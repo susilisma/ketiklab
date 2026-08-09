@@ -1,0 +1,457 @@
+[
+ {
+  "id": "yong-e",
+  "lang": "zh",
+  "title": "咏鹅",
+  "author": "骆宾王",
+  "era": "唐",
+  "genre": "五言古诗",
+  "lines": [
+   "鹅，鹅，鹅，",
+   "曲项向天歌。",
+   "白毛浮绿水，",
+   "红掌拨清波。"
+  ],
+  "note": "全文 · 公共领域 ·《全唐诗》。骆宾王七岁咏鹅，唐代作品。"
+ },
+ {
+  "id": "min-nong-2",
+  "lang": "zh",
+  "title": "悯农（其二）",
+  "author": "李绅",
+  "era": "唐",
+  "genre": "五言绝句",
+  "lines": [
+   "锄禾日当午，",
+   "汗滴禾下土。",
+   "谁知盘中餐，",
+   "粒粒皆辛苦。"
+  ],
+  "note": "全文 · 公共领域 ·《全唐诗》。珍惜粮食、体恤劳作的名篇。"
+ },
+ {
+  "id": "deng-leyouyuan",
+  "lang": "zh",
+  "title": "登乐游原",
+  "author": "李商隐",
+  "era": "唐",
+  "genre": "五言绝句",
+  "lines": [
+   "向晚意不适，",
+   "驱车登古原。",
+   "夕阳无限好，",
+   "只是近黄昏。"
+  ],
+  "note": "全文 · 公共领域 ·《唐诗三百首》。夕阳与迟暮之思。"
+ },
+ {
+  "id": "wang-tianmenshan",
+  "lang": "zh",
+  "title": "望天门山",
+  "author": "李白",
+  "era": "唐",
+  "genre": "七言绝句",
+  "lines": [
+   "天门中断楚江开，",
+   "碧水东流至此回。",
+   "两岸青山相对出，",
+   "孤帆一片日边来。"
+  ],
+  "note": "全文 · 公共领域 ·《全唐诗》。江水与青山间的孤帆远影。"
+ },
+ {
+  "id": "bie-dongda",
+  "lang": "zh",
+  "title": "别董大",
+  "author": "高适",
+  "era": "唐",
+  "genre": "七言绝句",
+  "lines": [
+   "千里黄云白日曛，",
+   "北风吹雁雪纷纷。",
+   "莫愁前路无知己，",
+   "天下谁人不识君。"
+  ],
+  "note": "全文 · 公共领域 ·《全唐诗》。送别中的豪迈与宽慰。"
+ },
+ {
+  "id": "jueju-dufu",
+  "lang": "zh",
+  "title": "绝句",
+  "author": "杜甫",
+  "era": "唐",
+  "genre": "七言绝句",
+  "lines": [
+   "两个黄鹂鸣翠柳，",
+   "一行白鹭上青天。",
+   "窗含西岭千秋雪，",
+   "门泊东吴万里船。"
+  ],
+  "note": "全文 · 公共领域 ·《全唐诗》。四句四景，色彩明丽。"
+ },
+ {
+  "id": "chusai-wangchangling",
+  "lang": "zh",
+  "title": "出塞",
+  "author": "王昌龄",
+  "era": "唐",
+  "genre": "七言绝句",
+  "lines": [
+   "秦时明月汉时关，",
+   "万里长征人未还。",
+   "但使龙城飞将在，",
+   "不教胡马度阴山。"
+  ],
+  "note": "全文 · 公共领域 ·《唐诗三百首》。边塞诗的压卷之作。"
+ },
+ {
+  "id": "liangzhou-ci",
+  "lang": "zh",
+  "title": "凉州词",
+  "author": "王翰",
+  "era": "唐",
+  "genre": "七言绝句",
+  "lines": [
+   "葡萄美酒夜光杯，",
+   "欲饮琵琶马上催。",
+   "醉卧沙场君莫笑，",
+   "古来征战几人回。"
+  ],
+  "note": "全文 · 公共领域 ·《唐诗三百首》。边塞豪饮与生死之叹。"
+ },
+ {
+  "id": "furonglou",
+  "lang": "zh",
+  "title": "芙蓉楼送辛渐",
+  "author": "王昌龄",
+  "era": "唐",
+  "genre": "七言绝句",
+  "lines": [
+   "寒雨连江夜入吴，",
+   "平明送客楚山孤。",
+   "洛阳亲友如相问，",
+   "一片冰心在玉壶。"
+  ],
+  "note": "全文 · 公共领域 ·《唐诗三百首》。冰心玉壶的高洁自喻。"
+ },
+ {
+  "id": "xiaochi",
+  "lang": "zh",
+  "title": "小池",
+  "author": "杨万里",
+  "era": "宋",
+  "genre": "七言绝句",
+  "lines": [
+   "泉眼无声惜细流，",
+   "树阴照水爱晴柔。",
+   "小荷才露尖尖角，",
+   "早有蜻蜓立上头。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。初夏小池的细腻观察。"
+ },
+ {
+  "id": "xiaochu-jingcisi",
+  "lang": "zh",
+  "title": "晓出净慈寺送林子方",
+  "author": "杨万里",
+  "era": "宋",
+  "genre": "七言绝句",
+  "lines": [
+   "毕竟西湖六月中，",
+   "风光不与四时同。",
+   "接天莲叶无穷碧，",
+   "映日荷花别样红。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。六月西湖的莲叶与荷花。"
+ },
+ {
+  "id": "yin-hushang",
+  "lang": "zh",
+  "title": "饮湖上初晴后雨",
+  "author": "苏轼",
+  "era": "宋",
+  "genre": "七言绝句",
+  "lines": [
+   "水光潋滟晴方好，",
+   "山色空蒙雨亦奇。",
+   "欲把西湖比西子，",
+   "淡妆浓抹总相宜。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。把西湖比作西子的名喻。"
+ },
+ {
+  "id": "yuanri",
+  "lang": "zh",
+  "title": "元日",
+  "author": "王安石",
+  "era": "宋",
+  "genre": "七言绝句",
+  "lines": [
+   "爆竹声中一岁除，",
+   "春风送暖入屠苏。",
+   "千门万户曈曈日，",
+   "总把新桃换旧符。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。春节辞旧迎新的图景。"
+ },
+ {
+  "id": "meihua-wanganshi",
+  "lang": "zh",
+  "title": "梅花",
+  "author": "王安石",
+  "era": "宋",
+  "genre": "五言绝句",
+  "lines": [
+   "墙角数枝梅，",
+   "凌寒独自开。",
+   "遥知不是雪，",
+   "为有暗香来。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。凌寒独开与暗香。"
+ },
+ {
+  "id": "xiari-jueju",
+  "lang": "zh",
+  "title": "夏日绝句",
+  "author": "李清照",
+  "era": "宋",
+  "genre": "五言绝句",
+  "lines": [
+   "生当作人杰，",
+   "死亦为鬼雄。",
+   "至今思项羽，",
+   "不肯过江东。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。以项羽自况的气节之作。"
+ },
+ {
+  "id": "shi-er",
+  "lang": "zh",
+  "title": "示儿",
+  "author": "陆游",
+  "era": "宋",
+  "genre": "七言绝句",
+  "lines": [
+   "死去元知万事空，",
+   "但悲不见九州同。",
+   "王师北定中原日，",
+   "家祭无忘告乃翁。"
+  ],
+  "note": "全文 · 公共领域 · 宋诗。陆游临终仍念家国。"
+ },
+ {
+  "id": "youzi-yin",
+  "lang": "zh",
+  "title": "游子吟",
+  "author": "孟郊",
+  "era": "唐",
+  "genre": "五言古诗",
+  "lines": [
+   "慈母手中线，",
+   "游子身上衣。",
+   "临行密密缝，",
+   "意恐迟迟归。",
+   "谁言寸草心，",
+   "报得三春晖。"
+  ],
+  "note": "全文 · 公共领域 ·《唐诗三百首》。慈母与游子，寸草与春晖。"
+ },
+ {
+  "id": "chile-ge",
+  "lang": "zh",
+  "title": "敕勒歌",
+  "author": "北朝民歌",
+  "era": "南北朝",
+  "genre": "乐府民歌",
+  "lines": [
+   "敕勒川，阴山下。",
+   "天似穹庐，笼盖四野。",
+   "天苍苍，野茫茫。",
+   "风吹草低见牛羊。"
+  ],
+  "note": "全文 · 公共领域 · 乐府诗集。草原的辽阔与生机。"
+ },
+ {
+  "id": "cunju-gaoding",
+  "lang": "zh",
+  "title": "村居",
+  "author": "高鼎",
+  "era": "清",
+  "genre": "七言绝句",
+  "lines": [
+   "草长莺飞二月天，",
+   "拂堤杨柳醉春烟。",
+   "儿童散学归来早，",
+   "忙趁东风放纸鸢。"
+  ],
+  "note": "全文 · 公共领域 · 清诗。早春放纸鸢的村居图。"
+ },
+ {
+  "id": "suojian-yuanmei",
+  "lang": "zh",
+  "title": "所见",
+  "author": "袁枚",
+  "era": "清",
+  "genre": "五言绝句",
+  "lines": [
+   "牧童骑黄牛，",
+   "歌声振林樾。",
+   "意欲捕鸣蝉，",
+   "忽然闭口立。"
+  ],
+  "note": "全文 · 公共领域 · 清诗。牧童捕蝉的瞬间。"
+ },
+ {
+  "id": "a-word-is-dead",
+  "lang": "en",
+  "title": "A word is dead",
+  "author": "Emily Dickinson",
+  "era": "1894",
+  "genre": "POETRY",
+  "lines": [
+   "A word is dead",
+   "When it is said,",
+   "Some say.",
+   "I say it just",
+   "Begins to live",
+   "That day."
+  ],
+  "note": "Full text · Public domain · Letters of Emily Dickinson (1894)."
+ },
+ {
+  "id": "auguries-excerpt",
+  "lang": "en",
+  "title": "Auguries of Innocence (opening)",
+  "author": "William Blake",
+  "era": "1863",
+  "genre": "POETRY",
+  "lines": [
+   "To see a World in a Grain of Sand",
+   "And a Heaven in a Wild Flower,",
+   "Hold Infinity in the palm of your hand",
+   "And Eternity in an hour."
+  ],
+  "note": "节选（开篇四行）· Public domain. Written c.1803, first published 1863."
+ },
+ {
+  "id": "my-heart-leaps-up",
+  "lang": "en",
+  "title": "My Heart Leaps Up",
+  "author": "William Wordsworth",
+  "era": "1807",
+  "genre": "POETRY",
+  "lines": [
+   "My heart leaps up when I behold",
+   "A rainbow in the sky:",
+   "So was it when my life began;",
+   "So is it now I am a man;",
+   "So be it when I shall grow old,",
+   "Or let me die!",
+   "The Child is father of the Man;",
+   "And I could wish my days to be",
+   "Bound each to each by natural piety."
+  ],
+  "note": "Full text · Public domain · Poems, in Two Volumes (1807)."
+ },
+ {
+  "id": "the-eagle",
+  "lang": "en",
+  "title": "The Eagle",
+  "author": "Alfred, Lord Tennyson",
+  "era": "1851",
+  "genre": "POETRY",
+  "lines": [
+   "He clasps the crag with crooked hands;",
+   "Close to the sun in lonely lands,",
+   "Ring'd with the azure world, he stands.",
+   "The wrinkled sea beneath him crawls;",
+   "He watches from his mountain walls,",
+   "And like a thunderbolt he falls."
+  ],
+  "note": "Full text · Public domain. Published 1851; Tennyson died in 1892."
+ },
+ {
+  "id": "aku-chairil",
+  "lang": "id",
+  "title": "Aku",
+  "author": "Chairil Anwar",
+  "era": "1943",
+  "genre": "PUISI",
+  "lines": [
+   "Kalau sampai waktuku",
+   "'Ku mau tak seorang 'kan merayu",
+   "Tidak juga kau",
+   "Tak perlu sedu sedan itu",
+   "Aku ini binatang jalang",
+   "Dari kumpulannya terbuang",
+   "Biar peluru menembus kulitku",
+   "Aku tetap meradang menerjang",
+   "Luka dan bisa kubawa berlari",
+   "Berlari",
+   "Hingga hilang pedih peri",
+   "Dan aku akan lebih tidak perduli",
+   "Aku mau hidup seribu tahun lagi"
+  ],
+  "note": "Teks lengkap · Domain publik di Indonesia (Chairil Anwar wafat 1949; perlindungan hak cipta berakhir 2019). Ditulis Maret 1943."
+ },
+ {
+  "id": "pantun-pisang-emas",
+  "lang": "id",
+  "title": "Pisang Emas",
+  "author": "Pantun Melayu",
+  "era": "Tradisional",
+  "genre": "PANTUN",
+  "lines": [
+   "Pisang emas dibawa berlayar,",
+   "Masak sebiji di atas peti.",
+   "Hutang emas boleh dibayar,",
+   "Hutang budi dibawa mati."
+  ],
+  "note": "Teks lengkap · Pantun Melayu tradisional · domain publik. Budi lebih berat daripada emas."
+ },
+ {
+  "id": "pantun-lintah",
+  "lang": "id",
+  "title": "Dari Mana Datangnya Lintah",
+  "author": "Pantun Melayu",
+  "era": "Tradisional",
+  "genre": "PANTUN",
+  "lines": [
+   "Dari mana datangnya lintah,",
+   "Dari sawah turun ke kali.",
+   "Dari mana datangnya cinta,",
+   "Dari mata turun ke hati."
+  ],
+  "note": "Teks lengkap · Pantun Melayu tradisional · domain publik. Pantun cinta paling terkenal."
+ },
+ {
+  "id": "pantun-cempedak",
+  "lang": "id",
+  "title": "Buah Cempedak",
+  "author": "Pantun Melayu",
+  "era": "Tradisional",
+  "genre": "PANTUN",
+  "lines": [
+   "Buah cempedak di luar pagar,",
+   "Ambil galah tolong jolokkan.",
+   "Saya budak baru belajar,",
+   "Kalau salah tolong tunjukkan."
+  ],
+  "note": "Teks lengkap · Pantun Melayu tradisional · domain publik. Rendah hati dalam belajar."
+ },
+ {
+  "id": "pantun-air-dalam",
+  "lang": "id",
+  "title": "Air Dalam",
+  "author": "Pantun Melayu",
+  "era": "Tradisional",
+  "genre": "PANTUN",
+  "lines": [
+   "Air dalam bertambah dalam,",
+   "Hujan di hulu belum lagi teduh.",
+   "Hati dendam bertambah dendam,",
+   "Dendam dahulu belum lagi sembuh."
+  ],
+  "note": "Teks lengkap · Pantun Melayu tradisional · domain publik. Tentang hati dan dendam yang belum reda."
+ }
+]
