@@ -1,0 +1,73 @@
+name: Build and deploy
+
+on:
+  push:
+    branches: [main]
+  schedule:
+    - cron: "7 * * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pages: write
+  id-token: write
+
+concurrency:
+  group: site
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    outputs:
+      go: ${{ steps.gate.outputs.go }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Promote queued content (hourly runs only)
+        id: promote
+        if: github.event_name == 'schedule'
+        run: node scripts/promote.mjs
+      - name: Push promoted content
+        if: github.event_name == 'schedule' && steps.promote.outputs.changed == 'true'
+        run: |
+          git config user.name "lingotrio-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add public/data queue
+          git commit -m "chore(content): hourly auto-update" || echo "nothing to commit"
+          git push
+      - name: Decide whether to deploy
+        id: gate
+        run: |
+          if [ "${{ github.event_name }}" = "schedule" ] && [ "${{ steps.promote.outputs.changed }}" != "true" ]; then
+            echo "go=false" >> "$GITHUB_OUTPUT"
+          else
+            echo "go=true" >> "$GITHUB_OUTPUT"
+          fi
+      - name: Install
+        if: steps.gate.outputs.go == 'true'
+        run: npm ci || npm install
+      - name: Build
+        if: steps.gate.outputs.go == 'true'
+        run: npm run build
+      - uses: actions/configure-pages@v5
+        if: steps.gate.outputs.go == 'true'
+        with:
+          enablement: true
+      - uses: actions/upload-pages-artifact@v3
+        if: steps.gate.outputs.go == 'true'
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    if: needs.build.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
