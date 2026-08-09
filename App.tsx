@@ -103,6 +103,8 @@ export default function Home() {
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
   const speechRequest = useRef(0);
+  const autoAdvance = useRef(0);
+  const readingAuto = useRef(0);
   const t = UI[uiLang];
 
   // Load content (words + readings) as JSON at runtime so the app bundle stays
@@ -213,10 +215,11 @@ export default function Home() {
       }
     }, 450);
   }
-  function submit() {
-    if (!typed.trim()) return;
+  function submit(value = typed) {
+    autoAdvance.current++;
+    if (!value.trim()) return;
     setAttempts(n => n + 1);
-    const answer = lang === "zh" ? typed.trim() : typed.trim().replace(/\s+/g, " ").toLowerCase();
+    const answer = lang === "zh" ? value.trim() : value.trim().replace(/\s+/g, " ").toLowerCase();
     const expected = lang === "zh" ? targetWord : targetWord.toLowerCase();
     const isCorrect = answer === expected;
     if (isCorrect) setCorrect(n => n + 1);
@@ -233,6 +236,13 @@ export default function Home() {
       speak(targetWord, targetVoice);
     }
     setTyped(cleanValue);
+    // qwerty-learner style: when the word is fully and correctly typed, advance automatically
+    const answer = lang === "zh" ? cleanValue.trim() : cleanValue.trim().replace(/\s+/g, " ").toLowerCase();
+    const expected = lang === "zh" ? targetWord : targetWord.toLowerCase();
+    if (answer === expected) {
+      const token = ++autoAdvance.current;
+      window.setTimeout(() => { if (autoAdvance.current === token) submit(cleanValue); }, 260);
+    }
   }
   function handleWordKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
     if (event.key === "Enter") { submit(); return; }
@@ -306,6 +316,7 @@ export default function Home() {
     setTimeout(() => readingInput.current?.focus(), 30);
   }
   function submitReading() {
+    readingAuto.current++;
     if (readingTyped !== readingTarget) return;
     if (readingLine === reading.lines.length - 1) { setReadingDone(true); setReadingActive(false); return; }
     setReadingLine(line => line + 1); setReadingTyped("");
@@ -350,7 +361,7 @@ export default function Home() {
           </div>
           <div className="type-area">
             <input ref={input} value={typed} onChange={e=>typeWord(e.target.value)} onKeyDown={handleWordKeyDown} onFocus={()=>setRunning(true)} placeholder={PROMPTS[uiLang][lang]} autoComplete="off" spellCheck={false}/>
-            <button onClick={submit} aria-label="Submit">↵</button>
+            <button onClick={() => submit()} aria-label="Submit">↵</button>
           </div>
           <p className="hint">{lang === "zh" ? <>ENTER <span>·</span> 下一个词 &nbsp;&nbsp; SPACE <span>·</span> 重播发音</> : lang === "id" ? <>ENTER <span>·</span> kata berikutnya &nbsp;&nbsp; CTRL+SPACE <span>·</span> ulang suara</> : <>ENTER <span>·</span> next word &nbsp;&nbsp; SPACE <span>·</span> replay sound</>}</p>
         </div>
@@ -413,7 +424,7 @@ export default function Home() {
                   {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTyped[i] === character ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character === " " ? " " : character}</span>)}
                 </div>
                 <div className="reading-input-wrap">
-                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => setReadingTyped(e.target.value.replace(/\n/g,""))} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={reading.lang === "zh" ? "照着上方文字输入……" : reading.lang === "id" ? "Ketik baris di atas…" : "Type the line above…"} spellCheck={false} />
+                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (v === readingTarget) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(); }, 300); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={reading.lang === "zh" ? "照着上方文字输入……" : reading.lang === "id" ? "Ketik baris di atas…" : "Type the line above…"} spellCheck={false} />
                   <button className={readingTyped === readingTarget ? "ready" : ""} onClick={submitReading} disabled={readingTyped !== readingTarget}>{t.nextLine} <span>↵</span></button>
                 </div>
                 {readingTyped && readingTyped !== readingTarget && <p className="typing-help">{t.typingHelp}</p>}
