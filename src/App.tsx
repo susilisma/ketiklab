@@ -14,6 +14,25 @@ const UI = {
   en: { learn: "Start Learning", library: "Word Lists", mistakes: "Spaced Review", articles: "Reading", plan: "Study Plan", stats: "Statistics", settings: "Settings", language: "Language", start: "Start", pause: "Pause", prompt: "Type the English word above", meaning: "Trilingual meaning", daily: "Daily goal", streak: "Study streak", words: "Words learned", accuracy: "Accuracy", day: "days", chapter: "Business English · Chapter 1", finish: "Today's progress", keyboard: "Press any letter key to start", choose: "Choose word list", all: "All lists", search: "Search words…", readingTagline: "Read the classics as you type, letting every line pass through your eyes and fingers.", allReadings: "All", classics: "Classic collection", pieces: "readings", readAll: "Read full text aloud", read: "Read aloud", lineLabel: "Line", nextLine: "Next line", typingHelp: "Correct the red characters; punctuation and capitalization must match the original.", completed: "Completed", completedNote: "You have typed an entire classic work.", characters: "characters", timeUsed: "time", practiceAgain: "Practice again", loading: "Loading vocabulary…", due: "Due today", mastered: "Mastered", learning: "Learning", startReview: "Start review", reviewing: "Review mode", exitReview: "Exit review", noDueTitle: "Nothing due yet", noDueNote: "Keep practicing in “Start Learning”. Correct words are scheduled further out; missed words return soon.", reviewHint: "Forgetting curve: correct spreads out, wrong returns soon" },
 };
 
+// prompt above the typing box: what to type (learn lang), written in the interface lang
+const PROMPTS: Record<Lang, Record<Lang, string>> = {
+  zh: { zh: "输入上方中文词语", id: "输入上方印尼语单词", en: "输入上方英语单词" },
+  id: { zh: "Ketik kata bahasa Mandarin di atas", id: "Ketik kata bahasa Indonesia di atas", en: "Ketik kata bahasa Inggris di atas" },
+  en: { zh: "Type the Chinese word above", id: "Type the Indonesian word above", en: "Type the English word above" },
+};
+
+const MODAL_T: Record<Lang, { title: string; subtitle: string; ui: string; uiDesc: string; learn: string; learnDesc: string; def: string; defDesc: string; selected: string; cancel: string; save: string }> = {
+  zh: { title: "语言设置", subtitle: "配置界面语言、学习语言和释义语言", ui: "界面语言", uiDesc: "选择应用界面的显示语言", learn: "学习语言", learnDesc: "选择你要练习打字的语言", def: "释义语言", defDesc: "选择单词释义的显示语言", selected: "已选择", cancel: "取消", save: "保存设置" },
+  id: { title: "Pengaturan Bahasa", subtitle: "Atur bahasa antarmuka, bahasa belajar, dan bahasa arti", ui: "Bahasa Antarmuka", uiDesc: "Pilih bahasa tampilan aplikasi", learn: "Bahasa Belajar", learnDesc: "Pilih bahasa yang ingin kamu latih mengetik", def: "Bahasa Arti", defDesc: "Pilih bahasa untuk menampilkan arti kata", selected: "Dipilih", cancel: "Batal", save: "Simpan" },
+  en: { title: "Language Settings", subtitle: "Choose interface, learning, and definition language", ui: "Interface Language", uiDesc: "Language used for menus and labels", learn: "Learning Language", learnDesc: "The language you practice typing", def: "Definition Language", defDesc: "Language used to show word meanings", selected: "Selected", cancel: "Cancel", save: "Save" },
+};
+
+const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: string; defName: string; defDesc: string }[] = [
+  { code: "zh", name: "中文", uiDesc: "中文界面", learnDesc: "练习中文打字与词汇", defName: "中文释义", defDesc: "使用中文释义显示单词含义" },
+  { code: "id", name: "Bahasa Indonesia", uiDesc: "Antarmuka bahasa Indonesia", learnDesc: "Latihan mengetik bahasa Indonesia", defName: "Arti Bahasa Indonesia", defDesc: "Tampilkan arti kata dalam bahasa Indonesia" },
+  { code: "en", name: "English", uiDesc: "English interface", learnDesc: "Practice English typing", defName: "English Definition", defDesc: "Show word meanings in English" },
+];
+
 const LANGUAGE_META: Record<Lang, { label: string; voice: string; example: string }> = {
   zh: { label: "中文", voice: "zh-CN", example: "中文例句" },
   id: { label: "Bahasa Indonesia", voice: "id-ID", example: "Contoh bahasa Indonesia" },
@@ -57,6 +76,9 @@ export default function Home() {
 
   const [view, setView] = useState<View>("learn");
   const [lang, setLang] = useState<Lang>("zh");
+  const [uiLang, setUiLang] = useState<Lang>("zh");
+  const [defLang, setDefLang] = useState<Lang>("en");
+  const [showLangSetup, setShowLangSetup] = useState(false);
   const [dark, setDark] = useState(false);
   const [running, setRunning] = useState(false);
   const [index, setIndex] = useState(0);
@@ -81,7 +103,7 @@ export default function Home() {
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
   const speechRequest = useRef(0);
-  const t = UI[lang];
+  const t = UI[uiLang];
 
   // Load content (words + readings) as JSON at runtime so the app bundle stays
   // small and the content can grow hourly without a code change.
@@ -101,6 +123,22 @@ export default function Home() {
 
   const refreshSrs = () => { getStats().then(setSrs).catch(() => {}); };
   useEffect(() => { refreshSrs(); }, []);
+
+  // language preferences: restore on first load; show the setup modal on first visit
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem("lingotrio-langs");
+      if (saved) {
+        const v = JSON.parse(saved);
+        if (v.ui === "zh" || v.ui === "id" || v.ui === "en") setUiLang(v.ui);
+        if (v.learn === "zh" || v.learn === "id" || v.learn === "en") setLang(v.learn);
+        if ((v.def === "zh" || v.def === "id" || v.def === "en") && v.def !== v.learn) setDefLang(v.def);
+        else if (v.learn) setDefLang(v.learn === "zh" ? "en" : "zh");
+      } else {
+        setShowLangSetup(true);
+      }
+    } catch { setShowLangSetup(true); }
+  }, []);
 
   useEffect(() => {
     const saved = localStorage.getItem("lingotrio-state");
@@ -130,7 +168,6 @@ export default function Home() {
   const targetWord = wordValue(word, lang);
   const targetVoice = LANGUAGE_META[lang].voice;
   const targetKey = `${lang}:${word.en}`;
-  const otherLanguages = TRANSLATION_ORDER[lang];
   const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
   const reading = readings.find(piece => piece.id === readingId) || readings[0];
   const readingTarget = reading.lines[readingLine] || "";
@@ -207,12 +244,34 @@ export default function Home() {
       speak(targetWord, targetVoice);
     }
   }
+  function persistLangs(ui: Lang, learn: Lang, def: Lang) {
+    try { localStorage.setItem("lingotrio-langs", JSON.stringify({ ui, learn, def })); } catch { /* ignore */ }
+  }
+  function fixDef(learn: Lang, preferred: Lang): Lang {
+    return preferred !== learn ? preferred : learn === "zh" ? "en" : "zh";
+  }
   function changeLanguage(nextLanguage: Lang) {
+    const nextDef = fixDef(nextLanguage, defLang);
     setLang(nextLanguage);
+    setDefLang(nextDef);
     setTyped("");
     autoSpokenWord.current = null;
     setSpeakingWord(null);
+    persistLangs(uiLang, nextLanguage, nextDef);
     setTimeout(() => input.current?.focus(), 30);
+  }
+  function saveLangSetup(ui: Lang, learn: Lang, def: Lang) {
+    const finalDef = fixDef(learn, def);
+    setUiLang(ui);
+    setDefLang(finalDef);
+    if (learn !== lang) {
+      setLang(learn);
+      setTyped("");
+      autoSpokenWord.current = null;
+      setSpeakingWord(null);
+    }
+    persistLangs(ui, learn, finalDef);
+    setShowLangSetup(false);
   }
   function changeCategory(nextCategory: WordFilter) {
     setReviewKeys(null);
@@ -269,7 +328,7 @@ export default function Home() {
 
     <main className="main">
       <header>
-        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{category === "all" ? t.all : CATEGORY_META[category][lang]} · {activeWords.length}</b></button>
+        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{category === "all" ? t.all : CATEGORY_META[category][uiLang]} · {activeWords.length}</b></button>
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label="Dark mode">{dark ? "☀" : "☾"}</button>
           <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Indonesia</option><option value="en">English</option></select></label>
@@ -286,11 +345,11 @@ export default function Home() {
           <h1 className={`target-word ${lang}`}>{targetWord.split("").map((letter,i)=><span key={i} className={typed[i] ? ((lang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}>{letter === " " ? " " : letter}</span>)}</h1>
           <p className="phonetic">{pronunciation(word, lang)}</p>
           <div className="meanings">
-            {otherLanguages.map(language => <span key={language}><small>{LANGUAGE_META[language].label}</small>{word[language]}</span>)}
+            <span><small>{LANGUAGE_META[defLang].label}</small>{word[defLang]}</span>
             <span><small>{LANGUAGE_META[lang].example}</small>{word.examples[lang]}</span>
           </div>
           <div className="type-area">
-            <input ref={input} value={typed} onChange={e=>typeWord(e.target.value)} onKeyDown={handleWordKeyDown} onFocus={()=>setRunning(true)} placeholder={t.prompt} autoComplete="off" spellCheck={false}/>
+            <input ref={input} value={typed} onChange={e=>typeWord(e.target.value)} onKeyDown={handleWordKeyDown} onFocus={()=>setRunning(true)} placeholder={PROMPTS[uiLang][lang]} autoComplete="off" spellCheck={false}/>
             <button onClick={submit} aria-label="Submit">↵</button>
           </div>
           <p className="hint">{lang === "zh" ? <>ENTER <span>·</span> 下一个词 &nbsp;&nbsp; SPACE <span>·</span> 重播发音</> : lang === "id" ? <>ENTER <span>·</span> kata berikutnya &nbsp;&nbsp; CTRL+SPACE <span>·</span> ulang suara</> : <>ENTER <span>·</span> next word &nbsp;&nbsp; SPACE <span>·</span> replay sound</>}</p>
@@ -305,17 +364,17 @@ export default function Home() {
 
       {view === "library" && <Panel title={t.library} eyebrow="TRILINGUAL COLLECTION">
         <div className="category-tabs">
-          {(["all","daily","business","indonesia","study"] as WordFilter[]).map(item => <button key={item} className={category === item ? "active" : ""} onClick={() => changeCategory(item)}>{item === "all" ? t.all : CATEGORY_META[item][lang]}<small>{item === "all" ? words.length : words.filter(wordItem => wordItem.category === item).length}</small></button>)}
+          {(["all","daily","business","indonesia","study"] as WordFilter[]).map(item => <button key={item} className={category === item ? "active" : ""} onClick={() => changeCategory(item)}>{item === "all" ? t.all : CATEGORY_META[item][uiLang]}<small>{item === "all" ? words.length : words.filter(wordItem => wordItem.category === item).length}</small></button>)}
         </div>
-        <div className="toolbar"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.search}/><span>{filtered.length} {lang === "id" ? "kata" : lang === "zh" ? "个词" : "words"}</span></div>
-        <div className="word-grid">{filtered.slice(0, 300).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][lang]}</em><div><b>{w[otherLanguages[0]]}</b><small>{w[otherLanguages[1]]}</small></div></button>)}</div>
-        <div className="source-note"><b>{lang === "zh" ? "词库来源" : lang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p>NGSL · Open English WordNet · Wordnet Bahasa · CC-CEDICT</p><span>{lang === "zh" ? "首批词条已经按三语概念对齐；重点词条将继续人工校对例句、拼音和音标。" : lang === "id" ? "Kosakata diselaraskan berdasarkan konsep dalam tiga bahasa dan akan terus ditinjau secara manual." : "Entries are aligned by concept across three languages and will continue through editorial review."}</span></div>
+        <div className="toolbar"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.search}/><span>{filtered.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "个词" : "words"}</span></div>
+        <div className="word-grid">{filtered.slice(0, 300).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div><b>{w[defLang]}</b></div></button>)}</div>
+        <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p>NGSL · Open English WordNet · Wordnet Bahasa · CC-CEDICT</p><span>{uiLang === "zh" ? "首批词条已经按三语概念对齐；重点词条将继续人工校对例句、拼音和音标。" : uiLang === "id" ? "Kosakata diselaraskan berdasarkan konsep dalam tiga bahasa dan akan terus ditinjau secara manual." : "Entries are aligned by concept across three languages and will continue through editorial review."}</span></div>
       </Panel>}
 
       {view === "mistakes" && <Panel title={t.mistakes} eyebrow="SPACED REPETITION">
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
-        <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {lang === "zh" ? "个词在复习计划中" : lang === "id" ? "kata dalam jadwal" : "words in schedule"}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
-        <div className="mistake-list">{dueWords.length ? dueWords.map((w,i)=><button key={w.en} onClick={()=>practiceWord(w)}><span>{i+1}</span><b>{wordValue(w,lang)}</b><em>{w[otherLanguages[0]]}</em><em>{w[otherLanguages[1]]}</em><i>Practice →</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
+        <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : "words in schedule"}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
+        <div className="mistake-list">{dueWords.length ? dueWords.map((w,i)=><button key={w.en} onClick={()=>practiceWord(w)}><span>{i+1}</span><b>{wordValue(w,lang)}</b><em>{w[defLang]}</em><i>Practice →</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
 
       {view === "articles" && <section className="reading-panel">
@@ -378,9 +437,60 @@ export default function Home() {
       </Panel>}
 
       {view === "settings" && <Panel title={t.settings} eyebrow="MAKE IT YOURS">
-        <div className="settings-grid"><Setting title="Learning language" detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title="Theme" detail="Choose a comfortable reading mode"><button onClick={()=>setDark(v=>!v)}>{dark?"Light":"Dark"} mode</button></Setting><Setting title="Pronunciation" detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>Test sound ▶</button></Setting><Setting title="Learning data" detail="Stored privately on this device"><button onClick={()=>{setCorrect(0);setAttempts(0);setMistakes([]);resetAll().then(refreshSrs)}}>Reset progress</button></Setting></div>
+        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title="Learning language" detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title="Theme" detail="Choose a comfortable reading mode"><button onClick={()=>setDark(v=>!v)}>{dark?"Light":"Dark"} mode</button></Setting><Setting title="Pronunciation" detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>Test sound ▶</button></Setting><Setting title="Learning data" detail="Stored privately on this device"><button onClick={()=>{setCorrect(0);setAttempts(0);setMistakes([]);resetAll().then(refreshSrs)}}>Reset progress</button></Setting></div>
       </Panel>}
     </main>
+
+    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} initialDef={defLang} onSave={saveLangSetup} onClose={() => { persistLangs(uiLang, lang, defLang); setShowLangSetup(false); }} />}
+  </div>;
+}
+
+function LangSetup({ initialUi, initialLearn, initialDef, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; initialDef: Lang; onSave: (ui: Lang, learn: Lang, def: Lang) => void; onClose: () => void }) {
+  const [ui, setUi] = useState<Lang>(initialUi);
+  const [learn, setLearn] = useState<Lang>(initialLearn);
+  const [def, setDef] = useState<Lang>(initialDef !== initialLearn ? initialDef : initialLearn === "zh" ? "en" : "zh");
+  const mt = MODAL_T[ui];
+  function pickLearn(code: Lang) {
+    setLearn(code);
+    if (def === code) setDef(code === "zh" ? "en" : "zh");
+  }
+  return <div className="lang-modal-backdrop" role="dialog" aria-modal="true">
+    <div className="lang-modal">
+      <button className="lang-modal-close" onClick={onClose} aria-label="Close">✕</button>
+      <h2>{mt.title}</h2>
+      <p className="lang-modal-subtitle">{mt.subtitle}</p>
+      <div className="lang-modal-section">
+        <h3>🖥 {mt.ui}</h3>
+        <p>{mt.uiDesc}</p>
+        <div className="lang-cards">
+          {LANG_CARDS.map(c => <button key={c.code} className={ui === c.code ? "lang-card active" : "lang-card"} onClick={() => setUi(c.code)}>
+            <b>{c.name}</b><small>{c.uiDesc}</small>{ui === c.code && <span>{mt.selected}</span>}
+          </button>)}
+        </div>
+      </div>
+      <div className="lang-modal-section">
+        <h3>⌨ {mt.learn}</h3>
+        <p>{mt.learnDesc}</p>
+        <div className="lang-cards">
+          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => pickLearn(c.code)}>
+            <b>{c.name}</b><small>{c.learnDesc}</small>{learn === c.code && <span>{mt.selected}</span>}
+          </button>)}
+        </div>
+      </div>
+      <div className="lang-modal-section">
+        <h3>🌐 {mt.def}</h3>
+        <p>{mt.defDesc}</p>
+        <div className="lang-cards">
+          {LANG_CARDS.filter(c => c.code !== learn).map(c => <button key={c.code} className={def === c.code ? "lang-card active" : "lang-card"} onClick={() => setDef(c.code)}>
+            <b>{c.defName}</b><small>{c.defDesc}</small>{def === c.code && <span>{mt.selected}</span>}
+          </button>)}
+        </div>
+      </div>
+      <div className="lang-modal-actions">
+        <button className="lang-modal-cancel" onClick={onClose}>{mt.cancel}</button>
+        <button className="lang-modal-save" onClick={() => onSave(ui, learn, def)}>{mt.save}</button>
+      </div>
+    </div>
   </div>;
 }
 

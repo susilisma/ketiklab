@@ -24,3 +24,26 @@
 .review-cta small{color:var(--muted);font-size:11px;margin-top:4px;display:block}
 .review-cta button{border:0;background:var(--line);color:var(--muted);border-radius:12px;padding:12px 20px;font-weight:800;font-size:13px;cursor:not-allowed}
 .review-cta button.ready{background:var(--purple);color:#fff;cursor:pointer;box-shadow:0 8px 18px color-mix(in srgb,var(--purple) 35%,transparent)}
+
+/* ---- first-visit language setup modal ---- */
+.lang-modal-backdrop{position:fixed;inset:0;z-index:50;background:rgba(15,15,25,.45);backdrop-filter:blur(6px);display:grid;place-items:center;padding:18px;overflow:auto}
+.lang-modal{position:relative;width:100%;max-width:640px;background:var(--surface);color:var(--text);border-radius:22px;box-shadow:0 30px 80px rgba(0,0,0,.3);padding:34px 38px 28px}
+.lang-modal h2{margin:0 0 6px;font-size:24px}
+.lang-modal-subtitle{margin:0 0 22px;color:var(--muted);font-size:13px}
+.lang-modal-close{position:absolute;right:18px;top:16px;border:0;background:transparent;color:var(--muted);font-size:16px;cursor:pointer}
+.lang-modal-section{border-top:1px solid var(--line);padding:18px 0 6px}
+.lang-modal-section h3{margin:0 0 3px;font-size:15px}
+.lang-modal-section>p{margin:0 0 13px;color:var(--muted);font-size:12px}
+.lang-cards{display:flex;flex-direction:column;gap:10px}
+.lang-card{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:3px;text-align:left;border:1.5px solid var(--line);background:var(--surface);color:var(--text);border-radius:14px;padding:14px 18px;transition:.15s}
+.lang-card:hover{border-color:color-mix(in srgb,var(--purple) 45%,var(--line))}
+.lang-card.active{border-color:var(--purple);background:var(--purple-soft)}
+.lang-card b{font-size:15px}
+.lang-card small{color:var(--muted);font-size:11px}
+.lang-card span{position:absolute;right:14px;top:50%;transform:translateY(-50%);background:color-mix(in srgb,var(--purple) 16%,var(--surface));color:var(--purple);font-size:11px;font-weight:800;border-radius:999px;padding:5px 11px}
+.lang-modal-actions{display:flex;justify-content:flex-end;gap:10px;margin-top:22px}
+.lang-modal-cancel{border:0;background:transparent;color:var(--text);padding:11px 18px;border-radius:11px;font-weight:600}
+.lang-modal-cancel:hover{background:var(--bg)}
+.lang-modal-save{border:0;background:var(--purple);color:#fff;padding:11px 20px;border-radius:11px;font-weight:700;box-shadow:0 8px 18px color-mix(in srgb,var(--purple) 35%,transparent)}
+@media(max-width:640px){.lang-modal{padding:24px 20px 20px}.lang-cards{gap:8px}.lang-card{padding:12px 14px}}
+.meanings>span:first-child:nth-last-child(2){grid-column:1/-1}
