@@ -9,6 +9,12 @@ type WordFilter = "all" | WordCategory;
 
 const DATA = import.meta.env.BASE_URL + "data/";
 
+// dictionary files may live under data/dicts/ or flat under data/ - try both
+function loadDictFile<T>(name: string): Promise<T> {
+  const ok = (r: Response) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); };
+  return fetch(DATA + "dicts/" + name).then(ok).catch(() => fetch(DATA + name).then(ok));
+}
+
 const UI = {
   zh: { learn: "开始学习", library: "词库", mistakes: "间隔复习", articles: "阅读", plan: "学习计划", stats: "数据统计", settings: "设置", language: "语言", start: "开始", pause: "暂停", prompt: "输入上方中文词语", meaning: "三语释义", daily: "今日目标", streak: "连续学习", words: "已学词语", accuracy: "正确率", day: "天", chapter: "中文商务词汇 · 第 1 章", finish: "今日完成度", keyboard: "输入第一个汉字开始", choose: "选择词库", all: "全部词库", search: "搜索词语…", readingTagline: "读经典，照着输入，让文字经过眼睛，也经过手指。", allReadings: "全部", classics: "经典选集", pieces: "篇", readAll: "朗读全文", read: "朗读", lineLabel: "第几句", nextLine: "下一句", typingHelp: "红色字符需要修改；标点和大小写也要与原文一致。", completed: "已完成", completedNote: "你刚刚完整地输入了一篇经典作品。", characters: "字符", timeUsed: "用时", practiceAgain: "再练一次", loading: "正在加载词库…", due: "今日待复习", mastered: "已掌握", learning: "学习中", startReview: "开始复习", reviewing: "复习模式", exitReview: "退出复习", noDueTitle: "暂无到期复习", noDueNote: "继续在“开始学习”里练习。答对的词会按遗忘曲线拉长间隔，答错的词很快再次出现。", reviewHint: "按遗忘曲线：答对间隔变长，答错很快再见" },
   id: { learn: "Mulai Belajar", library: "Daftar Kata", mistakes: "Ulasan Berkala", articles: "Bacaan", plan: "Rencana Belajar", stats: "Statistik", settings: "Pengaturan", language: "Bahasa", start: "Mulai", pause: "Jeda", prompt: "Ketik kata bahasa Indonesia di atas", meaning: "Arti tiga bahasa", daily: "Target hari ini", streak: "Hari berturut-turut", words: "Kata dipelajari", accuracy: "Akurasi", day: "hari", chapter: "Kosakata Bisnis Indonesia · Bab 1", finish: "Progres hari ini", keyboard: "Ketik huruf pertama untuk mulai", choose: "Pilih daftar kata", all: "Semua daftar", search: "Cari kata…", readingTagline: "Baca karya klasik sambil mengetik, agar kata-katanya melewati mata dan jemari.", allReadings: "Semua", classics: "Koleksi klasik", pieces: "bacaan", readAll: "Bacakan seluruh teks", read: "Bacakan", lineLabel: "Baris", nextLine: "Baris berikutnya", typingHelp: "Perbaiki karakter merah; tanda baca dan huruf besar harus sama dengan teks asli.", completed: "Selesai", completedNote: "Kamu baru saja mengetik satu karya klasik secara lengkap.", characters: "karakter", timeUsed: "waktu", practiceAgain: "Latihan lagi", loading: "Memuat kosakata…", due: "Jatuh tempo hari ini", mastered: "Dikuasai", learning: "Dipelajari", startReview: "Mulai ulasan", reviewing: "Mode ulasan", exitReview: "Keluar", noDueTitle: "Belum ada ulasan jatuh tempo", noDueNote: "Terus berlatih di “Mulai Belajar”. Kata yang benar dijadwalkan makin jarang; yang salah muncul lagi segera.", reviewHint: "Kurva lupa: benar makin jarang, salah segera kembali" },
@@ -128,7 +134,7 @@ export default function Home() {
       setReadings(r);
       if (r.length) setReadingId(r[0].id);
     }).catch(() => { if (alive) setDataError(true); });
-    fetch(DATA + "dicts/manifest.json").then(r => r.json()).then((m: DictInfo[]) => {
+    loadDictFile<DictInfo[]>("manifest.json").then((m: DictInfo[]) => {
       if (!alive) return;
       setDicts(m);
       // restore the previously selected dictionary
@@ -136,7 +142,7 @@ export default function Home() {
         const savedSource = localStorage.getItem("lingotrio-source");
         const d = savedSource && m.find(x => x.id === savedSource);
         if (d) {
-          fetch(DATA + "dicts/" + d.file).then(r => r.json()).then((data: DictEntry[]) => {
+          loadDictFile<DictEntry[]>(d.file).then((data: DictEntry[]) => {
             if (!alive) return;
             dictCache.current.set(d.id, data);
             setDictWords(data);
@@ -370,7 +376,7 @@ export default function Home() {
     let data = dictCache.current.get(d.id);
     if (!data) {
       try {
-        data = await fetch(DATA + "dicts/" + d.file).then(r => r.json()) as DictEntry[];
+        data = await loadDictFile<DictEntry[]>(d.file);
         dictCache.current.set(d.id, data);
       } catch { return; }
     }
