@@ -14,6 +14,17 @@ export type Word = {
   source: string;
 };
 
+export type DictEntry = { name: string; trans: string[]; usphone?: string };
+
+export type DictInfo = {
+  id: string;
+  name: string;
+  description: string;
+  lang: "en" | "id";
+  length: number;
+  file: string;
+};
+
 export type ReadingPiece = {
   id: string;
   lang: "en" | "id" | "zh";
