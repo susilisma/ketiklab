@@ -25,6 +25,17 @@ export type DictInfo = {
   file: string;
 };
 
+export type PracticeItem = {
+  key: string;
+  text: string;
+  sub: string;
+  meaning: string;
+  example?: string;
+  voice: string;
+  lang: Lang;
+  dict?: string;
+};
+
 export type ReadingPiece = {
   id: string;
   lang: "en" | "id" | "zh";

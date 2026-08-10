@@ -99,3 +99,14 @@
 .finish-wrong small{font-size:10px;color:var(--muted);max-width:150px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chapter-select{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:8px;padding:4px 8px;font-size:11px;font-weight:700;outline:0;max-width:170px}
 .chapter-select:hover{border-color:var(--purple)}
+
+/* ---- favorites, loop dots, sound (round 4) ---- */
+.fav-btn{position:absolute;right:70px;top:20px;border:1px solid var(--line);background:var(--bg);color:var(--muted);width:36px;height:36px;border-radius:50%;font-size:16px;line-height:1}
+.fav-btn:hover{color:#e9ae4e;border-color:#e9ae4e}
+.fav-btn.on{color:#e9ae4e;border-color:#e9ae4e;background:color-mix(in srgb,#e9ae4e 12%,var(--surface))}
+.loop-dots{position:absolute;left:27px;top:56px;display:flex;gap:5px}
+.loop-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
+.loop-dots i.on{background:var(--purple)}
+.fav-source{border:1.5px solid color-mix(in srgb,#e9ae4e 55%,var(--line));background:color-mix(in srgb,#e9ae4e 10%,var(--surface));color:#b7822a;border-radius:12px;padding:9px 15px;font-size:12px;font-weight:800;margin-bottom:8px}
+.fav-source.active{background:color-mix(in srgb,#e9ae4e 22%,var(--surface));border-color:#e9ae4e}
+.dark .fav-source{color:#e9ae4e}

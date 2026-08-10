@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo } from "./types";
+import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, resetAll, type SrsStats } from "./srs";
-import { keyClick, errorBeep, successChime, setSoundEnabled, initSoundPref } from "./sounds";
+import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
@@ -83,8 +83,11 @@ export default function Home() {
   const [dicts, setDicts] = useState<DictInfo[]>([]);
   const [source, setSource] = useState<string>("trio");
   const [dictWords, setDictWords] = useState<DictEntry[] | null>(null);
-  const [soundOn, setSoundOn] = useState(true);
+  const [soundProfile, setSoundProfileState] = useState<SoundProfile>("soft");
   const [wrongFlash, setWrongFlash] = useState(false);
+  const [loopTimes, setLoopTimes] = useState(1);
+  const [loopIx, setLoopIx] = useState(0);
+  const [favorites, setFavorites] = useState<PracticeItem[]>([]);
   const [chapter, setChapter] = useState(0);
   const [chapterFinished, setChapterFinished] = useState(false);
   const [chDone, setChDone] = useState(0);
@@ -161,7 +164,10 @@ export default function Home() {
         }
       } catch { /* ignore */ }
     }).catch(() => {});
-    setSoundOn(initSoundPref());
+    { const sp = initSoundPref(); setSoundProfileState(sp.profile); }
+    try { const lp = Number(localStorage.getItem("lingotrio-loop")); if (lp >= 1 && lp <= 5) setLoopTimes(lp); } catch { /* ignore */ }
+    try { setFavorites(JSON.parse(localStorage.getItem("lingotrio-fav") || "[]")); } catch { /* ignore */ }
+    try { if (localStorage.getItem("lingotrio-dark") === "1") setDark(true); } catch { /* ignore */ }
     try { setDayCounts(JSON.parse(localStorage.getItem("lingotrio-days") || "{}")); } catch { /* ignore */ }
     return () => { alive = false; };
   }, []);
@@ -211,8 +217,10 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
 
-  useEffect(() => { setWrongCountWord(0); setReveal(false); }, [index]);
+  useEffect(() => { setWrongCountWord(0); setReveal(false); setLoopIx(0); }, [index]);
   useEffect(() => { try { localStorage.setItem("lingotrio-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
+  useEffect(() => { try { localStorage.setItem("lingotrio-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
+  useEffect(() => { try { localStorage.setItem("lingotrio-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
 
   const ready = words.length > 0;
 
@@ -225,9 +233,10 @@ export default function Home() {
     </div>;
   }
 
-  const dictInfo = source !== "trio" && dictWords ? dicts.find(d => d.id === source) || null : null;
-  const practiceLang: Lang = dictInfo ? dictInfo.lang : lang;
-  const activeItems = (dictInfo && dictWords)
+  const dictInfo = source !== "trio" && source !== "fav" && dictWords ? dicts.find(d => d.id === source) || null : null;
+  const activeItems: PracticeItem[] = source === "fav"
+    ? favorites
+    : (dictInfo && dictWords)
     ? dictWords.map(e => ({
         key: e.name,
         text: e.name,
@@ -235,6 +244,8 @@ export default function Home() {
         meaning: e.trans.join("；"),
         example: undefined as string | undefined,
         voice: dictInfo.lang === "id" ? "id-ID" : "en-US",
+        lang: dictInfo.lang,
+        dict: dictInfo.name,
       }))
     : activeWords.map(w => ({
         key: w.en,
@@ -243,6 +254,7 @@ export default function Home() {
         meaning: w[defLang],
         example: w.examples[lang] as string | undefined,
         voice: LANGUAGE_META[lang].voice,
+        lang,
       }));
   const reviewItems = reviewKeys ? activeItems.filter(i => reviewKeys.includes(i.key)) : null;
   const chapterCount = Math.max(1, Math.ceil(activeItems.length / 20));
@@ -250,6 +262,9 @@ export default function Home() {
   const chapterItems = activeItems.slice(chapterSafe * 20, chapterSafe * 20 + 20);
   const learnItems = (reviewItems && reviewItems.length) ? reviewItems : (chapterItems.length ? chapterItems : activeItems);
   const item = learnItems[index % Math.max(learnItems.length, 1)] || learnItems[0];
+  const practiceLang: Lang = (item && item.lang) || lang;
+  const favId = item ? `${item.lang}:${item.key}` : "";
+  const isFav = favorites.some(f => `${f.lang}:${f.key}` === favId);
   const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
@@ -361,13 +376,37 @@ export default function Home() {
     bumpToday();
     recordReview(item.key, cleanRun).then(refreshSrs).catch(() => {});
     const token = ++autoAdvance.current;
+    // repeat the same word loopTimes before moving on (reference "loop word" mode)
+    if (loopIx + 1 < loopTimes) {
+      window.setTimeout(() => {
+        if (autoAdvance.current !== token) return;
+        setTyped(""); hadWrong.current = false; setLoopIx(n => n + 1);
+        setTimeout(() => input.current?.focus(), 20);
+      }, 320);
+      return;
+    }
     window.setTimeout(() => {
       if (autoAdvance.current !== token) return;
-      setTyped("");
+      setTyped(""); setLoopIx(0);
       const wasWrong = hadWrong.current;
       hadWrong.current = false;
       advanceOrFinishChapter(wasWrong);
     }, 320);
+  }
+  function toggleFav() {
+    if (!item) return;
+    setFavorites(list => list.some(f => `${f.lang}:${f.key}` === favId)
+      ? list.filter(f => `${f.lang}:${f.key}` !== favId)
+      : [{ key: item.key, text: item.text, sub: item.sub, meaning: item.meaning, example: item.example, voice: item.voice, lang: item.lang, dict: item.dict }, ...list].slice(0, 500));
+  }
+  function changeLoop(n: number) {
+    setLoopTimes(n); setLoopIx(0);
+    try { localStorage.setItem("lingotrio-loop", String(n)); } catch { /* ignore */ }
+    setTimeout(() => input.current?.focus(), 20);
+  }
+  function pickSound(pf: SoundProfile) {
+    setSoundProfileState(pf); setSoundProfile(pf);
+    if (pf !== "off") keyClick();
   }
   function skipWord() {
     autoAdvance.current++;
@@ -496,6 +535,12 @@ export default function Home() {
     setView("learn");
     setTimeout(() => input.current?.focus(), 40);
   }
+  function selectFav() {
+    setSource("fav"); persistSource("fav");
+    setReviewKeys(null); setIndex(0); setTyped(""); setWrongFlash(false);
+    hadWrong.current = false; autoSpokenWord.current = null;
+    setView("learn"); setTimeout(() => input.current?.focus(), 40);
+  }
   function jumpToItem(ix: number) {
     setReviewKeys(null); setIndex(Math.max(0, ix)); setTyped(""); setWrongFlash(false);
     hadWrong.current = false; autoSpokenWord.current = null; setView("learn");
@@ -572,6 +617,8 @@ export default function Home() {
         <div className="word-card" onClick={() => input.current?.focus()}>
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
           <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label="Play pronunciation">▶</button>
+          <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
+          {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
           <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>
           <p className="phonetic">{item.sub}</p>
           <div className="meanings">
@@ -605,7 +652,7 @@ export default function Home() {
       </section>}
 
       {view === "library" && <Panel title={t.library} eyebrow="TRILINGUAL COLLECTION">
-        <div className="library-section-title"><b>{uiLang === "zh" ? "LingoTrio 三语精选" : uiLang === "id" ? "Pilihan Trilingual LingoTrio" : "LingoTrio Trilingual Collection"}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
+        <div className="library-section-title"><b>{uiLang === "zh" ? "LingoTrio 三语精选" : uiLang === "id" ? "Pilihan Trilingual LingoTrio" : "LingoTrio Trilingual Collection"}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
         <div className="category-tabs">
           {(["all","daily","business","indonesia","study"] as WordFilter[]).map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
         </div>
@@ -692,7 +739,7 @@ export default function Home() {
       </Panel>}
 
       {view === "settings" && <Panel title={t.settings} eyebrow="MAKE IT YOURS">
-        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title="Learning language" detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title="Theme" detail="Choose a comfortable reading mode"><button onClick={()=>setDark(v=>!v)}>{dark?"Light":"Dark"} mode</button></Setting><Setting title="Pronunciation" detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>Test sound ▶</button></Setting><Setting title={uiLang === "zh" ? "打字音效" : uiLang === "id" ? "Efek suara ketikan" : "Typing sounds"} detail={uiLang === "zh" ? "按键 / 错误 / 完成提示音" : "key · error · success"}><button onClick={()=>{ const v = !soundOn; setSoundOn(v); setSoundEnabled(v); }}>{soundOn ? "ON" : "OFF"}</button></Setting><Setting title="Learning data" detail="Stored privately on this device"><button onClick={()=>{setCorrect(0);setAttempts(0);setMistakes([]);resetAll().then(refreshSrs)}}>Reset progress</button></Setting></div>
+        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title="Learning language" detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title="Theme" detail="Choose a comfortable reading mode"><button onClick={()=>setDark(v=>!v)}>{dark?"Light":"Dark"} mode</button></Setting><Setting title="Pronunciation" detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>Test sound ▶</button></Setting><Setting title={uiLang === "zh" ? "键盘音效" : uiLang === "id" ? "Suara ketik" : "Keyboard sound"} detail={uiLang === "zh" ? "柔和 / 清脆 / 打字机 / 关" : "soft · crisp · typewriter · off"}><select value={soundProfile} onChange={e=>pickSound(e.target.value as SoundProfile)}><option value="soft">{uiLang==="zh"?"柔和":"Soft"}</option><option value="crisp">{uiLang==="zh"?"清脆":"Crisp"}</option><option value="typewriter">{uiLang==="zh"?"打字机":"Typewriter"}</option><option value="off">{uiLang==="zh"?"关闭":"Off"}</option></select></Setting><Setting title={uiLang === "zh" ? "每词重复" : uiLang === "id" ? "Ulang tiap kata" : "Repeat each word"} detail={uiLang === "zh" ? "连续打对几遍再进入下一个" : "times before next word"}><select value={loopTimes} onChange={e=>changeLoop(Number(e.target.value))}><option value={1}>1×</option><option value={2}>2×</option><option value={3}>3×</option></select></Setting><Setting title="Learning data" detail="Stored privately on this device"><button onClick={()=>{setCorrect(0);setAttempts(0);setMistakes([]);resetAll().then(refreshSrs)}}>Reset progress</button></Setting></div>
       </Panel>}
     </main>
 
