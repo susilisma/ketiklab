@@ -110,3 +110,33 @@
 .fav-source{border:1.5px solid color-mix(in srgb,#e9ae4e 55%,var(--line));background:color-mix(in srgb,#e9ae4e 10%,var(--surface));color:#b7822a;border-radius:12px;padding:9px 15px;font-size:12px;font-weight:800;margin-bottom:8px}
 .fav-source.active{background:color-mix(in srgb,#e9ae4e 22%,var(--surface));border-color:#e9ae4e}
 .dark .fav-source{color:#e9ae4e}
+
+/* ---- stats: heatmap calendar + backup (round 5) ---- */
+.heatmap{display:flex;gap:4px;padding:8px 4px 4px;overflow-x:auto}
+.heat-col{display:flex;flex-direction:column;gap:4px}
+.heat{width:15px;height:15px;border-radius:4px;background:var(--line);display:block}
+.heat.l0{background:color-mix(in srgb,var(--line) 70%,transparent)}
+.heat.l1{background:#c9e8d6}
+.heat.l2{background:#8fd4ae}
+.heat.l3{background:#4bb183}
+.heat.l4{background:#2c8560}
+.dark .heat.l1{background:#1f4a37}
+.dark .heat.l2{background:#2c6b4e}
+.dark .heat.l3{background:#3f9b71}
+.dark .heat.l4{background:#59c793}
+.heat-legend{display:flex;align-items:center;gap:5px;justify-content:flex-end;padding:8px 6px 0;font-size:10px;color:var(--muted)}
+.heat-legend i{width:13px;height:13px;border-radius:3px}
+.backup-row{display:flex;align-items:center;justify-content:space-between;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 22px;margin-top:16px;flex-wrap:wrap}
+.backup-row b{font-size:14px;display:block}
+.backup-row small{color:var(--muted);font-size:11px;margin-top:4px;display:block;max-width:520px}
+.backup-btns{display:flex;gap:10px}
+.backup-btns button,.import-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:11px 18px;font-size:12px;font-weight:700;cursor:pointer}
+.backup-btns button:hover,.import-btn:hover{border-color:var(--purple);color:var(--purple)}
+.import-btn input{display:none}
+
+/* ---- reading list categorized groups (round 6) ---- */
+.reading-group{margin-bottom:6px}
+.reading-group-head{display:flex;align-items:center;justify-content:space-between;padding:12px 9px 6px;position:sticky;top:0;background:var(--surface);z-index:1}
+.reading-group-head span{font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.5px}
+.reading-group-head em{font-style:normal;font-size:10px;color:var(--muted);background:var(--bg);border-radius:8px;padding:2px 8px}
+.reading-list button{grid-template-columns:32px 1fr!important}

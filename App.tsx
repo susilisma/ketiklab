@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
-import { recordReview, getStats, getDueKeys, resetAll, type SrsStats } from "./srs";
+import { recordReview, getStats, getDueKeys, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "settings";
@@ -298,7 +298,22 @@ export default function Home() {
   });
   const last7max = Math.max(1, ...last7.map(x => x.count));
   const todayCount = dayCounts[todayStr(0)] || 0;
+  // last 91 days heatmap (13 weeks x 7), oldest -> newest, plus totals
+  const heat = Array.from({ length: 91 }, (_, k) => { const off = 90 - k; return { day: todayStr(off), count: dayCounts[todayStr(off)] || 0 }; });
+  const heatMax = Math.max(1, ...heat.map(h => h.count));
+  const totalTyped = Object.values(dayCounts).reduce((a, b) => a + b, 0);
+  const activeDays = Object.values(dayCounts).filter(v => v > 0).length;
+  function heatLevel(c: number): number { if (!c) return 0; const r = c / heatMax; return r > 0.75 ? 4 : r > 0.5 ? 3 : r > 0.25 ? 2 : 1; }
   const reading = readings.find(piece => piece.id === readingId) || readings[0];
+  const filteredReadings = readings.filter(pc => readingLang === "all" || pc.lang === readingLang);
+  const readingLangName: Record<"zh"|"id"|"en", string> = {
+    zh: uiLang === "zh" ? "中文诗词" : uiLang === "id" ? "Puisi Mandarin" : "Chinese Poetry",
+    id: uiLang === "zh" ? "印尼语诗歌" : uiLang === "id" ? "Puisi Indonesia" : "Indonesian Poetry",
+    en: uiLang === "zh" ? "英文诗歌" : uiLang === "id" ? "Puisi Inggris" : "English Poetry",
+  };
+  const readingGroups: { label: string; items: ReadingPiece[] }[] = readingLang === "all"
+    ? (["zh", "id", "en"] as const).map(lg => ({ label: readingLangName[lg], items: filteredReadings.filter(pc => pc.lang === lg) })).filter(g => g.items.length)
+    : (() => { const m = new Map<string, ReadingPiece[]>(); filteredReadings.forEach(pc => { if (!m.has(pc.genre)) m.set(pc.genre, []); m.get(pc.genre)!.push(pc); }); return [...m.entries()].map(([label, items]) => ({ label, items })); })();
   const readingTarget = reading.lines[readingLine] || "";
   const readingAccuracy = readingTyped.length
     ? Math.round(readingTyped.split("").filter((character, i) => character === readingTarget[i]).length / readingTyped.length * 100)
@@ -407,6 +422,33 @@ export default function Home() {
   function pickSound(pf: SoundProfile) {
     setSoundProfileState(pf); setSoundProfile(pf);
     if (pf !== "off") keyClick();
+  }
+  async function exportProgress() {
+    const reviews = await getAllRecords().catch(() => []);
+    const payload = {
+      app: "lingotrio", version: 1, exportedAt: new Date().toISOString().slice(0, 19),
+      local: Object.fromEntries(Object.keys(localStorage).filter(k => k.startsWith("lingotrio-")).map(k => [k, localStorage.getItem(k)])),
+      reviews,
+    };
+    const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url; a.download = `lingotrio-backup-${todayStr(0)}.json`;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  }
+  function importProgress(file: File) {
+    const reader = new FileReader();
+    reader.onload = async () => {
+      try {
+        const data = JSON.parse(String(reader.result));
+        if (data.app !== "lingotrio") throw new Error("bad file");
+        if (data.local) for (const [k, v] of Object.entries(data.local)) if (typeof v === "string") localStorage.setItem(k, v);
+        if (Array.isArray(data.reviews)) await restoreRecords(data.reviews).catch(() => {});
+        window.location.reload();
+      } catch { alert(uiLang === "zh" ? "导入失败：文件格式不对" : "Import failed: invalid file"); }
+    };
+    reader.readAsText(file);
   }
   function skipWord() {
     autoAdvance.current++;
@@ -691,11 +733,13 @@ export default function Home() {
           <aside className="reading-library">
             <div className="reading-library-title"><b>{t.classics}</b><span>{readings.filter(piece => readingLang === "all" || piece.lang === readingLang).length} {t.pieces}</span></div>
             <div className="reading-list">
-              {readings.filter(piece => readingLang === "all" || piece.lang === readingLang).map((piece, i) => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
-                <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
-                <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
-                <i>{String(i + 1).padStart(2,"0")}</i>
-              </button>)}
+              {readingGroups.map(group => <div className="reading-group" key={group.label}>
+                <div className="reading-group-head"><span>{group.label}</span><em>{group.items.length}</em></div>
+                {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
+                  <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
+                  <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
+                </button>)}
+              </div>)}
             </div>
           </aside>
 
@@ -734,8 +778,13 @@ export default function Home() {
       </Panel>}
 
       {view === "stats" && <Panel title={t.stats} eyebrow="YOUR LEARNING SIGNALS">
-        <div className="stats-top"><Metric value={correct} label={t.words} accent="violet"/><Metric value={`${accuracy}%`} label={t.accuracy} accent="mint"/><Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="amber"/></div>
-        <div className="chart-card"><div><h3>Learning activity</h3><p>Words practiced in the last 7 days</p></div><div className="bars">{last7.map((d,i)=><span key={i}><i style={{height:`${Math.max(4, Math.round(d.count / last7max * 100))}%`}}/><small>{d.label}</small></span>)}</div></div>
+        <div className="stats-top"><Metric value={totalTyped} label={uiLang === "zh" ? "累计打词" : uiLang === "id" ? "Total kata" : "Total typed"} accent="violet"/><Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="mint"/><Metric value={activeDays} label={uiLang === "zh" ? "学习天数" : uiLang === "id" ? "Hari aktif" : "Active days"} accent="amber"/><Metric value={srs.mastered} label={t.mastered} accent="blue"/></div>
+        <div className="chart-card"><div><h3>{uiLang === "zh" ? "学习日历" : uiLang === "id" ? "Kalender belajar" : "Learning calendar"}</h3><p>{uiLang === "zh" ? "最近 13 周，颜色越深当天练得越多" : uiLang === "id" ? "13 minggu terakhir" : "Last 13 weeks — darker = more"}</p></div>
+          <div className="heatmap">{Array.from({ length: 13 }, (_, wk) => <div key={wk} className="heat-col">{Array.from({ length: 7 }, (_, dy) => { const cell = heat[wk * 7 + dy]; return <i key={dy} className={`heat l${cell ? heatLevel(cell.count) : 0}`} title={cell ? `${cell.day}: ${cell.count}` : ""} />; })}</div>)}</div>
+          <div className="heat-legend"><span>{uiLang === "zh" ? "少" : "less"}</span><i className="heat l0"/><i className="heat l1"/><i className="heat l2"/><i className="heat l3"/><i className="heat l4"/><span>{uiLang === "zh" ? "多" : "more"}</span></div>
+        </div>
+        <div className="chart-card"><div><h3>{uiLang === "zh" ? "最近 7 天" : uiLang === "id" ? "7 hari terakhir" : "Last 7 days"}</h3></div><div className="bars">{last7.map((d,i)=><span key={i}><i style={{height:`${Math.max(4, Math.round(d.count / last7max * 100))}%`}}/><small>{d.label}</small></span>)}</div></div>
+        <div className="backup-row"><div><b>{uiLang === "zh" ? "进度备份" : uiLang === "id" ? "Cadangan progres" : "Backup progress"}</b><small>{uiLang === "zh" ? "导出成文件，换设备可导入恢复（含错词、复习、收藏、设置）" : uiLang === "id" ? "Ekspor & impor antar perangkat" : "Export / import across devices"}</small></div><div className="backup-btns"><button onClick={exportProgress}>{uiLang === "zh" ? "导出备份" : uiLang === "id" ? "Ekspor" : "Export"} ↓</button><label className="import-btn">{uiLang === "zh" ? "导入" : uiLang === "id" ? "Impor" : "Import"} ↑<input type="file" accept="application/json" onChange={e => { const f = e.target.files?.[0]; if (f) importProgress(f); }} /></label></div></div>
       </Panel>}
 
       {view === "settings" && <Panel title={t.settings} eyebrow="MAKE IT YOURS">
