@@ -66,6 +66,11 @@ export async function getAllRecords(): Promise<ReviewRecord[]> {
   return db.reviews.toArray();
 }
 
+export async function restoreRecords(records: ReviewRecord[]): Promise<void> {
+  const clean = records.filter((r) => r && typeof r.en === "string");
+  if (clean.length) await db.reviews.bulkPut(clean);
+}
+
 export async function resetAll(): Promise<void> {
   await db.reviews.clear();
 }
