@@ -133,3 +133,10 @@
 .backup-btns button,.import-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:11px 18px;font-size:12px;font-weight:700;cursor:pointer}
 .backup-btns button:hover,.import-btn:hover{border-color:var(--purple);color:var(--purple)}
 .import-btn input{display:none}
+
+/* ---- reading list categorized groups (round 6) ---- */
+.reading-group{margin-bottom:6px}
+.reading-group-head{display:flex;align-items:center;justify-content:space-between;padding:12px 9px 6px;position:sticky;top:0;background:var(--surface);z-index:1}
+.reading-group-head span{font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.5px}
+.reading-group-head em{font-style:normal;font-size:10px;color:var(--muted);background:var(--bg);border-radius:8px;padding:2px 8px}
+.reading-list button{grid-template-columns:32px 1fr!important}

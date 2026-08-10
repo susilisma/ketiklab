@@ -305,6 +305,15 @@ export default function Home() {
   const activeDays = Object.values(dayCounts).filter(v => v > 0).length;
   function heatLevel(c: number): number { if (!c) return 0; const r = c / heatMax; return r > 0.75 ? 4 : r > 0.5 ? 3 : r > 0.25 ? 2 : 1; }
   const reading = readings.find(piece => piece.id === readingId) || readings[0];
+  const filteredReadings = readings.filter(pc => readingLang === "all" || pc.lang === readingLang);
+  const readingLangName: Record<"zh"|"id"|"en", string> = {
+    zh: uiLang === "zh" ? "中文诗词" : uiLang === "id" ? "Puisi Mandarin" : "Chinese Poetry",
+    id: uiLang === "zh" ? "印尼语诗歌" : uiLang === "id" ? "Puisi Indonesia" : "Indonesian Poetry",
+    en: uiLang === "zh" ? "英文诗歌" : uiLang === "id" ? "Puisi Inggris" : "English Poetry",
+  };
+  const readingGroups: { label: string; items: ReadingPiece[] }[] = readingLang === "all"
+    ? (["zh", "id", "en"] as const).map(lg => ({ label: readingLangName[lg], items: filteredReadings.filter(pc => pc.lang === lg) })).filter(g => g.items.length)
+    : (() => { const m = new Map<string, ReadingPiece[]>(); filteredReadings.forEach(pc => { if (!m.has(pc.genre)) m.set(pc.genre, []); m.get(pc.genre)!.push(pc); }); return [...m.entries()].map(([label, items]) => ({ label, items })); })();
   const readingTarget = reading.lines[readingLine] || "";
   const readingAccuracy = readingTyped.length
     ? Math.round(readingTyped.split("").filter((character, i) => character === readingTarget[i]).length / readingTyped.length * 100)
@@ -724,11 +733,13 @@ export default function Home() {
           <aside className="reading-library">
             <div className="reading-library-title"><b>{t.classics}</b><span>{readings.filter(piece => readingLang === "all" || piece.lang === readingLang).length} {t.pieces}</span></div>
             <div className="reading-list">
-              {readings.filter(piece => readingLang === "all" || piece.lang === readingLang).map((piece, i) => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
-                <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
-                <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
-                <i>{String(i + 1).padStart(2,"0")}</i>
-              </button>)}
+              {readingGroups.map(group => <div className="reading-group" key={group.label}>
+                <div className="reading-group-head"><span>{group.label}</span><em>{group.items.length}</em></div>
+                {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
+                  <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
+                  <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
+                </button>)}
+              </div>)}
             </div>
           </aside>
 
