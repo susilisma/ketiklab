@@ -85,6 +85,15 @@ export default function Home() {
   const [dictWords, setDictWords] = useState<DictEntry[] | null>(null);
   const [soundOn, setSoundOn] = useState(true);
   const [wrongFlash, setWrongFlash] = useState(false);
+  const [chapter, setChapter] = useState(0);
+  const [chapterFinished, setChapterFinished] = useState(false);
+  const [chDone, setChDone] = useState(0);
+  const [chWrongKeys, setChWrongKeys] = useState<string[]>([]);
+  const [chElapsed, setChElapsed] = useState(0);
+  const [wrongCountWord, setWrongCountWord] = useState(0);
+  const [dictation, setDictation] = useState<"off" | "all" | "vowel" | "random">("off");
+  const [reveal, setReveal] = useState(false);
+  const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
   const [view, setView] = useState<View>("learn");
   const [lang, setLang] = useState<Lang>("zh");
@@ -119,6 +128,7 @@ export default function Home() {
   const readingAuto = useRef(0);
   const hadWrong = useRef(false);
   const dictCache = useRef(new Map<string, DictEntry[]>());
+  const chapterStart = useRef(Date.now());
   const t = UI[uiLang];
 
   // Load content (words + readings) as JSON at runtime so the app bundle stays
@@ -152,6 +162,7 @@ export default function Home() {
       } catch { /* ignore */ }
     }).catch(() => {});
     setSoundOn(initSoundPref());
+    try { setDayCounts(JSON.parse(localStorage.getItem("lingotrio-days") || "{}")); } catch { /* ignore */ }
     return () => { alive = false; };
   }, []);
 
@@ -186,6 +197,23 @@ export default function Home() {
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
 
 
+  const sourceKey = source === "trio" ? `trio:${category}` : source;
+
+  // restore chapter per source, and reset the chapter run when switching source/category
+  useEffect(() => {
+    let saved = 0;
+    try { saved = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}")[sourceKey] || 0; } catch { /* ignore */ }
+    setChapter(saved);
+    setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
+    chapterStart.current = Date.now();
+    setIndex(0); setTyped("");
+    hadWrong.current = false;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sourceKey]);
+
+  useEffect(() => { setWrongCountWord(0); setReveal(false); }, [index]);
+  useEffect(() => { try { localStorage.setItem("lingotrio-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
+
   const ready = words.length > 0;
 
   if (!ready) {
@@ -217,12 +245,44 @@ export default function Home() {
         voice: LANGUAGE_META[lang].voice,
       }));
   const reviewItems = reviewKeys ? activeItems.filter(i => reviewKeys.includes(i.key)) : null;
-  const learnItems = (reviewItems && reviewItems.length) ? reviewItems : activeItems;
+  const chapterCount = Math.max(1, Math.ceil(activeItems.length / 20));
+  const chapterSafe = Math.min(chapter, chapterCount - 1);
+  const chapterItems = activeItems.slice(chapterSafe * 20, chapterSafe * 20 + 20);
+  const learnItems = (reviewItems && reviewItems.length) ? reviewItems : (chapterItems.length ? chapterItems : activeItems);
   const item = learnItems[index % Math.max(learnItems.length, 1)] || learnItems[0];
+  const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
+  const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
   const targetVoice = item.voice;
   const targetKey = `${source}:${item.key}`;
   const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
+  function seededVisible(i: number): boolean {
+    let h = (i + 7) * 2654435761 >>> 0;
+    for (let k = 0; k < targetWord.length; k++) h = ((h * 31) + targetWord.charCodeAt(k)) >>> 0;
+    return h % 10 > 3;
+  }
+  function letterVisible(i: number): boolean {
+    if (dictation === "off" || reveal) return true;
+    if (typed[i] && (practiceLang === "zh" ? typed[i] === targetWord[i] : typed[i].toLowerCase() === targetWord[i].toLowerCase())) return true;
+    if (dictation === "all") return false;
+    if (dictation === "vowel") return practiceLang === "zh" ? seededVisible(i) : !"aeiouAEIOU".includes(targetWord[i]);
+    return seededVisible(i);
+  }
+  function todayStr(offset = 0): string {
+    const d = new Date(); d.setDate(d.getDate() - offset);
+    return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+  }
+  let streakDays = 0;
+  {
+    let off = (dayCounts[todayStr(0)] || 0) > 0 ? 0 : 1;
+    while ((dayCounts[todayStr(off)] || 0) > 0) { streakDays++; off++; }
+  }
+  const last7 = Array.from({ length: 7 }, (_, k) => {
+    const off = 6 - k; const d = new Date(); d.setDate(d.getDate() - off);
+    return { label: "SMTWTFS"[d.getDay()], count: dayCounts[todayStr(off)] || 0 };
+  });
+  const last7max = Math.max(1, ...last7.map(x => x.count));
+  const todayCount = dayCounts[todayStr(0)] || 0;
   const reading = readings.find(piece => piece.id === readingId) || readings[0];
   const readingTarget = reading.lines[readingLine] || "";
   const readingAccuracy = readingTyped.length
@@ -271,18 +331,42 @@ export default function Home() {
     }, 450);
   }
   // qwerty-learner style engine: per-keystroke judgement, wrong letter resets the word
+  function bumpToday() {
+    setDayCounts(m => ({ ...m, [todayStr(0)]: (m[todayStr(0)] || 0) + 1 }));
+  }
+  function advanceOrFinishChapter(wasWrong: boolean) {
+    setChDone(n => n + 1);
+    if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, item.key])));
+    const atEnd = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1;
+    if (!reviewKeys && atEnd) {
+      setChElapsed(Math.round((Date.now() - chapterStart.current) / 1000));
+      setChapterFinished(true);
+      setRunning(false);
+    } else {
+      const ni = (index + 1) % Math.max(learnItems.length, 1);
+      const nx = learnItems[ni];
+      setIndex(ni);
+      if (nx) {
+        autoSpokenWord.current = `${source}:${nx.key}`;
+        window.setTimeout(() => speak(nx.text, nx.voice), 160);
+      }
+      setTimeout(() => input.current?.focus(), 20);
+    }
+  }
   function finishWord() {
     successChime();
     setAttempts(n => n + 1);
     const cleanRun = !hadWrong.current;
     if (cleanRun) setCorrect(n => n + 1);
+    bumpToday();
     recordReview(item.key, cleanRun).then(refreshSrs).catch(() => {});
     const token = ++autoAdvance.current;
     window.setTimeout(() => {
       if (autoAdvance.current !== token) return;
-      setTyped(""); hadWrong.current = false;
-      setIndex(n => (n + 1) % Math.max(learnItems.length, 1));
-      setTimeout(() => input.current?.focus(), 20);
+      setTyped("");
+      const wasWrong = hadWrong.current;
+      hadWrong.current = false;
+      advanceOrFinishChapter(wasWrong);
     }, 320);
   }
   function skipWord() {
@@ -291,8 +375,30 @@ export default function Home() {
     setMistakes(m => Array.from(new Set([item.key, ...m])).slice(0, 30));
     recordReview(item.key, false).then(refreshSrs).catch(() => {});
     setTyped(""); hadWrong.current = false; setWrongFlash(false);
-    setIndex(n => (n + 1) % Math.max(learnItems.length, 1));
-    setTimeout(() => input.current?.focus(), 20);
+    advanceOrFinishChapter(true);
+  }
+  function setChapterTo(n: number) {
+    const target = Math.max(0, Math.min(n, chapterCount - 1));
+    setChapter(target);
+    try {
+      const m = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}");
+      m[sourceKey] = target;
+      localStorage.setItem("lingotrio-chapters", JSON.stringify(m));
+    } catch { /* ignore */ }
+    setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
+    chapterStart.current = Date.now();
+    setIndex(0); setTyped(""); hadWrong.current = false; autoSpokenWord.current = null;
+    setTimeout(() => input.current?.focus(), 30);
+  }
+  function retryChapter() { setChapterTo(chapterSafe); }
+  function nextChapter() { setChapterTo(chapterSafe + 1 >= chapterCount ? 0 : chapterSafe + 1); }
+  function practiceChapterWrong() {
+    if (!chWrongKeys.length) return;
+    setReviewKeys(chWrongKeys.slice());
+    setChapterFinished(false); setChDone(0);
+    setIndex(0); setTyped(""); hadWrong.current = false;
+    setRunning(true);
+    setTimeout(() => input.current?.focus(), 30);
   }
   function handleType(raw: string) {
     if (wrongFlash) return;
@@ -315,11 +421,13 @@ export default function Home() {
       hadWrong.current = true;
       setTyped(clean);
       setWrongFlash(true);
+      setWrongCountWord(n => n + 1);
       setMistakes(m => Array.from(new Set([item.key, ...m])).slice(0, 30));
       window.setTimeout(() => { setTyped(""); setWrongFlash(false); input.current?.focus(); }, 350);
     }
   }
   function handleGhostKeys(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Tab") { event.preventDefault(); setReveal(true); return; }
     if (event.key === "Enter") { event.preventDefault(); skipWord(); return; }
     if (event.key === " " && (event.ctrlKey || event.metaKey || (practiceLang === "zh"))) {
       event.preventDefault(); speak(targetWord, targetVoice); return;
@@ -405,6 +513,7 @@ export default function Home() {
     if (!keys.length) keys = mistakes.slice();
     if (!keys.length) return;
     setReviewKeys(keys);
+    setChapterFinished(false); setChDone(0);
     setIndex(0); setTyped(""); autoSpokenWord.current = null;
     setView("learn"); setRunning(true);
     setTimeout(() => input.current?.focus(), 40);
@@ -440,14 +549,14 @@ export default function Home() {
       <button className="brand" onClick={() => setView("learn")} aria-label="LingoTrio home"><span>LT</span><b>LingoTrio</b></button>
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
-        <div className="mini-progress"><span>{t.daily}<b>{Math.min(correct, 20)}/20</b></span><div><i style={{width:`${Math.min(correct/20*100,100)}%`}} /></div></div>
+        <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, 20)}/20</b></span><div><i style={{width:`${Math.min(todayCount/20*100,100)}%`}} /></div></div>
         <div className="profile"><span>S</span><div><b>Susi</b><small>Free learner</small></div><i>•••</i></div>
       </div>
     </aside>
 
     <main className="main">
       <header>
-        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictInfo.name : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {learnItems.length}</b></button>
+        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictInfo.name : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}</b></button>
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label="Dark mode">{dark ? "☀" : "☾"}</button>
           <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Indonesia</option><option value="en">English</option></select></label>
@@ -457,24 +566,41 @@ export default function Home() {
 
       {view === "learn" && <section className="learn-view">
         {reviewKeys && <div className="review-banner"><span>◎ {t.reviewing} · {learnItems.length}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
-        <div className="session-meta"><span><i className="live" />{running ? "FOCUS MODE" : t.keyboard}</span><b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
+        <div className="session-meta"><span><i className="live" />{running ? "FOCUS MODE" : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label="Prev chapter">‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label="Jump to chapter">{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label="Next chapter">›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
+        <div className="mode-row"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</div>
+        {!chapterFinished && <>
         <div className="word-card" onClick={() => input.current?.focus()}>
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
           <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label="Play pronunciation">▶</button>
-          <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>
+          <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>
           <p className="phonetic">{item.sub}</p>
           <div className="meanings">
             <span><small>{dictInfo ? "中文" : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
             {item.example && <span><small>{LANGUAGE_META[lang].example}</small>{item.example}</span>}
           </div>
-          <input ref={input} className="ghost-input" value={typed} onChange={e=>handleType(e.target.value)} onKeyDown={handleGhostKeys} onFocus={()=>setRunning(true)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
+          <input ref={input} className="ghost-input" value={typed} onChange={e=>handleType(e.target.value)} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>setRunning(true)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
           <p className="hint">{uiLang === "zh" ? <>直接敲键盘 <span>·</span> 打错整词重来 &nbsp;&nbsp; ENTER <span>·</span> 跳过 &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> 重播发音</> : uiLang === "id" ? <>Langsung ketik <span>·</span> salah = ulang kata &nbsp;&nbsp; ENTER <span>·</span> lewati &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> ulang suara</> : <>Just type <span>·</span> a mistake restarts the word &nbsp;&nbsp; ENTER <span>·</span> skip &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> replay</>}</p>
+          {wrongCountWord >= 3 && <button className="skip-btn" onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
         </div>
+        <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>
+        </>}
+        {chapterFinished && <div className="reading-complete chapter-complete">
+          <span>✓</span><small>{uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
+          <h2>{uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
+          <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} words · ${chWrongKeys.length} missed`}</p>
+          <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
+          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = keyLookup.get(k); return <span key={k}><b>{info ? info.text : k}</b><small>{info ? info.meaning : ""}</small></span>; })}</div>}
+          <div className="chapter-actions">
+            <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>
+            {chWrongKeys.length > 0 && <button onClick={practiceChapterWrong}>{uiLang === "zh" ? `练习错词 (${chWrongKeys.length})` : uiLang === "id" ? `Latih kata salah (${chWrongKeys.length})` : `Practice missed (${chWrongKeys.length})`}</button>}
+            <button className="go" onClick={nextChapter}>{uiLang === "zh" ? "下一章" : uiLang === "id" ? "Bab berikutnya" : "Next chapter"} →</button>
+          </div>
+        </div>}
         <div className="metrics">
           <Metric value={correct} label={t.words} accent="violet" />
           <Metric value={`${accuracy}%`} label={t.accuracy} accent="mint" />
           <Metric value={attempts ? Math.max(18, Math.round(correct/Math.max(seconds,1)*60)) : 0} label="WPM" accent="amber" />
-          <Metric value={`${Math.min(correct,7)} ${t.day}`} label={t.streak} accent="blue" />
+          <Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="blue" />
         </div>
       </section>}
 
@@ -557,12 +683,12 @@ export default function Home() {
       </section>}
 
       {view === "plan" && <Panel title={t.plan} eyebrow="A RHYTHM THAT WORKS">
-        <div className="plan-layout"><div className="goal-card"><span>{t.finish}</span><strong>{Math.min(correct*5,100)}%</strong><div className="goal-ring" style={{"--p":`${Math.min(correct*5,100)*3.6}deg`} as React.CSSProperties}><b>{Math.min(correct,20)}</b><small>/20 words</small></div></div><div className="week">{["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i)=><div className={i<4?"done":i===4?"today":""} key={d}><span>{d}</span><b>{i<4?"✓":i===4?"12":"·"}</b><small>{i<4?"20 words":i===4?"of 20":"Rest"}</small></div>)}</div></div>
+        <div className="plan-layout"><div className="goal-card"><span>{t.finish}</span><strong>{Math.min(todayCount*5,100)}%</strong><div className="goal-ring" style={{"--p":`${Math.min(todayCount*5,100)*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount,20)}</b><small>/20 words</small></div></div><div className="week">{["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i)=><div className={i<4?"done":i===4?"today":""} key={d}><span>{d}</span><b>{i<4?"✓":i===4?"12":"·"}</b><small>{i<4?"20 words":i===4?"of 20":"Rest"}</small></div>)}</div></div>
       </Panel>}
 
       {view === "stats" && <Panel title={t.stats} eyebrow="YOUR LEARNING SIGNALS">
-        <div className="stats-top"><Metric value={correct} label={t.words} accent="violet"/><Metric value={`${accuracy}%`} label={t.accuracy} accent="mint"/><Metric value={`${Math.min(correct,7)} ${t.day}`} label={t.streak} accent="amber"/></div>
-        <div className="chart-card"><div><h3>Learning activity</h3><p>Words practiced in the last 7 days</p></div><div className="bars">{[34,58,42,78,64,90,48].map((h,i)=><span key={i}><i style={{height:`${h}%`}}/><small>{["M","T","W","T","F","S","S"][i]}</small></span>)}</div></div>
+        <div className="stats-top"><Metric value={correct} label={t.words} accent="violet"/><Metric value={`${accuracy}%`} label={t.accuracy} accent="mint"/><Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="amber"/></div>
+        <div className="chart-card"><div><h3>Learning activity</h3><p>Words practiced in the last 7 days</p></div><div className="bars">{last7.map((d,i)=><span key={i}><i style={{height:`${Math.max(4, Math.round(d.count / last7max * 100))}%`}}/><small>{d.label}</small></span>)}</div></div>
       </Panel>}
 
       {view === "settings" && <Panel title={t.settings} eyebrow="MAKE IT YOURS">
