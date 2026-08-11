@@ -140,3 +140,14 @@
 .reading-group-head span{font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.5px}
 .reading-group-head em{font-style:normal;font-size:10px;color:var(--muted);background:var(--bg);border-radius:8px;padding:2px 8px}
 .reading-list button{grid-template-columns:32px 1fr!important}
+
+/* ---- global dictionary search (round 7) ---- */
+.toolbar{flex-wrap:wrap}
+.global-toggle{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:12px;padding:0 14px;font-size:12px;font-weight:700;white-space:nowrap}
+.global-toggle:hover{border-color:var(--purple);color:var(--purple)}
+.global-toggle.on{background:var(--purple-soft);color:var(--purple);border-color:color-mix(in srgb,var(--purple) 30%,transparent)}
+.res-src{position:absolute;right:14px;top:13px;font-size:9px;font-weight:800;letter-spacing:.3px;color:var(--purple);background:var(--purple-soft);border-radius:7px;padding:3px 7px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-src.id{color:#23815f;background:#e1f6ec}
+.res-src.zh{color:#a66e13;background:#fff0d7}
+.dark .res-src.id{color:#6ddba5;background:#1f4a37}
+.dark .res-src.zh{color:#e9ae4e;background:#3a2f13}

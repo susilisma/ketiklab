@@ -34,6 +34,16 @@ const MODAL_T: Record<Lang, { title: string; subtitle: string; ui: string; uiDes
   en: { title: "Language Settings", subtitle: "Choose interface, learning, and definition language", ui: "Interface Language", uiDesc: "Language used for menus and labels", learn: "Learning Language", learnDesc: "The language you practice typing", def: "Definition Language", defDesc: "Language used to show word meanings", selected: "Selected", cancel: "Cancel", save: "Save" },
 };
 
+const EYEBROW: Record<string, Record<Lang, string>> = {
+  library: { zh: "三语词汇合集", id: "Koleksi Trilingual", en: "TRILINGUAL COLLECTION" },
+  mistakes: { zh: "间隔复习", id: "Ulasan Berkala", en: "SPACED REPETITION" },
+  articles: { zh: "照着经典打字", id: "Ketik Karya Klasik", en: "TYPE THE CLASSICS" },
+  plan: { zh: "适合你的节奏", id: "Ritme yang Pas", en: "A RHYTHM THAT WORKS" },
+  stats: { zh: "你的学习信号", id: "Sinyal Belajarmu", en: "YOUR LEARNING SIGNALS" },
+  settings: { zh: "按你的习惯来", id: "Sesuai Seleramu", en: "MAKE IT YOURS" },
+};
+const TX = (zh: string, id: string, en: string, lg: Lang) => lg === "zh" ? zh : lg === "id" ? id : en;
+
 const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: string; defName: string; defDesc: string }[] = [
   { code: "zh", name: "中文", uiDesc: "中文界面", learnDesc: "练习中文打字与词汇", defName: "中文释义", defDesc: "使用中文释义显示单词含义" },
   { code: "id", name: "Bahasa Indonesia", uiDesc: "Antarmuka bahasa Indonesia", learnDesc: "Latihan mengetik bahasa Indonesia", defName: "Arti Bahasa Indonesia", defDesc: "Tampilkan arti kata dalam bahasa Indonesia" },
@@ -88,6 +98,9 @@ export default function Home() {
   const [loopTimes, setLoopTimes] = useState(1);
   const [loopIx, setLoopIx] = useState(0);
   const [favorites, setFavorites] = useState<PracticeItem[]>([]);
+  const [globalSearch, setGlobalSearch] = useState(false);
+  const [allDicts, setAllDicts] = useState<Record<string, DictEntry[]>>({});
+  const [globalLoading, setGlobalLoading] = useState(false);
   const [chapter, setChapter] = useState(0);
   const [chapterFinished, setChapterFinished] = useState(false);
   const [chDone, setChDone] = useState(0);
@@ -132,6 +145,8 @@ export default function Home() {
   const hadWrong = useRef(false);
   const dictCache = useRef(new Map<string, DictEntry[]>());
   const chapterStart = useRef(Date.now());
+  const pendingIndex = useRef<number | null>(null);
+  const isComposing = useRef(false);
   const t = UI[uiLang];
 
   // Load content (words + readings) as JSON at runtime so the app bundle stays
@@ -212,7 +227,9 @@ export default function Home() {
     setChapter(saved);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = Date.now();
-    setIndex(0); setTyped("");
+    if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; }
+    else setIndex(0);
+    setTyped("");
     hadWrong.current = false;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
@@ -323,6 +340,32 @@ export default function Home() {
   words.forEach(w => keyLookup.set(w.en, { text: wordValue(w, lang), meaning: w[defLang] }));
   if (dictWords) dictWords.forEach(e => { if (!keyLookup.has(e.name)) keyLookup.set(e.name, { text: e.name, meaning: e.trans.join("；") }); });
   const dueEntries = reviewKeys ? [] : mistakes.map(k => ({ key: k, info: keyLookup.get(k) })).filter(x => x.info) as { key: string; info: { text: string; meaning: string } }[];
+  const gq = search.trim().toLowerCase();
+  const rankMatch = (text: string, meaning: string, q: string): number => {
+    const tt = text.toLowerCase();
+    if (tt === q) return 0;                                   // exact
+    if (tt.startsWith(q)) return 1;                            // prefix
+    if (new RegExp(`(^|[^a-z])${q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}([^a-z]|$)`, "i").test(text)) return 2; // whole word
+    if (tt.includes(q)) return 3;                             // substring in headword
+    if (meaning.toLowerCase().includes(q)) return 4;          // in meaning only
+    return 5;
+  };
+  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; lang: Lang; dictName?: string; rank: number }[] = [];
+  if (globalSearch && gq) {
+    for (const w of words) {
+      const text = wordValue(w, lang); const meaning = w[defLang];
+      if (`${w.en} ${w.id} ${w.zh} ${meaning}`.toLowerCase().includes(gq)) globalResults.push({ src: "trio", key: w.en, text, sub: pronunciation(w, lang), meaning, lang, rank: rankMatch(text + " " + w.en, meaning, gq) });
+    }
+    for (const d of dicts) {
+      const data = allDicts[d.id]; if (!data) continue;
+      for (const e of data) {
+        const meaning = e.trans.join("；");
+        if (e.name.toLowerCase().includes(gq) || meaning.toLowerCase().includes(gq)) globalResults.push({ src: d.id, key: e.name, text: e.name, sub: e.usphone ? `/${e.usphone}/` : "", meaning, lang: d.lang, dictName: d.name, rank: rankMatch(e.name, meaning, gq) });
+      }
+    }
+    globalResults.sort((a, b) => a.rank - b.rank || a.text.length - b.text.length);
+    globalResults.length = Math.min(globalResults.length, 240);
+  }
 
   function speak(text = targetWord, voiceLang = targetVoice) {
     const requestId = ++speechRequest.current;
@@ -483,6 +526,7 @@ export default function Home() {
   }
   function handleType(raw: string) {
     if (wrongFlash) return;
+    if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
     const clean = practiceLang === "zh"
       ? raw.replace(/[^㐀-鿿]/g, "")
       : raw.replace(/[^a-zA-Z '\-\.&]/g, "");
@@ -502,9 +546,19 @@ export default function Home() {
       hadWrong.current = true;
       setTyped(clean);
       setWrongFlash(true);
+      const firstError = wrongCountWord === 0;
       setWrongCountWord(n => n + 1);
       setMistakes(m => Array.from(new Set([item.key, ...m])).slice(0, 30));
-      window.setTimeout(() => { setTyped(""); setWrongFlash(false); input.current?.focus(); }, 350);
+      // graded forgiveness: full restart only on a short word's first slip;
+      // otherwise keep the correct prefix so long words / phrases / repeat errors
+      // don't force retyping everything from scratch.
+      let k = 0;
+      while (k < expected.length && k < current.length && expected[k] === current[k]) k++;
+      const fullReset = firstError && targetWord.length <= 8;
+      window.setTimeout(() => {
+        setTyped(fullReset ? "" : targetWord.slice(0, k));
+        setWrongFlash(false); input.current?.focus();
+      }, 350);
     }
   }
   function handleGhostKeys(event: React.KeyboardEvent<HTMLInputElement>) {
@@ -583,6 +637,47 @@ export default function Home() {
     hadWrong.current = false; autoSpokenWord.current = null;
     setView("learn"); setTimeout(() => input.current?.focus(), 40);
   }
+  async function ensureAllDicts() {
+    const need = dicts.filter(d => !allDicts[d.id]);
+    if (!need.length) return;
+    setGlobalLoading(true);
+    const loaded: Record<string, DictEntry[]> = { ...allDicts };
+    for (const d of dicts) {
+      if (loaded[d.id]) continue;
+      let data = dictCache.current.get(d.id);
+      if (!data) { try { data = await loadDictFile<DictEntry[]>(d.file); dictCache.current.set(d.id, data); } catch { data = []; } }
+      loaded[d.id] = data;
+    }
+    setAllDicts(loaded);
+    setGlobalLoading(false);
+  }
+  function toggleGlobal() {
+    const next = !globalSearch;
+    setGlobalSearch(next);
+    if (next) ensureAllDicts();
+  }
+  function gotoTrioWord(w: Word) {
+    const gi = words.indexOf(w);
+    if (gi < 0) return;
+    pendingIndex.current = gi % 20;
+    try { const m = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}"); m["trio:all"] = Math.floor(gi / 20); localStorage.setItem("lingotrio-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    setGlobalSearch(false);
+    setReviewKeys(null); setCategory("all"); setSource("trio"); persistSource("trio");
+    setTyped(""); setWrongFlash(false); hadWrong.current = false; autoSpokenWord.current = null;
+    setView("learn"); setTimeout(() => input.current?.focus(), 60);
+  }
+  async function gotoDictWord(dictId: string, key: string) {
+    const d = dicts.find(x => x.id === dictId); if (!d) return;
+    let data = dictCache.current.get(d.id) || allDicts[d.id];
+    if (!data) { try { data = await loadDictFile<DictEntry[]>(d.file); dictCache.current.set(d.id, data); } catch { return; } }
+    const gi = data.findIndex(e => e.name === key); if (gi < 0) return;
+    pendingIndex.current = gi % 20;
+    try { const m = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}"); m[d.id] = Math.floor(gi / 20); localStorage.setItem("lingotrio-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    setGlobalSearch(false);
+    setDictWords(data); setReviewKeys(null); setSource(d.id); persistSource(d.id);
+    setTyped(""); setWrongFlash(false); hadWrong.current = false; autoSpokenWord.current = null;
+    setView("learn"); setTimeout(() => input.current?.focus(), 60);
+  }
   function jumpToItem(ix: number) {
     setReviewKeys(null); setIndex(Math.max(0, ix)); setTyped(""); setWrongFlash(false);
     hadWrong.current = false; autoSpokenWord.current = null; setView("learn");
@@ -614,6 +709,11 @@ export default function Home() {
     if (category !== "all" && w.category !== category) setCategory(w.category);
     setIndex(Math.max(0, list.indexOf(w)));
     setTyped(""); autoSpokenWord.current = null; setView("learn");
+  }
+  function changeReadingFilter(code: ReadingLang) {
+    setReadingLang(code);
+    const first = readings.find(pc => code === "all" || pc.lang === code);
+    if (first && first.id !== readingId) chooseReading(first.id);
   }
   function chooseReading(id: string) {
     setReadingId(id); setReadingLine(0); setReadingTyped(""); setReadingSeconds(0); setReadingActive(false); setReadingDone(false);
@@ -653,7 +753,7 @@ export default function Home() {
 
       {view === "learn" && <section className="learn-view">
         {reviewKeys && <div className="review-banner"><span>◎ {t.reviewing} · {learnItems.length}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
-        <div className="session-meta"><span><i className="live" />{running ? "FOCUS MODE" : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label="Prev chapter">‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label="Jump to chapter">{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label="Next chapter">›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
+        <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label="Prev chapter">‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label="Jump to chapter">{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label="Next chapter">›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</div>
         {!chapterFinished && <>
         <div className="word-card" onClick={() => input.current?.focus()}>
@@ -667,7 +767,7 @@ export default function Home() {
             <span><small>{dictInfo ? "中文" : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
             {item.example && <span><small>{LANGUAGE_META[lang].example}</small>{item.example}</span>}
           </div>
-          <input ref={input} className="ghost-input" value={typed} onChange={e=>handleType(e.target.value)} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>setRunning(true)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
+          <input ref={input} className="ghost-input" value={typed} onChange={e=>handleType(e.target.value)} onCompositionStart={()=>{ isComposing.current = true; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>setRunning(true)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
           <p className="hint">{uiLang === "zh" ? <>直接敲键盘 <span>·</span> 打错整词重来 &nbsp;&nbsp; ENTER <span>·</span> 跳过 &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> 重播发音</> : uiLang === "id" ? <>Langsung ketik <span>·</span> salah = ulang kata &nbsp;&nbsp; ENTER <span>·</span> lewati &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> ulang suara</> : <>Just type <span>·</span> a mistake restarts the word &nbsp;&nbsp; ENTER <span>·</span> skip &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> replay</>}</p>
           {wrongCountWord >= 3 && <button className="skip-btn" onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
         </div>
@@ -693,7 +793,7 @@ export default function Home() {
         </div>
       </section>}
 
-      {view === "library" && <Panel title={t.library} eyebrow="TRILINGUAL COLLECTION">
+      {view === "library" && <Panel title={t.library} eyebrow={EYEBROW.library[uiLang]}>
         <div className="library-section-title"><b>{uiLang === "zh" ? "LingoTrio 三语精选" : uiLang === "id" ? "Pilihan Trilingual LingoTrio" : "LingoTrio Trilingual Collection"}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
         <div className="category-tabs">
           {(["all","daily","business","indonesia","study"] as WordFilter[]).map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
@@ -708,24 +808,33 @@ export default function Home() {
             </button>)}
           </div>
         </>}
-        <div className="toolbar"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={t.search}/><span>{dictInfo ? activeItems.filter(it => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).length : filtered.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "个词" : "words"}</span></div>
-        {dictInfo
+        <div className="toolbar"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={globalSearch ? (uiLang === "zh" ? "在全部词库中搜索…" : uiLang === "id" ? "Cari di semua kamus…" : "Search all libraries…") : t.search}/><button className={globalSearch ? "global-toggle on" : "global-toggle"} onClick={toggleGlobal}>🌐 {uiLang === "zh" ? "全部词库" : uiLang === "id" ? "Semua" : "All"}</button><span>{globalSearch ? (gq ? `${globalResults.length}${globalResults.length >= 240 ? "+" : ""}` : `${dicts.reduce((a, d) => a + d.length, 0) + words.length}`) : (dictInfo ? activeItems.filter(it => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).length : filtered.length)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "个词" : "words"}</span></div>
+        {globalSearch
+          ? (globalLoading
+              ? <div className="empty"><b>⏳</b><h3>{uiLang === "zh" ? "正在加载全部词库…" : uiLang === "id" ? "Memuat semua kamus…" : "Loading all libraries…"}</h3></div>
+              : (!gq
+                  ? <div className="empty"><b>🌐</b><h3>{uiLang === "zh" ? "输入关键词，在全部词库中搜索" : uiLang === "id" ? "Ketik untuk mencari di semua kamus" : "Type to search across all libraries"}</h3><p>{uiLang === "zh" ? "三语精选 + 6 个考试词库，共约 " + (words.length + dicts.reduce((a, d) => a + d.length, 0)) + " 词" : `${words.length + dicts.reduce((a, d) => a + d.length, 0)} words`}</p></div>
+                  : (globalResults.length
+                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => r.src === "trio" ? gotoTrioWord(words.find(w => w.en === r.key)!) : gotoDictWord(r.src, r.key)}><span className={`res-src ${r.lang}`}>{r.dictName || (uiLang === "zh" ? "精选" : "Trio")}</span><h3>{r.text}</h3><p>{r.sub}</p><div><b>{r.meaning}</b></div></button>)}</div>
+                      : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
+          : dictInfo
           ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, 300).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictInfo.name}</em><div><b>{it.meaning}</b></div></button>)}</div>
           : <div className="word-grid">{filtered.slice(0, 300).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div><b>{w[defLang]}</b></div></button>)}</div>}
         <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p>NGSL · Open English WordNet · Wordnet Bahasa · CC-CEDICT</p><span>{uiLang === "zh" ? "首批词条已经按三语概念对齐；重点词条将继续人工校对例句、拼音和音标。" : uiLang === "id" ? "Kosakata diselaraskan berdasarkan konsep dalam tiga bahasa dan akan terus ditinjau secara manual." : "Entries are aligned by concept across three languages and will continue through editorial review."}</span></div>
       </Panel>}
 
-      {view === "mistakes" && <Panel title={t.mistakes} eyebrow="SPACED REPETITION">
+      {view === "mistakes" && <Panel title={t.mistakes} eyebrow={EYEBROW.mistakes[uiLang]}>
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
         <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : "words in schedule"}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
-        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em>{x.info.meaning}</em><i>Practice →</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
+        {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
+        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em>{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
 
       {view === "articles" && <section className="reading-panel">
         <div className="reading-heading">
-          <div><span>TYPE THE CLASSICS</span><h1>{t.articles}</h1><p>{t.readingTagline}</p></div>
+          <div><span>{EYEBROW.articles[uiLang]}</span><h1>{t.articles}</h1><p>{t.readingTagline}</p></div>
           <div className="reading-filters">
-            {(["all","en","id","zh"] as ReadingLang[]).map(code => <button key={code} className={readingLang === code ? "active" : ""} onClick={() => setReadingLang(code)}>{code === "all" ? t.allReadings : code === "en" ? "English" : code === "id" ? "Indonesia" : "中文"}</button>)}
+            {(["all","en","id","zh"] as ReadingLang[]).map(code => <button key={code} className={readingLang === code ? "active" : ""} onClick={() => changeReadingFilter(code)}>{code === "all" ? t.allReadings : code === "en" ? "English" : code === "id" ? "Indonesia" : "中文"}</button>)}
           </div>
         </div>
 
@@ -773,11 +882,11 @@ export default function Home() {
         </div>
       </section>}
 
-      {view === "plan" && <Panel title={t.plan} eyebrow="A RHYTHM THAT WORKS">
+      {view === "plan" && <Panel title={t.plan} eyebrow={EYEBROW.plan[uiLang]}>
         <div className="plan-layout"><div className="goal-card"><span>{t.finish}</span><strong>{Math.min(todayCount*5,100)}%</strong><div className="goal-ring" style={{"--p":`${Math.min(todayCount*5,100)*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount,20)}</b><small>/20 words</small></div></div><div className="week">{["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i)=><div className={i<4?"done":i===4?"today":""} key={d}><span>{d}</span><b>{i<4?"✓":i===4?"12":"·"}</b><small>{i<4?"20 words":i===4?"of 20":"Rest"}</small></div>)}</div></div>
       </Panel>}
 
-      {view === "stats" && <Panel title={t.stats} eyebrow="YOUR LEARNING SIGNALS">
+      {view === "stats" && <Panel title={t.stats} eyebrow={EYEBROW.stats[uiLang]}>
         <div className="stats-top"><Metric value={totalTyped} label={uiLang === "zh" ? "累计打词" : uiLang === "id" ? "Total kata" : "Total typed"} accent="violet"/><Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="mint"/><Metric value={activeDays} label={uiLang === "zh" ? "学习天数" : uiLang === "id" ? "Hari aktif" : "Active days"} accent="amber"/><Metric value={srs.mastered} label={t.mastered} accent="blue"/></div>
         <div className="chart-card"><div><h3>{uiLang === "zh" ? "学习日历" : uiLang === "id" ? "Kalender belajar" : "Learning calendar"}</h3><p>{uiLang === "zh" ? "最近 13 周，颜色越深当天练得越多" : uiLang === "id" ? "13 minggu terakhir" : "Last 13 weeks — darker = more"}</p></div>
           <div className="heatmap">{Array.from({ length: 13 }, (_, wk) => <div key={wk} className="heat-col">{Array.from({ length: 7 }, (_, dy) => { const cell = heat[wk * 7 + dy]; return <i key={dy} className={`heat l${cell ? heatLevel(cell.count) : 0}`} title={cell ? `${cell.day}: ${cell.count}` : ""} />; })}</div>)}</div>
@@ -787,8 +896,8 @@ export default function Home() {
         <div className="backup-row"><div><b>{uiLang === "zh" ? "进度备份" : uiLang === "id" ? "Cadangan progres" : "Backup progress"}</b><small>{uiLang === "zh" ? "导出成文件，换设备可导入恢复（含错词、复习、收藏、设置）" : uiLang === "id" ? "Ekspor & impor antar perangkat" : "Export / import across devices"}</small></div><div className="backup-btns"><button onClick={exportProgress}>{uiLang === "zh" ? "导出备份" : uiLang === "id" ? "Ekspor" : "Export"} ↓</button><label className="import-btn">{uiLang === "zh" ? "导入" : uiLang === "id" ? "Impor" : "Import"} ↑<input type="file" accept="application/json" onChange={e => { const f = e.target.files?.[0]; if (f) importProgress(f); }} /></label></div></div>
       </Panel>}
 
-      {view === "settings" && <Panel title={t.settings} eyebrow="MAKE IT YOURS">
-        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title="Learning language" detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title="Theme" detail="Choose a comfortable reading mode"><button onClick={()=>setDark(v=>!v)}>{dark?"Light":"Dark"} mode</button></Setting><Setting title="Pronunciation" detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>Test sound ▶</button></Setting><Setting title={uiLang === "zh" ? "键盘音效" : uiLang === "id" ? "Suara ketik" : "Keyboard sound"} detail={uiLang === "zh" ? "柔和 / 清脆 / 打字机 / 关" : "soft · crisp · typewriter · off"}><select value={soundProfile} onChange={e=>pickSound(e.target.value as SoundProfile)}><option value="soft">{uiLang==="zh"?"柔和":"Soft"}</option><option value="crisp">{uiLang==="zh"?"清脆":"Crisp"}</option><option value="typewriter">{uiLang==="zh"?"打字机":"Typewriter"}</option><option value="off">{uiLang==="zh"?"关闭":"Off"}</option></select></Setting><Setting title={uiLang === "zh" ? "每词重复" : uiLang === "id" ? "Ulang tiap kata" : "Repeat each word"} detail={uiLang === "zh" ? "连续打对几遍再进入下一个" : "times before next word"}><select value={loopTimes} onChange={e=>changeLoop(Number(e.target.value))}><option value={1}>1×</option><option value={2}>2×</option><option value={3}>3×</option></select></Setting><Setting title="Learning data" detail="Stored privately on this device"><button onClick={()=>{setCorrect(0);setAttempts(0);setMistakes([]);resetAll().then(refreshSrs)}}>Reset progress</button></Setting></div>
+      {view === "settings" && <Panel title={t.settings} eyebrow={EYEBROW.settings[uiLang]}>
+        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title={TX("学习语言", "Bahasa belajar", "Learning language", uiLang)} detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title={TX("主题", "Tema", "Theme", uiLang)} detail={TX("选择舒适的阅读模式", "Pilih mode yang nyaman", "Choose a comfortable reading mode", uiLang)}><button onClick={()=>setDark(v=>!v)}>{dark ? TX("浅色模式", "Mode terang", "Light mode", uiLang) : TX("深色模式", "Mode gelap", "Dark mode", uiLang)}</button></Setting><Setting title={TX("发音", "Pelafalan", "Pronunciation", uiLang)} detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>{TX("测试发音", "Tes suara", "Test sound", uiLang)} ▶</button></Setting><Setting title={uiLang === "zh" ? "键盘音效" : uiLang === "id" ? "Suara ketik" : "Keyboard sound"} detail={uiLang === "zh" ? "柔和 / 清脆 / 打字机 / 关" : "soft · crisp · typewriter · off"}><select value={soundProfile} onChange={e=>pickSound(e.target.value as SoundProfile)}><option value="soft">{uiLang==="zh"?"柔和":"Soft"}</option><option value="crisp">{uiLang==="zh"?"清脆":"Crisp"}</option><option value="typewriter">{uiLang==="zh"?"打字机":"Typewriter"}</option><option value="off">{uiLang==="zh"?"关闭":"Off"}</option></select></Setting><Setting title={uiLang === "zh" ? "每词重复" : uiLang === "id" ? "Ulang tiap kata" : "Repeat each word"} detail={uiLang === "zh" ? "连续打对几遍再进入下一个" : "times before next word"}><select value={loopTimes} onChange={e=>changeLoop(Number(e.target.value))}><option value={1}>1×</option><option value={2}>2×</option><option value={3}>3×</option></select></Setting><Setting title={TX("学习数据", "Data belajar", "Learning data", uiLang)} detail={TX("仅保存在本设备", "Tersimpan di perangkat ini", "Stored privately on this device", uiLang)}><button onClick={()=>{setCorrect(0);setAttempts(0);setMistakes([]);resetAll().then(refreshSrs)}}>{TX("重置进度", "Reset progres", "Reset progress", uiLang)}</button></Setting></div>
       </Panel>}
     </main>
 
