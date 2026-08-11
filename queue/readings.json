@@ -1,20 +1,5 @@
 [
  {
-  "id": "deng-leyouyuan",
-  "lang": "zh",
-  "title": "登乐游原",
-  "author": "李商隐",
-  "era": "唐",
-  "genre": "五言绝句",
-  "lines": [
-   "向晚意不适，",
-   "驱车登古原。",
-   "夕阳无限好，",
-   "只是近黄昏。"
-  ],
-  "note": "全文 · 公共领域 ·《唐诗三百首》。夕阳与迟暮之思。"
- },
- {
   "id": "wang-tianmenshan",
   "lang": "zh",
   "title": "望天门山",
