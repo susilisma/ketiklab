@@ -1,20 +1,5 @@
 [
  {
-  "id": "jueju-dufu",
-  "lang": "zh",
-  "title": "绝句",
-  "author": "杜甫",
-  "era": "唐",
-  "genre": "七言绝句",
-  "lines": [
-   "两个黄鹂鸣翠柳，",
-   "一行白鹭上青天。",
-   "窗含西岭千秋雪，",
-   "门泊东吴万里船。"
-  ],
-  "note": "全文 · 公共领域 ·《全唐诗》。四句四景，色彩明丽。"
- },
- {
   "id": "chusai-wangchangling",
   "lang": "zh",
   "title": "出塞",
