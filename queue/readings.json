@@ -1,20 +1,5 @@
 [
  {
-  "id": "meihua-wanganshi",
-  "lang": "zh",
-  "title": "梅花",
-  "author": "王安石",
-  "era": "宋",
-  "genre": "五言绝句",
-  "lines": [
-   "墙角数枝梅，",
-   "凌寒独自开。",
-   "遥知不是雪，",
-   "为有暗香来。"
-  ],
-  "note": "全文 · 公共领域 · 宋诗。凌寒独开与暗香。"
- },
- {
   "id": "xiari-jueju",
   "lang": "zh",
   "title": "夏日绝句",
