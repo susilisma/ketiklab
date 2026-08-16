@@ -1,22 +1,5 @@
 [
  {
-  "id": "a-word-is-dead",
-  "lang": "en",
-  "title": "A word is dead",
-  "author": "Emily Dickinson",
-  "era": "1894",
-  "genre": "POETRY",
-  "lines": [
-   "A word is dead",
-   "When it is said,",
-   "Some say.",
-   "I say it just",
-   "Begins to live",
-   "That day."
-  ],
-  "note": "Full text · Public domain · Letters of Emily Dickinson (1894)."
- },
- {
   "id": "auguries-excerpt",
   "lang": "en",
   "title": "Auguries of Innocence (opening)",
