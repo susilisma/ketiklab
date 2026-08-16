@@ -1,20 +1,5 @@
 [
  {
-  "id": "auguries-excerpt",
-  "lang": "en",
-  "title": "Auguries of Innocence (opening)",
-  "author": "William Blake",
-  "era": "1863",
-  "genre": "POETRY",
-  "lines": [
-   "To see a World in a Grain of Sand",
-   "And a Heaven in a Wild Flower,",
-   "Hold Infinity in the palm of your hand",
-   "And Eternity in an hour."
-  ],
-  "note": "节选（开篇四行）· Public domain. Written c.1803, first published 1863."
- },
- {
   "id": "my-heart-leaps-up",
   "lang": "en",
   "title": "My Heart Leaps Up",
