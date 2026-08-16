@@ -1,20 +1,5 @@
 [
  {
-  "id": "suojian-yuanmei",
-  "lang": "zh",
-  "title": "所见",
-  "author": "袁枚",
-  "era": "清",
-  "genre": "五言绝句",
-  "lines": [
-   "牧童骑黄牛，",
-   "歌声振林樾。",
-   "意欲捕鸣蝉，",
-   "忽然闭口立。"
-  ],
-  "note": "全文 · 公共领域 · 清诗。牧童捕蝉的瞬间。"
- },
- {
   "id": "a-word-is-dead",
   "lang": "en",
   "title": "A word is dead",
