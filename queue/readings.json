@@ -1,22 +1,5 @@
 [
  {
-  "id": "the-eagle",
-  "lang": "en",
-  "title": "The Eagle",
-  "author": "Alfred, Lord Tennyson",
-  "era": "1851",
-  "genre": "POETRY",
-  "lines": [
-   "He clasps the crag with crooked hands;",
-   "Close to the sun in lonely lands,",
-   "Ring'd with the azure world, he stands.",
-   "The wrinkled sea beneath him crawls;",
-   "He watches from his mountain walls,",
-   "And like a thunderbolt he falls."
-  ],
-  "note": "Full text · Public domain. Published 1851; Tennyson died in 1892."
- },
- {
   "id": "aku-chairil",
   "lang": "id",
   "title": "Aku",
