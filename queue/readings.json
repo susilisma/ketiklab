@@ -1,20 +1,5 @@
 [
  {
-  "id": "pantun-pisang-emas",
-  "lang": "id",
-  "title": "Pisang Emas",
-  "author": "Pantun Melayu",
-  "era": "Tradisional",
-  "genre": "PANTUN",
-  "lines": [
-   "Pisang emas dibawa berlayar,",
-   "Masak sebiji di atas peti.",
-   "Hutang emas boleh dibayar,",
-   "Hutang budi dibawa mati."
-  ],
-  "note": "Teks lengkap · Pantun Melayu tradisional · domain publik. Budi lebih berat daripada emas."
- },
- {
   "id": "pantun-lintah",
   "lang": "id",
   "title": "Dari Mana Datangnya Lintah",
