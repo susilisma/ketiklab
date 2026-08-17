@@ -244,7 +244,7 @@ export default function Home() {
   if (!ready) {
     return <div className={dark ? "app dark" : "app"}>
       <div className="loading-screen">
-        <span className="loading-mark">KG</span>
+        <span className="loading-mark">KL</span>
         <p>{dataError ? "内容加载失败，请刷新页面重试。" : t.loading}</p>
       </div>
     </div>;
@@ -733,7 +733,7 @@ export default function Home() {
 
   return <div className={dark ? "app dark" : "app"}>
     <aside className="sidebar">
-      <button className="brand" onClick={() => setView("learn")} aria-label="KetikGo home"><span>KG</span><b>KetikGo</b></button>
+      <button className="brand" onClick={() => setView("learn")} aria-label="KetikLab home"><span>KL</span><b>KetikLab</b></button>
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
         <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, 20)}/20</b></span><div><i style={{width:`${Math.min(todayCount/20*100,100)}%`}} /></div></div>
@@ -794,7 +794,7 @@ export default function Home() {
       </section>}
 
       {view === "library" && <Panel title={t.library} eyebrow={EYEBROW.library[uiLang]}>
-        <div className="library-section-title"><b>{uiLang === "zh" ? "KetikGo 三语精选" : uiLang === "id" ? "Pilihan Trilingual KetikGo" : "KetikGo Trilingual Collection"}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
+        <div className="library-section-title"><b>{uiLang === "zh" ? "KetikLab 三语精选" : uiLang === "id" ? "Pilihan Trilingual KetikLab" : "KetikLab Trilingual Collection"}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
         <div className="category-tabs">
           {(["all","daily","business","indonesia","study"] as WordFilter[]).map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
         </div>
