@@ -1,20 +1,5 @@
 [
  {
-  "id": "pantun-lintah",
-  "lang": "id",
-  "title": "Dari Mana Datangnya Lintah",
-  "author": "Pantun Melayu",
-  "era": "Tradisional",
-  "genre": "PANTUN",
-  "lines": [
-   "Dari mana datangnya lintah,",
-   "Dari sawah turun ke kali.",
-   "Dari mana datangnya cinta,",
-   "Dari mata turun ke hati."
-  ],
-  "note": "Teks lengkap · Pantun Melayu tradisional · domain publik. Pantun cinta paling terkenal."
- },
- {
   "id": "pantun-cempedak",
   "lang": "id",
   "title": "Buah Cempedak",
