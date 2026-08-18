@@ -54,6 +54,35 @@
 /* ---- direct-type input (no visible box) + dictionary cards ---- */
 .ghost-input{position:absolute;opacity:0;width:1px;height:1px;border:0;padding:0}
 .target-word.shake{animation:word-shake .3s}
+/* ---- Chinese step ladder (for learners who don't read hanzi yet) ---- */
+.zh-ladder{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:22px 0 4px}
+.zh-ladder button{display:flex;align-items:center;gap:7px;border:1.5px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:7px 15px 7px 7px;font-size:12px;font-weight:650;transition:.15s}
+.zh-ladder button i{font-style:normal;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;background:var(--line);color:var(--muted);font-size:11px;font-weight:800}
+.zh-ladder button:hover{border-color:var(--purple);color:var(--purple)}
+.zh-ladder button.on{border-color:var(--purple);background:var(--purple-soft);color:var(--purple)}
+.zh-ladder button.on i{background:var(--purple);color:#fff}
+.zh-step{margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:16px}
+.zh-read{display:flex;flex-direction:column;align-items:center;gap:9px}
+.zh-read b{font-size:31px;letter-spacing:.13em;color:var(--purple);cursor:pointer;font-weight:700}
+.zh-read span{font-size:15px;color:var(--muted);text-align:center;max-width:520px}
+.zh-go{border:0;border-radius:999px;background:var(--purple);color:#fff;font-size:15px;font-weight:700;padding:13px 30px;display:flex;align-items:center;gap:11px;box-shadow:var(--shadow)}
+.zh-go i{font-style:normal;font-size:10px;letter-spacing:.1em;border:1px solid rgba(255,255,255,.55);border-radius:6px;padding:3px 8px;opacity:.9}
+.zh-options{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;width:min(560px,92%)}
+.zh-options button{border:2px solid var(--line);background:var(--surface);color:var(--text);border-radius:16px;padding:19px 8px;font-size:27px;font-family:"Noto Serif SC","Songti SC",serif;transition:.15s}
+.zh-options button:hover{border-color:var(--purple);transform:translateY(-2px)}
+.zh-options button.ok{border-color:#22aa72;background:#e6f8f0;color:#12603f}
+.zh-options button.no{border-color:#e2566a;background:#fdecef;color:#8d1f31;animation:word-shake .3s}
+.zh-pinbox{display:flex;gap:16px;align-items:baseline;justify-content:center;flex-wrap:wrap}
+.zh-pinbox .syl{font-size:26px;letter-spacing:.13em;color:var(--muted);border-bottom:2px solid var(--line);padding:0 4px 5px;transition:.15s}
+.zh-pinbox .syl.now{color:var(--purple);border-color:var(--purple)}
+.zh-pinbox .syl.done{color:var(--text);border-color:var(--text)}
+.zh-typebox{width:min(430px,90%);padding:13px 18px;font-size:21px;text-align:center;letter-spacing:.08em;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--text);outline:none}
+.zh-typebox::placeholder{font-size:14px;letter-spacing:.02em;color:var(--muted);opacity:.75}
+.zh-typebox:focus{border-color:var(--purple);background:var(--surface);box-shadow:0 0 0 4px var(--purple-soft)}
+.zh-tip{font-size:12px;color:var(--muted);text-align:center;max-width:560px;line-height:1.7;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.zh-skip{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 13px;font-size:11px}
+@media(max-width:640px){.zh-options{grid-template-columns:repeat(2,1fr)}.zh-read b{font-size:25px}.zh-pinbox .syl{font-size:21px}.zh-ladder button{font-size:11px;padding:6px 12px 6px 6px}}
+
 .ime-input{position:relative;display:block;width:min(430px,88%);margin:26px auto 0;padding:13px 18px;font-size:23px;line-height:1.35;text-align:center;letter-spacing:.1em;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--text);outline:none;opacity:1;height:auto;transition:.15s}
 .ime-input::placeholder{font-size:15px;letter-spacing:.04em;color:var(--muted);opacity:.75}
 .ime-input:focus{border-color:var(--purple);background:var(--surface);box-shadow:0 0 0 4px var(--purple-soft)}
