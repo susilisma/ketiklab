@@ -153,7 +153,7 @@ export default function Home() {
       if (view !== "learn") return;
       const el = document.activeElement as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) return;
-      if (e.ctrlKey || e.metaKey || e.altKey || e.key.length !== 1) return;
+      if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
       isComposing.current = false;
       input.current?.focus();
     };
@@ -575,6 +575,7 @@ export default function Home() {
     }
   }
   function handleGhostKeys(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (isComposing.current || (event.nativeEvent as any).isComposing || event.key === "Process" || (event as any).keyCode === 229) return;
     if (event.key === "Tab") { event.preventDefault(); setReveal(true); return; }
     if (event.key === "Enter") { event.preventDefault(); skipWord(); return; }
     if (event.key === " " && (event.ctrlKey || event.metaKey || (practiceLang === "zh"))) {
