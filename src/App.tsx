@@ -118,7 +118,7 @@ export default function Home() {
   const [showLangSetup, setShowLangSetup] = useState(false);
   const [dark, setDark] = useState(false);
   const [running, setRunning] = useState(false);
-  const [typingFocus, setTypingFocus] = useState(false);Page_DownPage_DownPage_DownPage_DownPage_DownPage_DownPage_DownPage_DownPage_DownPage_DownPage_DownPage_Down
+  const [typingFocus, setTypingFocus] = useState(false);
   const [index, setIndex] = useState(0);
   const [typed, setTyped] = useState("");
   const [correct, setCorrect] = useState(0);
