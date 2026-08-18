@@ -160,6 +160,11 @@ export default function Home() {
     window.addEventListener("keydown", onAnyKey);
     return () => window.removeEventListener("keydown", onAnyKey);
   }, [view]);
+
+  useEffect(() => {
+    const el = input.current;
+    if (el && el.classList.contains("ime-input") && !isComposing.current && el.value !== typed) el.value = typed;
+  });
   const t = UI[uiLang];
 
   // Load content (words + readings) as JSON at runtime so the app bundle stays
@@ -574,10 +579,6 @@ export default function Home() {
       }, 350);
     }
   }
-  useEffect(() => {
-    const el = input.current;
-    if (el && practiceLang === "zh" && !isComposing.current && el.value !== typed) el.value = typed;
-  }, [typed, practiceLang]);
   function handleGhostKeys(event: React.KeyboardEvent<HTMLInputElement>) {
     if (isComposing.current || (event.nativeEvent as any).isComposing || event.key === "Process" || (event as any).keyCode === 229) return;
     if (event.key === "Tab") { event.preventDefault(); setReveal(true); return; }
