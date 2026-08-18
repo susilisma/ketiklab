@@ -1,20 +1,5 @@
 [
  {
-  "id": "sonnet-55",
-  "lang": "en",
-  "title": "Sonnet 55",
-  "author": "William Shakespeare",
-  "era": "1609",
-  "genre": "SONNET",
-  "lines": [
-   "Not marble, nor the gilded monuments",
-   "Of princes, shall outlive this powerful rhyme;",
-   "But you shall shine more bright in these contents",
-   "Than unswept stone besmear'd with sluttish time."
-  ],
-  "note": "莎士比亚断言诗比大理石更耐久。练这四行时注意 outlive、besmear'd 这类词的节奏。"
- },
- {
   "id": "pagi-di-kantor",
   "lang": "id",
   "title": "Pagi di Kantor",
