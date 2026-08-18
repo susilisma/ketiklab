@@ -1,24 +1,5 @@
 [
  {
-  "id": "pagi-di-kantor",
-  "lang": "id",
-  "title": "Pagi di Kantor",
-  "author": "KetikLab",
-  "era": "2026",
-  "genre": "PROSA MODERN",
-  "lines": [
-   "Saya biasanya sampai di kantor sebelum pukul delapan.",
-   "Hari ini jalan sangat macet, jadi saya datang sedikit terlambat.",
-   "Di meja sudah ada surat dan beberapa pesan yang belum saya baca.",
-   "Saya harus memeriksa laporan penjualan sebelum rapat dimulai.",
-   "Rekan saya bertanya apakah stok di gudang masih cukup.",
-   "Saya belum tahu, karena kabar dari distributor belum datang.",
-   "Akhirnya saya menelepon mereka dan keadaan menjadi jelas.",
-   "Pekerjaan pagi ini tidak mudah, tetapi semuanya berhasil selesai."
-  ],
-  "note": "办公室早晨场景，集中练 biasanya / sudah / belum / harus / karena / akhirnya 这些高频虚词，以及 memeriksa、menelepon 等日常动词。"
- },
- {
   "id": "kunjungan-ke-toko",
   "lang": "id",
   "title": "Kunjungan ke Toko",
