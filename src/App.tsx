@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
+import { ZhSteps, ZH_STEPS, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
@@ -148,6 +149,11 @@ export default function Home() {
   const chapterStart = useRef(Date.now());
   const pendingIndex = useRef<number | null>(null);
   const isComposing = useRef(false);
+  const [zhStep, setZhStep] = useState<ZhStep>(() => {
+    try { return (localStorage.getItem("ketiklab-zh-step") as ZhStep) || "read"; } catch { return "read"; }
+  });
+  const zhMap = useZhMap(DATA);
+  useEffect(() => { try { localStorage.setItem("ketiklab-zh-step", zhStep); } catch { /* ignore */ } }, [zhStep]);
   useEffect(() => {
     const onAnyKey = (e: KeyboardEvent) => {
       if (view !== "learn") return;
@@ -233,6 +239,13 @@ export default function Home() {
   useEffect(() => { if (!readingActive || readingDone) return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone]);
 
   const activeWords = useMemo(() => category === "all" ? words : words.filter(item => item.category === category), [category, words]);
+  const ladderWords = useMemo(() => {
+    if (lang !== "zh" || zhStep === "hanzi") return activeWords;
+    const cap = zhMaxLevel(zhStep);
+    const pick = words.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
+    if (pick.length < 20) return activeWords;
+    return pick.slice().sort((a, b) => zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]));
+  }, [words, activeWords, lang, zhStep, zhMap]);
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
 
 
@@ -282,10 +295,12 @@ export default function Home() {
         lang: dictInfo.lang,
         dict: dictInfo.name,
       }))
-    : activeWords.map(w => ({
+    : ladderWords.map(w => ({
         key: w.en,
         text: wordValue(w, lang),
-        sub: pronunciation(w, lang),
+        sub: lang === "zh" && zhToned(zhMap, wordValue(w, "zh"))
+          ? `普通话 · ${zhToned(zhMap, wordValue(w, "zh"))}`
+          : pronunciation(w, lang),
         meaning: w[defLang],
         example: w.examples[lang] as string | undefined,
         voice: LANGUAGE_META[lang].voice,
@@ -303,6 +318,8 @@ export default function Home() {
   const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
+  const zhLadder = practiceLang === "zh" && zhStep !== "hanzi";
+  const zhPool = learnItems.map(i => i.text);
   const targetVoice = item.voice;
   const targetKey = `${source}:${item.key}`;
   const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
@@ -583,7 +600,7 @@ export default function Home() {
     if (isComposing.current || (event.nativeEvent as any).isComposing || event.key === "Process" || (event as any).keyCode === 229) return;
     if (event.key === "Tab") { event.preventDefault(); setReveal(true); return; }
     if (event.key === "Enter") { event.preventDefault(); skipWord(); return; }
-    if (event.key === " " && (event.ctrlKey || event.metaKey || (practiceLang === "zh"))) {
+    if (event.key === " " && (event.ctrlKey || event.metaKey)) {
       event.preventDefault(); speak(targetWord, targetVoice); return;
     }
   }
@@ -776,19 +793,37 @@ export default function Home() {
         <div className="mode-row"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</div>
         {!chapterFinished && <>
         <div className="word-card" onClick={() => input.current?.focus()}>
-          {!typingFocus && <div className="type-veil" onClick={() => input.current?.focus()}><b>{uiLang === "zh" ? (running ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (running ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (running ? "Press any key to continue" : "Press any key to start")}</b></div>}
+          {!typingFocus && !zhLadder && <div className="type-veil" onClick={() => input.current?.focus()}><b>{uiLang === "zh" ? (running ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (running ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (running ? "Press any key to continue" : "Press any key to start")}</b></div>}
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
           <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label="Play pronunciation">▶</button>
           <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
-          <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>
-          <p className="phonetic">{item.sub}</p>
+          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
+          {!(practiceLang === "zh" && zhStep === "pinyin") && <p className="phonetic">{item.sub}</p>}
+          {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
+            {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} onClick={() => { setZhStep(st.id); setTyped(""); }}>
+              <i>{st.num}</i>{uiLang === "zh" ? st.zh : uiLang === "id" ? st.idn : st.en}
+            </button>)}
+          </div>}
           <div className="meanings">
             <span><small>{dictInfo ? "中文" : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
             {item.example && <span><small>{LANGUAGE_META[lang].example}</small>{item.example}</span>}
           </div>
+          {zhLadder ? <ZhSteps
+            step={zhStep}
+            word={targetWord}
+            toned={zhToned(zhMap, targetWord)}
+            plain={zhPlain(zhMap, targetWord)}
+            meaning={item.meaning}
+            pool={zhPool}
+            uiLang={uiLang}
+            onPass={finishWord}
+            onSkip={skipWord}
+            onSpeak={() => speak()}
+          /> : <>
           <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? "请用拼音输入" : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} value={practiceLang === "zh" ? undefined : typed} defaultValue="" onChange={e=>handleType(e.target.value)} onCompositionStart={()=>{ isComposing.current = true; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>setTypingFocus(false)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
-          <p className="hint">{uiLang === "zh" ? <>直接敲键盘 <span>·</span> 打错整词重来 &nbsp;&nbsp; ENTER <span>·</span> 跳过 &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> 重播发音</> : uiLang === "id" ? <>Langsung ketik <span>·</span> salah = ulang kata &nbsp;&nbsp; ENTER <span>·</span> lewati &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> ulang suara</> : <>Just type <span>·</span> a mistake restarts the word &nbsp;&nbsp; ENTER <span>·</span> skip &nbsp;&nbsp; {practiceLang === "zh" ? "SPACE" : "CTRL+SPACE"} <span>·</span> replay</>}</p>
+          <p className="hint">{uiLang === "zh" ? <>直接敲键盘 <span>·</span> 打错整词重来 &nbsp;&nbsp; ENTER <span>·</span> 跳过 &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> 重播发音</> : uiLang === "id" ? <>Langsung ketik <span>·</span> salah = ulang kata &nbsp;&nbsp; ENTER <span>·</span> lewati &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> ulang suara</> : <>Just type <span>·</span> a mistake restarts the word &nbsp;&nbsp; ENTER <span>·</span> skip &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> replay</>}</p>
+          </>}
           {wrongCountWord >= 3 && <button className="skip-btn" onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
         </div>
         <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>
