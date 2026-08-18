@@ -732,9 +732,9 @@ export default function Home() {
     setReadingId(id); setReadingLine(0); setReadingTyped(""); setReadingSeconds(0); setReadingActive(false); setReadingDone(false);
     setTimeout(() => readingInput.current?.focus(), 30);
   }
-  function submitReading() {
+  function submitReading(typedNow?: string) {
     readingAuto.current++;
-    if (readingTyped !== readingTarget) return;
+    if ((typedNow ?? readingTyped) !== readingTarget) return;
     if (readingLine === reading.lines.length - 1) { setReadingDone(true); setReadingActive(false); return; }
     setReadingLine(line => line + 1); setReadingTyped("");
     setTimeout(() => readingInput.current?.focus(), 30);
@@ -882,7 +882,7 @@ export default function Home() {
                   {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTyped[i] === character ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character === " " ? " " : character}</span>)}
                 </div>
                 <div className="reading-input-wrap">
-                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (v === readingTarget) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(); }, 300); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={reading.lang === "zh" ? "照着上方文字输入……" : reading.lang === "id" ? "Ketik baris di atas…" : "Type the line above…"} spellCheck={false} />
+                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (v === readingTarget) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={reading.lang === "zh" ? "照着上方文字输入……" : reading.lang === "id" ? "Ketik baris di atas…" : "Type the line above…"} spellCheck={false} />
                   <button className={readingTyped === readingTarget ? "ready" : ""} onClick={submitReading} disabled={readingTyped !== readingTarget}>{t.nextLine} <span>↵</span></button>
                 </div>
                 {readingTyped && readingTyped !== readingTarget && <p className="typing-help">{t.typingHelp}</p>}
