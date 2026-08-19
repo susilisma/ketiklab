@@ -14,7 +14,7 @@ export type Word = {
   source: string;
 };
 
-export type DictEntry = { name: string; trans: string[]; usphone?: string };
+export type DictEntry = { name: string; trans: string[]; idtrans?: string[]; def?: string; usphone?: string };
 
 export type DictInfo = {
   id: string;
