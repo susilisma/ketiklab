@@ -270,13 +270,19 @@ export default function Home() {
   useEffect(() => { if (!readingActive || readingDone) return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone]);
 
   const activeWords = useMemo(() => category === "all" ? words : words.filter(item => item.category === category), [category, words]);
-  const ladderWords = useMemo(() => {
-    if (lang !== "zh" || zhStep === "hanzi") return activeWords;
+  const ladder = useMemo(() => {
+    if (lang !== "zh" || zhStep === "hanzi") return { list: activeWords, broad: false };
     const cap = zhMaxLevel(zhStep);
-    const pick = words.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
-    if (pick.length < 20) return activeWords;
-    return pick.slice().sort((a, b) => zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]));
+    const byLevel = (a: typeof words[number], b: typeof words[number]) =>
+      zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]);
+    // stay inside the chosen category whenever it has enough words at this rung
+    const inCat = activeWords.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
+    if (inCat.length >= 20) return { list: inCat.slice().sort(byLevel), broad: false };
+    const all = words.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
+    if (all.length < 20) return { list: activeWords, broad: false };
+    return { list: all.slice().sort(byLevel), broad: true };
   }, [words, activeWords, lang, zhStep, zhMap]);
+  const ladderWords = ladder.list;
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
 
 
@@ -813,7 +819,7 @@ export default function Home() {
 
     <main className="main">
       <header>
-        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictInfo.name : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}</b></button>
+        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictInfo.name : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}</b></button>
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label="Dark mode">{dark ? "☀" : "☾"}</button>
           <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Indonesia</option><option value="en">English</option></select></label>
