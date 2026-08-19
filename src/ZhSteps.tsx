@@ -88,7 +88,7 @@ type Props = {
   onSpeak: () => void;
 };
 
-export function ZhSteps({ step, word, toned, plain, meaning, pool, uiLang, onPass, onSkip, onSpeak }: Props) {
+export function ZhSteps({ step, word, toned, plain, pool, uiLang, onPass, onSkip, onSpeak }: Props) {
   const [typed, setTyped] = useState("");
   const [wrong, setWrong] = useState(0);
   const [peek, setPeek] = useState(false);
@@ -126,7 +126,6 @@ export function ZhSteps({ step, word, toned, plain, meaning, pool, uiLang, onPas
     return <div className="zh-step">
       <div className="zh-read">
         <b onClick={onSpeak}>{toned || "—"}</b>
-        <span>{meaning}</span>
       </div>
       <button className="zh-go" onClick={onPass}>
         {T(uiLang, "认识了，下一个", "Sudah paham, lanjut", "Got it, next")} <i>SPACE</i>
@@ -139,7 +138,6 @@ export function ZhSteps({ step, word, toned, plain, meaning, pool, uiLang, onPas
     return <div className="zh-step">
       <div className="zh-read">
         <b onClick={onSpeak}>{toned || "—"}</b>
-        <span>{meaning}</span>
       </div>
       <div className="zh-options">
         {options.map(o => <button
