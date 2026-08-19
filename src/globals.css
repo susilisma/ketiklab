@@ -191,3 +191,32 @@
 .res-src.zh{color:#a66e13;background:#fff0d7}
 .dark .res-src.id{color:#6ddba5;background:#1f4a37}
 .dark .res-src.zh{color:#e9ae4e;background:#3a2f13}
+/* ---- compact one-screen layout for the Chinese step ladder ---- */
+.word-card.zh-compact{min-height:0;padding:30px 48px 26px;margin-top:12px}
+.word-card.zh-compact h1.target-word.zh{font-size:46px;letter-spacing:7px;margin:6px 0 2px}
+.word-card.zh-compact .zh-ladder{margin:12px 0 2px}
+.word-card.zh-compact .meanings{gap:7px;margin-top:12px;max-width:620px}
+.word-card.zh-compact .meanings>span{padding:5px 12px;font-size:13px}
+.word-card.zh-compact .meanings small{font-size:8px;margin-bottom:3px}
+.word-card.zh-compact .zh-step{margin-top:14px;gap:11px}
+.word-card.zh-compact .zh-read b{font-size:27px}
+.word-card.zh-compact .zh-go{padding:11px 26px;font-size:14px}
+.word-card.zh-compact .zh-tip{margin:0}
+.word-card.zh-compact .zh-options{gap:10px}
+.word-card.zh-compact .zh-options button{padding:14px 8px;font-size:24px}
+.word-card.zh-compact .zh-pinbox{gap:13px}
+.word-card.zh-compact .word-count{top:16px;left:20px}
+.word-card.zh-compact .sound{top:13px;right:18px}
+.word-card.zh-compact .fav-btn{top:13px}
+.word-card.zh-compact .speech-unlock{top:48px}
+.word-card.zh-compact + .prevnext{margin-top:8px}
+.word-card.zh-compact ~ .metrics{margin-top:10px}
+@media(max-width:640px){.word-card.zh-compact{padding:26px 16px 22px}.word-card.zh-compact h1.target-word.zh{font-size:38px}}
+.word-card.zh-compact .ime-input{margin-top:14px}
+.word-card.zh-compact .hint{margin-top:14px}
+/* ---- fit the practice card on one screen for every language ---- */
+.word-card{min-height:0;padding:36px 72px 30px}
+.word-card h1{margin:14px 0 4px}
+.phonetic{margin:6px 0 18px}
+.word-card .hint{margin-top:18px}
+.metrics{margin-top:11px}
