@@ -326,8 +326,8 @@ export default function Home() {
         key: e.name,
         text: e.name,
         sub: e.usphone ? `American English · /${e.usphone}/` : (dictInfo.lang === "id" ? "Bahasa Indonesia" : "English"),
-        meaning: e.trans.join("；"),
-        example: undefined as string | undefined,
+        meaning: (uiLang === "id" && e.idtrans && e.idtrans.length ? e.idtrans.join("; ") : e.trans.join("；")),
+        example: e.def || undefined,
         voice: dictInfo.lang === "id" ? "id-ID" : "en-US",
         lang: dictInfo.lang,
         dict: dictInfo.name,
@@ -849,8 +849,8 @@ export default function Home() {
             </button>)}
           </div>}
           <div className="meanings">
-            <span><small>{dictInfo ? "中文" : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
-            {item.example && <span><small>{LANGUAGE_META[lang].example}</small>{item.example}</span>}
+            <span><small>{dictInfo ? (uiLang === "id" ? "Bahasa Indonesia" : "中文") : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
+            {item.example && <span><small>{dictInfo ? (uiLang === "zh" ? "英文释义" : uiLang === "id" ? "Definisi Inggris" : "English definition") : LANGUAGE_META[lang].example}</small>{item.example}</span>}
           </div>
           {zhLadder ? <ZhSteps
             step={zhStep}
