@@ -149,6 +149,37 @@ export default function Home() {
   const chapterStart = useRef(Date.now());
   const pendingIndex = useRef<number | null>(null);
   const isComposing = useRef(false);
+  const [speechBlocked, setSpeechBlocked] = useState(false);
+  const speechPrimed = useRef(false);
+  useEffect(() => {
+    // Chrome gates speechSynthesis behind a user activation. IME composition
+    // keydowns arrive as key "Process" / keyCode 229 and do NOT grant it, so a
+    // learner who only ever types Chinese through an IME never unlocks audio.
+    // Prime the engine on the first gesture that does count.
+    const prime = () => {
+      if (speechPrimed.current || !("speechSynthesis" in window)) return;
+      speechPrimed.current = true;
+      try {
+        const u = new SpeechSynthesisUtterance(" ");
+        u.volume = 0;
+        window.speechSynthesis.speak(u);
+        window.speechSynthesis.resume();
+        // NB: do not clear speechBlocked here. This runs on pointerdown, and
+        // unmounting the recovery button before its click lands would swallow it.
+        // onstart clears the flag once audio genuinely plays.
+      } catch { /* ignore */ }
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.isComposing || e.key === "Process" || (e as any).keyCode === 229) return;
+      prime();
+    };
+    window.addEventListener("pointerdown", prime);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      window.removeEventListener("pointerdown", prime);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, []);
   const [zhStep, setZhStep] = useState<ZhStep>(() => {
     try { return (localStorage.getItem("ketiklab-zh-step") as ZhStep) || "read"; } catch { return "read"; }
   });
@@ -417,9 +448,12 @@ export default function Home() {
       utterance.rate = .82;
       const matchingVoice = synth.getVoices().find(voice => voice.lang.toLowerCase().startsWith(voiceLang.slice(0, 2).toLowerCase()));
       if (matchingVoice) utterance.voice = matchingVoice;
-      utterance.onstart = () => { started = true; setSpeakingWord(text); };
+      utterance.onstart = () => { started = true; setSpeakingWord(text); setSpeechBlocked(false); };
       utterance.onend = () => { if (speechRequest.current === requestId) setSpeakingWord(null); };
-      utterance.onerror = () => { if (speechRequest.current === requestId) setSpeakingWord(null); };
+      utterance.onerror = (ev) => {
+        if ((ev as SpeechSynthesisErrorEvent).error === "not-allowed") setSpeechBlocked(true);
+        if (speechRequest.current === requestId) setSpeakingWord(null);
+      };
       return utterance;
     };
     const play = () => {
@@ -796,6 +830,9 @@ export default function Home() {
           {!typingFocus && !zhLadder && <div className="type-veil" onClick={() => input.current?.focus()}><b>{uiLang === "zh" ? (running ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (running ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (running ? "Press any key to continue" : "Press any key to start")}</b></div>}
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
           <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label="Play pronunciation">▶</button>
+          {speechBlocked && <button className="speech-unlock" onClick={e => { e.stopPropagation(); speechPrimed.current = false; setSpeechBlocked(false); speak(); }}>
+            {uiLang === "zh" ? "点此启用发音" : uiLang === "id" ? "Ketuk untuk mengaktifkan suara" : "Tap to enable sound"}
+          </button>}
           <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
           {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
