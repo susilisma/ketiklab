@@ -221,3 +221,8 @@
 .word-card .hint{margin-top:18px}
 .metrics{margin-top:11px}
 .learn-view{padding:22px 42px 20px}
+/* ---- use the full width of the main column ---- */
+.learn-view{max-width:1560px;padding:22px 26px 20px}
+.panel{max-width:1560px;padding:34px 26px}
+.reading-panel{max-width:1560px;padding:30px 26px 40px}
+@media(max-width:640px){.learn-view,.panel{padding:18px 14px}.reading-panel{padding:18px 12px}}
