@@ -3,9 +3,10 @@ import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, Pract
 import { recordReview, getStats, getDueKeys, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Membership } from "./Membership";
+import { Account } from "./Account";
 import { ZhSteps, ZH_STEPS, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 
-type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "settings";
+type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "account" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
 type WordFilter = "all" | WordCategory;
 
@@ -81,7 +82,7 @@ function pronunciation(word: Word, language: Lang) {
   return word.phonetic ? `American English · ${word.phonetic}` : "English · tap to hear pronunciation";
 }
 
-const NAV: { id: View; icon: string }[] = [
+const NAV: { id: Exclude<View, "account">; icon: string }[] = [
   { id: "learn", icon: "⌨" }, { id: "library", icon: "▤" }, { id: "mistakes", icon: "◎" },
   { id: "articles", icon: "¶" }, { id: "plan", icon: "✓" }, { id: "stats", icon: "↗" }, { id: "member", icon: "♛" }, { id: "settings", icon: "⚙" },
 ];
@@ -115,7 +116,6 @@ export default function Home() {
   const [inputMode, setInputMode] = useState<"strict" | "soft">("strict");
   // No accounts yet, so the sidebar profile is whatever name this browser saved.
   const [profileName, setProfileName] = useState("");
-  const [nameEdit, setNameEdit] = useState(false);
   const [reveal, setReveal] = useState(false);
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
@@ -836,16 +836,11 @@ export default function Home() {
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
         <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, 20)}/20</b></span><div><i style={{width:`${Math.min(todayCount/20*100,100)}%`}} /></div></div>
-        {nameEdit
-          ? <form className="profile profile-edit" onSubmit={e => { e.preventDefault(); setNameEdit(false); }}>
-              <input autoFocus maxLength={24} value={profileName} placeholder={TX("你的名字", "Nama kamu", "Your name", uiLang)}
-                onChange={e => setProfileName(e.target.value)} onBlur={() => setNameEdit(false)} aria-label={TX("你的名字", "Nama kamu", "Your name", uiLang)} />
-            </form>
-          : <button className="profile" onClick={() => setNameEdit(true)} title={TX("改名字", "Ubah nama", "Change name", uiLang)}>
-              <span>{(profileName.trim()[0] || "?").toUpperCase()}</span>
-              <div><b>{profileName.trim() || TX("学习者", "Pelajar", "Learner", uiLang)}</b><small>{TX("免费用户", "Pengguna gratis", "Free learner", uiLang)}</small></div>
-              <i>✎</i>
-            </button>}
+        <button className="profile" onClick={() => setView("account")} title={TX("账号", "Akun", "Account", uiLang)}>
+          <span>{(profileName.trim()[0] || "?").toUpperCase()}</span>
+          <div><b>{profileName.trim() || TX("学习者", "Pelajar", "Learner", uiLang)}</b><small>{TX("账号与同步", "Akun & sinkron", "Account & sync", uiLang)}</small></div>
+          <i>›</i>
+        </button>
       </div>
     </aside>
 
@@ -1024,6 +1019,10 @@ export default function Home() {
         </div>
         <div className="chart-card"><div><h3>{uiLang === "zh" ? "最近 7 天" : uiLang === "id" ? "7 hari terakhir" : "Last 7 days"}</h3></div><div className="bars">{last7.map((d,i)=><span key={i}><i style={{height:`${Math.max(4, Math.round(d.count / last7max * 100))}%`}}/><small>{d.label}</small></span>)}</div></div>
         <div className="backup-row"><div><b>{uiLang === "zh" ? "进度备份" : uiLang === "id" ? "Cadangan progres" : "Backup progress"}</b><small>{uiLang === "zh" ? "导出成文件，换设备可导入恢复（含错词、复习、收藏、设置）" : uiLang === "id" ? "Ekspor & impor antar perangkat" : "Export / import across devices"}</small></div><div className="backup-btns"><button onClick={exportProgress}>{uiLang === "zh" ? "导出备份" : uiLang === "id" ? "Ekspor" : "Export"} ↓</button><label className="import-btn">{uiLang === "zh" ? "导入" : uiLang === "id" ? "Impor" : "Import"} ↑<input type="file" accept="application/json" onChange={e => { const f = e.target.files?.[0]; if (f) importProgress(f); }} /></label></div></div>
+      </Panel>}
+
+      {view === "account" && <Panel title={TX("账号", "Akun", "Account", uiLang)} eyebrow={TX("登录与云端同步", "MASUK & SINKRON CLOUD", "SIGN IN & CLOUD SYNC", uiLang)}>
+        <Account uiLang={uiLang} name={profileName} onName={setProfileName} />
       </Panel>}
 
       {view === "member" && <Panel title={t.member} eyebrow={TX("会员与推广", "ANGGOTA & REFERRAL", "MEMBERSHIP & REFERRAL", uiLang)}>
