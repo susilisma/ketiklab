@@ -8,6 +8,54 @@ import {
 type Lang = "zh" | "id" | "en";
 const T = (zh: string, id: string, en: string, l: Lang) => (l === "zh" ? zh : l === "id" ? id : en);
 
+/** The mistyped domains that actually cost people their account. */
+const DOMAIN_FIX: Record<string, string> = {
+  "gmail.co": "gmail.com", "gmial.com": "gmail.com", "gmai.com": "gmail.com",
+  "gmail.con": "gmail.com", "gmail.cm": "gmail.com", "gmailc.om": "gmail.com",
+  "gnail.com": "gmail.com", "gmail.om": "gmail.com",
+  "yahoo.co": "yahoo.com", "yaho.com": "yahoo.com", "yahooo.com": "yahoo.com",
+  "hotmail.co": "hotmail.com", "hotmial.com": "hotmail.com",
+  "outlook.co": "outlook.com", "outlok.com": "outlook.com",
+  "icloud.co": "icloud.com", "163.co": "163.com", "126.co": "126.com",
+  "qq.co": "qq.com",
+};
+
+function suggestEmail(raw: string): string | null {
+  const at = raw.lastIndexOf("@");
+  if (at < 0) return null;
+  const domain = raw.slice(at + 1).toLowerCase().trim();
+  const fixed = DOMAIN_FIX[domain];
+  return fixed ? raw.slice(0, at + 1) + fixed : null;
+}
+
+/** Supabase speaks English error codes; learners deserve their own language. */
+function humanError(raw: string, l: Lang): string {
+  const m = raw.toLowerCase();
+  if (m.includes("email not confirmed"))
+    return T("这个邮箱还没确认。去收件箱（含垃圾邮件）点确认链接后再登录。",
+             "Email ini belum dikonfirmasi. Cek inbox (dan folder spam), klik tautannya, lalu masuk lagi.",
+             "This email is not confirmed yet. Open the link we sent (check spam too), then sign in.", l);
+  if (m.includes("invalid login credentials"))
+    return T("邮箱或密码不对。也请检查邮箱有没有打错字母。",
+             "Email atau kata sandi salah. Cek juga ejaan emailmu.",
+             "Wrong email or password. Double-check the spelling of your email too.", l);
+  if (m.includes("rate limit"))
+    return T("发信次数达到上限，请等一小时再试。",
+             "Batas pengiriman email tercapai. Coba lagi satu jam lagi.",
+             "Email sending limit reached. Try again in an hour.", l);
+  if (m.includes("already registered") || m.includes("already exists"))
+    return T("这个邮箱已经注册过了，直接登录即可。",
+             "Email ini sudah terdaftar. Silakan masuk saja.",
+             "That email is already registered — just sign in.", l);
+  if (m.includes("password") && m.includes("6"))
+    return T("密码至少 6 位。", "Kata sandi minimal 6 karakter.", "Password needs at least 6 characters.", l);
+  if (m.includes("failed to fetch") || m.includes("network"))
+    return T("连不上服务器，检查一下网络再试。",
+             "Tidak bisa terhubung ke server. Cek koneksimu.",
+             "Could not reach the server. Check your connection.", l);
+  return raw;
+}
+
 export function Account({ uiLang, name, onName }: {
   uiLang: Lang;
   name: string;
@@ -25,6 +73,8 @@ export function Account({ uiLang, name, onName }: {
   const [member, setMember] = useState<string | null>(null);
   const [refCode, setRefCode] = useState<string | null>(null);
   const [syncedAt, setSyncedAt] = useState("");
+  const [typo, setTypo] = useState<string | null>(null);
+  const [sentTo, setSentTo] = useState("");
 
   useEffect(() => {
     let alive = true;
@@ -73,21 +123,23 @@ export function Account({ uiLang, name, onName }: {
     e.preventDefault();
     setErr(""); setMsg(""); setBusy(true);
     try {
+      const addr = email.trim();
       if (mode === "up") {
-        const res = await signUp(email.trim(), password, formName.trim() || name.trim());
+        const res = await signUp(addr, password, formName.trim() || name.trim());
         if (formName.trim()) onName(formName.trim());
         if (!res.session) {
-          setMsg(T("注册成功。请到邮箱点确认链接，然后回来登录。",
-                   "Pendaftaran berhasil. Cek email kamu, klik tautan konfirmasi, lalu masuk.",
-                   "Signed up. Check your email for the confirmation link, then sign in.", uiLang));
+          setSentTo(addr);
+          setMsg(T(`确认邮件已发到 ${addr}。点开里面的链接，然后回来登录。地址不对的话现在就改，否则永远收不到。`,
+                   `Email konfirmasi dikirim ke ${addr}. Klik tautannya, lalu masuk. Kalau alamatnya salah, perbaiki sekarang — kalau tidak, emailnya tidak akan pernah sampai.`,
+                   `A confirmation email went to ${addr}. Open the link, then sign in. If that address is wrong, fix it now — otherwise it will never arrive.`, uiLang));
           setMode("in");
         }
       } else {
-        await signIn(email.trim(), password);
+        await signIn(addr, password);
       }
       setPassword("");
     } catch (e2: unknown) {
-      setErr((e2 as Error).message || String(e2));
+      setErr(humanError((e2 as Error).message || String(e2), uiLang));
     } finally {
       setBusy(false);
     }
@@ -96,10 +148,11 @@ export function Account({ uiLang, name, onName }: {
   async function forgot() {
     setErr(""); setMsg("");
     if (!email.trim()) { setErr(T("先填邮箱。", "Isi email dulu.", "Enter your email first.", uiLang)); return; }
+    const addr = email.trim();
     try {
-      await resetPassword(email.trim());
-      setMsg(T("重置链接已发到你的邮箱。", "Tautan reset sudah dikirim ke emailmu.", "A reset link is on its way.", uiLang));
-    } catch (e2: unknown) { setErr((e2 as Error).message || String(e2)); }
+      await resetPassword(addr);
+      setMsg(T(`重置链接已发到 ${addr}。`, `Tautan reset sudah dikirim ke ${addr}.`, `A reset link went to ${addr}.`, uiLang));
+    } catch (e2: unknown) { setErr(humanError((e2 as Error).message || String(e2), uiLang)); }
   }
 
   async function pushNow() {
@@ -183,8 +236,13 @@ export function Account({ uiLang, name, onName }: {
         <label className="acct-field">
           <span>{T("邮箱", "Email", "Email", uiLang)}</span>
           <input type="email" required autoComplete="email" value={email}
-            onChange={e => setEmail(e.target.value)} placeholder="nama@email.com" />
+            onChange={e => { setEmail(e.target.value); setTypo(suggestEmail(e.target.value)); }}
+            placeholder="nama@email.com" />
         </label>
+        {typo && <button type="button" className="acct-typo"
+          onClick={() => { setEmail(typo); setTypo(null); }}>
+          {T(`是不是想输 ${typo}？点这里改。`, `Maksudmu ${typo}? Ketuk untuk memperbaiki.`, `Did you mean ${typo}? Tap to fix.`, uiLang)}
+        </button>}
         <label className="acct-field">
           <span>{T("密码", "Kata sandi", "Password", uiLang)}</span>
           <input type="password" required minLength={6}
