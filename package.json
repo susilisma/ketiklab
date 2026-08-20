@@ -13,6 +13,7 @@
     "append": "node scripts/append-batch.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.112.3",
     "dexie": "^4.4.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0"
