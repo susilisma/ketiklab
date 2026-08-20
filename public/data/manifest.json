@@ -8,43 +8,43 @@
   "file": "indonesian.json"
  },
  {
-  "id": "cet4",
-  "name": "CET-4 四级",
-  "description": "大学英语四级词库",
+  "id": "en-business",
+  "name": "商务英语",
+  "description": "精选商务词汇 · 347 词 · 中文/印尼语释义",
   "lang": "en",
-  "length": 2607,
-  "file": "cet4.json"
+  "length": 347,
+  "file": "en-business.json"
  },
  {
-  "id": "cet6",
-  "name": "CET-6 六级",
-  "description": "大学英语六级词库",
+  "id": "en-core",
+  "name": "英语核心词",
+  "description": "词频 Zipf 4.3–9.0 · 2591 词 · 中文/印尼语释义",
   "lang": "en",
-  "length": 2345,
-  "file": "cet6.json"
+  "length": 2591,
+  "file": "en-core.json"
  },
  {
-  "id": "ielts",
-  "name": "IELTS 雅思",
-  "description": "雅思考试词库",
+  "id": "en-plus",
+  "name": "英语进阶词",
+  "description": "词频 Zipf 3.85–4.3 · 2129 词 · 中文/印尼语释义",
   "lang": "en",
-  "length": 3575,
-  "file": "ielts.json"
+  "length": 2129,
+  "file": "en-plus.json"
  },
  {
-  "id": "toefl",
-  "name": "TOEFL 托福",
-  "description": "托福词汇 · 词以类记",
+  "id": "en-upper",
+  "name": "英语高阶词",
+  "description": "词频 Zipf 3.5–3.85 · 2134 词 · 中文/印尼语释义",
   "lang": "en",
-  "length": 4264,
-  "file": "toefl.json"
+  "length": 2134,
+  "file": "en-upper.json"
  },
  {
-  "id": "bec",
-  "name": "BEC 商务英语",
-  "description": "剑桥商务英语词库",
+  "id": "en-academic",
+  "name": "英语学术词",
+  "description": "词频 Zipf 3.15–3.5 · 2445 词 · 中文/印尼语释义",
   "lang": "en",
-  "length": 2753,
-  "file": "bec.json"
+  "length": 2445,
+  "file": "en-academic.json"
  }
 ]
