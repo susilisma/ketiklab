@@ -1,0 +1,7 @@
+{
+  "seatsTaken": 0,
+  "whatsapp": "",
+  "qris": "",
+  "bank": { "name": "", "account": "", "holder": "" },
+  "note": "填好 whatsapp（国际格式，如 6281234567890）、bank 三项，或放一张 QRIS 图片路径到 qris，会员页的付款方式就会自动出现。全部留空时按钮只显示“即将开放”。"
+}
