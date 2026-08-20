@@ -113,6 +113,9 @@ export default function Home() {
   // "strict": a wrong key rolls the word back. "soft": wrong letters stay on screen
   // and BACKSPACE fixes them, which beginners need far more than the discipline.
   const [inputMode, setInputMode] = useState<"strict" | "soft">("strict");
+  // No accounts yet, so the sidebar profile is whatever name this browser saved.
+  const [profileName, setProfileName] = useState("");
+  const [nameEdit, setNameEdit] = useState(false);
   const [reveal, setReveal] = useState(false);
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
@@ -243,6 +246,7 @@ export default function Home() {
     try { setFavorites(JSON.parse(localStorage.getItem("lingotrio-fav") || "[]")); } catch { /* ignore */ }
     try { if (localStorage.getItem("lingotrio-dark") === "1") setDark(true); } catch { /* ignore */ }
     try { if (localStorage.getItem("lingotrio-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
+    try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
     try { setDayCounts(JSON.parse(localStorage.getItem("lingotrio-days") || "{}")); } catch { /* ignore */ }
     return () => { alive = false; };
   }, []);
@@ -312,6 +316,7 @@ export default function Home() {
   useEffect(() => { try { localStorage.setItem("lingotrio-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
   useEffect(() => { try { localStorage.setItem("lingotrio-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
   useEffect(() => { try { localStorage.setItem("lingotrio-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-name", profileName); } catch { /* ignore */ } }, [profileName]);
 
   const ready = words.length > 0;
 
@@ -831,7 +836,16 @@ export default function Home() {
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
         <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, 20)}/20</b></span><div><i style={{width:`${Math.min(todayCount/20*100,100)}%`}} /></div></div>
-        <div className="profile"><span>S</span><div><b>Susi</b><small>Free learner</small></div><i>•••</i></div>
+        {nameEdit
+          ? <form className="profile profile-edit" onSubmit={e => { e.preventDefault(); setNameEdit(false); }}>
+              <input autoFocus maxLength={24} value={profileName} placeholder={TX("你的名字", "Nama kamu", "Your name", uiLang)}
+                onChange={e => setProfileName(e.target.value)} onBlur={() => setNameEdit(false)} aria-label={TX("你的名字", "Nama kamu", "Your name", uiLang)} />
+            </form>
+          : <button className="profile" onClick={() => setNameEdit(true)} title={TX("改名字", "Ubah nama", "Change name", uiLang)}>
+              <span>{(profileName.trim()[0] || "?").toUpperCase()}</span>
+              <div><b>{profileName.trim() || TX("学习者", "Pelajar", "Learner", uiLang)}</b><small>{TX("免费用户", "Pengguna gratis", "Free learner", uiLang)}</small></div>
+              <i>✎</i>
+            </button>}
       </div>
     </aside>
 
