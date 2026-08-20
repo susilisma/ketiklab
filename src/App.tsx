@@ -110,6 +110,9 @@ export default function Home() {
   const [chElapsed, setChElapsed] = useState(0);
   const [wrongCountWord, setWrongCountWord] = useState(0);
   const [dictation, setDictation] = useState<"off" | "all" | "vowel" | "random">("off");
+  // "strict": a wrong key rolls the word back. "soft": wrong letters stay on screen
+  // and BACKSPACE fixes them, which beginners need far more than the discipline.
+  const [inputMode, setInputMode] = useState<"strict" | "soft">("strict");
   const [reveal, setReveal] = useState(false);
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
@@ -239,6 +242,7 @@ export default function Home() {
     try { const lp = Number(localStorage.getItem("lingotrio-loop")); if (lp >= 1 && lp <= 5) setLoopTimes(lp); } catch { /* ignore */ }
     try { setFavorites(JSON.parse(localStorage.getItem("lingotrio-fav") || "[]")); } catch { /* ignore */ }
     try { if (localStorage.getItem("lingotrio-dark") === "1") setDark(true); } catch { /* ignore */ }
+    try { if (localStorage.getItem("lingotrio-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setDayCounts(JSON.parse(localStorage.getItem("lingotrio-days") || "{}")); } catch { /* ignore */ }
     return () => { alive = false; };
   }, []);
@@ -307,6 +311,7 @@ export default function Home() {
   useEffect(() => { try { localStorage.setItem("lingotrio-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
   useEffect(() => { try { localStorage.setItem("lingotrio-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
   useEffect(() => { try { localStorage.setItem("lingotrio-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
+  useEffect(() => { try { localStorage.setItem("lingotrio-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
 
   const ready = words.length > 0;
 
@@ -617,6 +622,16 @@ export default function Home() {
       if (clean.length > typed.length) keyClick();
       setTyped(clean);
       if (current.length === expected.length && current.length > 0) finishWord();
+    } else if (inputMode === "soft") {
+      // Soft mode: keep what was typed, mark the bad letters red, let BACKSPACE
+      // undo them. Only count one mistake per word so the stats stay meaningful.
+      errorBeep();
+      if (!hadWrong.current) {
+        hadWrong.current = true;
+        setWrongCountWord(n => n + 1);
+        setMistakes(m => Array.from(new Set([item.key, ...m])).slice(0, 30));
+      }
+      setTyped(clean);
     } else {
       errorBeep();
       hadWrong.current = true;
@@ -831,7 +846,7 @@ export default function Home() {
       {view === "learn" && <section className="learn-view">
         {reviewKeys && <div className="review-banner"><span>◎ {t.reviewing} · {learnItems.length}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
         <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label="Prev chapter">‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label="Jump to chapter">{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label="Next chapter">›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
-        <div className="mode-row"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</div>
+        <div className="mode-row"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}<span className="mode-sep" /><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", uiLang === "zh" ? "整词重来" : uiLang === "id" ? "Ulang kata" : "Restart word"], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); setWrongFlash(false); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</div>
         {!chapterFinished && <>
         <div className={practiceLang === "zh" ? "word-card zh-compact" : "word-card"} onClick={() => input.current?.focus()}>
           {!typingFocus && !zhLadder && <div className="type-veil" onClick={() => input.current?.focus()}><b>{uiLang === "zh" ? (running ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (running ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (running ? "Press any key to continue" : "Press any key to start")}</b></div>}
@@ -842,7 +857,7 @@ export default function Home() {
           </button>}
           <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
-          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
+          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}{inputMode === "soft" && typed.length > targetWord.length && <span className="letter wrong">{typed.slice(targetWord.length)}</span>}</h1>}
           {!zhLadder && <p className="phonetic">{item.sub}</p>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
             {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} onClick={() => { setZhStep(st.id); setTyped(""); }}>
