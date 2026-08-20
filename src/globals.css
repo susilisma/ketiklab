@@ -298,3 +298,4 @@
 .app.focused .word-card:before{display:none}
 .app.focused .metrics{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-top:22px}
 .app.focused .metric{background:transparent;border:0;justify-content:center}
+.app.focused .meanings{grid-template-columns:auto;justify-content:center;max-width:560px}
