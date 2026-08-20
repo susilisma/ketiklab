@@ -336,10 +336,12 @@ export default function Home() {
     ? dictWords.map(e => ({
         key: e.name,
         text: e.name,
-        sub: e.usphone ? `American English · /${e.usphone}/` : (dictInfo.lang === "id" ? "Bahasa Indonesia" : "English"),
+        sub: dictInfo.lang === "zh"
+          ? (e.usphone ? `普通话 · ${e.usphone}` : "普通话")
+          : e.usphone ? `American English · /${e.usphone}/` : (dictInfo.lang === "id" ? "Bahasa Indonesia" : "English"),
         meaning: (uiLang === "id" && e.idtrans && e.idtrans.length ? e.idtrans.join("; ") : e.trans.join("；")),
         example: e.def || undefined,
-        voice: dictInfo.lang === "id" ? "id-ID" : "en-US",
+        voice: dictInfo.lang === "id" ? "id-ID" : dictInfo.lang === "zh" ? "zh-CN" : "en-US",
         lang: dictInfo.lang,
         dict: dictInfo.name,
       }))
@@ -876,7 +878,7 @@ export default function Home() {
             </button>)}
           </div>}
           <div className="meanings">
-            <span><small>{dictInfo ? (uiLang === "id" ? "Bahasa Indonesia" : "中文") : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
+            <span><small>{dictInfo ? (uiLang === "id" ? "Bahasa Indonesia" : dictInfo.lang === "zh" ? "English" : "中文") : LANGUAGE_META[defLang].label}</small>{item.meaning}</span>
             {item.example && <span><small>{dictInfo ? (uiLang === "zh" ? "英文释义" : uiLang === "id" ? "Definisi Inggris" : "English definition") : LANGUAGE_META[lang].example}</small>{item.example}</span>}
           </div>
           {zhLadder ? <ZhSteps
@@ -927,8 +929,8 @@ export default function Home() {
           <div className="library-section-title"><b>{uiLang === "zh" ? "考试词库 · 开源社区" : uiLang === "id" ? "Kamus Ujian · Komunitas" : "Exam Dictionaries · Community"}</b><span>{dicts.reduce((a, d) => a + d.length, 0)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
           <div className="dict-grid">
             {dicts.map(d => <button key={d.id} className={source === d.id ? "dict-card active" : "dict-card"} onClick={() => selectDict(d)}>
-              <span className={`piece-language ${d.lang}`}>{d.lang === "id" ? "ID" : "EN"}</span>
-              <div><b>{d.name}</b><p>{d.description}</p><small>{d.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"} · {uiLang === "zh" ? "中文释义" : "arti 中文"}</small></div>
+              <span className={`piece-language ${d.lang}`}>{d.lang === "id" ? "ID" : d.lang === "zh" ? "中" : "EN"}</span>
+              <div><b>{d.name}</b><p>{d.description}</p><small>{d.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"} · {d.lang === "zh" ? (uiLang === "id" ? "arti Indonesia" : uiLang === "zh" ? "英文/印尼语释义" : "EN / ID glosses") : (uiLang === "zh" ? "中文释义" : "arti 中文")}</small></div>
               {source === d.id && <em>✓</em>}
             </button>)}
           </div>
