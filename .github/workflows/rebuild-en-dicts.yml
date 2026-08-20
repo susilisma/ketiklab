@@ -1,0 +1,43 @@
+name: Rebuild English word libraries
+
+# Regenerates public/data/en-*.json from openly-licensed sources.
+# Run manually whenever scripts/build-en-dicts.py or the business gloss table changes.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: rebuild-en-dicts
+  cancel-in-progress: false
+
+jobs:
+  rebuild:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Install generator dependencies
+        run: pip install wn wordfreq cmudict
+      - name: Download open wordnets
+        run: |
+          python -m wn download oewn:2024
+          python -m wn download omw-cmn:1.4
+          python -m wn download omw-id:1.4
+      - name: Build libraries
+        run: python scripts/build-en-dicts.py
+      - name: Drop retired exam-branded libraries
+        run: |
+          rm -f public/data/cet4.json public/data/cet6.json \
+                public/data/ielts.json public/data/toefl.json public/data/bec.json
+      - name: Commit
+        run: |
+          git config user.name "lingotrio-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add public/data
+          git commit -m "chore(data): rebuild English libraries from open sources" || echo "nothing to commit"
+          git push
