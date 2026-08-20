@@ -808,7 +808,7 @@ export default function Home() {
     setTimeout(() => readingInput.current?.focus(), 30);
   }
 
-  return <div className={dark ? "app dark" : "app"}>
+  return <div className={`app${dark ? " dark" : ""}${running && view === "learn" ? " focused" : ""}`}>
     <aside className="sidebar">
       <button className="brand" onClick={() => setView("learn")} aria-label="KetikLab home"><span>KL</span><b>KetikLab</b></button>
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
