@@ -46,5 +46,29 @@
   "lang": "en",
   "length": 2445,
   "file": "en-academic.json"
+ },
+ {
+  "id": "zh-core",
+  "name": "中文核心词",
+  "description": "最高频中文词 · 印尼语/英语释义 · 1200 词",
+  "lang": "zh",
+  "length": 1200,
+  "file": "zh-core.json"
+ },
+ {
+  "id": "zh-plus",
+  "name": "中文进阶词",
+  "description": "常用中文词 · 印尼语/英语释义 · 1000 词",
+  "lang": "zh",
+  "length": 1000,
+  "file": "zh-plus.json"
+ },
+ {
+  "id": "zh-upper",
+  "name": "中文高阶词",
+  "description": "进阶中文词 · 印尼语/英语释义 · 1013 词",
+  "lang": "zh",
+  "length": 1013,
+  "file": "zh-upper.json"
  }
 ]
