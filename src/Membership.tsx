@@ -70,10 +70,51 @@ const FEATURES: Record<UiLang, string[]> = {
   ],
 };
 
-type Props = { uiLang: UiLang; seatsTaken?: number };
+type PayConfig = {
+  seatsTaken?: number;
+  whatsapp?: string;
+  qris?: string;
+  bank?: { name?: string; account?: string; holder?: string };
+};
 
-export function Membership({ uiLang, seatsTaken = 0 }: Props) {
+/* Payment details live in public/data/pay.json so they can be filled in
+   without a rebuild. Empty config = the offer shows as "opening soon". */
+function usePayConfig(base: string) {
+  const [cfg, setCfg] = useState<PayConfig>({});
+  useEffect(() => {
+    let alive = true;
+    fetch(base + "pay.json")
+      .then(r => (r.ok ? r.json() : {}))
+      .then(d => { if (alive) setCfg(d || {}); })
+      .catch(() => {});
+    return () => { alive = false; };
+  }, [base]);
+  return cfg;
+}
+
+/* Human-readable order reference so a manual transfer can be matched to a
+   buyer without an accounts system. */
+function orderRef(code: string) {
+  const KEY = "ketiklab-order";
+  try {
+    const saved = localStorage.getItem(KEY);
+    if (saved) return saved;
+    const n = Math.floor(Math.random() * 9000) + 1000;
+    const ref = `KL-${code}-${n}`;
+    localStorage.setItem(KEY, ref);
+    return ref;
+  } catch {
+    return `KL-${code}`;
+  }
+}
+
+type Props = { uiLang: UiLang; base?: string };
+
+export function Membership({ uiLang, base = "./data/" }: Props) {
+  const cfg = usePayConfig(base);
+  const seatsTaken = cfg.seatsTaken || 0;
   const code = useReferralCode();
+  const [checkout, setCheckout] = useState(false);
   const link = `https://ketiklab.com/?ref=${code}`;
   const [copied, setCopied] = useState("");
 
@@ -119,14 +160,11 @@ export function Membership({ uiLang, seatsTaken = 0 }: Props) {
         {FEATURES[uiLang].map(f => <li key={f}><i>✓</i>{f}</li>)}
       </ul>
 
-      <button className="offer-cta" onClick={() => setCopied("cta")}>
+      <button className="offer-cta" onClick={() => setCheckout(v => !v)}>
         {T(uiLang, "成为创始会员", "Jadi anggota pertama", "Become a founding member")}
       </button>
-      {copied === "cta" && <p className="offer-hint">
-        {T(uiLang, "开放购买后这里会直接付款。想先占位可以联系我们。",
-                   "Pembayaran akan aktif di sini. Hubungi kami untuk memesan kursi lebih dulu.",
-                   "Checkout opens here soon. Contact us to reserve a seat early.")}
-      </p>}
+
+      {checkout && <Checkout uiLang={uiLang} cfg={cfg} code={code} />}
     </section>
 
     {/* ---------- referral ---------- */}
@@ -210,5 +248,76 @@ export function Membership({ uiLang, seatsTaken = 0 }: Props) {
         {T(uiLang, "暂无记录", "Belum ada riwayat", "No records yet")}
       </div>
     </section>
+  </div>;
+}
+
+/* ------------------------------------------------------------------ */
+/* Manual checkout: works with no backend and no payment gateway, so   */
+/* seats can be sold while the gateway merchant account is in review.  */
+
+function Checkout({ uiLang, cfg, code }: { uiLang: UiLang; cfg: PayConfig; code: string }) {
+  const ref = orderRef(code);
+  const [copied, setCopied] = useState("");
+  useEffect(() => {
+    if (!copied) return;
+    const t = setTimeout(() => setCopied(""), 1600);
+    return () => clearTimeout(t);
+  }, [copied]);
+  const copy = (what: string, text: string) => {
+    navigator.clipboard?.writeText(text).then(() => setCopied(what)).catch(() => setCopied(""));
+  };
+  const copyLabel = (k: string) =>
+    copied === k ? T(uiLang, "已复制", "Tersalin", "Copied") : T(uiLang, "复制", "Salin", "Copy");
+
+  const hasBank = !!(cfg.bank && cfg.bank.account && cfg.bank.name);
+  const hasQris = !!cfg.qris;
+  const hasWa = !!cfg.whatsapp;
+
+  if (!hasBank && !hasQris && !hasWa) {
+    return <p className="offer-hint">
+      {T(uiLang, "支付通道正在开通中，很快就能在这里直接付款。",
+                 "Kanal pembayaran sedang disiapkan dan akan segera aktif di sini.",
+                 "Payment is being set up and will open here shortly.")}
+    </p>;
+  }
+
+  const waText = encodeURIComponent(
+    T(uiLang,
+      `你好，我要购买 KetikLab 永久会员，订单号 ${ref}`,
+      `Halo, saya mau membeli KetikLab Anggota Seumur Hidup. Nomor pesanan ${ref}`,
+      `Hi, I'd like to buy the KetikLab lifetime membership. Order ${ref}`));
+
+  return <div className="checkout">
+    <div className="checkout-ref">
+      <div>
+        <small>{T(uiLang, "你的订单号", "Nomor pesananmu", "Your order number")}</small>
+        <b>{ref}</b>
+      </div>
+      <button onClick={() => copy("ref", ref)}>{copyLabel("ref")}</button>
+    </div>
+    <p className="checkout-lead">
+      {T(uiLang, "转账时请务必备注订单号，我们核对到款后为你开通，通常几小时内。",
+                 "Cantumkan nomor pesanan pada berita transfer. Akun diaktifkan setelah pembayaran dicek, biasanya dalam beberapa jam.",
+                 "Put the order number in the transfer note. We activate your account once payment clears, usually within a few hours.")}
+    </p>
+
+    {hasQris && <div className="pay-method">
+      <small>QRIS</small>
+      <img src={cfg.qris} alt="QRIS" />
+    </div>}
+
+    {hasBank && <div className="pay-method">
+      <small>{T(uiLang, "银行转账", "Transfer bank", "Bank transfer")}</small>
+      <div className="pay-row"><span>{cfg.bank!.name}</span></div>
+      <div className="pay-row">
+        <b>{cfg.bank!.account}</b>
+        <button onClick={() => copy("acct", cfg.bank!.account!)}>{copyLabel("acct")}</button>
+      </div>
+      {cfg.bank!.holder && <div className="pay-row"><span>a.n. {cfg.bank!.holder}</span></div>}
+    </div>}
+
+    {hasWa && <a className="wa-cta" href={`https://wa.me/${cfg.whatsapp}?text=${waText}`} target="_blank" rel="noreferrer">
+      {T(uiLang, "发送付款凭证到 WhatsApp", "Kirim bukti bayar via WhatsApp", "Send proof of payment on WhatsApp")}
+    </a>}
   </div>;
 }
