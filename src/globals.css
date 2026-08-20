@@ -286,3 +286,15 @@
 .pay-row b{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;font-size:16px;letter-spacing:.5px}
 .pay-row span{color:var(--muted);font-size:13px}
 .wa-cta{display:block;margin-top:16px;text-align:center;text-decoration:none;background:#25d366;color:#fff;border-radius:12px;padding:13px;font-size:14px;font-weight:700}
+/* ---- focus mode: while typing, strip everything except the word ---- */
+.app.focused .sidebar{display:none}
+.app.focused .main{margin-left:0}
+.app.focused .main>header{height:64px;border-bottom:0;background:transparent;backdrop-filter:none}
+.app.focused .chapter small{display:none}
+.app.focused .learn-view{max-width:900px;padding:2vh 26px 26px}
+.app.focused .session-meta .chapter-nav{display:none}
+.app.focused .mode-row,.app.focused .prevnext,.app.focused .hint{display:none}
+.app.focused .word-card{background:transparent;border-color:transparent;box-shadow:none;margin-top:2vh}
+.app.focused .word-card:before{display:none}
+.app.focused .metrics{background:var(--surface);border:1px solid var(--line);border-radius:16px;margin-top:22px}
+.app.focused .metric{background:transparent;border:0;justify-content:center}
