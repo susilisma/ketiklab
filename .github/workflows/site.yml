@@ -36,6 +36,9 @@ jobs:
         env:
           WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '12' }}
         run: node scripts/promote.mjs
+      - name: Snapshot library size for the ops dashboard
+        if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.promote.outputs.changed == 'true'
+        run: python3 scripts/snapshot-history.py
       - name: Push promoted content
         if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.promote.outputs.changed == 'true'
         run: |
