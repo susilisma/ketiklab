@@ -226,3 +226,49 @@
 .panel{max-width:1560px;padding:34px 26px}
 .reading-panel{max-width:1560px;padding:30px 26px 40px}
 @media(max-width:640px){.learn-view,.panel{padding:18px 14px}.reading-panel{padding:18px 12px}}
+/* ---- membership & referral ---- */
+.member-view{display:flex;flex-direction:column;gap:14px;max-width:940px;margin:0 auto}
+.member-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:24px 26px;box-shadow:var(--shadow)}
+.member-card.offer{border-color:color-mix(in srgb,var(--purple) 35%,var(--line));background:linear-gradient(180deg,var(--purple-soft) 0,var(--surface) 130px)}
+.offer-head{display:flex;align-items:center;gap:14px}
+.offer-head .crown{width:44px;height:44px;border-radius:13px;background:var(--purple);color:#fff;display:grid;place-items:center;font-size:19px}
+.offer-head b{display:block;font-size:19px}
+.offer-head small{color:var(--muted);font-size:12px}
+.offer-price{display:flex;align-items:baseline;gap:10px;margin:20px 0 12px}
+.offer-price b{font-size:38px;letter-spacing:-1px}
+.offer-price span{color:var(--muted);font-size:12px}
+.seat-bar{height:7px;border-radius:6px;background:var(--line);overflow:hidden}
+.seat-bar i{display:block;height:100%;background:var(--purple);border-radius:6px;transition:width .4s}
+.seat-note{font-size:12px;color:var(--muted);margin:8px 0 18px}
+.feature-list{list-style:none;padding:0;margin:0;display:grid;grid-template-columns:1fr 1fr;gap:9px 20px}
+.feature-list li{display:flex;gap:9px;align-items:flex-start;font-size:13.5px;line-height:1.5}
+.feature-list i{font-style:normal;color:var(--purple);font-weight:800;flex:0 0 auto}
+.offer-cta{margin-top:22px;width:100%;border:0;border-radius:13px;background:var(--purple);color:#fff;padding:14px;font-size:15px;font-weight:700;box-shadow:0 10px 22px color-mix(in srgb,var(--purple) 32%,transparent)}
+.offer-hint{font-size:12px;color:var(--muted);margin:10px 0 0;text-align:center}
+.card-head{display:flex;align-items:flex-start;justify-content:space-between;gap:14px;margin-bottom:18px}
+.card-head b{display:block;font-size:16px}
+.card-head small{color:var(--muted);font-size:12px}
+.pill{background:var(--purple-soft);color:var(--purple);border-radius:999px;padding:5px 12px;font-size:11px;font-weight:700;white-space:nowrap}
+.ref-grid{display:grid;grid-template-columns:1fr 1.4fr;gap:14px}
+.ref-grid label small{display:block;color:var(--muted);font-size:11px;margin-bottom:6px}
+.copy-row{display:flex;gap:8px}
+.copy-row input{flex:1;min-width:0;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:10px;padding:10px 12px;font-size:13px;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+.copy-row button{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:10px;padding:0 15px;font-size:12px;font-weight:650;white-space:nowrap}
+.copy-row button:hover{border-color:var(--purple);color:var(--purple)}
+.ref-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px}
+.ref-stats .stat{display:flex;align-items:center;gap:12px;border:1px solid var(--line);border-radius:14px;padding:14px}
+.ref-stats .stat i{font-style:normal;width:36px;height:36px;border-radius:11px;display:grid;place-items:center;font-size:15px;background:#e5f8ef;color:#278360}
+.ref-stats .stat.amber i{background:#fdf1dc;color:#a1690f}
+.ref-stats .stat.blue i{background:#e6effc;color:#2f6bbd}
+.dark .ref-stats .stat i{background:#1f3a2e}
+.dark .ref-stats .stat.amber i{background:#3a2f14}
+.dark .ref-stats .stat.blue i{background:#1c2a40}
+.ref-stats .stat b{display:block;font-size:17px;letter-spacing:-.3px}
+.ref-stats .stat small{color:var(--muted);font-size:11px}
+.rule-table{width:100%;border-collapse:collapse}
+.rule-table td{padding:11px 0;border-bottom:1px solid var(--line);font-size:13.5px}
+.rule-table td:last-child{text-align:right;font-weight:650}
+.rule-table tr:last-child td{border-bottom:0}
+.rule-note{font-size:12px;color:var(--muted);line-height:1.7;margin:14px 0 0}
+.empty-records{border:1px dashed var(--line);border-radius:13px;padding:34px;text-align:center;color:var(--muted);font-size:13px}
+@media(max-width:760px){.feature-list,.ref-grid,.ref-stats{grid-template-columns:1fr}.member-card{padding:20px 17px}.offer-price b{font-size:31px}}
