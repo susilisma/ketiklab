@@ -1,0 +1,54 @@
+name: Daily word batch
+
+# Generates ~100 fresh trilingual words a day into queue/words.json.
+# The hourly "Build and deploy" run drains the queue into public/data/words.json.
+# Dedup is against the live library + the current queue, so runs never repeat.
+
+on:
+  schedule:
+    - cron: "20 21 * * *"   # 04:20 WIB
+  workflow_dispatch:
+    inputs:
+      count:
+        description: "How many new words to generate"
+        default: "100"
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-words
+  cancel-in-progress: false
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cache wordnet data
+        uses: actions/cache@v4
+        with:
+          path: ~/.wn_data
+          key: wn-oewn2024-cmn14-id14
+      - name: Install dependencies
+        run: pip install wn wordfreq cmudict pypinyin
+      - name: Download open wordnets
+        run: |
+          python -m wn download oewn:2024 || true
+          python -m wn download omw-cmn:1.4 || true
+          python -m wn download omw-id:1.4 || true
+      - name: Generate batch
+        env:
+          WORDS: ${{ inputs.count || '100' }}
+        run: python scripts/build-trio-queue.py
+      - name: Commit queue
+        run: |
+          git config user.name "lingotrio-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add queue/words.json
+          git diff --cached --quiet && echo "nothing new" && exit 0
+          git commit -m "chore(content): daily word batch"
+          git push
