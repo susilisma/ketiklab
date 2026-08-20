@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>KetikLab 内部页</title>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f4f2; --surface:#fcfcfb; --line:#e4e3df;
+  --text:#0b0b0b; --muted:#7b7a76; --purple:#6b5df6; --purple-soft:#eeecff;
+  --shadow:0 10px 28px rgba(28,29,38,.07);
+}
+@media (prefers-color-scheme: dark){
+  :root{
+    color-scheme: dark;
+    --bg:#111110; --surface:#1a1a19; --line:#2e2e2b;
+    --text:#ececf2; --muted:#94938b; --purple-soft:#26243d;
+    --shadow:0 10px 28px rgba(0,0,0,.35);
+  }
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);
+  font:15px/1.65 -apple-system,BlinkMacSystemFont,"Segoe UI",Inter,"PingFang SC","Microsoft YaHei",sans-serif}
+.wrap{max-width:880px;margin:0 auto;padding:44px 24px 70px}
+header{display:flex;align-items:center;gap:13px;margin-bottom:8px}
+.logo{width:42px;height:42px;border-radius:12px;background:var(--purple);color:#fff;
+  display:grid;place-items:center;font-weight:800;font-size:15px}
+h1{font-size:22px;margin:0;letter-spacing:-.2px}
+.sub{color:var(--muted);font-size:12.5px;margin:0 0 30px 55px}
+
+.list{display:grid;gap:12px}
+a.card{display:block;text-decoration:none;color:inherit;background:var(--surface);
+  border:1px solid var(--line);border-radius:16px;padding:18px 21px;transition:.16s}
+a.card:hover{border-color:var(--purple);transform:translateY(-2px);box-shadow:var(--shadow)}
+.card .row{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+.card b{font-size:16px}
+.card .tag{font-size:10px;font-weight:800;letter-spacing:.6px;color:var(--purple);
+  background:var(--purple-soft);border-radius:6px;padding:3px 8px;text-transform:uppercase}
+.card p{margin:6px 0 0;color:var(--muted);font-size:13px}
+
+.note{margin-top:34px;padding-top:18px;border-top:1px solid var(--line);
+  color:var(--muted);font-size:12px;line-height:1.8}
+.note code{background:var(--purple-soft);color:var(--purple);border-radius:5px;padding:2px 6px;font-size:11.5px}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="logo">KL</div>
+    <h1>KetikLab 内部页</h1>
+  </header>
+  <p class="sub">只给运营方看的页面。学员端在 <a href="/" style="color:var(--purple)">ketiklab.com</a>。</p>
+
+  <div class="list">
+    <a class="card" href="./dashboard.html">
+      <div class="row"><b>运营看板</b><span class="tag">实时</span></div>
+      <p>词库增长曲线、分类与难度分布、各词库规模、运营健康告警、创始会员席位销售。数据实时取自仓库，无后端。</p>
+    </a>
+  </div>
+
+  <p class="note">
+    这一侧只放 KetikLab 自己的内容，与 JOIWAY 的内容站 <code>ketikgo.me</code> 完全分开：
+    两边各自独立的仓库、各自独立的索引，不会再互相覆盖。<br>
+    页面随 KetikLab 应用一同部署在仓库 <code>susilisma/ketiklab</code> 的 <code>public/ops/</code> 下。
+  </p>
+</div>
+</body>
+</html>
