@@ -608,9 +608,11 @@ export default function Home() {
   function handleType(raw: string) {
     if (wrongFlash) return;
     if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
-    const clean = practiceLang === "zh"
+    // Never let the buffer grow past the target: extra keystrokes are simply
+    // ignored, the way every other typing trainer behaves.
+    const clean = (practiceLang === "zh"
       ? raw.replace(/[^㐀-鿿]/g, "")
-      : raw.replace(/[^a-zA-Z '\-\.&]/g, "");
+      : raw.replace(/[^a-zA-Z '\-\.&]/g, "")).slice(0, targetWord.length);
     if (typed.length === 0 && clean.length > 0 && autoSpokenWord.current !== targetKey) {
       autoSpokenWord.current = targetKey;
       speak(targetWord, targetVoice);
@@ -857,7 +859,7 @@ export default function Home() {
           </button>}
           <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
-          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}{inputMode === "soft" && typed.length > targetWord.length && <span className="letter wrong">{typed.slice(targetWord.length)}</span>}</h1>}
+          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
           {!zhLadder && <p className="phonetic">{item.sub}</p>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
             {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} onClick={() => { setZhStep(st.id); setTyped(""); }}>
