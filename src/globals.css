@@ -358,3 +358,12 @@ button.profile:hover>i{color:var(--purple)}
   border:1px solid #f0c36a;background:#fff8e6;color:#8a5a00;border-radius:10px;
   padding:9px 12px;font-size:12.5px;line-height:1.5}
 @media(prefers-color-scheme:dark){.acct-typo{background:#332a12;border-color:#6b5320;color:#f0c36a}}
+/* ---- reading list: groups collapse until clicked (round 7) ---- */
+.reading-list .reading-group-head{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px;padding:11px 9px;border:1px solid transparent;border-radius:12px;background:var(--surface);color:var(--text);text-align:left;cursor:pointer;transition:.18s}
+.reading-list .reading-group-head:hover{background:var(--bg)}
+.reading-list .reading-group.open>.reading-group-head{background:var(--purple-soft);border-color:color-mix(in srgb,var(--purple) 26%,transparent)}
+.reading-group-head em{display:inline-flex;align-items:center;gap:6px}
+.reading-chevron{font-style:normal;font-size:9px;line-height:1;transition:transform .18s}
+.reading-group.open .reading-chevron{transform:rotate(180deg)}
+.reading-group-items{display:flex;flex-direction:column;gap:5px;margin-top:4px;max-height:min(50vh,400px);overflow-y:auto;overscroll-behavior:contain;padding-right:3px}
+@media(max-width:640px){.reading-list{flex-direction:column;overflow-x:visible}.reading-list .reading-group-head{min-width:0}.reading-list .reading-group-items button{min-width:0}.reading-group-items{max-height:46vh}}

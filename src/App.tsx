@@ -136,6 +136,7 @@ export default function Home() {
   const [category, setCategory] = useState<WordFilter>("business");
   const [mistakes, setMistakes] = useState<string[]>([]);
   const [readingLang, setReadingLang] = useState<ReadingLang>("all");
+  const [openReadingGroup, setOpenReadingGroup] = useState<string | null>(null);
   const [readingId, setReadingId] = useState("");
   const [readingLine, setReadingLine] = useState(0);
   const [readingTyped, setReadingTyped] = useState("");
@@ -813,6 +814,7 @@ export default function Home() {
   }
   function changeReadingFilter(code: ReadingLang) {
     setReadingLang(code);
+    setOpenReadingGroup(null);
     const first = readings.find(pc => code === "all" || pc.lang === code);
     if (first && first.id !== readingId) chooseReading(first.id);
   }
@@ -969,13 +971,20 @@ export default function Home() {
           <aside className="reading-library">
             <div className="reading-library-title"><b>{t.classics}</b><span>{readings.filter(piece => readingLang === "all" || piece.lang === readingLang).length} {t.pieces}</span></div>
             <div className="reading-list">
-              {readingGroups.map(group => <div className="reading-group" key={group.label}>
-                <div className="reading-group-head"><span>{group.label}</span><em>{group.items.length}</em></div>
-                {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
-                  <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
-                  <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
-                </button>)}
-              </div>)}
+              {readingGroups.map(group => {
+                const open = openReadingGroup === group.label;
+                return <div className={open ? "reading-group open" : "reading-group"} key={group.label}>
+                  <button type="button" className="reading-group-head" aria-expanded={open} onClick={() => setOpenReadingGroup(open ? null : group.label)}>
+                    <span>{group.label}</span><em>{group.items.length}<i className="reading-chevron">▾</i></em>
+                  </button>
+                  {open && <div className="reading-group-items">
+                    {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
+                      <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
+                      <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
+                    </button>)}
+                  </div>}
+                </div>;
+              })}
             </div>
           </aside>
 
