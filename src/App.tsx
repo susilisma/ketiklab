@@ -230,7 +230,7 @@ export default function Home() {
       setDicts(m);
       // restore the previously selected dictionary
       try {
-        const savedSource = localStorage.getItem("lingotrio-source");
+        const savedSource = localStorage.getItem("ketiklab-source");
         const d = savedSource && m.find(x => x.id === savedSource);
         if (d) {
           loadDictFile<DictEntry[]>(d.file).then((data: DictEntry[]) => {
@@ -243,12 +243,12 @@ export default function Home() {
       } catch { /* ignore */ }
     }).catch(() => {});
     { const sp = initSoundPref(); setSoundProfileState(sp.profile); }
-    try { const lp = Number(localStorage.getItem("lingotrio-loop")); if (lp >= 1 && lp <= 5) setLoopTimes(lp); } catch { /* ignore */ }
-    try { setFavorites(JSON.parse(localStorage.getItem("lingotrio-fav") || "[]")); } catch { /* ignore */ }
-    try { if (localStorage.getItem("lingotrio-dark") === "1") setDark(true); } catch { /* ignore */ }
-    try { if (localStorage.getItem("lingotrio-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
+    try { const lp = Number(localStorage.getItem("ketiklab-loop")); if (lp >= 1 && lp <= 5) setLoopTimes(lp); } catch { /* ignore */ }
+    try { setFavorites(JSON.parse(localStorage.getItem("ketiklab-fav") || "[]")); } catch { /* ignore */ }
+    try { if (localStorage.getItem("ketiklab-dark") === "1") setDark(true); } catch { /* ignore */ }
+    try { if (localStorage.getItem("ketiklab-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
-    try { setDayCounts(JSON.parse(localStorage.getItem("lingotrio-days") || "{}")); } catch { /* ignore */ }
+    try { setDayCounts(JSON.parse(localStorage.getItem("ketiklab-days") || "{}")); } catch { /* ignore */ }
     return () => { alive = false; };
   }, []);
 
@@ -258,7 +258,7 @@ export default function Home() {
   // language preferences: restore on first load; show the setup modal on first visit
   useEffect(() => {
     try {
-      const saved = localStorage.getItem("lingotrio-langs");
+      const saved = localStorage.getItem("ketiklab-langs");
       if (saved) {
         const v = JSON.parse(saved);
         if (v.ui === "zh" || v.ui === "id" || v.ui === "en") setUiLang(v.ui);
@@ -272,10 +272,10 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const saved = localStorage.getItem("lingotrio-state");
+    const saved = localStorage.getItem("ketiklab-state");
     if (saved) try { const v = JSON.parse(saved); setCorrect(v.correct || 0); setAttempts(v.attempts || 0); setMistakes(v.mistakes || []); } catch { /* ignore */ }
   }, []);
-  useEffect(() => { localStorage.setItem("lingotrio-state", JSON.stringify({ correct, attempts, mistakes })); }, [correct, attempts, mistakes]);
+  useEffect(() => { localStorage.setItem("ketiklab-state", JSON.stringify({ correct, attempts, mistakes })); }, [correct, attempts, mistakes]);
   useEffect(() => { if (!running) return; const timer = setInterval(() => setSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [running]);
   useEffect(() => { if (!readingActive || readingDone) return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone]);
 
@@ -301,7 +301,7 @@ export default function Home() {
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
     let saved = 0;
-    try { saved = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}")[sourceKey] || 0; } catch { /* ignore */ }
+    try { saved = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}")[sourceKey] || 0; } catch { /* ignore */ }
     setChapter(saved);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = Date.now();
@@ -313,10 +313,10 @@ export default function Home() {
   }, [sourceKey]);
 
   useEffect(() => { setWrongCountWord(0); setReveal(false); setLoopIx(0); }, [index]);
-  useEffect(() => { try { localStorage.setItem("lingotrio-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
-  useEffect(() => { try { localStorage.setItem("lingotrio-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
-  useEffect(() => { try { localStorage.setItem("lingotrio-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
-  useEffect(() => { try { localStorage.setItem("lingotrio-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
   useEffect(() => { try { localStorage.setItem("ketiklab-name", profileName); } catch { /* ignore */ } }, [profileName]);
 
   const ready = words.length > 0;
@@ -548,7 +548,7 @@ export default function Home() {
   }
   function changeLoop(n: number) {
     setLoopTimes(n); setLoopIx(0);
-    try { localStorage.setItem("lingotrio-loop", String(n)); } catch { /* ignore */ }
+    try { localStorage.setItem("ketiklab-loop", String(n)); } catch { /* ignore */ }
     setTimeout(() => input.current?.focus(), 20);
   }
   function pickSound(pf: SoundProfile) {
@@ -558,14 +558,14 @@ export default function Home() {
   async function exportProgress() {
     const reviews = await getAllRecords().catch(() => []);
     const payload = {
-      app: "lingotrio", version: 1, exportedAt: new Date().toISOString().slice(0, 19),
-      local: Object.fromEntries(Object.keys(localStorage).filter(k => k.startsWith("lingotrio-")).map(k => [k, localStorage.getItem(k)])),
+      app: "ketiklab", version: 1, exportedAt: new Date().toISOString().slice(0, 19),
+      local: Object.fromEntries(Object.keys(localStorage).filter(k => k.startsWith("ketiklab-")).map(k => [k, localStorage.getItem(k)])),
       reviews,
     };
     const blob = new Blob([JSON.stringify(payload)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
-    a.href = url; a.download = `lingotrio-backup-${todayStr(0)}.json`;
+    a.href = url; a.download = `ketiklab-backup-${todayStr(0)}.json`;
     document.body.appendChild(a); a.click(); a.remove();
     setTimeout(() => URL.revokeObjectURL(url), 2000);
   }
@@ -574,7 +574,7 @@ export default function Home() {
     reader.onload = async () => {
       try {
         const data = JSON.parse(String(reader.result));
-        if (data.app !== "lingotrio") throw new Error("bad file");
+        if (data.app !== "ketiklab") throw new Error("bad file");
         if (data.local) for (const [k, v] of Object.entries(data.local)) if (typeof v === "string") localStorage.setItem(k, v);
         if (Array.isArray(data.reviews)) await restoreRecords(data.reviews).catch(() => {});
         window.location.reload();
@@ -594,9 +594,9 @@ export default function Home() {
     const target = Math.max(0, Math.min(n, chapterCount - 1));
     setChapter(target);
     try {
-      const m = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}");
+      const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}");
       m[sourceKey] = target;
-      localStorage.setItem("lingotrio-chapters", JSON.stringify(m));
+      localStorage.setItem("ketiklab-chapters", JSON.stringify(m));
     } catch { /* ignore */ }
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = Date.now();
@@ -671,7 +671,7 @@ export default function Home() {
     }
   }
   function persistLangs(ui: Lang, learn: Lang, def: Lang) {
-    try { localStorage.setItem("lingotrio-langs", JSON.stringify({ ui, learn, def })); } catch { /* ignore */ }
+    try { localStorage.setItem("ketiklab-langs", JSON.stringify({ ui, learn, def })); } catch { /* ignore */ }
   }
   function fixDef(learn: Lang, preferred: Lang): Lang {
     return preferred !== learn ? preferred : learn === "zh" ? "en" : "zh";
@@ -709,7 +709,7 @@ export default function Home() {
     autoSpokenWord.current = null;
   }
   function persistSource(id: string) {
-    try { localStorage.setItem("lingotrio-source", id); } catch { /* ignore */ }
+    try { localStorage.setItem("ketiklab-source", id); } catch { /* ignore */ }
   }
   function selectTrio(nextCategory: WordFilter) {
     setSource("trio");
@@ -762,7 +762,7 @@ export default function Home() {
     const gi = words.indexOf(w);
     if (gi < 0) return;
     pendingIndex.current = gi % 20;
-    try { const m = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}"); m["trio:all"] = Math.floor(gi / 20); localStorage.setItem("lingotrio-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    try { const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); m["trio:all"] = Math.floor(gi / 20); localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
     setGlobalSearch(false);
     setReviewKeys(null); setCategory("all"); setSource("trio"); persistSource("trio");
     setTyped(""); setWrongFlash(false); hadWrong.current = false; autoSpokenWord.current = null;
@@ -774,7 +774,7 @@ export default function Home() {
     if (!data) { try { data = await loadDictFile<DictEntry[]>(d.file); dictCache.current.set(d.id, data); } catch { return; } }
     const gi = data.findIndex(e => e.name === key); if (gi < 0) return;
     pendingIndex.current = gi % 20;
-    try { const m = JSON.parse(localStorage.getItem("lingotrio-chapters") || "{}"); m[d.id] = Math.floor(gi / 20); localStorage.setItem("lingotrio-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    try { const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); m[d.id] = Math.floor(gi / 20); localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
     setGlobalSearch(false);
     setDictWords(data); setReviewKeys(null); setSource(d.id); persistSource(d.id);
     setTyped(""); setWrongFlash(false); hadWrong.current = false; autoSpokenWord.current = null;

@@ -8,18 +8,18 @@ let profile: SoundProfile = "soft";
 
 export function setSoundEnabled(v: boolean) {
   enabled = v;
-  try { localStorage.setItem("lingotrio-sound", v ? "1" : "0"); } catch { /* ignore */ }
+  try { localStorage.setItem("ketiklab-sound", v ? "1" : "0"); } catch { /* ignore */ }
 }
 export function setSoundProfile(p: SoundProfile) {
   profile = p;
   if (p === "off") enabled = false; else enabled = true;
-  try { localStorage.setItem("lingotrio-sound-profile", p); } catch { /* ignore */ }
+  try { localStorage.setItem("ketiklab-sound-profile", p); } catch { /* ignore */ }
 }
 export function initSoundPref(): { enabled: boolean; profile: SoundProfile } {
   try {
-    const p = localStorage.getItem("lingotrio-sound-profile") as SoundProfile | null;
+    const p = localStorage.getItem("ketiklab-sound-profile") as SoundProfile | null;
     if (p) profile = p;
-    const legacy = localStorage.getItem("lingotrio-sound");
+    const legacy = localStorage.getItem("ketiklab-sound");
     enabled = profile !== "off" && legacy !== "0";
   } catch { /* ignore */ }
   return { enabled, profile };

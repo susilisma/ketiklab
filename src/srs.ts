@@ -19,15 +19,15 @@ export const INTERVALS = [1, 2, 4, 7, 15, 30, 60, 120];
 const DAY = 24 * 60 * 60 * 1000;
 const RELAPSE_DELAY = 10 * 60 * 1000; // 10 minutes
 
-class LingoDB extends Dexie {
+class KetikDB extends Dexie {
   reviews!: Table<ReviewRecord, string>;
   constructor() {
-    super("lingotrio");
+    super("ketiklab");
     this.version(1).stores({ reviews: "en, dueAt, step" });
   }
 }
 
-const db = new LingoDB();
+const db = new KetikDB();
 
 export async function recordReview(en: string, correct: boolean, now = Date.now()): Promise<void> {
   const existing = await db.reviews.get(en);
