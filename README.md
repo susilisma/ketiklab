@@ -10,7 +10,7 @@ npm run build    # 产出 dist/
 ```
 
 ## 部署
-GitHub Actions（`.github/workflows/deploy.yml`）在每次 push 到 `main` 时自动构建并发布到 GitHub Pages。
+GitHub Actions（`.github/workflows/site.yml`）在每次 push 到 `main` 时自动构建并发布到 GitHub Pages。
 首次需在仓库 Settings → Pages → Source 选 **GitHub Actions**。
 
 ## 数据架构（参考 qwerty-learner）
@@ -25,7 +25,9 @@ GitHub Actions（`.github/workflows/deploy.yml`）在每次 push 到 `main` 时�
 - 追加工具：`node scripts/append-batch.mjs [--dry-run] <batch.json>`（直接读写上面的 JSON）
   - 词条支持元组 `[en,id,zh,category,level?]`（自动补例句）或完整对象。
   - 自动 schema 校验 + 去重（词按 en/id/zh；朗读按 id 与 title+author）+ 幂等。
-- 每小时自动更新由计划任务驱动：生成新批次 → append 到 JSON → commit → push → Actions 自动部署。
+- 自动更新全部跑在 GitHub Actions 上，**不依赖任何本机计划任务**：
+  - `daily-words.yml`：每天 04:20 WIB 生成约 100 个新词写入 `queue/words.json`。
+  - `site.yml`：每小时第 7 分跑一次，`scripts/promote.mjs` 从 queue 提升 12 条到 `public/data/`，`scripts/snapshot-history.py` 记录词库规模供 `/ops/` 看板使用，然后 commit + push；只有内容真的变了才触发部署。
 
 ## 内容规则
 词汇须中-印-英语义对齐（非表面直译），优先日常/商务/印尼生活公共服务/公共政策/学术研究。
