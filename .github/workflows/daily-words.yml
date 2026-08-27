@@ -46,7 +46,7 @@ jobs:
         run: python scripts/build-trio-queue.py
       - name: Commit queue
         run: |
-          git config user.name "lingotrio-bot"
+          git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
           git add queue/words.json
           git diff --cached --quiet && echo "nothing new" && exit 0

@@ -36,7 +36,7 @@ jobs:
                 public/data/ielts.json public/data/toefl.json public/data/bec.json
       - name: Commit
         run: |
-          git config user.name "lingotrio-bot"
+          git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data
           git commit -m "chore(data): rebuild English libraries from open sources" || echo "nothing to commit"

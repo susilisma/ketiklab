@@ -42,7 +42,7 @@ jobs:
       - name: Push promoted content
         if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.promote.outputs.changed == 'true'
         run: |
-          git config user.name "lingotrio-bot"
+          git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
           git add public/data queue
           git commit -m "chore(content): hourly auto-update" || echo "nothing to commit"
