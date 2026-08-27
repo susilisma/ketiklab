@@ -6,14 +6,14 @@ cannot run scripts), this renders the decrypted page inside an iframe srcdoc,
 so the payload's own <script> executes normally and inherits the page origin.
 
 Usage: python3 tools/lock-page.py <input.html> <output.html> <password> [title]
-Crypto: PBKDF2-SHA256 (250000 iters, 16-byte salt) -> AES-256-GCM (12-byte IV).
+Crypto: PBKDF2-SHA256 (1000000 iters, 16-byte salt) -> AES-256-GCM (12-byte IV).
 """
 import base64, json, os, sys
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
 
-ITER = 250000
+ITER = 1000000
 
 TPL = """<!doctype html>
 <html lang="zh-CN"><head><meta charset="utf-8">
