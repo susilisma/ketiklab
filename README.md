@@ -1,6 +1,6 @@
 # KetikLab — 三语打字练习站
 
-中文 · Bahasa Indonesia · English 三语打字 + 词汇 + 朗读练习。纯静态站，部署在 GitHub Pages，push 即自动构建上线。内容每小时自动扩充。
+中文 · Bahasa Indonesia · English 三语打字 + 词汇 + 朗读练习。纯静态站，部署在 GitHub Pages，push 即自动构建上线。词库持续自动扩充；朗读为人工甄选的公共领域全文，不自动生成。
 
 ## 本地开发
 ```bash
