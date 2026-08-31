@@ -66,8 +66,8 @@ export async function saveProgress(userId: string, data: Record<string, unknown>
 
 /** Keys we mirror to the cloud. Everything else stays device-local on purpose. */
 export const SYNCED_KEYS = [
-  "lingotrio-state", "lingotrio-days", "lingotrio-fav", "lingotrio-chapters",
-  "lingotrio-langs", "lingotrio-source", "lingotrio-loop", "lingotrio-input",
+  "ketiklab-state", "ketiklab-days", "ketiklab-fav", "ketiklab-chapters",
+  "ketiklab-langs", "ketiklab-source", "ketiklab-loop", "ketiklab-input",
   "ketiklab-name",
 ];
 
