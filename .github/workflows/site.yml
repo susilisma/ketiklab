@@ -59,7 +59,7 @@ jobs:
           fi
       - name: Install
         if: steps.gate.outputs.go == 'true'
-        run: npm ci
+        run: npm ci || npm install
       - name: Build
         if: steps.gate.outputs.go == 'true'
         run: npm run build
