@@ -22,7 +22,18 @@ self.addEventListener("fetch", (e) => {
 
   // SPA navigations: network-first, fall back to cached shell offline
   if (req.mode === "navigate") {
-    e.respondWith(fetch(req).catch(() => caches.match("./index.html")));
+    e.respondWith(fetch(req).then((res) => {
+      // Keep the offline shell in step with what the network last served: this
+      // worker's bytes never change between deploys, so it never reinstalls and
+      // the install-time copy would otherwise stay frozen forever. Only a real
+      // page counts — a 404 or a captive portal must not become what everyone
+      // sees offline.
+      if (res.ok) {
+        const copy = res.clone();
+        caches.open(VERSION).then((c) => c.put("./index.html", copy));
+      }
+      return res;
+    }).catch(() => caches.match("./index.html")));
     return;
   }
   // Hashed build assets are immutable: cache-first
