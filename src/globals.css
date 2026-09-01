@@ -367,3 +367,27 @@ button.profile:hover>i{color:var(--purple)}
 .reading-group.open .reading-chevron{transform:rotate(180deg)}
 .reading-group-items{display:flex;flex-direction:column;gap:5px;margin-top:4px;max-height:min(50vh,400px);overflow-y:auto;overscroll-behavior:contain;padding-right:3px}
 @media(max-width:640px){.reading-list{flex-direction:column;overflow-x:visible}.reading-list .reading-group-head{min-width:0}.reading-list .reading-group-items button{min-width:0}.reading-group-items{max-height:46vh}}
+/* ---- learn view proportions (round 8) ---- */
+/* The practice word was a fixed pixel size, so it kept a laptop-sized scale on
+   a tall screen while the column ended a third of the way up the viewport.
+   Sizing from vh holds the word at the same share of the screen everywhere;
+   the clamp floor protects short viewports and the ceiling very tall ones. */
+.word-card h1{font-size:clamp(44px,6.4vh,88px)}
+.word-card h1.target-word.zh{font-size:clamp(40px,6vh,80px)}
+.word-card h1.target-word.id{font-size:clamp(44px,6.4vh,88px)}
+.word-card.zh-compact h1.target-word.zh{font-size:clamp(34px,6.2vh,78px)}
+/* the secondary type has to ride along, or growing the word alone just makes
+   the meaning and the pinyin look stranded under it */
+.word-card.zh-compact .meanings>span{font-size:clamp(13px,1.4vh,17px)}
+.word-card.zh-compact .zh-read b{font-size:clamp(24px,2.7vh,35px)}
+/* Fill the column instead of stacking everything against the header. flex
+   rather than calc(100vh - header) because the header is 88/68/64px depending
+   on breakpoint and focus mode, and none of those belong in this arithmetic. */
+.main{display:flex;flex-direction:column}
+.main>header{flex:none}
+.learn-view{flex:1;display:flex;flex-direction:column;justify-content:center}
+@media(max-width:640px){
+  .word-card h1{font-size:clamp(34px,5.2vh,48px)}
+  .word-card h1.target-word.zh{font-size:clamp(32px,4.9vh,45px)}
+  .word-card.zh-compact h1.target-word.zh{font-size:clamp(30px,4.6vh,42px)}
+}
