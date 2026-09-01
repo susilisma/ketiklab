@@ -394,3 +394,16 @@ button.profile:hover>i{color:var(--purple)}
   .word-card h1.target-word.zh{font-size:clamp(32px,4.9vh,45px)}
   .word-card.zh-compact h1.target-word.zh{font-size:clamp(30px,4.6vh,42px)}
 }
+/* ---- learn view: the word sits on the page, not in a box (round 9) ---- */
+/* Measured on the reference: every ancestor of its practice word, nine levels
+   up to the layout container, is background transparent with no border, no
+   radius and no shadow. The word reads as being on the page rather than inside
+   a component. This project already had that — .app.focused strips the card
+   the same way — but only while a session is running, so the screen a visitor
+   first meets was the boxed one and the two states looked like two products. */
+.word-card{background:transparent;border-color:transparent;box-shadow:none}
+.word-card:before{display:none}
+/* and the four bordered stat boxes become the single quiet bar they already
+   become once running, which is also how the reference carries its stats */
+.metrics{background:var(--surface);border:1px solid var(--line);border-radius:16px}
+.metric{background:transparent;border:0;justify-content:center}
