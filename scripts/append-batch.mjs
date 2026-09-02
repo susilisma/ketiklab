@@ -7,7 +7,7 @@
  *
  * batch.json shape:
  * {
- *   "words":   [ ["en","id","zh","daily|business|indonesia|study","A1|A2|B1|B2?"], ...   // tuple form, examples auto-generated
+ *   "words":   [ ["en","id","zh","daily|business|indonesia|study","A1|A2|B1|B2?"], ...   // tuple form, no examples
  *              | {"en","id","zh","category","level","examples":{"en","id","zh"},"pinyin?","phonetic?","idSyllables?"} ],
  *   "readings":[ {"id","lang":"en|id|zh","title","author","era","genre","lines":[...],"note"}, ... ]
  * }
@@ -58,17 +58,10 @@ function materializeWord(w) {
     if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
     if (!CATEGORIES.has(category)) return { err: "bad-category" };
     if (!LEVELS.has(level)) return { err: "bad-level" };
-    const chinese = zh.split("；")[0];
-    return {
-      obj: {
-        en, id, zh, category, level, source: DEFAULT_SOURCE,
-        examples: {
-          en: `Today I am learning the word “${en}”.`,
-          id: `Hari ini saya belajar kata “${id}”.`,
-          zh: `我今天学习“${chinese}”这个词。`,
-        },
-      },
-    };
+    // No examples: leave the object empty rather than inventing a sentence. The
+    // tuple form carries no example text, and filling one in produced the same
+    // filler for every word in the library.
+    return { obj: { en, id, zh, category, level, source: DEFAULT_SOURCE, examples: {} } };
   }
   // object form
   if (!w || typeof w !== "object") return { err: "not-object" };
@@ -76,10 +69,12 @@ function materializeWord(w) {
   if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
   if (!CATEGORIES.has(category)) return { err: "bad-category" };
   if (!LEVELS.has(level)) return { err: "bad-level" };
-  const chinese = zh.split("；")[0];
-  const ex = examples && ["en", "id", "zh"].every((k) => typeof examples[k] === "string" && examples[k].trim())
-    ? { en: examples.en, id: examples.id, zh: examples.zh }
-    : { en: `Today I am learning the word “${en}”.`, id: `Hari ini saya belajar kata “${id}”.`, zh: `我今天学习“${chinese}”这个词。` };
+  // keep whichever languages the batch actually supplied; a language with no
+  // example simply has none, and the UI already skips the row when it is absent
+  const ex = {};
+  if (examples) for (const k of ["en", "id", "zh"]) {
+    if (typeof examples[k] === "string" && examples[k].trim()) ex[k] = examples[k];
+  }
   const obj = { en, id, zh, category, level, source: source || DEFAULT_SOURCE, examples: ex };
   if (phonetic) obj.phonetic = phonetic;
   if (idSyllables) obj.idSyllables = idSyllables;

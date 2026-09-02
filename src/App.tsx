@@ -362,7 +362,7 @@ export default function Home() {
           ? `普通话 · ${zhToned(zhMap, wordValue(w, "zh"))}`
           : pronunciation(w, lang),
         meaning: w[defLang],
-        example: w.examples[lang] as string | undefined,
+        example: w.examples?.[lang] as string | undefined,
         voice: LANGUAGE_META[lang].voice,
         lang,
       }));
