@@ -407,3 +407,16 @@ button.profile:hover>i{color:var(--purple)}
    become once running, which is also how the reference carries its stats */
 .metrics{background:var(--surface);border:1px solid var(--line);border-radius:16px}
 .metric{background:transparent;border:0;justify-content:center}
+/* ---- learn view: the English card's secondary type and floor (round 10) ---- */
+/* Round 8 scaled the word everywhere but only scaled the secondary type inside
+   .zh-compact, so on the English card a 13px phonetic sat under a 75px word —
+   17% of it, where the reference runs 29%. */
+.phonetic{font-size:clamp(13px,1.9vh,24px)}
+.meanings>span{font-size:clamp(14px,1.55vh,20px)}
+.meanings small{font-size:clamp(9px,0.95vh,12px)}
+/* The English card holds a word, a phonetic and two meanings and nothing else,
+   so it collapsed to 357px and, being centred, carried its word down to 41.6%
+   of the viewport against the reference's 35.5%. A floor proportional to the
+   viewport puts it back. .word-card.zh-compact sets min-height:0 at higher
+   specificity, so the Chinese four-step card, already at 35.6%, is untouched. */
+.word-card{min-height:min(40vh,470px)}
