@@ -160,12 +160,18 @@ def build():
             "file": key + ".json",
         })
         print(f"{key:12s} {len(rows):5d} words  (zipf {lo}-{hi})")
-    # rewrite the manifest, keeping non-English libraries untouched
+    # Rewrite the manifest, replacing only the rows this script owns. Dropping
+    # every lang == "en" row and re-adding these five would silently delete any
+    # other English library from the picker — the file would stay on disk with
+    # nothing listing it — and would reshuffle the order of everything else.
     man_path = os.path.join(OUT, "manifest.json")
     man = json.load(open(man_path, encoding="utf-8"))
-    man = [m for m in man if m.get("lang") != "en"]
     order = {b[0]: i for i, b in enumerate(BANDS)}
-    man += sorted(manifest_rows, key=lambda r: order[r["id"]])
+    fresh = {r["id"]: r for r in manifest_rows}
+    man = [fresh.get(m["id"], m) for m in man]
+    listed = {m["id"] for m in man}
+    man += [r for r in sorted(manifest_rows, key=lambda r: order[r["id"]])
+            if r["id"] not in listed]
     with open(man_path, "w", encoding="utf-8") as f:
         json.dump(man, f, ensure_ascii=False, indent=1)
     print("manifest.json rewritten:", ", ".join(m["id"] for m in man))
