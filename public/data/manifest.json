@@ -48,6 +48,14 @@
   "file": "en-academic.json"
  },
  {
+  "id": "en-toefl",
+  "name": "托福必考词",
+  "description": "托福备考词表 · 2100 词 · 中文释义（1290 词含印尼语）",
+  "lang": "en",
+  "length": 2100,
+  "file": "en-toefl.json"
+ },
+ {
   "id": "zh-core",
   "name": "中文核心词",
   "description": "最高频中文词 · 印尼语/英语释义 · 1200 词",
