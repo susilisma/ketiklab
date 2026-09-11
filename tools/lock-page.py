@@ -5,10 +5,12 @@ Unlike tools/lock.py (which injects a fragment with innerHTML and therefore
 cannot run scripts), this renders the decrypted page inside an iframe srcdoc,
 so the payload's own <script> executes normally and inherits the page origin.
 
-Usage: python3 tools/lock-page.py <input.html> <output.html> <password> [title]
+Usage: python3 tools/lock-page.py <input.html> <output.html> [password|-] [title]
+       Omit the password, or pass "-", to be prompted for it twice instead;
+       that keeps it out of shell history.
 Crypto: PBKDF2-SHA256 (1000000 iters, 16-byte salt) -> AES-256-GCM (12-byte IV).
 """
-import base64, json, os, sys
+import base64, getpass, json, os, sys
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 from cryptography.hazmat.primitives.kdf.pbkdf2 import PBKDF2HMAC
 from cryptography.hazmat.primitives import hashes
@@ -95,9 +97,17 @@ document.getElementById('pw').addEventListener('keydown',e=>{if(e.key==='Enter')
 """
 
 def main():
-    if len(sys.argv) < 4:
+    if len(sys.argv) < 3:
         print(__doc__); sys.exit(1)
-    src, dst, pw = sys.argv[1], sys.argv[2], sys.argv[3]
+    src, dst = sys.argv[1], sys.argv[2]
+    pw = sys.argv[3] if len(sys.argv) > 3 and sys.argv[3] != "-" else None
+    if pw is None:
+        # asked twice: a typo here would lock the page behind a passphrase nobody knows
+        pw = getpass.getpass("passphrase: ")
+        if not pw:
+            sys.exit("empty passphrase, nothing written")
+        if pw != getpass.getpass("again: "):
+            sys.exit("passphrases do not match, nothing written")
     html = open(src, encoding="utf-8").read()
     title = sys.argv[4] if len(sys.argv) > 4 else os.path.splitext(os.path.basename(src))[0]
     salt, nonce = os.urandom(16), os.urandom(12)
