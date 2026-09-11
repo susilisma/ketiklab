@@ -170,7 +170,7 @@ export function ZhSteps({ step, word, toned, plain, pool, uiLang, onPass, onSkip
       ref={box}
       className="zh-typebox"
       value={typed}
-      inputMode="latin"
+      inputMode="text"
       placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
       onChange={e => {
         const v = norm(e.target.value);
