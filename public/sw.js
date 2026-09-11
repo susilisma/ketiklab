@@ -45,6 +45,10 @@ self.addEventListener("fetch", (e) => {
     })));
     return;
   }
+  // A cache-busting query on data is an explicit request for the network copy —
+  // the ops dashboard sends one on every refresh. Caching those would store a
+  // fresh ~1MB words.json per refresh under a URL nothing ever asks for again.
+  if (url.pathname.includes("/data/") && url.search) return;
   // Content JSON: stale-while-revalidate (instant + refreshes in background)
   if (url.pathname.includes("/data/")) {
     e.respondWith(caches.match(req).then((hit) => {
