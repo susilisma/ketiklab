@@ -1,0 +1,69 @@
+name: Build check
+
+# Builds every branch except main — install, type check, vite build — and deploys
+# nothing, so work can be verified on GitHub's runners before it reaches the site.
+# main keeps its own pipeline in site.yml, which builds and deploys.
+#
+# If npm install has to rewrite package-lock.json because it drifted from
+# package.json, the regenerated lockfile is committed back to the branch. That is
+# how the lockfile gets repaired without anyone having to run npm locally.
+
+on:
+  push:
+    branches-ignore: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install
+        run: npm install --no-audit --no-fund
+
+      - name: Type check (reported as warnings)
+        # vite build strips types without checking them, so this is the only place
+        # type errors surface. They are annotated rather than failing the job: the
+        # build step below is the gate.
+        run: |
+          if npx tsc --noEmit --pretty false > tsc.log 2>&1; then
+            echo "no type errors"
+            exit 0
+          fi
+          grep -E '^[^(]+\([0-9]+,[0-9]+\): error ' tsc.log | head -50 \
+            | sed -E -e 's/%/%25/g' \
+                     -e 's/^([^(]+)\(([0-9]+),([0-9]+)\): error (.*)$/::warning file=\1,line=\2,col=\3::\4/' || true
+          echo "$(grep -cE ': error ' tsc.log || true) type error(s), annotated above"
+
+      - name: Build
+        run: |
+          set -o pipefail
+          if ! npm run build 2>&1 | tee build.log; then
+            # annotations can be read without access to the raw log
+            tail -25 build.log | sed -e 's/%/%25/g' -e 's/^/::error::/'
+            exit 1
+          fi
+
+      - name: Commit the regenerated lockfile
+        if: github.event_name == 'push'
+        run: |
+          if git diff --quiet -- package-lock.json; then
+            echo "package-lock.json already in sync with package.json"
+            exit 0
+          fi
+          git config user.name "ketiklab-bot"
+          git config user.email "bot@users.noreply.github.com"
+          git add package-lock.json
+          git commit -m "chore(deps): sync package-lock.json with package.json"
+          git push origin "HEAD:${GITHUB_REF_NAME}"
