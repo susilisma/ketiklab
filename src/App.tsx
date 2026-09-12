@@ -88,6 +88,7 @@ const NAV: { id: Exclude<View, "account">; icon: string }[] = [
 ];
 
 const EMPTY_STATS: SrsStats = { due: 0, learning: 0, mastered: 0, total: 0 };
+const DAILY_GOAL = 20;
 
 export default function Home() {
   const [words, setWords] = useState<Word[]>([]);
@@ -405,6 +406,7 @@ export default function Home() {
   });
   const last7max = Math.max(1, ...last7.map(x => x.count));
   const todayCount = dayCounts[todayStr(0)] || 0;
+  const goalPct = Math.min(Math.round(todayCount / DAILY_GOAL * 100), 100);
   // last 91 days heatmap (13 weeks x 7), oldest -> newest, plus totals
   const heat = Array.from({ length: 91 }, (_, k) => { const off = 90 - k; return { day: todayStr(off), count: dayCounts[todayStr(off)] || 0 }; });
   const heatMax = Math.max(1, ...heat.map(h => h.count));
@@ -845,7 +847,7 @@ export default function Home() {
       <button className="brand" onClick={() => setView("learn")} aria-label="KetikLab home"><span>KL</span><b>KetikLab</b></button>
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
-        <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, 20)}/20</b></span><div><i style={{width:`${Math.min(todayCount/20*100,100)}%`}} /></div></div>
+        <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, DAILY_GOAL)}/{DAILY_GOAL}</b></span><div><i style={{width:`${Math.min(todayCount / DAILY_GOAL * 100, 100)}%`}} /></div></div>
         <button className="profile" onClick={() => setView("account")} title={TX("账号", "Akun", "Account", uiLang)}>
           <span>{(profileName.trim()[0] || "?").toUpperCase()}</span>
           <div><b>{profileName.trim() || TX("学习者", "Pelajar", "Learner", uiLang)}</b><small>{TX("账号与同步", "Akun & sinkron", "Account & sync", uiLang)}</small></div>
@@ -1026,7 +1028,10 @@ export default function Home() {
       </section>}
 
       {view === "plan" && <Panel title={t.plan} eyebrow={EYEBROW.plan[uiLang]}>
-        <div className="plan-layout"><div className="goal-card"><span>{t.finish}</span><strong>{Math.min(todayCount*5,100)}%</strong><div className="goal-ring" style={{"--p":`${Math.min(todayCount*5,100)*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount,20)}</b><small>/20 words</small></div></div><div className="week">{["Mon","Tue","Wed","Thu","Fri","Sat","Sun"].map((d,i)=><div className={i<4?"done":i===4?"today":""} key={d}><span>{d}</span><b>{i<4?"✓":i===4?"12":"·"}</b><small>{i<4?"20 words":i===4?"of 20":"Rest"}</small></div>)}</div></div>
+        <div className="plan-layout">
+          <div className="goal-card"><span>{t.finish}</span><strong>{goalPct}%</strong><div className="goal-ring" style={{"--p":`${goalPct*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount, DAILY_GOAL)}</b><small>/{DAILY_GOAL} {TX("词", "kata", "words", uiLang)}</small></div></div>
+          <div className="week">{last7.map((d, i) => <div className={i === 6 ? "today" : d.count >= DAILY_GOAL ? "done" : ""} key={i}><span>{d.label}</span><b>{i === 6 ? d.count : d.count >= DAILY_GOAL ? "✓" : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", "words", uiLang)}` : TX("未练", "Kosong", "None", uiLang)}</small></div>)}</div>
+        </div>
       </Panel>}
 
       {view === "stats" && <Panel title={t.stats} eyebrow={EYEBROW.stats[uiLang]}>
