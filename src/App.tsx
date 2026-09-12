@@ -12,10 +12,12 @@ type WordFilter = "all" | WordCategory;
 
 const DATA = import.meta.env.BASE_URL + "data/";
 
-// dictionary files may live under data/dicts/ or flat under data/ - try both
+// Dictionary files ship flat under data/; data/dicts/ is the older layout kept as a
+// fallback. Probing dicts/ first cost a 404 on every single load — one for the
+// manifest on every page view, eleven more the first time the library opens.
 function loadDictFile<T>(name: string): Promise<T> {
   const ok = (r: Response) => { if (!r.ok) throw new Error(String(r.status)); return r.json(); };
-  return fetch(DATA + "dicts/" + name).then(ok).catch(() => fetch(DATA + name).then(ok));
+  return fetch(DATA + name).then(ok).catch(() => fetch(DATA + "dicts/" + name).then(ok));
 }
 
 const UI = {
