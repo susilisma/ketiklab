@@ -66,9 +66,9 @@
 .speech-unlock:hover{background:var(--purple);color:#fff}
 @media(max-width:640px){.speech-unlock{top:52px;right:12px;font-size:11px;padding:6px 12px}}
 .zh-step{margin-top:26px;display:flex;flex-direction:column;align-items:center;gap:16px}
-.zh-read{display:flex;flex-direction:column;align-items:center;gap:9px}
-.zh-read b{font-size:31px;letter-spacing:.13em;color:var(--purple);cursor:pointer;font-weight:700}
-.zh-read span{font-size:15px;color:var(--muted);text-align:center;max-width:520px}
+
+
+
 .zh-go{border:0;border-radius:999px;background:var(--purple);color:#fff;font-size:15px;font-weight:700;padding:13px 30px;display:flex;align-items:center;gap:11px;box-shadow:var(--shadow)}
 .zh-go i{font-style:normal;font-size:10px;letter-spacing:.1em;border:1px solid rgba(255,255,255,.55);border-radius:6px;padding:3px 8px;opacity:.9}
 .zh-options{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;width:min(560px,92%)}
@@ -85,7 +85,7 @@
 .zh-typebox:focus{border-color:var(--purple);background:var(--surface);box-shadow:0 0 0 4px var(--purple-soft)}
 .zh-tip{font-size:12px;color:var(--muted);text-align:center;max-width:560px;line-height:1.7;display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
 .zh-skip{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:5px 13px;font-size:11px}
-@media(max-width:640px){.zh-options{grid-template-columns:repeat(2,1fr)}.zh-read b{font-size:25px}.zh-pinbox .syl{font-size:21px}.zh-ladder button{font-size:11px;padding:6px 12px 6px 6px}}
+@media(max-width:640px){.zh-options{grid-template-columns:repeat(2,1fr)}.zh-pinbox .syl{font-size:21px}.zh-ladder button{font-size:11px;padding:6px 12px 6px 6px}}
 
 .ime-input{position:relative;display:block;width:min(430px,88%);margin:26px auto 0;padding:13px 18px;font-size:23px;line-height:1.35;text-align:center;letter-spacing:.1em;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--text);outline:none;opacity:1;height:auto;transition:.15s}
 .ime-input::placeholder{font-size:15px;letter-spacing:.04em;color:var(--muted);opacity:.75}
@@ -199,7 +199,7 @@
 .word-card.zh-compact .meanings>span{padding:5px 12px;font-size:13px}
 .word-card.zh-compact .meanings small{font-size:8px;margin-bottom:3px}
 .word-card.zh-compact .zh-step{margin-top:14px;gap:11px}
-.word-card.zh-compact .zh-read b{font-size:27px}
+
 .word-card.zh-compact .zh-go{padding:11px 26px;font-size:14px}
 .word-card.zh-compact .zh-tip{margin:0}
 .word-card.zh-compact .zh-options{gap:10px}
@@ -372,7 +372,7 @@ button.profile:hover>i{color:var(--purple)}
 .word-card h1.target-word.id{font-size:clamp(44px,6.4vh,88px)}
 .word-card.zh-compact h1.target-word.zh{font-size:clamp(34px,6.2vh,78px)}
 .word-card.zh-compact .meanings>span{font-size:clamp(13px,1.4vh,17px)}
-.word-card.zh-compact .zh-read b{font-size:clamp(24px,2.7vh,35px)}
+
 /* flex, not calc(100vh - header): that header is 88/68/64px by breakpoint and focus mode */
 .main{display:flex;flex-direction:column}
 .main>header{flex:none}
@@ -392,3 +392,8 @@ button.profile:hover>i{color:var(--purple)}
 .meanings small{font-size:clamp(9px,0.95vh,12px)}
 /* a floor so the short English card cannot collapse; .zh-compact overrides it to 0 */
 .word-card{min-height:min(40vh,470px)}
+/* ---- pinyin above the character it annotates (round 11) ---- */
+.zh-annot{margin:0;color:var(--purple);font-weight:700;letter-spacing:.13em;cursor:pointer;line-height:1.25;font-size:clamp(15px,2.1vh,27px)}
+/* in the pick-the-character step the word itself is hidden, so the pinyin is the prompt */
+.zh-annot.solo{font-size:clamp(24px,3.4vh,44px);margin-bottom:6px}
+@media(max-width:640px){.zh-annot{font-size:clamp(13px,1.9vh,19px)}.zh-annot.solo{font-size:clamp(20px,2.9vh,30px)}}

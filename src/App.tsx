@@ -876,6 +876,9 @@ export default function Home() {
           </button>}
           <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
+          {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
+            <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
+               onClick={e => { e.stopPropagation(); speak(); }}>{zhToned(zhMap, targetWord) || "—"}</p>}
           {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
           {!zhLadder && <p className="phonetic">{item.sub}</p>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
@@ -890,9 +893,7 @@ export default function Home() {
           {zhLadder ? <ZhSteps
             step={zhStep}
             word={targetWord}
-            toned={zhToned(zhMap, targetWord)}
             plain={zhPlain(zhMap, targetWord)}
-            meaning={item.meaning}
             pool={zhPool}
             uiLang={uiLang}
             onPass={finishWord}

@@ -78,9 +78,7 @@ const norm = (s: string) => s.toLowerCase().replace(/[^a-z]/g, "").replace(/ü/g
 type Props = {
   step: ZhStep;
   word: string;
-  toned: string;
   plain: string;
-  meaning: string;
   pool: string[];
   uiLang: UiLang;
   onPass: () => void;
@@ -88,7 +86,7 @@ type Props = {
   onSpeak: () => void;
 };
 
-export function ZhSteps({ step, word, toned, plain, pool, uiLang, onPass, onSkip, onSpeak }: Props) {
+export function ZhSteps({ step, word, plain, pool, uiLang, onPass, onSkip, onSpeak }: Props) {
   const [typed, setTyped] = useState("");
   const [wrong, setWrong] = useState(0);
   const [peek, setPeek] = useState(false);
@@ -124,9 +122,6 @@ export function ZhSteps({ step, word, toned, plain, pool, uiLang, onPass, onSkip
 
   if (step === "read") {
     return <div className="zh-step">
-      <div className="zh-read">
-        <b onClick={onSpeak}>{toned || "—"}</b>
-      </div>
       <button className="zh-go" onClick={onPass}>
         {T(uiLang, "认识了，下一个", "Sudah paham, lanjut", "Got it, next")} <i>SPACE</i>
       </button>
@@ -136,9 +131,6 @@ export function ZhSteps({ step, word, toned, plain, pool, uiLang, onPass, onSkip
 
   if (step === "choose") {
     return <div className="zh-step">
-      <div className="zh-read">
-        <b onClick={onSpeak}>{toned || "—"}</b>
-      </div>
       <div className="zh-options">
         {options.map(o => <button
           key={o}
