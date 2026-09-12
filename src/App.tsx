@@ -90,6 +90,27 @@ const NAV: { id: Exclude<View, "account">; icon: string }[] = [
 const EMPTY_STATS: SrsStats = { due: 0, learning: 0, mastered: 0, total: 0 };
 const DAILY_GOAL = 20;
 
+// The single definition of what the learn view practises. The zh steps are a
+// difficulty ladder: 认读 admits level 1, 打拼音 2, 选汉字 3, 输入法 everything.
+// Navigation helpers resolve indexes against this same list, so a word opened
+// from the library lands on itself rather than on whatever sits at that offset.
+function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, step: ZhStep, cat: WordFilter) {
+  const inCatAll = cat === "all" ? all : all.filter(item => item.category === cat);
+  if (lang !== "zh" || step === "hanzi") return { list: inCatAll, broad: false };
+  const cap = zhMaxLevel(step);
+  const byLevel = (a: Word, b: Word) => zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]);
+  const inCat = inCatAll.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
+  if (inCat.length >= 20) return { list: inCat.slice().sort(byLevel), broad: false };
+  const wide = all.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
+  if (wide.length < 20) return { list: inCatAll, broad: false };
+  return { list: wide.slice().sort(byLevel), broad: true };
+}
+
+// A chapter position belongs to a rung: 商务工作 holds 53 words at 认读 and 590 at
+// 输入法, so "第 3 章" is not the same 20 words in both.
+const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
+  `trio:${cat}${lang === "zh" && step !== "hanzi" ? ":" + step : ""}`;
+
 export default function Home() {
   const [words, setWords] = useState<Word[]>([]);
   const [readings, setReadings] = useState<ReadingPiece[]>([]);
@@ -281,23 +302,15 @@ export default function Home() {
   useEffect(() => { if (!readingActive || readingDone) return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone]);
 
   const activeWords = useMemo(() => category === "all" ? words : words.filter(item => item.category === category), [category, words]);
-  const ladder = useMemo(() => {
-    if (lang !== "zh" || zhStep === "hanzi") return { list: activeWords, broad: false };
-    const cap = zhMaxLevel(zhStep);
-    const byLevel = (a: typeof words[number], b: typeof words[number]) =>
-      zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]);
-    // stay inside the chosen category whenever it has enough words at this rung
-    const inCat = activeWords.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
-    if (inCat.length >= 20) return { list: inCat.slice().sort(byLevel), broad: false };
-    const all = words.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
-    if (all.length < 20) return { list: activeWords, broad: false };
-    return { list: all.slice().sort(byLevel), broad: true };
-  }, [words, activeWords, lang, zhStep, zhMap]);
+  const ladder = useMemo(() => buildLadder(words, zhMap, lang, zhStep, category), [words, zhMap, lang, zhStep, category]);
   const ladderWords = ladder.list;
+  // the rung admits fewer words than the category holds, and the library still
+  // lists all of them — say so instead of printing the narrowed number alone
+  const ladderNarrowed = source === "trio" && !ladder.broad && ladderWords.length < activeWords.length;
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
 
 
-  const sourceKey = source === "trio" ? `trio:${category}` : source;
+  const sourceKey = source === "trio" ? trioChapterKey(category, lang, zhStep) : source;
 
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
@@ -363,6 +376,12 @@ export default function Home() {
         lang,
       }));
   const reviewItems = reviewKeys ? activeItems.filter(i => reviewKeys.includes(i.key)) : null;
+  // both library grids stop at 300 cards; the counter above them used to report the
+  // full match count, so the list just ended with nothing saying it had been cut
+  const LIB_CAP = 300;
+  const libMatches = dictInfo
+    ? activeItems.filter(it => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).length
+    : filtered.length;
   const chapterCount = Math.max(1, Math.ceil(activeItems.length / 20));
   const chapterSafe = Math.min(chapter, chapterCount - 1);
   const chapterItems = activeItems.slice(chapterSafe * 20, chapterSafe * 20 + 20);
@@ -766,11 +785,26 @@ export default function Home() {
     setGlobalSearch(next);
     if (next) ensureAllDicts();
   }
+  function writeChapter(key: string, ch: number) {
+    try { const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); m[key] = ch; localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+  }
+  // Opening a word harder than the current rung is an explicit request for that
+  // word, so climb to the step that holds it instead of landing somewhere else.
+  function stepForWord(w: Word): ZhStep {
+    if (lang !== "zh" || zhStep === "hanzi") return zhStep;
+    const level = zhLevel(zhMap, w.zh.split("；")[0]);
+    if (level <= zhMaxLevel(zhStep)) return zhStep;
+    const next = ZH_STEPS.find(st => zhMaxLevel(st.id) >= level);
+    const step: ZhStep = next ? next.id : "hanzi";
+    setZhStep(step);
+    return step;
+  }
   function gotoTrioWord(w: Word) {
-    const gi = words.indexOf(w);
+    const step = stepForWord(w);
+    const gi = buildLadder(words, zhMap, lang, step, "all").list.findIndex(x => x.en === w.en);
     if (gi < 0) return;
     pendingIndex.current = gi % 20;
-    try { const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); m["trio:all"] = Math.floor(gi / 20); localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    writeChapter(trioChapterKey("all", lang, step), Math.floor(gi / 20));
     setGlobalSearch(false);
     setReviewKeys(null); setCategory("all"); setSource("trio"); persistSource("trio");
     setTyped(""); setWrongFlash(false); hadWrong.current = false; autoSpokenWord.current = null;
@@ -782,7 +816,7 @@ export default function Home() {
     if (!data) { try { data = await loadDictFile<DictEntry[]>(d.file); dictCache.current.set(d.id, data); } catch { return; } }
     const gi = data.findIndex(e => e.name === key); if (gi < 0) return;
     pendingIndex.current = gi % 20;
-    try { const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); m[d.id] = Math.floor(gi / 20); localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    writeChapter(d.id, Math.floor(gi / 20));
     setGlobalSearch(false);
     setDictWords(data); setReviewKeys(null); setSource(d.id); persistSource(d.id);
     setTyped(""); setWrongFlash(false); hadWrong.current = false; autoSpokenWord.current = null;
@@ -815,9 +849,26 @@ export default function Home() {
   }
   function practiceWord(w: Word) {
     setReviewKeys(null);
-    const list = category === "all" ? words : words.filter(item => item.category === w.category);
-    if (category !== "all" && w.category !== category) setCategory(w.category);
-    setIndex(Math.max(0, list.indexOf(w)));
+    const cat: WordFilter = category === "all" || w.category === category ? category : w.category;
+    const step = stepForWord(w);
+    // index into the list the learn view consumes, not the unfiltered category:
+    // it slices 20 at a time, so an index taken from a 590-long list landed on
+    // whatever sat at that offset inside the current chapter
+    const gi = buildLadder(words, zhMap, lang, step, cat).list.findIndex(x => x.en === w.en);
+    if (gi < 0) return;
+    const key = trioChapterKey(cat, lang, step);
+    writeChapter(key, Math.floor(gi / 20));
+    if (source === "trio" && key === sourceKey) {
+      // same list and same rung: the restore effect will not re-fire, so move here
+      setChapter(Math.floor(gi / 20));
+      setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
+      chapterStart.current = Date.now();
+      setIndex(gi % 20);
+    } else {
+      pendingIndex.current = gi % 20;
+      if (cat !== category) setCategory(cat);
+      if (source !== "trio") { setSource("trio"); persistSource("trio"); }
+    }
     setTyped(""); autoSpokenWord.current = null; setView("learn");
   }
   function changeReadingFilter(code: ReadingLang) {
@@ -858,7 +909,7 @@ export default function Home() {
 
     <main className="main">
       <header>
-        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictInfo.name : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}</b></button>
+        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictInfo.name : source === "fav" ? TX("我的收藏", "Favorit saya", "My favorites", uiLang) : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}{ladderNarrowed ? ` / ${activeWords.length}` : ""}</b></button>
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label="Dark mode">{dark ? "☀" : "☾"}</button>
           <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Indonesia</option><option value="en">English</option></select></label>
@@ -867,7 +918,7 @@ export default function Home() {
       </header>
 
       {view === "learn" && <section className="learn-view">
-        {reviewKeys && <div className="review-banner"><span>◎ {t.reviewing} · {learnItems.length}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
+        {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${reviewKeys.length > reviewItems.length ? ` / ${reviewKeys.length}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata jatuh tempo di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
         <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label="Prev chapter">‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label="Jump to chapter">{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label="Next chapter">›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}<span className="mode-sep" /><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", uiLang === "zh" ? "整词重来" : uiLang === "id" ? "Ulang kata" : "Restart word"], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); setWrongFlash(false); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</div>
         {!chapterFinished && <>
@@ -946,7 +997,7 @@ export default function Home() {
             </button>)}
           </div>
         </>}
-        <div className="toolbar"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={globalSearch ? (uiLang === "zh" ? "在全部词库中搜索…" : uiLang === "id" ? "Cari di semua kamus…" : "Search all libraries…") : t.search}/><button className={globalSearch ? "global-toggle on" : "global-toggle"} onClick={toggleGlobal}>🌐 {TX("全部词库", "Semua kamus", "All libraries", uiLang)}</button><span>{globalSearch ? (gq ? `${globalResults.length}${globalTotal > globalResults.length ? "+" : ""}` : `${dicts.reduce((a, d) => a + d.length, 0) + words.length}`) : (dictInfo ? activeItems.filter(it => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).length : filtered.length)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
+        <div className="toolbar"><input value={search} onChange={e=>setSearch(e.target.value)} placeholder={globalSearch ? (uiLang === "zh" ? "在全部词库中搜索…" : uiLang === "id" ? "Cari di semua kamus…" : "Search all libraries…") : t.search}/><button className={globalSearch ? "global-toggle on" : "global-toggle"} onClick={toggleGlobal}>🌐 {TX("全部词库", "Semua kamus", "All libraries", uiLang)}</button><span>{globalSearch ? (gq ? `${globalResults.length}${globalTotal > globalResults.length ? "+" : ""}` : `${dicts.reduce((a, d) => a + d.length, 0) + words.length}`) : (libMatches > LIB_CAP ? `${LIB_CAP} / ${libMatches}` : libMatches)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
         {globalSearch
           ? (globalLoading
               ? <div className="empty"><b>⏳</b><h3>{uiLang === "zh" ? "正在加载全部词库…" : uiLang === "id" ? "Memuat semua kamus…" : "Loading all libraries…"}</h3></div>
@@ -956,8 +1007,8 @@ export default function Home() {
                       ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => r.src === "trio" ? gotoTrioWord(words.find(w => w.en === r.key)!) : gotoDictWord(r.src, r.key)}><span className={`res-src ${r.lang}`}>{r.dictName || (uiLang === "zh" ? "精选" : "Trio")}</span><h3>{r.text}</h3><p>{r.sub}</p><div><b>{r.meaning}</b></div></button>)}</div>
                       : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
           : dictInfo
-          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, 300).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictInfo.name}</em><div><b>{it.meaning}</b></div></button>)}</div>
-          : <div className="word-grid">{filtered.slice(0, 300).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div><b>{w[defLang]}</b></div></button>)}</div>}
+          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictInfo.name}</em><div><b>{it.meaning}</b></div></button>)}</div>
+          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div><b>{w[defLang]}</b></div></button>)}</div>}
         <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p><a href={DATA + "SOURCES.md"} target="_blank" rel="noreferrer">Open English WordNet · Chinese Open Wordnet · Wordnet Bahasa · wordfreq · CMUdict · pypinyin</a></p><span>{uiLang === "zh" ? "各词库的具体来源与授权见上方链接；其中托福词表取自第三方备考材料，未获再分发授权。" : uiLang === "id" ? "Sumber dan lisensi tiap kamus ada di tautan di atas; daftar TOEFL berasal dari materi pihak ketiga tanpa izin distribusi." : "Per-library sources and licences are linked above; the TOEFL list comes from third-party material with no redistribution licence."}</span></div>
       </Panel>}
 
