@@ -8,5 +8,7 @@
 .source-note{margin-top:20px;padding:19px 21px;border:1px solid var(--line);border-radius:15px;background:var(--surface)}
 .source-note b{font-size:11px;color:var(--purple);letter-spacing:.8px;text-transform:uppercase}
 .source-note p{font-size:13px;font-weight:750;margin:7px 0}
+.source-note p a{color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--purple)}
+.source-note p a:hover{color:var(--purple)}
 .source-note span{color:var(--muted);font-size:11px;line-height:1.6}
 @media(max-width:640px){.category-tabs{margin-top:-5px}.category-tabs button{padding:8px 11px}.toolbar{align-items:stretch}.toolbar>span{display:flex;align-items:center}.source-note{padding:16px}}

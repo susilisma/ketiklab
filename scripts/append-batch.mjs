@@ -27,7 +27,7 @@ const READINGS_JSON = join(ROOT, "public", "data", "readings.json");
 const CATEGORIES = new Set(["daily", "business", "indonesia", "study"]);
 const LEVELS = new Set(["A1", "A2", "B1", "B2"]);
 const LANGS = new Set(["en", "id", "zh"]);
-const DEFAULT_SOURCE = "NGSL · Open English WordNet · Wordnet Bahasa · CC-CEDICT";
+const DEFAULT_SOURCE = "KetikLab";
 
 const args = process.argv.slice(2);
 const dryRun = args.includes("--dry-run");
