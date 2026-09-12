@@ -32,7 +32,7 @@ FURNITURE = re.compile(
     r"^\s*(\d+|2026 新版《考托必背词》|2026 BEAT|《托福必考2000词》|List \d+"
     r"|托福资源下载|请加助教微信|单词\s*.?音标\s*释义\s*助记)\s*$")
 ENTRY = re.compile(r"^\s*(\d{1,3})\s+([A-Za-z][A-Za-z'’\-]*(?:\s[A-Za-z'’\-]+){0,2})"
-                   r"\s*(\[[^\]]*\])?\s*(.*)$")
+                   r"\s*(?:\[[^\]]*\])?\s*(.*)$")
 POS_TOKEN = re.compile(r"\b(n|v|vt|vi|adj|adv|prep|conj|pron|num|art|aux|int)\.")
 NOTE = re.compile(r"【")
 INLINE = re.compile(r"\[[^\]]*\]")
@@ -91,7 +91,7 @@ def parse(pdf_path):
         if m and m.group(2):
             if cur:
                 entries.append(cur)
-            cur = {"word": m.group(2).strip(), "body": [m.group(4)]}
+            cur = {"word": m.group(2).strip(), "body": [m.group(3)]}
         elif cur:
             cur["body"].append(l)
     if cur:

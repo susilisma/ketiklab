@@ -1,12 +1,7 @@
 name: Build check
 
-# Builds every branch except main — install, type check, vite build — and deploys
-# nothing, so work can be verified on GitHub's runners before it reaches the site.
-# main keeps its own pipeline in site.yml, which builds and deploys.
-#
-# If npm install has to rewrite package-lock.json because it drifted from
-# package.json, the regenerated lockfile is committed back to the branch. That is
-# how the lockfile gets repaired without anyone having to run npm locally.
+# Builds every branch except main and deploys nothing, so work can be verified on
+# GitHub's runners first. main has its own pipeline in site.yml, which deploys.
 
 on:
   push:

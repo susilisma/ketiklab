@@ -23,11 +23,8 @@ self.addEventListener("fetch", (e) => {
   // SPA navigations: network-first, fall back to cached shell offline
   if (req.mode === "navigate") {
     e.respondWith(fetch(req).then((res) => {
-      // Keep the offline shell in step with what the network last served: this
-      // worker's bytes never change between deploys, so it never reinstalls and
-      // the install-time copy would otherwise stay frozen forever. Only a real
-      // page counts — a 404 or a captive portal must not become what everyone
-      // sees offline.
+      // this worker's bytes never change between deploys, so the install-time copy
+      // would stay frozen; ok only, or a 404 could become the page everyone sees offline
       if (res.ok) {
         const copy = res.clone();
         caches.open(VERSION).then((c) => c.put("./index.html", copy));
@@ -45,9 +42,7 @@ self.addEventListener("fetch", (e) => {
     })));
     return;
   }
-  // A cache-busting query on data is an explicit request for the network copy —
-  // the ops dashboard sends one on every refresh. Caching those would store a
-  // fresh ~1MB words.json per refresh under a URL nothing ever asks for again.
+  // a cache-busting query wants the network copy; caching each would store a fresh ~1MB words.json
   if (url.pathname.includes("/data/") && url.search) return;
   // Content JSON: stale-while-revalidate (instant + refreshes in background)
   if (url.pathname.includes("/data/")) {

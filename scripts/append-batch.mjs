@@ -58,9 +58,7 @@ function materializeWord(w) {
     if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
     if (!CATEGORIES.has(category)) return { err: "bad-category" };
     if (!LEVELS.has(level)) return { err: "bad-level" };
-    // No examples: leave the object empty rather than inventing a sentence. The
-    // tuple form carries no example text, and filling one in produced the same
-    // filler for every word in the library.
+    // the tuple form carries no example text; inventing one filled the library with one sentence
     return { obj: { en, id, zh, category, level, source: DEFAULT_SOURCE, examples: {} } };
   }
   // object form
@@ -69,8 +67,7 @@ function materializeWord(w) {
   if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
   if (!CATEGORIES.has(category)) return { err: "bad-category" };
   if (!LEVELS.has(level)) return { err: "bad-level" };
-  // keep whichever languages the batch actually supplied; a language with no
-  // example simply has none, and the UI already skips the row when it is absent
+  // keep whichever languages the batch supplied; the card skips a missing row
   const ex = {};
   if (examples) for (const k of ["en", "id", "zh"]) {
     if (typeof examples[k] === "string" && examples[k].trim()) ex[k] = examples[k];

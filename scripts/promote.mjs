@@ -3,16 +3,11 @@
  * Promotion step: move queued content into the live site data.
  * Runs inside GitHub Actions.
  *
- * Scheduled runs release at a RATE, not a fixed amount per run. GitHub
- * delivers cron events when it feels like it — this repo saw ~22 runs a day
- * through 2026-08-25 and then 1-2 a day, with gaps of 7 to 13 hours — so a
- * fixed count per run makes the publishing speed depend on GitHub's mood
- * rather than on the schedule. The amount released is WORDS_PER_HOUR times
- * the hours since the last promotion, capped at MAX_CATCHUP_HOURS so a long
- * gap cannot empty the queue in one go.
- *
- * Manual runs set WORDS_PER_RUN to take that fixed number instead, which is
- * how the workflow's "flush the whole queue" dispatch works.
+ * Scheduled runs release at a RATE, not a fixed amount per run: WORDS_PER_HOUR
+ * times the hours since the last promotion, capped at MAX_CATCHUP_HOURS. GitHub
+ * fires cron irregularly, so a fixed count would tie publishing speed to how
+ * often it happens to run. Manual runs set WORDS_PER_RUN to take a fixed number,
+ * which is how the workflow's "flush the whole queue" dispatch works.
  *
  * - Validation + dedup are delegated to scripts/append-batch.mjs
  * - Promoted items leave the queue whether appended or skipped as duplicates,
@@ -37,11 +32,8 @@ const MAX_CATCHUP_HOURS = Number(process.env.MAX_CATCHUP_HOURS || 24);
 // present only on manual dispatch: take exactly this many, ignoring elapsed time
 const FIXED_COUNT = process.env.WORDS_PER_RUN ? Number(process.env.WORDS_PER_RUN) : null;
 
-/**
- * Decide how much to release. Pure: same inputs, same answer, no I/O — so it
- * can be exercised on its own without a queue on disk.
- */
-export function plan({
+/** Decide how much to release. Pure — no I/O, so it can be reasoned about alone. */
+function plan({
   queuedWords, queuedReadings, elapsedHours, fixedCount = null,
   wordsPerHour = 12, readingEveryHours = 6, maxCatchupHours = 24,
 }) {

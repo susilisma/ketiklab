@@ -2,19 +2,16 @@
 /**
  * One-off cleanup: remove the filler example sentences from public/data/words.json.
  *
- * append-batch.mjs used to invent an example for every word that arrived without
- * one, so 3082 of 3094 entries carry the same three sentences with the word
- * swapped in. The generator no longer does this, but the entries already written
- * still hold the filler. This strips exactly those three shapes and leaves every
- * genuine example untouched.
+ * append-batch.mjs used to invent an example for any word that arrived without one,
+ * so most entries carry the same three sentences with the word swapped in. It no
+ * longer does; this strips what was already written and leaves genuine examples.
  *
  * Usage:
  *   node scripts/strip-placeholder-examples.mjs            # report only
  *   node scripts/strip-placeholder-examples.mjs --write    # actually rewrite
  *
- * Run it through the "Build and deploy" workflow_dispatch rather than locally if
- * a local branch is behind origin/main: words.json is written as a single line,
- * so any local edit conflicts irreconcilably with the hourly content commits.
+ * Prefer the "Build and deploy" workflow_dispatch over running it locally: words.json
+ * is a single line, so a local edit conflicts irreconcilably with the hourly commits.
  */
 import { readFileSync, writeFileSync } from "node:fs";
 import { fileURLToPath } from "node:url";

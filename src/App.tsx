@@ -319,10 +319,8 @@ export default function Home() {
   useEffect(() => { try { localStorage.setItem("ketiklab-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
   useEffect(() => { try { localStorage.setItem("ketiklab-name", profileName); } catch { /* ignore */ } }, [profileName]);
 
-  // readings gates too: reading/readings[0] is dereferenced unguarded further
-  // down, and both files land in the same Promise.all, so requiring both costs
-  // nothing today and turns a white screen into the loading state if
-  // readings.json ever parses to an empty array.
+  // readings gates too: readings[0] is dereferenced unguarded below, and both
+  // files resolve from the same Promise.all, so requiring both costs nothing.
   const ready = words.length > 0 && readings.length > 0;
 
   if (!ready) {
@@ -335,11 +333,8 @@ export default function Home() {
   }
 
   const dictInfo = source !== "trio" && source !== "fav" && dictWords ? dicts.find(d => d.id === source) || null : null;
-  // Each branch falls back when it would be empty. Unfavouriting the last saved
-  // word, or picking a dictionary whose file failed to load, would otherwise
-  // leave every derived list empty, and `item` is dereferenced unguarded a few
-  // lines below. source="fav" is persisted, so that crash repeated on reload.
-  // ladderWords is always non-empty here: `ready` guarantees words.json loaded.
+  // No branch may yield an empty list: `item` is dereferenced unguarded below.
+  // ladderWords cannot be empty here — `ready` means words.json loaded.
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favorites
     : (dictInfo && dictWords && dictWords.length)

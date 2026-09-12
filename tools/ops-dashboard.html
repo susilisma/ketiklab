@@ -102,7 +102,7 @@ td:last-child,th:last-child{text-align:right;font-variant-numeric:tabular-nums}
     <button class="reload" id="reload">刷新数据</button>
   </header>
 
-  <div id="fail"></div>
+  
 
   <div class="tiles" id="tiles"></div>
 
@@ -265,10 +265,8 @@ function health(host, items) {
 }
 
 /* ---------- load ---------- */
-// Read from the site that served this page first. If the page loaded, ketiklab.com
-// is reachable; raw.githubusercontent.com is not guaranteed to be — some networks
-// block or poison it, and that is what produced the "Failed to fetch" banner.
-// GitHub raw stays as a fallback so the file still works when opened on its own.
+// The site that served this page is reachable by definition; raw.githubusercontent.com
+// is not — some networks block it. Raw stays as a fallback for opening this file alone.
 const SITE = "/data/";
 const RETRY_SECONDS = 30;
 let retryTimer = null;
@@ -285,8 +283,7 @@ async function getJson(sitePath, repoPath) {
   return await r.json();
 }
 
-// One broken card must not blank the whole page. The error still goes to the
-// console for whoever opens devtools; it just does not become a banner.
+// one broken card must not blank the page; its error goes to the console, not the UI
 function section(name, fn) {
   try { fn(); } catch (e) { console.warn("[ops] " + name + " failed to render:", e); }
 }
@@ -294,8 +291,6 @@ function section(name, fn) {
 async function load() {
   clearTimeout(retryTimer);
   const sub = document.getElementById("sub");
-  document.getElementById("fail").innerHTML = "";
-
   let words, manifest;
   try {
     [words, manifest] = await Promise.all([
@@ -303,17 +298,15 @@ async function load() {
       getJson("manifest.json", "public/data/manifest.json"),
     ]);
   } catch (e) {
-    // Neither the site nor GitHub answered, which is almost always transient —
-    // so say so quietly and try again instead of raising an alarm.
+    // almost always transient: say so quietly and retry rather than raise an alarm
     console.warn("[ops] data unavailable:", e);
     sub.textContent = "暂时连不上数据源，" + RETRY_SECONDS + " 秒后自动重试…";
     retryTimer = setTimeout(load, RETRY_SECONDS * 1000);
     return;
   }
 
-  // Only the library itself is required. The queue lives in the repo and is never
-  // published to the site, so it can only come from GitHub; pay and history are
-  // secondary. Each degrades to "unknown" on its own card instead of failing the load.
+  // the queue is repo-only so GitHub is its only source; each of these degrades to
+  // "unknown" on its own card rather than failing the load
   const [queue, pay, hist] = await Promise.all([
     getJson(null, "queue/words.json").catch(() => null),
     getJson("pay.json", "public/data/pay.json").catch(() => ({})),
