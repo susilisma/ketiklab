@@ -9,6 +9,8 @@ import { ZhSteps, ZH_STEPS, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, typ
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "account" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
 type WordFilter = "all" | WordCategory;
+// a due word resolved to where it lives: the trio collection or one dictionary
+type ReviewRef = { key: string; w: Word } | { key: string; d: DictInfo; e: DictEntry };
 
 const DATA = import.meta.env.BASE_URL + "data/";
 
@@ -170,6 +172,7 @@ export default function Home() {
   const [speakingWord, setSpeakingWord] = useState<string | null>(null);
   const [srs, setSrs] = useState<SrsStats>(EMPTY_STATS);
   const [reviewKeys, setReviewKeys] = useState<string[] | null>(null);
+  const [reviewRefs, setReviewRefs] = useState<ReviewRef[]>([]);
   const input = useRef<HTMLInputElement>(null);
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
@@ -351,33 +354,38 @@ export default function Home() {
   const dictInfo = source !== "trio" && source !== "fav" && dictWords ? dicts.find(d => d.id === source) || null : null;
   // No branch may yield an empty list: `item` is dereferenced unguarded below.
   // ladderWords cannot be empty here — `ready` means words.json loaded.
+  const dictItem = (d: DictInfo, e: DictEntry): PracticeItem => ({
+    key: e.name,
+    text: e.name,
+    sub: d.lang === "zh"
+      ? (e.usphone ? `普通话 · ${e.usphone}` : "普通话")
+      : e.usphone ? `American English · /${e.usphone}/` : (d.lang === "id" ? "Bahasa Indonesia" : "English"),
+    meaning: (uiLang === "id" && e.idtrans && e.idtrans.length ? e.idtrans.join("; ") : e.trans.join("；")),
+    example: e.def || undefined,
+    voice: d.lang === "id" ? "id-ID" : d.lang === "zh" ? "zh-CN" : "en-US",
+    lang: d.lang,
+    dict: d.name,
+  });
+  const trioItem = (w: Word): PracticeItem => ({
+    key: w.en,
+    text: wordValue(w, lang),
+    sub: lang === "zh" && zhToned(zhMap, wordValue(w, "zh"))
+      ? `普通话 · ${zhToned(zhMap, wordValue(w, "zh"))}`
+      : pronunciation(w, lang),
+    meaning: w[defLang],
+    example: w.examples?.[lang] as string | undefined,
+    voice: LANGUAGE_META[lang].voice,
+    lang,
+  });
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favorites
     : (dictInfo && dictWords && dictWords.length)
-    ? dictWords.map(e => ({
-        key: e.name,
-        text: e.name,
-        sub: dictInfo.lang === "zh"
-          ? (e.usphone ? `普通话 · ${e.usphone}` : "普通话")
-          : e.usphone ? `American English · /${e.usphone}/` : (dictInfo.lang === "id" ? "Bahasa Indonesia" : "English"),
-        meaning: (uiLang === "id" && e.idtrans && e.idtrans.length ? e.idtrans.join("; ") : e.trans.join("；")),
-        example: e.def || undefined,
-        voice: dictInfo.lang === "id" ? "id-ID" : dictInfo.lang === "zh" ? "zh-CN" : "en-US",
-        lang: dictInfo.lang,
-        dict: dictInfo.name,
-      }))
-    : ladderWords.map(w => ({
-        key: w.en,
-        text: wordValue(w, lang),
-        sub: lang === "zh" && zhToned(zhMap, wordValue(w, "zh"))
-          ? `普通话 · ${zhToned(zhMap, wordValue(w, "zh"))}`
-          : pronunciation(w, lang),
-        meaning: w[defLang],
-        example: w.examples?.[lang] as string | undefined,
-        voice: LANGUAGE_META[lang].voice,
-        lang,
-      }));
-  const reviewItems = reviewKeys ? activeItems.filter(i => reviewKeys.includes(i.key)) : null;
+    ? dictWords.map(e => dictItem(dictInfo, e))
+    : ladderWords.map(trioItem);
+  // Due keys span every category, rung and dictionary. Intersecting them with the
+  // current list practised 4 of 47 due words — or, when none overlapped, fell back to
+  // an ordinary chapter while still calling it review. Practise the due words themselves.
+  const reviewItems = reviewKeys ? reviewRefs.map(r => "w" in r ? trioItem(r.w) : dictItem(r.d, r.e)) : null;
   // both library grids stop at 300 cards; the counter above them used to report the
   // full match count, so the list just ended with nothing saying it had been cut
   const LIB_CAP = 300;
@@ -836,10 +844,33 @@ export default function Home() {
     if (w) practiceWord(w);
   }
   function start() { setRunning(v => !v); setTimeout(() => input.current?.focus(), 20); }
+  // Keys are not source-qualified, so an English key can exist both in the trio
+  // collection and in an English dictionary: prefer the dictionary being practised,
+  // then the trio collection, then the other dictionaries in manifest order.
+  async function resolveReviewRefs(keys: string[]): Promise<ReviewRef[]> {
+    const found = new Map<string, ReviewRef>();
+    const scan = (d: DictInfo, data: DictEntry[]) => {
+      const byName = new Map(data.map(e => [e.name, e]));
+      for (const k of keys) { const e = byName.get(k); if (e && !found.has(k)) found.set(k, { key: k, d, e }); }
+    };
+    if (dictInfo && dictWords) scan(dictInfo, dictWords);
+    const byEn = new Map(words.map(w => [w.en, w]));
+    for (const k of keys) { const w = byEn.get(k); if (w && !found.has(k)) found.set(k, { key: k, w }); }
+    for (const d of dicts) {
+      if (found.size === keys.length) break;
+      let data = dictCache.current.get(d.id) || allDicts[d.id];
+      if (!data) { try { data = await loadDictFile<DictEntry[]>(d.file); dictCache.current.set(d.id, data); } catch { continue; } }
+      scan(d, data);
+    }
+    return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r);
+  }
   async function startReview() {
     let keys = await getDueKeys();
     if (!keys.length) keys = mistakes.slice();
     if (!keys.length) return;
+    const refs = await resolveReviewRefs(keys);
+    if (!refs.length) return;
+    setReviewRefs(refs);
     setReviewKeys(keys);
     setChapterFinished(false); setChDone(0);
     setIndex(0); setTyped(""); autoSpokenWord.current = null;
