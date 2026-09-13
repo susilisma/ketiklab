@@ -20,6 +20,10 @@ export type DictInfo = {
   id: string;
   name: string;
   description: string;
+  name_id?: string;
+  name_en?: string;
+  description_id?: string;
+  description_en?: string;
   lang: Lang;
   length: number;
   file: string;

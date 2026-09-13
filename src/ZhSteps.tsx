@@ -73,7 +73,11 @@ export function zhMaxLevel(step: ZhStep) {
 }
 
 const T = (ui: UiLang, zh: string, idn: string, en: string) => (ui === "zh" ? zh : ui === "id" ? idn : en);
-const norm = (s: string) => s.toLowerCase().replace(/[^a-z]/g, "").replace(/ü/g, "v");
+// NFD first: tone marks fall away, and ü (also ǖǘǚǜ) is then u + U+0308,
+// which becomes the IME "v" before the strip
+const UMLAUT_U = "u" + String.fromCharCode(0x308);
+const norm = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "");
+const focusVisible = (el: Element) => { try { return el.matches(":focus-visible"); } catch { return true; } };
 
 type Props = {
   step: ZhStep;
@@ -81,12 +85,14 @@ type Props = {
   plain: string;
   pool: string[];
   uiLang: UiLang;
+  active: boolean;
   onPass: () => void;
   onSkip: () => void;
+  onMiss: () => void;
   onSpeak: () => void;
 };
 
-export function ZhSteps({ step, word, plain, pool, uiLang, onPass, onSkip, onSpeak }: Props) {
+export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak }: Props) {
   const [typed, setTyped] = useState("");
   const [wrong, setWrong] = useState(0);
   const [peek, setPeek] = useState(false);
@@ -99,21 +105,30 @@ export function ZhSteps({ step, word, plain, pool, uiLang, onPass, onSkip, onSpe
 
   /* step 1 — recognise, advance on SPACE / ENTER */
   useEffect(() => {
-    if (step !== "read") return;
+    if (step !== "read" || !active) return;
     const on = (e: KeyboardEvent) => {
-      if (e.key === " " || e.key === "Enter") { e.preventDefault(); onPass(); }
+      if (e.key !== " " && e.key !== "Enter") return;
+      if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
+      const t = e.target instanceof HTMLElement ? e.target : null;
+      // fields, dialogs and a control the learner tabbed to keep their own keys;
+      // a button that was merely clicked (no focus ring) still lets SPACE advance
+      if (t && t.closest("[role=dialog], input, textarea, select, [contenteditable=true]")) return;
+      if (t && t !== document.body && !t.classList.contains("zh-go") && t.closest("button, a, [role=button]") && focusVisible(t)) return;
+      e.preventDefault(); onPass();
     };
     window.addEventListener("keydown", on);
     return () => window.removeEventListener("keydown", on);
-  }, [step, word, onPass]);
+  }, [step, word, onPass, active]);
 
   /* step 3 — options: correct answer plus three same-level distractors */
   const options = useMemo(() => {
-    const others = pool.filter(w => w && w !== word);
+    const others = Array.from(new Set(pool.filter(w => w && w !== word)));
     const seed = word.length + (word.codePointAt(0) || 0);
+    // the stride must be coprime with the pool size or the walk keeps landing on the same slots
+    const stride = others.length % 7 ? 7 : 5;
     const picks: string[] = [];
     for (let i = 0; i < others.length && picks.length < 3; i++) {
-      const c = others[(seed + i * 7) % others.length];
+      const c = others[(seed + i * stride) % others.length];
       if (!picks.includes(c)) picks.push(c);
     }
     const all = [word, ...picks];
@@ -136,9 +151,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, onPass, onSkip, onSpe
           key={o}
           className={picked === o ? (o === word ? "ok" : "no") : ""}
           onClick={() => {
+            if (picked === word) return;
             setPicked(o);
-            if (o === word) { onSpeak(); setTimeout(onPass, 260); }
-            else setTimeout(() => setPicked(null), 420);
+            if (o === word) { onSpeak(); onPass(); }
+            else { onMiss(); setTimeout(() => setPicked(null), 420); }
           }}>{o}</button>)}
       </div>
       <p className="zh-tip">{zhStepHint("choose", uiLang)}</p>
@@ -152,8 +168,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, onPass, onSkip, onSpe
       {syllables.map((s, i) => {
         const before = norm(syllables.slice(0, i).join(""));
         const done = typed.length >= before.length + norm(s).length;
-        const active = !done && typed.length >= before.length;
-        return <span key={i} className={done ? "syl done" : active ? "syl now" : "syl"}>
+        const current = !done && typed.length >= before.length;
+        return <span key={i} className={done ? "syl done" : current ? "syl now" : "syl"}>
           {peek || wrong >= 2 ? s : done ? s : "•".repeat(s.length)}
         </span>;
       })}
@@ -165,17 +181,19 @@ export function ZhSteps({ step, word, plain, pool, uiLang, onPass, onSkip, onSpe
       inputMode="text"
       placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
       onChange={e => {
+        if (target.length > 0 && typed.length >= target.length) return;
         const v = norm(e.target.value);
         if (target.startsWith(v)) {
           setTyped(v);
-          if (v.length === target.length && v.length > 0) { onSpeak(); setTimeout(onPass, 240); }
+          if (v.length === target.length && v.length > 0) { onSpeak(); onPass(); }
         } else {
+          onMiss();
           setWrong(n => n + 1);
           setTyped(target.slice(0, v.length - 1 > 0 ? v.length - 1 : 0));
         }
       }}
       onKeyDown={e => {
-        if (e.key === "Tab") { e.preventDefault(); setPeek(true); }
+        if (e.key === "Tab") { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
         if (e.key === "Enter") { e.preventDefault(); onSkip(); }
       }}
       onKeyUp={e => { if (e.key === "Tab") setPeek(false); }}

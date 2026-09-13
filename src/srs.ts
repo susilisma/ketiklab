@@ -5,8 +5,8 @@
 import Dexie, { type Table } from "dexie";
 
 export type ReviewRecord = {
-  en: string; // primary key — the word's English key
-  step: number; // index into INTERVALS
+  en: string; // primary key — "<lang>:<word key>", so the Indonesian "air" and the English "air" keep separate rows
+  step: number; // index into INTERVALS; -1 = new or lapsed, not on the ladder yet
   dueAt: number; // epoch ms when the word should be reviewed next
   reps: number; // total times answered
   lapses: number; // total wrong answers
@@ -31,9 +31,14 @@ const db = new KetikDB();
 
 export async function recordReview(en: string, correct: boolean, now = Date.now()): Promise<void> {
   const existing = await db.reviews.get(en);
-  const prevStep = existing?.step ?? 0;
-  const step = correct ? Math.min(prevStep + 1, INTERVALS.length - 1) : 0;
-  const dueAt = correct ? now + INTERVALS[step] * DAY : now + RELAPSE_DELAY;
+  const prevStep = existing?.step ?? -1;
+  let step: number;
+  let dueAt: number;
+  if (!correct) { step = -1; dueAt = now + RELAPSE_DELAY; }
+  // a correct answer before the word is due (a retried chapter, a repeated word) is
+  // not a recall from memory, so it keeps the rung and the date it already has
+  else if (existing && existing.dueAt > now) { step = prevStep; dueAt = existing.dueAt; }
+  else { step = Math.min(prevStep + 1, INTERVALS.length - 1); dueAt = now + INTERVALS[step] * DAY; }
   await db.reviews.put({
     en,
     step,
@@ -55,7 +60,7 @@ export async function getStats(now = Date.now()): Promise<SrsStats> {
   return { due, learning, mastered, total: all.length };
 }
 
-// English keys of words due for review now, soonest first.
+// "<lang>:<key>" ids of words due for review now, soonest first.
 export async function getDueKeys(now = Date.now(), limit = 60): Promise<string[]> {
   const all = await db.reviews.where("dueAt").belowOrEqual(now).toArray();
   all.sort((a, b) => a.dueAt - b.dueAt);

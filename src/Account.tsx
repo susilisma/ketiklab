@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
-  supabase, currentSession, signIn, signUp, signOut, resetPassword,
-  loadProfile, saveName, loadProgress, saveProgress, collectLocal, applyLocal,
+  supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
+  loadProfile, saveName, pushProgress, linkThisDevice, applyLocal, linkedUid, linkDevice,
+  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, type SyncNote,
 } from "./cloud";
 
 type Lang = "zh" | "id" | "en";
@@ -29,8 +30,21 @@ function suggestEmail(raw: string): string | null {
 }
 
 /** Supabase speaks English error codes; learners deserve their own language. */
-function humanError(raw: string, l: Lang): string {
+function humanError(e: unknown, l: Lang): string {
+  const ae = (e && typeof e === "object" ? e : {}) as { name?: string; status?: number; message?: string };
+  const raw = typeof e === "string" ? e : ae.message || String(e);
   const m = raw.toLowerCase();
+  // A dead connection carries the browser's own wording — Chrome "Failed to fetch",
+  // Firefox "NetworkError…", Safari "Load failed" — so the error class is checked
+  // first and the text only as a fallback.
+  if (ae.name === "AuthRetryableFetchError" || ae.status === 0 || m.includes("failed to fetch") || m.includes("network") || m.includes("load failed") || m.includes("offline"))
+    return T("连不上服务器，检查一下网络再试。",
+             "Tidak bisa terhubung ke server. Cek koneksimu.",
+             "Could not reach the server. Check your connection.", l);
+  if (m.includes("cloud read failed"))
+    return T("暂时读不到云端记录，没有改动任何数据，请稍后再试。",
+             "Data cloud belum bisa dibaca. Tidak ada yang diubah — coba lagi nanti.",
+             "Could not read the cloud copy; nothing was changed. Try again later.", l);
   if (m.includes("email not confirmed"))
     return T("这个邮箱还没确认。去收件箱（含垃圾邮件）点确认链接后再登录。",
              "Email ini belum dikonfirmasi. Cek inbox (dan folder spam), klik tautannya, lalu masuk lagi.",
@@ -47,12 +61,14 @@ function humanError(raw: string, l: Lang): string {
     return T("这个邮箱已经注册过了，直接登录即可。",
              "Email ini sudah terdaftar. Silakan masuk saja.",
              "That email is already registered — just sign in.", l);
+  if (m.includes("different from the old"))
+    return T("新密码不能和原密码相同。", "Kata sandi baru harus berbeda dari yang lama.", "The new password must differ from the old one.", l);
   if (m.includes("password") && m.includes("6"))
     return T("密码至少 6 位。", "Kata sandi minimal 6 karakter.", "Password needs at least 6 characters.", l);
-  if (m.includes("failed to fetch") || m.includes("network"))
-    return T("连不上服务器，检查一下网络再试。",
-             "Tidak bisa terhubung ke server. Cek koneksimu.",
-             "Could not reach the server. Check your connection.", l);
+  if (m.includes("expired") || m.includes("invalid or has"))
+    return T("这个链接已失效或过期，请重新申请一封。",
+             "Tautan ini sudah kedaluwarsa. Minta yang baru.",
+             "That link has expired. Request a new one.", l);
   return raw;
 }
 
@@ -72,52 +88,78 @@ export function Account({ uiLang, name, onName }: {
   const [err, setErr] = useState("");
   const [member, setMember] = useState<string | null>(null);
   const [refCode, setRefCode] = useState<string | null>(null);
+  const [profName, setProfName] = useState("");
   const [syncedAt, setSyncedAt] = useState("");
   const [typo, setTypo] = useState<string | null>(null);
   const [sentTo, setSentTo] = useState("");
+  const [recovering, setRecovering] = useState(recoveryPending);
+  const [newPw, setNewPw] = useState("");
+  // the data on this device belongs to a different account than the one signed in
+  const [foreign, setForeign] = useState(false);
+  const [cloudNewer, setCloudNewer] = useState(false);
+  const [note, setNote] = useState<SyncNote>("");
+  const [urlErr, setUrlErr] = useState("");
+  const lastUid = useRef<string | undefined>(undefined);
 
   useEffect(() => {
     let alive = true;
     currentSession().then(s => { if (alive) { setSession(s); setReady(true); } });
-    const { data } = supabase.auth.onAuthStateChange((_e, s) => { if (alive) setSession(s); });
+    const { data } = supabase.auth.onAuthStateChange((e, s) => {
+      if (!alive) return;
+      setSession(s);
+      if (e === "PASSWORD_RECOVERY") setRecovering(true);
+      if (e === "SIGNED_OUT") setRecovering(false);
+    });
+    const n = takeNote(); if (n) setNote(n);
+    const ue = takeUrlError(); if (ue) setUrlErr(ue);
     return () => { alive = false; data.subscription.unsubscribe(); };
   }, []);
 
-  // First sight of a session: pull the cloud copy, or push this device's copy up
-  // if the account is still empty. Local data is never silently discarded.
+  // Account mounts afresh on every visit to the tab, so this runs often. It only
+  // writes to localStorage while linking this device to the account for the first
+  // time (and reloads then, see linkThisDevice); afterwards it pushes and reports.
   useEffect(() => {
+    const cur = session?.user.id;
+    if (lastUid.current !== cur) {
+      lastUid.current = cur;
+      setMember(null); setRefCode(null); setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setCloudNewer(false);
+    }
     if (!session) return;
     let alive = true;
     (async () => {
       const uid = session.user.id;
+      const linked = linkedUid();
       const prof = await loadProfile(uid);
       if (!alive) return;
       if (prof) {
         setMember(prof.member_until);
         setRefCode(prof.ref_code);
-        if (prof.name) { onName(prof.name); }
-        else if (name.trim()) { await saveName(uid, name.trim()); }
+        setProfName(prof.name || "");
+        if (prof.name) onName(prof.name);
+        else if (name.trim() && (!linked || linked === uid)) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
       }
-      const cloud = await loadProgress(uid);
-      if (!alive) return;
-      if (cloud && Object.keys(cloud).length) {
-        applyLocal(cloud);
-        const n = localStorage.getItem("ketiklab-name");
-        if (n) onName(n);
-        setMsg(T("已从云端恢复你的学习记录，刷新后生效。",
-                 "Data belajarmu dipulihkan dari cloud. Muat ulang untuk melihatnya.",
-                 "Your progress was restored from the cloud. Reload to see it.", uiLang));
-      } else {
-        await saveProgress(uid, collectLocal());
-        setMsg(T("这台设备上的学习记录已上传到你的账号。",
-                 "Data di perangkat ini sudah diunggah ke akunmu.",
-                 "This device's progress has been uploaded to your account.", uiLang));
-      }
-      if (alive) setSyncedAt(new Date().toLocaleTimeString());
+      if (recovering) return;
+      try {
+        if (linked && linked !== uid) { setForeign(true); return; }
+        if (linked === uid) {
+          const { cloudHasMore } = await pushProgress(uid);
+          if (!alive) return;
+          setCloudNewer(cloudHasMore);
+        } else {
+          const done = await linkThisDevice(uid, "merge", prof?.name || "");
+          if (!alive || done === "reloading") return;
+          setMsg(done === "uploaded"
+            ? T("这台设备上的学习记录已上传到你的账号。",
+                "Data di perangkat ini sudah diunggah ke akunmu.",
+                "This device's progress has been uploaded to your account.", uiLang)
+            : T("已同步。", "Tersinkron.", "Synced.", uiLang));
+        }
+        setSyncedAt(new Date().toLocaleTimeString());
+      } catch (e2: unknown) { if (alive) setErr(humanError(e2, uiLang)); }
     })();
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.user?.id]);
+  }, [session?.user?.id, recovering]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
@@ -126,6 +168,14 @@ export function Account({ uiLang, name, onName }: {
       const addr = email.trim();
       if (mode === "up") {
         const res = await signUp(addr, password, formName.trim() || name.trim());
+        // With confirmation on, signing up an address that already has an account
+        // returns a placeholder user with no identities instead of an error, and
+        // sends no email.
+        if (res.user && res.user.identities && res.user.identities.length === 0) {
+          setErr(humanError("already registered", uiLang));
+          setMode("in");
+          return;
+        }
         if (formName.trim()) onName(formName.trim());
         if (!res.session) {
           setSentTo(addr);
@@ -139,7 +189,7 @@ export function Account({ uiLang, name, onName }: {
       }
       setPassword("");
     } catch (e2: unknown) {
-      setErr(humanError((e2 as Error).message || String(e2), uiLang));
+      setErr(humanError(e2, uiLang));
     } finally {
       setBusy(false);
     }
@@ -152,20 +202,72 @@ export function Account({ uiLang, name, onName }: {
     try {
       await resetPassword(addr);
       setMsg(T(`重置链接已发到 ${addr}。`, `Tautan reset sudah dikirim ke ${addr}.`, `A reset link went to ${addr}.`, uiLang));
-    } catch (e2: unknown) { setErr(humanError((e2 as Error).message || String(e2), uiLang)); }
+    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+  }
+
+  async function setNewPassword(e: React.FormEvent) {
+    e.preventDefault();
+    setErr(""); setMsg(""); setBusy(true);
+    try {
+      await updatePassword(newPw);
+      finishRecovery(); setRecovering(false); setNewPw("");
+      setMsg(T("密码已更新。", "Kata sandi sudah diperbarui.", "Password updated.", uiLang));
+    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+    finally { setBusy(false); }
   }
 
   async function pushNow() {
     if (!session) return;
-    setBusy(true);
+    const uid = session.user.id;
+    setErr(""); setMsg(""); setBusy(true);
     try {
-      await saveProgress(session.user.id, collectLocal());
-      if (name.trim()) await saveName(session.user.id, name.trim());
+      const linked = linkedUid();
+      if (linked && linked !== uid) { setForeign(true); return; }
+      const { cloudHasMore } = await pushProgress(uid);
+      if (name.trim()) await saveName(uid, name.trim());
+      linkDevice(uid);
+      setCloudNewer(cloudHasMore);
       setSyncedAt(new Date().toLocaleTimeString());
       setMsg(T("已同步。", "Tersinkron.", "Synced.", uiLang));
-    } catch (e2: unknown) { setErr((e2 as Error).message || String(e2)); }
+    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
     finally { setBusy(false); }
   }
+
+  // Bring what the cloud has onto this device. Reloads, because App would write its
+  // in-memory copy of every synced key straight back over the merged values.
+  async function pullNow() {
+    if (!session) return;
+    setErr(""); setMsg(""); setBusy(true);
+    try {
+      const { merged } = await pushProgress(session.user.id);
+      applyLocal(merged); noteAfterReload("merged"); window.location.reload();
+    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); setBusy(false); }
+  }
+
+  async function chooseLink(how: "merge" | "replace") {
+    if (!session) return;
+    setErr(""); setMsg(""); setBusy(true);
+    try {
+      const done = await linkThisDevice(session.user.id, how, profName);
+      if (done === "reloading") return;
+      setForeign(false);
+      setSyncedAt(new Date().toLocaleTimeString());
+      setMsg(done === "uploaded"
+        ? T("这台设备上的学习记录已上传到你的账号。",
+            "Data di perangkat ini sudah diunggah ke akunmu.",
+            "This device's progress has been uploaded to your account.", uiLang)
+        : T("已同步。", "Tersinkron.", "Synced.", uiLang));
+    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+    finally { setBusy(false); }
+  }
+
+  const noteText = note === "restored"
+    ? T("已从云端恢复你的学习记录。", "Data belajarmu dipulihkan dari cloud.", "Your progress was restored from the cloud.", uiLang)
+    : note === "merged"
+    ? T("已把云端的记录合并到这台设备。", "Data dari cloud sudah digabung ke perangkat ini.", "The cloud's progress was merged into this device.", uiLang)
+    : note === "switched"
+    ? T("这台设备已换成这个账号的记录。", "Perangkat ini sekarang memakai data akun ini.", "This device now holds this account's progress.", uiLang)
+    : "";
 
   if (!ready) return <p className="acct-note">{T("加载中…", "Memuat…", "Loading…", uiLang)}</p>;
 
@@ -186,10 +288,25 @@ export function Account({ uiLang, name, onName }: {
           </em>
         </div>
 
+        {recovering && <form onSubmit={setNewPassword} style={{ marginBottom: 18 }}>
+          <label className="acct-field">
+            <span>{T("设置新密码", "Kata sandi baru", "New password", uiLang)}</span>
+            <input type="password" required minLength={6} autoComplete="new-password" value={newPw}
+              onChange={e => setNewPw(e.target.value)}
+              placeholder={T("至少 6 位", "Minimal 6 karakter", "At least 6 characters", uiLang)} />
+          </label>
+          <button className="acct-btn primary" type="submit" disabled={busy}>
+            {busy ? T("处理中…", "Memproses…", "Working…", uiLang) : T("保存新密码", "Simpan kata sandi baru", "Save new password", uiLang)}
+          </button>
+          <button className="acct-link" type="button" onClick={() => { finishRecovery(); setRecovering(false); }}>
+            {T("先不改，保留原密码", "Nanti saja, pakai yang lama", "Not now, keep the old one", uiLang)}
+          </button>
+        </form>}
+
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
           <input value={name} maxLength={24} onChange={e => onName(e.target.value)}
-            onBlur={() => session && saveName(session.user.id, name.trim())}
+            onBlur={() => { if (session && !foreign) saveName(session.user.id, name.trim()).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
@@ -197,16 +314,41 @@ export function Account({ uiLang, name, onName }: {
           {T("你的推广码：", "Kode referralmu: ", "Your referral code: ", uiLang)}<code>{refCode}</code>
         </p>}
 
+        {foreign
+          ? <>
+              <p className="acct-note">
+                {T("这台设备上的学习记录属于另一个账号。要怎么处理？",
+                   "Data belajar di perangkat ini milik akun lain. Mau diapakan?",
+                   "The progress on this device belongs to another account. What should happen to it?", uiLang)}
+              </p>
+              <div className="acct-actions">
+                <button className="acct-btn" onClick={() => chooseLink("merge")} disabled={busy}>
+                  {T("合并进这个账号", "Gabungkan ke akun ini", "Merge into this account", uiLang)}
+                </button>
+                <button className="acct-btn ghost" onClick={() => chooseLink("replace")} disabled={busy}>
+                  {T("只用云端记录", "Pakai data cloud saja", "Use the cloud copy only", uiLang)}
+                </button>
+              </div>
+            </>
+          : cloudNewer && <p className="acct-note">
+              {T("云端有这台设备还没有的记录。", "Cloud punya data yang belum ada di perangkat ini.", "The cloud has progress this device does not.", uiLang)}
+              <button className="acct-link" style={{ marginTop: 0, marginLeft: 6 }} onClick={pullNow} disabled={busy}>
+                {T("合并到本机", "Gabungkan ke sini", "Merge it here", uiLang)}
+              </button>
+            </p>}
+
         <div className="acct-actions">
-          <button className="acct-btn" onClick={pushNow} disabled={busy}>
+          {!foreign && <button className="acct-btn" onClick={pushNow} disabled={busy}>
             {T("立即同步", "Sinkronkan sekarang", "Sync now", uiLang)}
-          </button>
+          </button>}
           <button className="acct-btn ghost" onClick={() => signOut()}>
             {T("退出登录", "Keluar", "Sign out", uiLang)}
           </button>
         </div>
         {syncedAt && <p className="acct-note">{T("上次同步 ", "Sinkron terakhir ", "Last synced ", uiLang)}{syncedAt}</p>}
+        {noteText && <p className="acct-ok">{noteText}</p>}
         {msg && <p className="acct-ok">{msg}</p>}
+        {urlErr && <p className="acct-err">{humanError(urlErr, uiLang)}</p>}
         {err && <p className="acct-err">{err}</p>}
       </div>
       <p className="acct-note">
@@ -259,7 +401,9 @@ export function Account({ uiLang, name, onName }: {
       {mode === "in" && <button className="acct-link" onClick={forgot}>
         {T("忘记密码？", "Lupa kata sandi?", "Forgot password?", uiLang)}
       </button>}
+      {noteText && <p className="acct-ok">{noteText}</p>}
       {msg && <p className="acct-ok">{msg}</p>}
+      {urlErr && <p className="acct-err">{humanError(urlErr, uiLang)}</p>}
       {err && <p className="acct-err">{err}</p>}
     </div>
     <p className="acct-note">

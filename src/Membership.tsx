@@ -1,4 +1,6 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import type { Session } from "@supabase/supabase-js";
+import { supabase, currentSession, loadProfile, type Profile } from "./cloud";
 
 export type UiLang = "zh" | "id" | "en";
 
@@ -17,25 +19,30 @@ const T = <T,>(ui: UiLang, zh: T, id: T, en: T): T => (ui === "zh" ? zh : ui ===
 
 const money = (n: number) => "Rp " + n.toLocaleString("id-ID");
 
-/* Referral code is derived locally and kept stable per browser until real
-   accounts exist; the server will hand out the authoritative code later. */
-function useReferralCode() {
-  return useMemo(() => {
-    const KEY = "ketiklab-ref";
-    const ALPHABET = "ACDEFGHJKLMNPQRSTUVWXYZ23456789";   // no 0/O/1/I/B/8
-    try {
-      const saved = localStorage.getItem(KEY);
-      if (saved && /^[A-Z0-9]{6}$/.test(saved)) return saved;
-      const bytes = new Uint8Array(6);
-      crypto.getRandomValues(bytes);
-      const code = Array.from(bytes, b => ALPHABET[b % ALPHABET.length]).join("");
-      localStorage.setItem(KEY, code);
-      return code;
-    } catch {
-      return "KETIK9";
+/* First-touch referral attribution. The ?ref= a visitor arrived with is captured
+   once, when this module loads, and kept until they buy; a later link from
+   someone else does not overwrite it. The query is stripped so the visitor does
+   not pass the same code on by sharing their address bar. */
+const REFERRER_KEY = "ketiklab-referrer";
+const REF_RE = /^[A-Z0-9]{4,12}$/;
+const REFERRER = (() => {
+  let fromUrl = "";
+  try {
+    const url = new URL(location.href);
+    if (url.searchParams.has("ref")) {
+      fromUrl = (url.searchParams.get("ref") || "").trim().toUpperCase();
+      url.searchParams.delete("ref");
+      history.replaceState(history.state, "", url);
     }
-  }, []);
-}
+  } catch { /* ignore */ }
+  if (!REF_RE.test(fromUrl)) fromUrl = "";
+  try {
+    const saved = localStorage.getItem(REFERRER_KEY) || "";
+    if (REF_RE.test(saved)) return saved;
+    if (fromUrl) localStorage.setItem(REFERRER_KEY, fromUrl);
+  } catch { /* ignore */ }
+  return fromUrl;
+})();
 
 const FEATURES: Record<UiLang, string[]> = {
   zh: [
@@ -78,12 +85,14 @@ type PayConfig = {
 };
 
 /* Payment details live in public/data/pay.json so they can be filled in
-   without a rebuild. Empty config = the offer shows as "opening soon". */
+   without a rebuild — which is also why they are never read from a cache:
+   a stale copy could show a closed bank account. Empty config = the offer
+   shows as "opening soon". */
 function usePayConfig(base: string) {
   const [cfg, setCfg] = useState<PayConfig>({});
   useEffect(() => {
     let alive = true;
-    fetch(base + "pay.json")
+    fetch(base + "pay.json", { cache: "no-store" })
       .then(r => (r.ok ? r.json() : {}))
       .then(d => { if (alive) setCfg(d || {}); })
       .catch(() => {});
@@ -92,30 +101,46 @@ function usePayConfig(base: string) {
   return cfg;
 }
 
-/* Human-readable order reference so a manual transfer can be matched to a
-   buyer without an accounts system. */
-function orderRef(code: string) {
-  const KEY = "ketiklab-order";
-  try {
-    const saved = localStorage.getItem(KEY);
-    if (saved) return saved;
-    const n = Math.floor(Math.random() * 9000) + 1000;
-    const ref = `KL-${code}-${n}`;
-    localStorage.setItem(KEY, ref);
-    return ref;
-  } catch {
-    return `KL-${code}`;
-  }
+/* undefined while Supabase is still answering, so the checkout can tell
+   "not signed in" apart from "not known yet". */
+function useSession() {
+  const [session, setSession] = useState<Session | null | undefined>(undefined);
+  useEffect(() => {
+    let alive = true;
+    currentSession().then(s => { if (alive) setSession(s); });
+    const { data } = supabase.auth.onAuthStateChange((_e, s) => { if (alive) setSession(s); });
+    return () => { alive = false; data.subscription.unsubscribe(); };
+  }, []);
+  return session;
 }
 
-type Props = { uiLang: UiLang; base?: string };
+function useProfile(uid: string | undefined) {
+  const [profile, setProfile] = useState<Profile | null>(null);
+  useEffect(() => {
+    if (!uid) { setProfile(null); return; }
+    let alive = true;
+    loadProfile(uid).then(p => { if (alive) setProfile(p); });
+    return () => { alive = false; };
+  }, [uid]);
+  return profile;
+}
 
-export function Membership({ uiLang, base = "./data/" }: Props) {
+/* Order reference derived from the account id, so the operator can match a
+   transfer note to a profiles row from any browser. The referrer rides along
+   because a bank-only checkout has no other channel to carry it. */
+const orderRef = (userId: string, referrer: string) =>
+  `KL-${userId.replace(/-/g, "").slice(0, 8).toUpperCase()}${referrer ? `-${referrer}` : ""}`;
+
+type Props = { uiLang: UiLang; base?: string; onSignIn?: () => void };
+
+export function Membership({ uiLang, base = "./data/", onSignIn }: Props) {
   const cfg = usePayConfig(base);
   const seatsTaken = cfg.seatsTaken || 0;
-  const code = useReferralCode();
+  const session = useSession();
+  const profile = useProfile(session?.user.id);
+  const code = profile?.ref_code || "";
+  const link = code ? `https://ketiklab.com/?ref=${code}` : "";
   const [checkout, setCheckout] = useState(false);
-  const link = `https://ketiklab.com/?ref=${code}`;
   const [copied, setCopied] = useState("");
 
   useEffect(() => {
@@ -164,7 +189,7 @@ export function Membership({ uiLang, base = "./data/" }: Props) {
         {T(uiLang, "成为创始会员", "Jadi anggota pertama", "Become a founding member")}
       </button>
 
-      {checkout && <Checkout uiLang={uiLang} cfg={cfg} code={code} />}
+      {checkout && <Checkout uiLang={uiLang} cfg={cfg} session={session} ownCode={code} onSignIn={onSignIn} />}
     </section>
 
     {/* ---------- referral ---------- */}
@@ -179,7 +204,7 @@ export function Membership({ uiLang, base = "./data/" }: Props) {
         <span className="pill">{T(uiLang, "会员专属", "Khusus anggota", "Members only")}</span>
       </div>
 
-      <div className="ref-grid">
+      {code ? <div className="ref-grid">
         <label>
           <small>{T(uiLang, "推广码", "Kode referral", "Referral code")}</small>
           <div className="copy-row">
@@ -198,7 +223,11 @@ export function Membership({ uiLang, base = "./data/" }: Props) {
             </button>
           </div>
         </label>
-      </div>
+      </div> : <p className="offer-hint">
+        {T(uiLang, "登录并成为会员后，这里会显示你的专属推广码和链接。",
+                   "Masuk dan jadi anggota untuk mendapatkan kode dan tautan referralmu di sini.",
+                   "Sign in and become a member to get your referral code and link here.")}
+      </p>}
 
       <div className="ref-stats">
         <div className="stat mint"><i>▣</i><div><b>{money(0)}</b><small>{T(uiLang, "可提现余额", "Saldo bisa ditarik", "Available")}</small></div></div>
@@ -255,8 +284,9 @@ export function Membership({ uiLang, base = "./data/" }: Props) {
 /* Manual checkout: works with no backend and no payment gateway, so   */
 /* seats can be sold while the gateway merchant account is in review.  */
 
-function Checkout({ uiLang, cfg, code }: { uiLang: UiLang; cfg: PayConfig; code: string }) {
-  const ref = orderRef(code);
+function Checkout({ uiLang, cfg, session, ownCode, onSignIn }: {
+  uiLang: UiLang; cfg: PayConfig; session: Session | null | undefined; ownCode: string; onSignIn?: () => void;
+}) {
   const [copied, setCopied] = useState("");
   useEffect(() => {
     if (!copied) return;
@@ -281,11 +311,34 @@ function Checkout({ uiLang, cfg, code }: { uiLang: UiLang; cfg: PayConfig; code:
     </p>;
   }
 
+  if (session === undefined) {
+    return <p className="offer-hint">{T(uiLang, "加载中…", "Memuat…", "Loading…")}</p>;
+  }
+
+  /* Membership is recorded on the account (profiles.member_until), so a
+     payment from an anonymous browser could never be applied to anyone. */
+  if (!session) {
+    return <div className="checkout">
+      <p className="checkout-lead">
+        {T(uiLang, "付款前请先登录或注册账号：会员资格会绑定到你的账号，换设备也在。",
+                   "Masuk atau daftar dulu sebelum membayar: keanggotaan terikat ke akunmu dan ikut ke perangkat lain.",
+                   "Sign in or sign up before paying: membership is tied to your account and follows you across devices.")}
+      </p>
+      {onSignIn && <button className="acct-btn primary" onClick={onSignIn}>
+        {T(uiLang, "登录 / 注册", "Masuk / Daftar", "Sign in / Sign up")}
+      </button>}
+    </div>;
+  }
+
+  const email = session.user.email || session.user.id;
+  const referrer = REFERRER && REFERRER !== ownCode ? REFERRER : "";
+  const ref = orderRef(session.user.id, referrer);
+
   const waText = encodeURIComponent(
     T(uiLang,
-      `你好，我要购买 KetikLab 永久会员，订单号 ${ref}`,
-      `Halo, saya mau membeli KetikLab Anggota Seumur Hidup. Nomor pesanan ${ref}`,
-      `Hi, I'd like to buy the KetikLab lifetime membership. Order ${ref}`));
+      `你好，我要购买 KetikLab 永久会员，订单号 ${ref}，账号 ${email}`,
+      `Halo, saya mau membeli KetikLab Anggota Seumur Hidup. Nomor pesanan ${ref}, akun ${email}`,
+      `Hi, I'd like to buy the KetikLab lifetime membership. Order ${ref}, account ${email}`));
 
   return <div className="checkout">
     <div className="checkout-ref">
@@ -296,9 +349,9 @@ function Checkout({ uiLang, cfg, code }: { uiLang: UiLang; cfg: PayConfig; code:
       <button onClick={() => copy("ref", ref)}>{copyLabel("ref")}</button>
     </div>
     <p className="checkout-lead">
-      {T(uiLang, "转账时请务必备注订单号，我们核对到款后为你开通，通常几小时内。",
-                 "Cantumkan nomor pesanan pada berita transfer. Akun diaktifkan setelah pembayaran dicek, biasanya dalam beberapa jam.",
-                 "Put the order number in the transfer note. We activate your account once payment clears, usually within a few hours.")}
+      {T(uiLang, `转账时请务必备注订单号，我们核对到款后为你开通，通常几小时内。会员将开通到账号 ${email}。`,
+                 `Cantumkan nomor pesanan pada berita transfer. Akun diaktifkan setelah pembayaran dicek, biasanya dalam beberapa jam. Keanggotaan dipasang ke akun ${email}.`,
+                 `Put the order number in the transfer note. We activate your account once payment clears, usually within a few hours. Membership goes to ${email}.`)}
     </p>
 
     {hasQris && <div className="pay-method">
