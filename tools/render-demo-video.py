@@ -39,7 +39,7 @@ T = {
     "cta2":   {"zh": "浏览器打开就能用 · 可安装到手机", "id": "Langsung di browser · bisa dipasang di HP", "en": "Runs in the browser · installs on your phone"},
 }
 WORDS = [("实现", "shí xiàn", "shi xian", "mencapai  ·  achieve"), ("机会", "jī huì", "ji hui", "kesempatan  ·  opportunity")]
-LIB_VALUES = (3701, 10, 21697, 161)
+LIB_VALUES = (3701, 10, 21600, 161)   # the site total is shown as a floor ("21,600+") so it does not go stale as the library grows
 
 def brand(d, x, y, size=1.0):
     s = px(64 * size)
@@ -131,7 +131,7 @@ def sc_libs(d, t):
         a = ease((t - k * 0.25) / 0.5); shown = int(val * ease((t - k * 0.25) / 1.4))
         d.rounded_rectangle((x, y, x + bw, y + bh), px(30), fill=mix(BG, SURF, a), outline=mix(BG, LINE, a), width=px(2))
         d.rounded_rectangle((x + px(30), y + px(36), x + px(42), y + bh - px(36)), px(6), fill=mix(BG, accents[k], a))
-        d.text((x + px(70), y + bh * 0.42), f"{shown:,}" + ("+" if val == 21697 and shown == val else ""), font=F(64, True), fill=mix(BG, TEXT, a), anchor="lm")
+        d.text((x + px(70), y + bh * 0.42), f"{shown:,}" + ("+" if val == 21600 and shown == val else ""), font=F(64, True), fill=mix(BG, TEXT, a), anchor="lm")
         d.text((x + px(70), y + bh * 0.72), lab, font=F(26), fill=mix(BG, MUTED, a), anchor="lm")
     caption(d, T["langs"][LANG], H * 0.14, 34, MUTED, False)
 

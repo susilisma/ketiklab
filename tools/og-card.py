@@ -13,7 +13,7 @@ d.text((LEFT, 206), "中文 · Bahasa Indonesia · English", font=F(38, True), f
 d.text((LEFT, 266), "三语打字练习 · 边打字边记单词", font=F(27), fill=MUTED, anchor="lm")
 d.text((LEFT, 308), "Latihan mengetik trilingual · Trilingual typing practice", font=F(23), fill=MUTED, anchor="lm")
 x, y = LEFT, 372
-for label in ("免费 · Gratis · Free", "开源 · Open source", "21,700+ 词 · kata · words"):
+for label in ("免费 · Gratis · Free", "开源 · Open source", "21,600+ 词 · kata · words"):
     f = F(20, True); w = d.textlength(label, font=f) + 36
     if x + w > RIGHT_LIMIT: x, y = LEFT, y + 56
     d.rounded_rectangle((x, y, x + w, y + 44), 22, fill=PURPLE_SOFT); d.text((x + 18, y + 22), label, font=f, fill=PURPLE, anchor="lm"); x += w + 12
