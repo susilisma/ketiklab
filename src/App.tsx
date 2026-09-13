@@ -336,8 +336,10 @@ export default function Home() {
     try { if (localStorage.getItem("ketiklab-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
     try {
-      const dc = JSON.parse(localStorage.getItem("ketiklab-days") || "{}");
-      setDayCounts(dc && typeof dc === "object" && !Array.isArray(dc) ? Object.fromEntries(Object.entries(dc).filter(([, n]) => typeof n === "number")) : {});
+      const dc: unknown = JSON.parse(localStorage.getItem("ketiklab-days") || "{}");
+      const clean: Record<string, number> = {};
+      if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number") clean[k] = n;
+      setDayCounts(clean);
     } catch { /* ignore */ }
     return () => { alive = false; mounted.current = false; };
   }, []);
