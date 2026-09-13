@@ -2,7 +2,6 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
-import { Membership } from "./Membership";
 import { Account } from "./Account";
 import { onAccountWanted, SYNCED_KEYS } from "./cloud";
 import { ZhSteps, ZH_STEPS, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
@@ -98,7 +97,7 @@ function pronunciation(word: Word, language: Lang) {
 
 const NAV: { id: Exclude<View, "account">; icon: string }[] = [
   { id: "learn", icon: "⌨" }, { id: "library", icon: "▤" }, { id: "mistakes", icon: "◎" },
-  { id: "articles", icon: "¶" }, { id: "plan", icon: "✓" }, { id: "stats", icon: "↗" }, { id: "member", icon: "♛" }, { id: "settings", icon: "⚙" },
+  { id: "articles", icon: "¶" }, { id: "plan", icon: "✓" }, { id: "stats", icon: "↗" }, { id: "settings", icon: "⚙" },
 ];
 
 const EMPTY_STATS: SrsStats = { due: 0, learning: 0, mastered: 0, total: 0 };
@@ -1327,10 +1326,6 @@ export default function Home() {
 
       {view === "account" && <Panel title={TX("账号", "Akun", "Account", uiLang)} eyebrow={TX("登录与云端同步", "MASUK & SINKRON CLOUD", "SIGN IN & CLOUD SYNC", uiLang)}>
         <Account uiLang={uiLang} name={profileName} onName={setProfileName} />
-      </Panel>}
-
-      {view === "member" && <Panel title={t.member} eyebrow={TX("会员与推广", "ANGGOTA & REFERRAL", "MEMBERSHIP & REFERRAL", uiLang)}>
-        <Membership uiLang={uiLang} onSignIn={() => setView("account")} />
       </Panel>}
 
       {view === "settings" && <Panel title={t.settings} eyebrow={EYEBROW.settings[uiLang]}>

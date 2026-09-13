@@ -375,8 +375,8 @@ button.profile:hover>i{color:var(--purple)}
 /* bottom bar */
 @media(max-width:640px){
 .sidebar{position:fixed;inset:auto 0 0;width:auto;height:var(--bar-h);flex-direction:row;align-items:center;padding:6px calc(4px + env(safe-area-inset-right,0px)) calc(6px + env(safe-area-inset-bottom,0px)) calc(4px + env(safe-area-inset-left,0px));z-index:10;border-top:1px solid var(--line);border-right:0;overflow:visible}.brand{display:none}.main{padding-left:env(safe-area-inset-left,0px)}
-/* every view stays reachable: the 8 nav buttons and the account avatar split the bar into 9 equal slots */
-.sidebar nav{flex:8 1 0;min-width:0;flex-direction:row;gap:0}.nav{flex:1 1 0;min-width:0;height:48px;position:relative;padding:0;justify-content:center;border-radius:11px}.nav i{width:auto;font-size:22px}.nav span{display:none}.nav .nav-badge{position:absolute;top:2px;right:2px;margin:0;min-width:18px;height:18px;padding:0 4px;border-radius:9px;font-size:12px}
+/* every view stays reachable: the 7 nav buttons and the account avatar split the bar into 8 equal slots */
+.sidebar nav{flex:7 1 0;min-width:0;flex-direction:row;gap:0}.nav{flex:1 1 0;min-width:0;height:48px;position:relative;padding:0;justify-content:center;border-radius:11px}.nav i{width:auto;font-size:22px}.nav span{display:none}.nav .nav-badge{position:absolute;top:2px;right:2px;margin:0;min-width:18px;height:18px;padding:0 4px;border-radius:9px;font-size:12px}
 .sidebar-bottom{flex:1 1 0;min-width:0;margin:0;display:flex;align-items:center}.mini-progress{display:none}.sidebar-bottom .profile{border:0;padding:0;height:48px;justify-content:center}.profile div,.profile>i{display:none}.profile>span{width:40px;height:40px}.sidebar-bottom .profile:hover{border-radius:11px}
 .main>header{gap:8px}.chapter small{display:none}.chapter b{font-size:13px}.round{display:none}.language{padding:0 6px}.language span{display:none}.primary{padding:0 12px;gap:8px}
 }
