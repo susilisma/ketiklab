@@ -116,6 +116,11 @@ def fmt(key, lang, **kw):
     return T[key][lang].format(**kw)
 
 
+def strip_hreflang(h):
+    """Make re-runs on an already-processed dist idempotent."""
+    return re.sub(r'\n[ \t]*<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', "", h)
+
+
 def hreflang_links(path_for):
     """path_for(lang) -> URL path; x-default points at the root."""
     out = [f'    <link rel="alternate" hreflang="{HTML_LANG[l]}" href="{SITE}{path_for(l)}" />' for l in LANGS]
@@ -125,7 +130,7 @@ def hreflang_links(path_for):
 
 def language_page(index_html, lang, lib_rows, n_readings):
     url = f"{SITE}/{lang}/"
-    h = index_html
+    h = strip_hreflang(index_html)
     h = sub1(r'<html lang="[^"]*">', f'<html lang="{HTML_LANG[lang]}">', h, "<html lang>")
     h = sub1(r"<head>", '<head>\n    <base href="/" />', h, "<head>")
     h = sub1(r"<title>[^<]*</title>", f"<title>{esc(T['title'][lang])}</title>", h, "<title>")
@@ -156,10 +161,11 @@ def language_page(index_html, lang, lib_rows, n_readings):
 
 
 def root_page(index_html, n_readings):
-    h = index_html
-    h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") .replace('hreflang="x-default" href="' + SITE + '/"', 'hreflang="x-default" href="' + SITE + '/"') + "\n  </head>", h, "</head> (root)")
+    h = strip_hreflang(index_html)
+    h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head> (root)")
     links = " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}" style="color:#7165eb">{T["lang_names"][l]}</a>' for l in LANGS)
-    h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:#7b7d8c;font-size:14px">{links} · <a href="/zh/readings/" style="color:#7165eb">{esc(T["readings"]["zh"])} ({n_readings})</a></p>' + m.group(1), h, "</main> (root)")
+    if "/zh/readings/" not in h:
+        h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:#7b7d8c;font-size:14px">{links} · <a href="/zh/readings/" style="color:#7165eb">{esc(T["readings"]["zh"])} ({n_readings})</a></p>' + m.group(1), h, "</main> (root)")
     return h
 
 
