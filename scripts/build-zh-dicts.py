@@ -39,9 +39,9 @@ SCAN = 60000
 # Rank bands over the *kept* list, so each library has a usable size no matter
 # how much the wordnets cover.
 BANDS = [
-    ("zh-core",  "中文核心词", "最高频中文词 · 印尼语/英语释义", 0,    1200),
-    ("zh-plus",  "中文进阶词", "常用中文词 · 印尼语/英语释义",   1200, 2200),
-    ("zh-upper", "中文高阶词", "进阶中文词 · 印尼语/英语释义",   2200, 999999),
+    ("zh-core",  "中文核心词", "最高频中文词 · 印尼语/英语释义", "Kata inti Mandarin",         "Core Chinese",         "Kata Mandarin paling sering dipakai · arti Indonesia/Inggris", "Highest-frequency Chinese words · Indonesian/English glosses", 0,    1200),
+    ("zh-plus",  "中文进阶词", "常用中文词 · 印尼语/英语释义",   "Kata lanjutan Mandarin",     "Intermediate Chinese", "Kata Mandarin umum · arti Indonesia/Inggris",                   "Common Chinese words · Indonesian/English glosses",            1200, 2200),
+    ("zh-upper", "中文高阶词", "进阶中文词 · 印尼语/英语释义",   "Kata tingkat atas Mandarin", "Advanced Chinese",     "Kata Mandarin tingkat lanjut · arti Indonesia/Inggris",         "Higher-level Chinese words · Indonesian/English glosses",      2200, 999999),
 ]
 
 def toned(word):
@@ -122,7 +122,7 @@ def main():
     except Exception:
         pinmap = {}
 
-    for dict_id, name, blurb, lo, hi in BANDS:
+    for dict_id, name, blurb, name_id, name_en, blurb_id, blurb_en, lo, hi in BANDS:
         rows = kept[lo:hi]
         if not rows:
             continue
@@ -133,6 +133,10 @@ def main():
             "id": dict_id,
             "name": name,
             "description": f"{blurb} · {len(rows)} 词",
+            "name_id": name_id,
+            "name_en": name_en,
+            "description_id": f"{blurb_id} · {len(rows)} kata",
+            "description_en": f"{blurb_en} · {len(rows)} words",
             "lang": "zh",
             "length": len(rows),
             "file": dict_id + ".json",

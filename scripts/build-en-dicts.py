@@ -89,11 +89,11 @@ def entry(w, en, cmn, idn):
 
 
 BANDS = [
-    ("en-business",  "商务英语",     "Bahasa Inggris bisnis",         None, None),
-    ("en-core",     "英语核心词",   "Kosakata inti bahasa Inggris",  4.30, 9.0),
-    ("en-plus",     "英语进阶词",   "Kosakata lanjutan",             3.85, 4.30),
-    ("en-upper",    "英语高阶词",   "Kosakata tingkat atas",         3.50, 3.85),
-    ("en-academic", "英语学术词",   "Kosakata akademik",             3.15, 3.50),
+    ("en-business",  "商务英语",     "Bahasa Inggris bisnis",       "Business English",     None, None),
+    ("en-core",     "英语核心词",   "Kata inti Inggris",           "Core English",         4.30, 9.0),
+    ("en-plus",     "英语进阶词",   "Kata lanjutan Inggris",       "Intermediate English", 3.85, 4.30),
+    ("en-upper",    "英语高阶词",   "Kata tingkat atas Inggris",   "Advanced English",     3.50, 3.85),
+    ("en-academic", "英语学术词",   "Kata akademik Inggris",       "Academic English",     3.15, 3.50),
 ]
 
 SKIP = re.compile(r"[^a-z]")
@@ -116,7 +116,7 @@ def build():
     seen = set()
     for w in candidates:
         z = zipf_frequency(w, "en")
-        band = next((b for b in BANDS if b[3] is not None and b[3] <= z < b[4]), None)
+        band = next((b for b in BANDS if b[4] is not None and b[4] <= z < b[5]), None)
         if not band or w in seen:
             continue
         row = entry(w, en, cmn, idn)
@@ -145,16 +145,26 @@ def build():
     buckets["en-business"] = biz
 
     manifest_rows = []
-    for key, zh_name, id_name, lo, hi in BANDS:
+    for key, zh_name, id_name, en_name, lo, hi in BANDS:
         rows = buckets[key]
-        desc = (f"精选商务词汇 · {len(rows)} 词 · 中文/印尼语释义" if lo is None
-                else f"词频 Zipf {lo}–{hi} · {len(rows)} 词 · 中文/印尼语释义")
+        if lo is None:
+            desc = f"精选商务词汇 · {len(rows)} 词 · 中文/印尼语释义"
+            desc_id = f"Kosakata bisnis pilihan · {len(rows)} kata · arti Mandarin/Indonesia"
+            desc_en = f"Curated business vocabulary · {len(rows)} words · Chinese/Indonesian glosses"
+        else:
+            desc = f"词频 Zipf {lo}–{hi} · {len(rows)} 词 · 中文/印尼语释义"
+            desc_id = f"Frekuensi Zipf {lo}–{hi} · {len(rows)} kata · arti Mandarin/Indonesia"
+            desc_en = f"Zipf frequency {lo}–{hi} · {len(rows)} words · Chinese/Indonesian glosses"
         with open(os.path.join(OUT, key + ".json"), "w", encoding="utf-8") as f:
             json.dump(rows, f, ensure_ascii=False, separators=(",", ":"))
         manifest_rows.append({
             "id": key,
             "name": zh_name,
             "description": desc,
+            "name_id": id_name,
+            "name_en": en_name,
+            "description_id": desc_id,
+            "description_en": desc_en,
             "lang": "en",
             "length": len(rows),
             "file": key + ".json",
