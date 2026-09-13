@@ -57,7 +57,18 @@
     </script>
   </head>
   <body class="antialiased">
-    <div id="root"></div>
+    <!-- Crawlable copy: React replaces this the moment it mounts, so visitors never see it, but the raw HTML a
+         search engine fetches has real trilingual content instead of an empty div. -->
+    <div id="root">
+      <main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Inter,'PingFang SC','Microsoft YaHei',sans-serif;color:#1c1d26;line-height:1.7">
+        <h1 style="font-size:28px;margin:0 0 8px">KetikLab — 中文 · Bahasa Indonesia · English 三语打字练习</h1>
+        <p style="color:#7b7d8c;margin:0 0 24px">免费 · 开源 · Gratis · Open source · Free</p>
+        <p lang="zh-CN">KetikLab 是免费、开源的三语打字与词汇训练站：3,701 个按概念对齐的中文、印尼语、英语精选词，10 个考试词库（英语核心词、进阶词、高阶词、学术词、托福必考词，中文核心词、进阶词、高阶词，印尼语高频词）共 21,700 余词，161 篇公共领域经典朗读。中文按「认读 → 打拼音 → 选汉字 → 输入法」四步阶梯练习；艾宾浩斯间隔复习、错词本、收藏、学习日历与云端同步。</p>
+        <p lang="id">KetikLab adalah situs latihan mengetik dan kosakata yang gratis dan open source untuk bahasa Mandarin, Indonesia, dan Inggris: 3.701 kata pilihan dengan arti tiga bahasa, 10 kamus ujian (lebih dari 21.700 kata), 161 bacaan klasik, tangga pinyin empat langkah untuk bahasa Mandarin, pengulangan berjarak, buku kesalahan, favorit, dan sinkronisasi cloud.</p>
+        <p lang="en">KetikLab is a free, open-source typing and vocabulary trainer for Chinese, Indonesian and English: 3,701 curated trilingual words, 10 exam libraries with 21,700+ words, 161 public-domain classic readings, a four-step pinyin ladder for Chinese, spaced repetition, a mistakes book, favourites and cloud sync.</p>
+        <p style="color:#7b7d8c">正在加载 · Memuat · Loading… · <a href="https://github.com/susilisma/ketiklab" style="color:#7165eb">GitHub</a></p>
+      </main>
+    </div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
