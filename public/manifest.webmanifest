@@ -1,7 +1,9 @@
 {
+  "id": "/",
   "name": "KetikLab — 三语打字",
   "short_name": "KetikLab",
-  "description": "中文 · Bahasa Indonesia · English 三语打字与词汇训练",
+  "description": "Free, open-source typing and vocabulary trainer for Chinese, Indonesian and English: curated trilingual words, exam word lists, a four-step pinyin ladder for Chinese, spaced repetition, and classic readings you type through. 中文 · Bahasa Indonesia · English 三语打字与词汇训练。",
+  "categories": ["education", "productivity"],
   "start_url": "./",
   "scope": "./",
   "display": "standalone",

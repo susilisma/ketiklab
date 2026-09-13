@@ -91,6 +91,8 @@ jobs:
         run: npm ci || npm install
       - name: Build
         run: npm run build
+      - name: Generate language landing pages, library pages and sitemap
+        run: python3 scripts/build-seo-pages.py dist
       - uses: actions/configure-pages@v6
         with:
           enablement: true
