@@ -7,6 +7,7 @@ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 LANG = sys.argv[1] if len(sys.argv) > 1 else "zh"
 ORIENT = sys.argv[2] if len(sys.argv) > 2 else "v"
 OUT_DIR = sys.argv[3] if len(sys.argv) > 3 else os.path.dirname(os.path.abspath(__file__))
+NOURL = "nourl" in sys.argv[4:]   # 小红书 treats an on-screen domain as off-platform steering; this cut ends on the wordmark
 W, H = (1080, 1920) if ORIENT == "v" else (1920, 1080)
 FPS = 30
 S = W / 1080 if ORIENT == "v" else H / 1080          # scale relative to a 1080-wide phone frame
@@ -157,7 +158,7 @@ def sc_srs(d, t):
 def sc_cta(d, t):
     a = ease(t / 0.5)
     brand(d, W / 2 - px(150), H * (0.29 if ORIENT == "v" else 0.24), 1.15)
-    d.text((W / 2, H * (0.46 if ORIENT == "v" else 0.42)), "ketiklab.com", font=F(92, True), fill=mix(BG, PURPLE, a), anchor="mm")
+    d.text((W / 2, H * (0.46 if ORIENT == "v" else 0.42)), "KetikLab" if NOURL else "ketiklab.com", font=F(92, True), fill=mix(BG, PURPLE, a), anchor="mm")
     labels = T["cta"][LANG]; f = F(30, True)
     widths = [d.textlength(l, font=f) + px(44) for l in labels]; total = sum(widths) + px(16) * (len(labels) - 1)
     x = W / 2 - total / 2; y = H * (0.54 if ORIENT == "v" else 0.50)
