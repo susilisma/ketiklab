@@ -16,39 +16,52 @@ permissions:
   pages: write
   id-token: write
 
-concurrency:
-  group: site
-  cancel-in-progress: false
-
 jobs:
-  build:
+  # Promotion and the build sit in different concurrency groups. A group holds one
+  # running and one pending run, and a newly queued run cancels the pending one,
+  # so a scheduled run that promotes nothing must never enter the "site" group:
+  # there it would take the pending slot from a push's build and that push would
+  # stay undeployed. Pushes skip straight to the gate.
+  promote:
     runs-on: ubuntu-latest
+    concurrency:
+      group: promote
+      cancel-in-progress: false
     outputs:
       go: ${{ steps.gate.outputs.go }}
     steps:
       - uses: actions/checkout@v5
+        if: github.event_name != 'push'
       - uses: actions/setup-node@v5
+        if: github.event_name != 'push'
         with:
           node-version: 22
       - name: Promote queued content (hourly + manual runs)
         id: promote
-        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        if: github.event_name != 'push'
         env:
           # Only a manual run pins a fixed count. Scheduled runs leave this empty and
           # release by elapsed time, because GitHub delivers cron events irregularly.
           WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '' }}
         run: node scripts/promote.mjs
-      - name: Snapshot library size for the ops dashboard
-        if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.promote.outputs.changed == 'true'
-        run: python3 scripts/snapshot-history.py
       - name: Push promoted content
-        if: (github.event_name == 'schedule' || github.event_name == 'workflow_dispatch') && steps.promote.outputs.changed == 'true'
+        if: steps.promote.outputs.changed == 'true'
         run: |
           git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add public/data queue
-          git commit -m "chore(content): hourly auto-update" || echo "nothing to commit"
-          git push
+          # main may have moved since checkout. A rejected push starts over from the
+          # new tip rather than failing with the promotion undone.
+          for attempt in 1 2 3 4 5; do
+            python3 scripts/snapshot-history.py
+            git add public/data queue
+            git commit -m "chore(content): hourly auto-update" || echo "nothing to commit"
+            git push && exit 0
+            sleep $((attempt * 10))
+            git fetch origin main
+            git reset --hard origin/main
+            node scripts/promote.mjs
+          done
+          exit 1
       - name: Decide whether to deploy
         id: gate
         run: |
@@ -57,25 +70,40 @@ jobs:
           else
             echo "go=true" >> "$GITHUB_OUTPUT"
           fi
+
+  build:
+    needs: promote
+    if: needs.promote.outputs.go == 'true'
+    runs-on: ubuntu-latest
+    concurrency:
+      group: site
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          # the branch tip rather than github.sha, so the commit the promote job
+          # just pushed is what gets built
+          ref: ${{ github.ref }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
       - name: Install
-        if: steps.gate.outputs.go == 'true'
         run: npm ci || npm install
       - name: Build
-        if: steps.gate.outputs.go == 'true'
         run: npm run build
       - uses: actions/configure-pages@v6
-        if: steps.gate.outputs.go == 'true'
         with:
           enablement: true
       - uses: actions/upload-pages-artifact@v5
-        if: steps.gate.outputs.go == 'true'
         with:
           path: dist
 
   deploy:
     needs: build
-    if: needs.build.outputs.go == 'true'
     runs-on: ubuntu-latest
+    concurrency:
+      group: site
+      cancel-in-progress: false
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

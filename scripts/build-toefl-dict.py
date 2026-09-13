@@ -19,7 +19,7 @@ Indonesian glosses come the same way, from the site's existing Wordnet
 Bahasa-derived dictionaries. So the only text this script copies out of the
 PDF is the headword list and the Chinese meanings.
 """
-import io, json, os, re, sys
+import io, json, os, re, sys, unicodedata
 
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 DATA = os.path.join(ROOT, "public", "data")
@@ -31,13 +31,32 @@ ENRICH_FROM = ("en-core", "en-plus", "en-upper", "en-academic", "en-business")
 FURNITURE = re.compile(
     r"^\s*(\d+|2026 新版《考托必背词》|2026 BEAT|《托福必考2000词》|List \d+"
     r"|托福资源下载|请加助教微信|单词\s*.?音标\s*释义\s*助记)\s*$")
-ENTRY = re.compile(r"^\s*(\d{1,3})\s+([A-Za-z][A-Za-z'’\-]*(?:\s[A-Za-z'’\-]+){0,2})"
+POS = r"(?:n|v|vt|vi|adj|adv|prep|conj|pron|num|art|aux|int)\."
+# a headword may run to three words ("vice versa"), but never into the part of
+# speech that some entries print before their phonetics ("extract v. [..]")
+ENTRY = re.compile(r"^\s*(\d{1,3})\s+([A-Za-z][A-Za-z'’\-]*(?:\s(?!" + POS + r")[A-Za-z'’\-]+){0,2})"
                    r"\s*(?:\[[^\]]*\])?\s*(.*)$")
-POS_TOKEN = re.compile(r"\b(n|v|vt|vi|adj|adv|prep|conj|pron|num|art|aux|int)\.")
+POS_TOKEN = re.compile(r"\b" + POS)
+# an entry with one phonetic per part of speech opens "v. [..] n. [..]"; those
+# labels belong to the transcriptions, not to the first gloss. A bracket holding
+# hanzi is a usage note ("vi. [不好的事] 复发") and its label stays.
+POS_PHONETIC = re.compile(r"^(?:" + POS + r"\s*\[[^\]一-鿿]*\]\s*)+")
 NOTE = re.compile(r"【")
 INLINE = re.compile(r"\[[^\]]*\]")
-ETYM = re.compile(r"(来⾃|来自|缩写⾃|缩写自|形变|得名于|拉丁语|拉丁⽂|拉丁文|希腊语|古英语|法语|同\s)")
-LATIN3 = re.compile(r"[A-Za-z]{3,}")
+ETYM = re.compile(r"(来自|缩写自|形变|得名于|拉丁语|拉丁文|希腊语|古英语|法语|同\s)")
+LATIN3 = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ]{3,}")
+
+# pypdf hands back the PDF's glyphs as CJK radical code points (⽯ U+2F6F for
+# 石), which no IME produces, so a search for the real character would never
+# match. NFKC folds the Kangxi block back to the ideographs; the simplified
+# forms in the Radicals Supplement have no decomposition and need a table.
+RADICAL = re.compile(r"[⺀-⿟]")
+RADICAL_SUPP = str.maketrans("⻓⻝⻋⺠⻛⻣⻜⻔⻅⻦⻰⻢⻆⻚⻥⻘⻬⻁⻤⻮⻄⻉⻩",
+                             "长食车民风骨飞门见鸟龙马角页鱼青齐虎鬼齿西贝黄")
+
+
+def unradical(text):
+    return RADICAL.sub(lambda m: unicodedata.normalize("NFKC", m.group()), text).translate(RADICAL_SUPP)
 
 
 def cut_at_english(g):
@@ -65,6 +84,7 @@ def glosses(body):
             break
         parts.append(seg)
     text = re.sub(r"\s+", " ", " ".join(parts)).strip(" ;；,，")
+    text = POS_PHONETIC.sub("", text)
     out = []
     for g in re.split(r"[;；]", text):
         g = re.sub(r"^[英美]\s*", "", INLINE.sub("", g).strip())
@@ -82,7 +102,7 @@ def parse(pdf_path):
             pages.append(page.extract_text() or "")
         except Exception:
             pages.append("")
-    lines = [l.rstrip() for l in "\n".join(pages).split("\n")]
+    lines = [l.rstrip() for l in unradical("\n".join(pages)).split("\n")]
     lines = [l for l in lines if l.strip() and not FURNITURE.match(l.strip())]
 
     entries, cur = [], None

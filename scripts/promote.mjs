@@ -4,10 +4,16 @@
  * Runs inside GitHub Actions.
  *
  * Scheduled runs release at a RATE, not a fixed amount per run: WORDS_PER_HOUR
- * times the hours since the last promotion, capped at MAX_CATCHUP_HOURS. GitHub
- * fires cron irregularly, so a fixed count would tie publishing speed to how
- * often it happens to run. Manual runs set WORDS_PER_RUN to take a fixed number,
- * which is how the workflow's "flush the whole queue" dispatch works.
+ * times the hours on the words clock, and one reading per READING_EVERY_HOURS
+ * on the readings clock, each capped at MAX_CATCHUP_HOURS. GitHub fires cron
+ * irregularly, so a fixed count would tie publishing speed to how often it
+ * happens to run. Manual runs set WORDS_PER_RUN to take a fixed number, which
+ * is how the workflow's "flush the whole queue" dispatch works.
+ *
+ * Words and readings keep separate clocks in queue/_promote-state.json, so a
+ * word release does not restart the wait for the next reading. A clock only
+ * advances by the period its release covered, and it stops when its queue runs
+ * dry, so neither a partial period nor an idle day is paid out as a burst.
  *
  * - Validation + dedup are delegated to scripts/append-batch.mjs
  * - Promoted items leave the queue whether appended or skipped as duplicates,
@@ -34,20 +40,44 @@ const FIXED_COUNT = process.env.WORDS_PER_RUN ? Number(process.env.WORDS_PER_RUN
 
 /** Decide how much to release. Pure — no I/O, so it can be reasoned about alone. */
 function plan({
-  queuedWords, queuedReadings, elapsedHours, fixedCount = null,
+  queuedWords, queuedReadings, wordsHours, readingsHours, fixedCount = null,
   wordsPerHour = 12, readingEveryHours = 6, maxCatchupHours = 24,
 }) {
   if (fixedCount !== null) {
     const words = Math.max(0, Math.min(queuedWords, Math.floor(fixedCount)));
-    return { words, readings: Math.min(queuedReadings, 1), effectiveHours: null };
+    return { words, readings: Math.min(queuedReadings, 1), wordsHours: null, readingsHours: null };
   }
   // a negative clock skew must never turn into a negative slice
-  const effectiveHours = Math.min(Math.max(elapsedHours, 0), maxCatchupHours);
+  const clamp = (h) => Math.min(Math.max(h, 0), maxCatchupHours);
+  const wh = clamp(wordsHours), rh = clamp(readingsHours);
   return {
-    words: Math.min(queuedWords, Math.floor(wordsPerHour * effectiveHours)),
-    readings: Math.min(queuedReadings, Math.floor(effectiveHours / readingEveryHours)),
-    effectiveHours,
+    words: Math.min(queuedWords, Math.floor(wordsPerHour * wh)),
+    readings: Math.min(queuedReadings, Math.floor(rh / readingEveryHours)),
+    wordsHours: wh, readingsHours: rh,
   };
+}
+
+/**
+ * Hours a clock has run. A clock that was never set, or that stopped because its
+ * queue ran dry, restarts at one release unit: the idle hours before new content
+ * arrived are not owed to it.
+ */
+function hoursOn(clock, restartHours, now) {
+  const at = Date.parse(clock?.at ?? "");
+  if (!Number.isFinite(at)) return restartHours;
+  const hours = (now - at) / 3600000;
+  return clock.drained ? Math.min(hours, restartHours) : hours;
+}
+
+/**
+ * The clock after a release: it advances by exactly the period the release
+ * covered, so the remainder of a partial period carries into the next run. A
+ * release that empties the queue stops the clock at now instead.
+ */
+function advance(clock, { count, effectiveHours, hoursPerItem, drained, now }) {
+  if (!count) return clock;
+  const carry = drained || effectiveHours === null ? 0 : Math.max(0, effectiveHours - count * hoursPerItem);
+  return { at: new Date(now - carry * 3600000).toISOString(), drained };
 }
 
 const readJson = (p, fallback) => {
@@ -56,14 +86,13 @@ const readJson = (p, fallback) => {
 
 const qWords = readJson(Q_WORDS, []);
 const qReads = readJson(Q_READS, []);
+const state = readJson(STATE, {});
 
 const now = Date.now();
-const lastAt = Date.parse(readJson(STATE, {}).lastPromotedAt ?? "");
-// no state yet (first run after this change) — bootstrap at one hour's worth
-const elapsedHours = Number.isFinite(lastAt) ? (now - lastAt) / 3600000 : 1;
-
-const { words: wordCount, readings: readingCount, effectiveHours } = plan({
-  queuedWords: qWords.length, queuedReadings: qReads.length, elapsedHours,
+const { words: wordCount, readings: readingCount, wordsHours, readingsHours } = plan({
+  queuedWords: qWords.length, queuedReadings: qReads.length,
+  wordsHours: hoursOn(state.words, 1, now),
+  readingsHours: hoursOn(state.readings, READING_EVERY_HOURS, now),
   fixedCount: FIXED_COUNT, wordsPerHour: WORDS_PER_HOUR,
   readingEveryHours: READING_EVERY_HOURS, maxCatchupHours: MAX_CATCHUP_HOURS,
 });
@@ -72,7 +101,8 @@ const takeReading = qReads.slice(0, readingCount);
 
 const mode = FIXED_COUNT !== null
   ? `fixed ${FIXED_COUNT}`
-  : `${WORDS_PER_HOUR}/h x ${effectiveHours.toFixed(2)}h since last promotion`;
+  : `${WORDS_PER_HOUR}/h x ${wordsHours.toFixed(2)}h on the words clock, ` +
+    `1 per ${READING_EVERY_HOURS}h x ${readingsHours.toFixed(2)}h on the readings clock`;
 console.log(`plan: ${mode} -> ${takeWords.length} words, ${takeReading.length} readings ` +
             `(queued: ${qWords.length} words, ${qReads.length} readings)`);
 
@@ -101,9 +131,17 @@ rmSync(batchPath, { force: true });
 // drain promoted items from the queue regardless of dup-skips
 writeFileSync(Q_WORDS, JSON.stringify(qWords.slice(takeWords.length), null, 0));
 if (takeReading.length) writeFileSync(Q_READS, JSON.stringify(qReads.slice(takeReading.length), null, 1));
-// only advance the clock once the release actually happened, so a run that
-// promotes nothing leaves the elapsed time to accumulate for the next one
-writeFileSync(STATE, JSON.stringify({ lastPromotedAt: new Date(now).toISOString() }, null, 1) + "\n");
+// a clock that released nothing is left untouched, so its time keeps accumulating
+writeFileSync(STATE, JSON.stringify({
+  words: advance(state.words, {
+    count: takeWords.length, effectiveHours: wordsHours, hoursPerItem: 1 / WORDS_PER_HOUR,
+    drained: takeWords.length === qWords.length, now,
+  }),
+  readings: advance(state.readings, {
+    count: takeReading.length, effectiveHours: readingsHours, hoursPerItem: READING_EVERY_HOURS,
+    drained: takeReading.length === qReads.length, now,
+  }),
+}, null, 1) + "\n");
 
 const summary = JSON.parse(out);
 const promoted = (summary.words?.added ?? 0) + (summary.readings?.added ?? 0);

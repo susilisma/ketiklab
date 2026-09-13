@@ -46,10 +46,10 @@ examination trademark.
 | 印尼语释义 Indonesian glosses | 本站 en-* 词库 / this site's en-* libraries ([Wordnet Bahasa](https://github.com/omwn)) | MIT |
 
 提取时已排除该来源的助记内容（【词根】【拓展】【词源】【辨析】【形近】）及其音标转写；
-音标与印尼语释义改由本站既有的开放词库补齐，2100 词中分别覆盖 1458 词与 1290 词。
+音标与印尼语释义改由本站既有的开放词库补齐，2100 词中分别覆盖 1463 词与 1294 词。
 The source's mnemonics and its own phonetic transcriptions are excluded. Pronunciations and
-Indonesian glosses come instead from this site's existing open libraries, covering 1458 and
-1290 of the 2100 entries.
+Indonesian glosses come instead from this site's existing open libraries, covering 1463 and
+1294 of the 2100 entries.
 
 ## 中文与印尼语词库 / Chinese and Indonesian libraries
 

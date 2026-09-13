@@ -180,16 +180,20 @@ def main():
             continue
         id_c = [g for x in idn_wn.synsets(ili=ili) for g in x.lemmas()]
         id_c = [g for g in dict.fromkeys(id_c) if g and not g[:1].isupper() and " " not in g]
-        if not id_c:
-            continue
-        idw = max(id_c, key=lambda g: zipf_frequency(g, "id"))
-        if zipf_frequency(idw, "id") < 2.0:        # too rare to teach
+        id_c.sort(key=lambda g: -zipf_frequency(g, "id"))
+        # the most frequent synonym is often already taken by a near-synonym the
+        # library holds, and the next one glosses the sense just as well
+        idw = next((g for g in id_c if zipf_frequency(g, "id") >= 2.0 and g.lower() not in ID), None)
+        if not idw:                                # none free, or all too rare to teach
             continue
         lexfile = syn.lexfile() or ""
 
-        zh = "；".join(zh_g)
-        if idw.lower() in ID or any(g in ZH for g in zh_g):
+        # the primary gloss is the pinyin target and must stay unique across the
+        # library; a secondary gloss another word already uses is simply dropped
+        if zh_g[0] in ZH:
             continue
+        zh_g = [zh_g[0]] + [g for g in zh_g[1:] if g not in ZH]
+        zh = "；".join(zh_g)
 
         cat = category_for(lexfile)
         if per_cat[cat] >= cap:
@@ -216,16 +220,22 @@ def main():
         for g in zh_g:
             ZH.add(g)
 
+    print(f"scanned {seen_scan} headwords")
+    print(f"new words: {len(picked)}  {per_cat}")
+    if not picked:
+        # a green run that adds nothing hides an exhausted generator; only a
+        # failed job reaches anyone
+        print("::error::generator exhausted: no headword in the list passed the filters")
+        sys.exit(1)
+    if len(picked) < WORDS:
+        print(f"::warning::only {len(picked)} of {WORDS} words found; the candidate pool is nearly exhausted")
+
     out = queue + picked
     os.makedirs(os.path.dirname(QUEUE), exist_ok=True)
     with open(QUEUE, "w", encoding="utf-8") as f:
         json.dump(out, f, ensure_ascii=False, separators=(",", ":"))
-
-    print(f"scanned {seen_scan} headwords")
-    print(f"new words: {len(picked)}  {per_cat}")
     print(f"queue: {len(queue)} -> {len(out)}")
-    if picked:
-        print("sample:", ", ".join(f"{r['en']}={r['zh'].split('；')[0]}/{r['id']}" for r in picked[:8]))
+    print("sample:", ", ".join(f"{r['en']}={r['zh'].split('；')[0]}/{r['id']}" for r in picked[:8]))
 
 if __name__ == "__main__":
     main()
