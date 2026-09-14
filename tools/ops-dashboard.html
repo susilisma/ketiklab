@@ -319,7 +319,7 @@ async function load() {
     const prev = hist.length > 1 ? hist[hist.length - 2].words : null;
     const added = prev === null ? null : today.words - prev;
     document.getElementById("tiles").innerHTML = `
-      <div class="tile"><small>总词条</small><b>${num(words.length)}</b><em>三语词库</em></div>
+      <div class="tile"><small>总词条</small><b>${num(words.length)}</b><em>主题词汇</em></div>
       <div class="tile"><small>昨日至今新增</small><b>${added === null ? "—" : "+" + num(added)}</b><em>目标 100 / 天</em></div>
       <div class="tile"><small>待发布队列</small><b>${queue ? num(queue.length) : "—"}</b><em>${queue ? "每小时释放 12 条" : "队列在 GitHub 上，暂时读不到"}</em></div>
       <div class="tile"><small>已售席位</small><b>${seats}<span style="font-size:15px;color:var(--text-muted)"> / ${SEATS}</span></b><em>Rp ${num(seats * PRICE)}</em></div>`;

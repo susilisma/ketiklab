@@ -6,11 +6,13 @@
 Writes, from public/data and the built dist/index.html:
   dist/{zh,id,en}/index.html          the app shell with that language's <html lang>, title, description,
                                       og:locale, canonical, hreflang set and a single-language crawlable block
-  dist/{lang}/lib/{id}/index.html     one static page per library (the ten manifest rows plus the trilingual
-                                      collection), listing the first entries with pronunciation and glosses
+  dist/{lang}/lib/{id}/index.html     one static page per library (the manifest rows plus Words by Topic, id "trio"),
+                                      listing the first entries with pronunciation and one meaning column, picked
+                                      the way the app picks it for a reader of that page's language
   dist/{lang}/readings/index.html     the classic readings, with author, era and an opening line
   dist/sitemap.xml                    every page above with xhtml:link alternates
-and adds the hreflang set plus links to the language pages to dist/index.html itself.
+and adds the hreflang set plus links to the readings pages to dist/index.html itself, whose <main> is the
+language chooser linking /zh/, /id/ and /en/.
 
 The sub-pages carry <base href="/"> so the bundle's relative asset, data and sw.js URLs keep resolving at the
 site root. Every structural pattern this script relies on is asserted, so a changed index.html fails the build
@@ -34,39 +36,50 @@ OG_LOCALE = {"zh": "zh_CN", "id": "id_ID", "en": "en_US"}
 ENTRIES_PER_PAGE = 150
 esc = html.escape
 
+# {trio} {nlibs} {exam} {total} {readings} are filled from public/data at build time (see counts()).
 T = {
     "title": {
-        "zh": "中文·印尼语·英语三语打字练习 — 免费开源 | KetikLab",
-        "id": "Latihan mengetik Mandarin (pinyin), Indonesia, Inggris — gratis & open source | KetikLab",
-        "en": "Chinese typing practice with pinyin, Indonesian and English — free, open source | KetikLab",
+        "zh": "打字背单词：学中文、印尼语或英语 — 免费开源 | KetikLab",
+        "id": "Latihan mengetik Mandarin (pinyin), Inggris, atau Indonesia — gratis & open source | KetikLab",
+        "en": "Typing practice for Chinese (pinyin), English or Indonesian — free, open source | KetikLab",
     },
     "desc": {
-        "zh": "KetikLab：免费、开源的三语打字与词汇训练站。中文按认读→打拼音→选汉字→输入法四步阶梯练习，拼音在上、汉字在下；3,701 个三语精选词、10 个考试词库、161 篇经典朗读，艾宾浩斯间隔复习。",
-        "id": "KetikLab: situs latihan mengetik dan kosakata gratis, open source, untuk bahasa Mandarin, Indonesia, dan Inggris. Tangga pinyin empat langkah, 3.701 kata pilihan trilingual, 10 kamus ujian, 161 bacaan klasik, pengulangan berjarak.",
-        "en": "KetikLab: a free, open-source typing and vocabulary trainer for Chinese, Indonesian and English. A four-step pinyin ladder, 3,701 curated trilingual words, 10 exam libraries, 161 classic readings, spaced repetition.",
+        "zh": "KetikLab：免费开源的打字背单词网站。学中文、印尼语或英语，释义用你最熟悉的语言。中文按认读→打拼音→选汉字→输入法四步练习；{trio} 个主题词汇、{nlibs} 个考试词库、{readings} 篇经典朗读，艾宾浩斯间隔复习。",
+        "id": "KetikLab: latihan mengetik dan kosakata gratis dan open source. Belajar Mandarin, Inggris, atau Indonesia — artinya dalam bahasa yang paling kamu pahami. Tangga pinyin empat langkah, {trio} kosakata tematik, {nlibs} kamus ujian, {readings} bacaan klasik, pengulangan berjarak.",
+        "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. A four-step pinyin ladder, {trio} words by topic, {nlibs} exam libraries, {readings} classic readings, spaced repetition.",
     },
     "h1": {
-        "zh": "中文 · 印尼语 · 英语三语打字练习",
-        "id": "Latihan mengetik Mandarin, Indonesia, dan Inggris",
-        "en": "Chinese, Indonesian and English typing practice",
+        "zh": "打字背单词：学中文、印尼语或英语",
+        "id": "Latihan mengetik dan kosakata: Mandarin, Inggris, atau Indonesia",
+        "en": "Typing and vocabulary practice: Chinese, English or Indonesian",
     },
     "para": {
-        "zh": "KetikLab 是免费、开源的三语打字与词汇训练站：3,701 个按概念对齐的中文、印尼语、英语精选词，10 个考试词库近 18,000 词（全站两万一千余词），161 篇公共领域经典朗读。中文按「认读 → 打拼音 → 选汉字 → 输入法」四步阶梯练习，拼音印在汉字上方；艾宾浩斯间隔复习、错词本、收藏、学习日历与云端同步。浏览器打开即用，可安装到手机。",
-        "id": "KetikLab adalah situs latihan mengetik dan kosakata yang gratis dan open source untuk bahasa Mandarin, Indonesia, dan Inggris: 3.701 kata pilihan dengan arti tiga bahasa, 10 kamus ujian dengan hampir 18.000 kata (lebih dari 21.600 kata di seluruh situs), 161 bacaan klasik. Bahasa Mandarin dilatih lewat tangga empat langkah — baca, ketik pinyin, pilih hanzi, ketik dengan IME — dengan pinyin di atas hanzi; ada pengulangan berjarak, buku kesalahan, favorit, kalender belajar, dan sinkronisasi cloud. Langsung di browser, bisa dipasang di HP.",
-        "en": "KetikLab is a free, open-source typing and vocabulary trainer for Chinese, Indonesian and English: 3,701 curated words aligned across the three languages, 10 exam libraries with nearly 18,000 words (21,600+ across the site), and 161 public-domain classic readings. Chinese is practised on a four-step ladder — read, type the pinyin, pick the character, type it with your IME — with the pinyin printed above the character; spaced repetition, a mistakes book, favourites, a learning calendar and cloud sync. Runs in the browser and installs on your phone.",
+        "zh": "KetikLab：免费开源的打字背单词网站。学中文、印尼语或英语，释义用你最熟悉的语言。{trio} 个主题词汇（日常、学习与政策、商务、印尼生活四类），{nlibs} 个考试词库共 {exam} 词（全站 {total} 词），{readings} 篇公共领域经典朗读。中文按「认读 → 打拼音 → 选汉字 → 输入法」四步阶梯练习，拼音印在汉字上方；艾宾浩斯间隔复习、错词本、收藏、学习日历与云端同步。浏览器打开即用，可安装到手机。",
+        "id": "KetikLab: latihan mengetik dan kosakata gratis dan open source. Belajar Mandarin, Inggris, atau Indonesia — artinya dalam bahasa yang paling kamu pahami. Ada {trio} kosakata tematik (harian, belajar & kebijakan, bisnis, hidup di Indonesia), {nlibs} kamus ujian dengan {exam} kata ({total} kata di seluruh situs), dan {readings} bacaan klasik domain publik. Bahasa Mandarin dilatih lewat tangga empat langkah — baca, ketik pinyin, pilih hanzi, ketik dengan IME — dengan pinyin di atas hanzi; ada pengulangan berjarak, buku kesalahan, favorit, kalender belajar, dan sinkronisasi cloud. Langsung di browser, bisa dipasang di HP.",
+        "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. There are {trio} words by topic (daily, study & policy, business, life in Indonesia), {nlibs} exam libraries with {exam} words ({total} across the site), and {readings} public-domain classic readings. Chinese is practised on a four-step ladder — read, type the pinyin, pick the character, type it with your IME — with the pinyin printed above the character; spaced repetition, a mistakes book, favourites, a learning calendar and cloud sync. Runs in the browser and installs on your phone.",
     },
     "open": {"zh": "打开练习", "id": "Buka latihan", "en": "Open the trainer"},
     "libs": {"zh": "词库", "id": "Kamus", "en": "Libraries"},
     "readings": {"zh": "经典朗读", "id": "Bacaan klasik", "en": "Classic readings"},
-    "trio": {"zh": "三语精选词", "id": "Kata pilihan trilingual", "en": "Curated trilingual words"},
+    "trio": {"zh": "主题词汇", "id": "Kosakata Tematik", "en": "Words by Topic"},
     "trio_desc": {
-        "zh": "按概念对齐的中文、印尼语、英语词汇，附拼音、音标、印尼语音节与三语例句，分日常、商务、印尼生活、学习与政策四类。",
-        "id": "Kosakata Mandarin, Indonesia, dan Inggris yang diselaraskan per konsep, dengan pinyin, fonetik, suku kata Indonesia, dan contoh kalimat tiga bahasa; empat kategori: harian, bisnis, hidup di Indonesia, belajar & kebijakan.",
-        "en": "Chinese, Indonesian and English vocabulary aligned by concept, with pinyin, phonetics, Indonesian syllables and trilingual example sentences, in four categories: daily, business, life in Indonesia, study & policy.",
+        "zh": "KetikLab 按主题分类的词汇：日常、学习与政策、商务、印尼生活四类。练习时默认只显示你选的那一种语言的释义；下表列出印尼语词和中文释义。",
+        "id": "Kosakata KetikLab yang dikelompokkan per tema: harian, belajar & kebijakan, bisnis, hidup di Indonesia. Saat latihan, arti secara bawaan hanya tampil dalam satu bahasa pilihanmu; tabel di bawah memuat kata Mandarin, pinyin, dan artinya dalam Bahasa Indonesia.",
+        "en": "KetikLab vocabulary grouped by topic: daily, study & policy, business, life in Indonesia. In practice the meaning is shown, by default, in the one language you pick; the table below lists the Chinese word, its pinyin and the English meaning.",
     },
     "showing": {"zh": "共 {n} 条，下面是前 {k} 条。完整词库在练习页里。", "id": "{n} entri; {k} pertama ditampilkan di bawah. Kamus lengkap ada di halaman latihan.", "en": "{n} entries; the first {k} are listed below. The full library is in the trainer."},
-    "cols": {"zh": ("词", "发音", "释义", "印尼语"), "id": ("Kata", "Pelafalan", "Arti", "Indonesia"), "en": ("Word", "Pronunciation", "Gloss", "Indonesian")},
-    "cols_trio": {"zh": ("中文", "拼音", "印尼语", "English"), "id": ("Mandarin", "Pinyin", "Indonesia", "Inggris"), "en": ("Chinese", "Pinyin", "Indonesian", "English")},
+    "cols": {"zh": ("词", "发音"), "id": ("Kata", "Pelafalan"), "en": ("Word", "Pronunciation")},
+    # meaning labels by the language of the text shown; "def" is the English (WordNet) definition
+    "meaning": {
+        "zh": {"zh": "中文释义", "id": "印尼语释义", "en": "英文释义", "def": "英文定义"},
+        "id": {"zh": "Arti Mandarin", "id": "Arti Bahasa Indonesia", "en": "Arti Inggris", "def": "Definisi Inggris"},
+        "en": {"zh": "Chinese meaning", "id": "Indonesian meaning", "en": "English meaning", "def": "English definition"},
+    },
+    "coverage": {"zh": "释义列：{parts}。", "id": "Kolom arti: {parts}.", "en": "Meaning column: {parts}."},
+    "no_meaning": {"zh": "暂无释义", "id": "tanpa arti", "en": "no meaning"},
+    "missing": {"zh": "暂无{label}", "id": "{label} belum tersedia", "en": "No {label} yet"},
+    "only": {"zh": "这个词库只有{label}。", "id": "Kamus ini hanya punya {label}.", "en": "This list has {label}s only."},
+    "cols_trio": {"zh": ("印尼语", "中文释义"), "id": ("Mandarin", "Pinyin", "Arti"), "en": ("Chinese", "Pinyin", "English")},
     "cols_read": {"zh": ("篇名", "作者", "年代", "语言", "开头"), "id": ("Judul", "Penulis", "Era", "Bahasa", "Baris pertama"), "en": ("Title", "Author", "Era", "Language", "Opening line")},
     "read_desc": {
         "zh": "{n} 篇公共领域经典作品，逐句照着输入：中文、印尼语、英语各有。",
@@ -116,6 +129,18 @@ def fmt(key, lang, **kw):
     return T[key][lang].format(**kw)
 
 
+def floor_num(n, lang):
+    """Site-size counts as floors ("3,700+"), the way the README and share card write them."""
+    f = n // 100 * 100
+    return num(f, lang) + "+" if 100 <= f < n else num(n, lang)
+
+
+def counts(lang, manifest, dict_entries, words, readings):
+    exam = sum(len(dict_entries[r["id"]]) for r in manifest)
+    return {"trio": floor_num(len(words), lang), "nlibs": len(manifest), "exam": floor_num(exam, lang),
+            "total": floor_num(exam + len(words), lang), "readings": len(readings)}
+
+
 def strip_hreflang(h):
     """Make re-runs on an already-processed dist idempotent."""
     return re.sub(r'\n[ \t]*<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', "", h)
@@ -128,17 +153,18 @@ def hreflang_links(path_for):
     return "\n".join(out)
 
 
-def language_page(index_html, lang, lib_rows, n_readings):
+def language_page(index_html, lang, lib_rows, n_readings, c):
     url = f"{SITE}/{lang}/"
+    desc = fmt("desc", lang, **c)
     h = strip_hreflang(index_html)
     h = sub1(r'<html lang="[^"]*">', f'<html lang="{HTML_LANG[lang]}">', h, "<html lang>")
     h = sub1(r"<head>", '<head>\n    <base href="/" />', h, "<head>")
     h = sub1(r"<title>[^<]*</title>", f"<title>{esc(T['title'][lang])}</title>", h, "<title>")
-    h = sub1(r'(<meta\s+name="description"\s+content=")[^"]*(")', lambda m: m.group(1) + esc(T["desc"][lang], quote=True) + m.group(2), h, "description", re.S)
+    h = sub1(r'(<meta\s+name="description"\s+content=")[^"]*(")', lambda m: m.group(1) + esc(desc, quote=True) + m.group(2), h, "description", re.S)
     for prop in ("og:title", "twitter:title"):
         h = sub1(rf'(<meta (?:property|name)="{prop}" content=")[^"]*(")', lambda m: m.group(1) + esc(T["title"][lang], quote=True) + m.group(2), h, prop)
     for prop in ("og:description", "twitter:description"):
-        h = sub1(rf'(<meta (?:property|name)="{prop}" content=")[^"]*(")', lambda m: m.group(1) + esc(T["desc"][lang], quote=True) + m.group(2), h, prop)
+        h = sub1(rf'(<meta (?:property|name)="{prop}" content=")[^"]*(")', lambda m: m.group(1) + esc(desc, quote=True) + m.group(2), h, prop)
     h = sub1(r'<link rel="canonical" href="[^"]*" />', f'<link rel="canonical" href="{url}" />', h, "canonical")
     h = sub1(r'<meta property="og:url" content="[^"]*" />', f'<meta property="og:url" content="{url}" />', h, "og:url")
     h = sub1(r'<meta property="og:locale" content="[^"]*" />', f'<meta property="og:locale" content="{OG_LOCALE[lang]}" />', h, "og:locale")
@@ -150,7 +176,7 @@ def language_page(index_html, lang, lib_rows, n_readings):
     block = (
         f'<main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Inter,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;color:#1c1d26;line-height:1.7">\n'
         f'        <h1 style="font-size:28px;margin:0 0 8px">{esc(T["h1"][lang])} — KetikLab</h1>\n'
-        f'        <p lang="{HTML_LANG[lang]}">{esc(T["para"][lang])}</p>\n'
+        f'        <p lang="{HTML_LANG[lang]}">{esc(fmt("para", lang, **c))}</p>\n'
         f'        <p><a href="/?ui={lang}" style="color:#7165eb;font-weight:700">{esc(T["open"][lang])} →</a></p>\n'
         f'        <p style="color:#7b7d8c;font-size:14px"><b>{esc(T["libs"][lang])}:</b> {lib_links} · <a href="/{lang}/readings/">{esc(T["readings"][lang])} ({n_readings})</a></p>\n'
         f'        <p style="color:#7b7d8c;font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
@@ -163,9 +189,10 @@ def language_page(index_html, lang, lib_rows, n_readings):
 def root_page(index_html, n_readings):
     h = strip_hreflang(index_html)
     h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head> (root)")
-    links = " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}" style="color:#7165eb">{T["lang_names"][l]}</a>' for l in LANGS)
+    # index.html's <main> already links the three language pages; the build adds each language's readings page
+    links = " · ".join(f'<a href="/{l}/readings/" hreflang="{HTML_LANG[l]}" style="color:#7165eb">{esc(T["readings"][l])}</a>' for l in LANGS)
     if "/zh/readings/" not in h:
-        h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:#7b7d8c;font-size:14px">{links} · <a href="/zh/readings/" style="color:#7165eb">{esc(T["readings"]["zh"])} ({n_readings})</a></p>' + m.group(1), h, "</main> (root)")
+        h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:#7b7d8c;font-size:14px">{links} ({n_readings})</p>' + m.group(1), h, "</main> (root)")
     return h
 
 
@@ -177,6 +204,67 @@ def lib_desc(row, lang):
     return row.get(f"description_{lang}") or row["description"] if lang != "zh" else row["description"]
 
 
+def default_def(ui, learn):
+    """The app's defaultDef with no browser signal: the page language reads the meanings unless it is the list's own."""
+    return ui if ui != learn else None
+
+
+def meaning_chain(lang, row_lang):
+    """[(field, language of its text)] in the app's fallback order for a page in `lang` on a `row_lang` list, plus
+    whether the list lacks the reader's language entirely. trans is Chinese on en/id lists and English on zh lists."""
+    trans = "en" if row_lang == "zh" else "zh"
+    reader = default_def(lang, row_lang)
+    if reader is None:  # same-language page: the audience the list is actually for
+        return {"zh": [("idtrans", "id")], "id": [("trans", "zh")], "en": [("def", "def"), ("idtrans", "id")]}[lang], False
+    if reader == "id":
+        return ([("idtrans", "id"), ("def", "def")] if row_lang == "en" else [("idtrans", "id")]), False
+    if reader == trans:
+        return [("trans", trans)], False
+    return [("trans", trans)], True  # an English reader on the Indonesian list, which has Chinese meanings only
+
+
+def gloss_text(e, field, text_lang):
+    v = e.get(field)
+    if isinstance(v, list):
+        v = ("；" if text_lang == "zh" else "; ").join(x for x in v if x)
+    return (v or "").strip()
+
+
+def pct(k, n):
+    """Rounded down so a partial coverage never reads as 100%."""
+    p = k * 100 // max(n, 1)
+    return "<1%" if k and not p else f"{p}%"
+
+
+def meaning_column(lang, row, entries):
+    """(header, cell(entry) -> html, coverage sentence) for the one meaning column of a library page."""
+    chain, only = meaning_chain(lang, row["lang"])
+    labels = T["meaning"][lang]
+    have = [sum(1 for e in entries if gloss_text(e, f, tl)) for f, tl in chain]
+    lead_i = next((i for i, k in enumerate(have) if k), 0)
+    head_field, head_lang = chain[lead_i]
+    header = labels[head_lang]
+    chain = chain[lead_i:]
+
+    def cell(e):
+        for f, tl in chain:
+            text = gloss_text(e, f, tl)
+            if text:
+                return esc(text) if f == head_field else f'<small class="tag">{esc(labels[tl])}</small> {esc(text)}'
+        return f'<span class="none">{esc(fmt("missing", lang, label=header))}</span>'
+
+    n = len(entries); left = entries; parts = []
+    for f, tl in chain:  # each entry counts once, under the field that fills its cell
+        rest = [e for e in left if not gloss_text(e, f, tl)]
+        if len(rest) < len(left):
+            parts.append(f"{labels[tl]} {pct(len(left) - len(rest), n)}")
+        left = rest
+    if left:
+        parts.append(f"{T['no_meaning'][lang]} {pct(len(left), n)}")
+    sentence = fmt("coverage", lang, parts=" · ".join(parts))
+    return header, cell, (fmt("only", lang, label=header) + " " + sentence) if only else sentence
+
+
 CSS = (
     "*{box-sizing:border-box}body{margin:0;background:#f6f7fb;color:#1c1d26;font:16px/1.65 Inter,'PingFang SC','Microsoft YaHei',sans-serif}"
     "header{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid #e6e6ef;background:#fff}"
@@ -186,6 +274,7 @@ CSS = (
     ".wrap{overflow-x:auto;background:#fff;border:1px solid #e6e6ef;border-radius:14px}table{border-collapse:collapse;width:100%;min-width:560px}"
     "th,td{padding:9px 14px;border-bottom:1px solid #f0f0f5;text-align:left;vertical-align:top}th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#7b7d8c;background:#fafafd}"
     "td.w{font-weight:700;white-space:nowrap}td.p{color:#7165eb;white-space:nowrap}"
+    "td .tag{display:inline-block;margin-right:4px;padding:0 6px;border-radius:6px;background:#f0effd;color:#5b52c9;font-size:12px}td .none{color:#7b7d8c;font-size:14px}"
     "nav.more{margin-top:34px;color:#7b7d8c;font-size:14px;line-height:2}nav.more a{color:#7165eb;text-decoration:none}"
     "footer{color:#7b7d8c;font-size:13px;padding:24px;text-align:center}footer a{color:#7165eb;text-decoration:none}"
     "@media(max-width:640px){main{padding:24px 14px 48px}h1{font-size:24px}th,td{padding:8px 10px}}"
@@ -218,13 +307,15 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
     name = lib_name(row, lang); desc = lib_desc(row, lang)
     n = len(entries); shown = entries[:ENTRIES_PER_PAGE]
     title = f"{name} — {fmt('count', lang, n=num(n, lang))} | KetikLab"
-    cols = T["cols"][lang]
+    header, cell, coverage = meaning_column(lang, row, entries)
+    pron = any(e.get("usphone") for e in entries)  # the Indonesian list has no pronunciation field
+    cols = (T["cols"][lang] if pron else T["cols"][lang][:1]) + (header,)
     rows = "\n".join(
-        f'<tr><td class="w">{esc(e["name"])}</td><td class="p">{esc(e.get("usphone") or "")}</td>'
-        f'<td>{esc("；".join(e.get("trans") or []))}</td><td>{esc("; ".join(e.get("idtrans") or []))}</td></tr>'
+        f'<tr><td class="w">{esc(e["name"])}</td>' + (f'<td class="p">{esc(e.get("usphone") or "")}</td>' if pron else "")
+        + f"<td>{cell(e)}</td></tr>"
         for e in shown)
     body = (
-        f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
+        f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}<br>{esc(coverage)}</p>\n"
         f'<a class="cta" href="/?ui={lang}&amp;lib={row["id"]}">{esc(T["practice"][lang])} →</a>\n'
         f"<p>{esc(fmt('showing', lang, n=num(n, lang), k=len(shown)))}</p>\n"
         f'<div class="wrap"><table><thead><tr>' + "".join(f"<th>{esc(c)}</th>" for c in cols) + f"</tr></thead>\n<tbody>\n{rows}\n</tbody></table></div>\n"
@@ -238,8 +329,10 @@ def trio_page(lang, words, lib_rows, n_readings):
     n = len(words); shown = words[:ENTRIES_PER_PAGE]
     title = f"{name} — {fmt('count', lang, n=num(n, lang))} | KetikLab"
     cols = T["cols_trio"][lang]
+    # one learning language per page, with the page language's meaning next to it: /zh/ Indonesian word, /id/ and /en/ Chinese
     rows = "\n".join(
-        f'<tr><td class="w">{esc(w["zh"])}</td><td class="p">{esc(w.get("pinyin") or "")}</td><td>{esc(w["id"])}</td><td>{esc(w["en"])}</td></tr>'
+        f'<tr><td class="w">{esc(w["id"])}</td><td>{esc(w["zh"])}</td></tr>' if lang == "zh" else
+        f'<tr><td class="w">{esc(w["zh"])}</td><td class="p">{esc(w.get("pinyin") or "")}</td><td>{esc(w[lang])}</td></tr>'
         for w in shown)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
@@ -299,7 +392,8 @@ def main():
 
     groups.append({l: f"/{l}/" for l in LANGS})
     for lang in LANGS:
-        write(os.path.join(DIST, lang, "index.html"), language_page(index_html, lang, manifest, len(readings))); n_pages += 1
+        c = counts(lang, manifest, dict_entries, words, readings)
+        write(os.path.join(DIST, lang, "index.html"), language_page(index_html, lang, manifest, len(readings), c)); n_pages += 1
 
     for row in manifest:
         for lang in LANGS:
