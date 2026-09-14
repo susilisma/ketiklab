@@ -11,7 +11,7 @@ Sources (all redistributable, attribution kept in public/data/SOURCES.md):
 Output: public/data/en-core.json / en-plus.json / en-upper.json / en-academic.json
 Format: {"name","trans":[zh...],"idtrans":[id...],"def":"english gloss","usphone":"ipa"}
 """
-import json, os, re, sys, warnings
+import importlib.util, json, os, re, sys, warnings
 warnings.filterwarnings("ignore")
 
 import wn
@@ -19,6 +19,14 @@ from wordfreq import zipf_frequency, top_n_list
 import cmudict
 
 OUT = os.path.join(os.path.dirname(__file__), "..", "public", "data")
+
+def annotate_coverage(manifest):
+    # scripts/manifest-coverage.py has a hyphen in its name, so load it by path
+    spec = importlib.util.spec_from_file_location(
+        "manifest_coverage", os.path.join(os.path.dirname(os.path.abspath(__file__)), "manifest-coverage.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.annotate(manifest, OUT)
 
 ARPA2IPA = {
     "AA":"ɑ","AE":"æ","AH":"ə","AO":"ɔ","AW":"aʊ","AY":"aɪ","B":"b","CH":"tʃ","D":"d",
@@ -147,14 +155,14 @@ def build():
     manifest_rows = []
     for key, zh_name, id_name, en_name, lo, hi in BANDS:
         rows = buckets[key]
+        # no word count or gloss languages here: the app's library card prints the count and
+        # which meaning this reader gets from the coverage the manifest carries
         if lo is None:
-            desc = f"精选商务词汇 · {len(rows)} 词 · 中文/印尼语释义"
-            desc_id = f"Kosakata bisnis pilihan · {len(rows)} kata · arti Mandarin/Indonesia"
-            desc_en = f"Curated business vocabulary · {len(rows)} words · Chinese/Indonesian glosses"
+            desc, desc_id, desc_en = "精选商务词汇", "Kosakata bisnis pilihan", "Curated business vocabulary"
         else:
-            desc = f"词频 Zipf {lo}–{hi} · {len(rows)} 词 · 中文/印尼语释义"
-            desc_id = f"Frekuensi Zipf {lo}–{hi} · {len(rows)} kata · arti Mandarin/Indonesia"
-            desc_en = f"Zipf frequency {lo}–{hi} · {len(rows)} words · Chinese/Indonesian glosses"
+            desc = f"词频 Zipf {lo}–{hi}"
+            desc_id = f"Frekuensi Zipf {lo}–{hi}"
+            desc_en = f"Zipf frequency {lo}–{hi}"
         with open(os.path.join(OUT, key + ".json"), "w", encoding="utf-8") as f:
             json.dump(rows, f, ensure_ascii=False, separators=(",", ":"))
         manifest_rows.append({
@@ -180,6 +188,7 @@ def build():
     listed = {m["id"] for m in man}
     man += [r for r in sorted(manifest_rows, key=lambda r: order[r["id"]])
             if r["id"] not in listed]
+    annotate_coverage(man)
     with open(man_path, "w", encoding="utf-8") as f:
         json.dump(man, f, ensure_ascii=False, indent=1)
     print("manifest.json rewritten:", ", ".join(m["id"] for m in man))

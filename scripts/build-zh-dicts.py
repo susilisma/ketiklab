@@ -23,7 +23,7 @@ Quality gates, learned the hard way on the English pipeline:
 
 Usage: python3 scripts/build-zh-dicts.py
 """
-import json, os, re, warnings
+import importlib.util, json, os, re, warnings
 warnings.filterwarnings("ignore")
 
 import wn
@@ -36,12 +36,22 @@ DATA = os.path.join(ROOT, "public", "data")
 HAN = re.compile(r"^[一-鿿]+$")
 SCAN = 60000
 
+def annotate_coverage(manifest):
+    # scripts/manifest-coverage.py has a hyphen in its name, so load it by path
+    spec = importlib.util.spec_from_file_location(
+        "manifest_coverage", os.path.join(os.path.dirname(os.path.abspath(__file__)), "manifest-coverage.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    return mod.annotate(manifest, DATA)
+
 # Rank bands over the *kept* list, so each library has a usable size no matter
 # how much the wordnets cover.
+# The blurbs carry no word count or gloss languages: the app's library card prints the count
+# and which meaning this reader gets from the coverage the manifest carries.
 BANDS = [
-    ("zh-core",  "中文核心词", "最高频中文词 · 印尼语/英语释义", "Kata inti Mandarin",         "Core Chinese",         "Kata Mandarin paling sering dipakai · arti Indonesia/Inggris", "Highest-frequency Chinese words · Indonesian/English glosses", 0,    1200),
-    ("zh-plus",  "中文进阶词", "常用中文词 · 印尼语/英语释义",   "Kata lanjutan Mandarin",     "Intermediate Chinese", "Kata Mandarin umum · arti Indonesia/Inggris",                   "Common Chinese words · Indonesian/English glosses",            1200, 2200),
-    ("zh-upper", "中文高阶词", "进阶中文词 · 印尼语/英语释义",   "Kata tingkat atas Mandarin", "Advanced Chinese",     "Kata Mandarin tingkat lanjut · arti Indonesia/Inggris",         "Higher-level Chinese words · Indonesian/English glosses",      2200, 999999),
+    ("zh-core",  "中文核心词", "最高频中文词", "Kata inti Mandarin",         "Core Chinese",         "Kata Mandarin paling sering dipakai", "Highest-frequency Chinese words", 0,    1200),
+    ("zh-plus",  "中文进阶词", "常用中文词",   "Kata lanjutan Mandarin",     "Intermediate Chinese", "Kata Mandarin umum",                   "Common Chinese words",            1200, 2200),
+    ("zh-upper", "中文高阶词", "进阶中文词",   "Kata tingkat atas Mandarin", "Advanced Chinese",     "Kata Mandarin tingkat lanjut",         "Higher-level Chinese words",      2200, 999999),
 ]
 
 def toned(word):
@@ -132,11 +142,11 @@ def main():
         manifest.append({
             "id": dict_id,
             "name": name,
-            "description": f"{blurb} · {len(rows)} 词",
+            "description": blurb,
             "name_id": name_id,
             "name_en": name_en,
-            "description_id": f"{blurb_id} · {len(rows)} kata",
-            "description_en": f"{blurb_en} · {len(rows)} words",
+            "description_id": blurb_id,
+            "description_en": blurb_en,
             "lang": "zh",
             "length": len(rows),
             "file": dict_id + ".json",
@@ -150,6 +160,7 @@ def main():
 
     with open(pin_path, "w", encoding="utf-8") as f:
         json.dump(pinmap, f, ensure_ascii=False, separators=(",", ":"))
+    annotate_coverage(manifest)
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=1)
     print(f"pinyin map: {len(pinmap)} entries")
