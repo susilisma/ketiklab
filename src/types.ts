@@ -1,4 +1,6 @@
 export type Lang = "zh" | "id" | "en";
+// the language a word's meaning is shown in, or "none" for typing practice without one
+export type MeaningLang = Lang | "none";
 export type WordCategory = "daily" | "business" | "indonesia" | "study";
 
 export type Word = {
@@ -27,6 +29,9 @@ export type DictInfo = {
   lang: Lang;
   length: number;
   file: string;
+  // entries with a non-empty meaning per language: zh = Chinese trans (en-*, indonesian),
+  // id = idtrans, en = English trans (zh-*), def = English definition
+  coverage?: { zh: number; id: number; en: number; def: number };
 };
 
 export type PracticeItem = {
@@ -38,6 +43,11 @@ export type PracticeItem = {
   voice: string;
   lang: Lang;
   dict?: string;
+  dictId?: string;
+  // every meaning the word has, keyed by the language it is written in (never item.lang);
+  // absent on favourites saved before glosses existed
+  glosses?: Partial<Record<Lang, string>>;
+  def?: string;
 };
 
 export type ReadingPiece = {

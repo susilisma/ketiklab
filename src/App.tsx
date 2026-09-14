@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from "react";
-import type { Lang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
+import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
@@ -12,10 +12,10 @@ type WordFilter = "all" | WordCategory;
 // a due word resolved to where it lives: the trio collection (in the language it
 // was practised in) or one dictionary
 type ReviewRef = { key: string; w: Word; lang: Lang } | { key: string; d: DictInfo; e: DictEntry };
-// a practice item that also knows which language its gloss is in: a dictionary
-// entry shows Indonesian when the interface is Indonesian and it has an idtrans,
-// otherwise its Chinese (or, for a zh dictionary, English) gloss
-type LearnItem = PracticeItem & { meaningLang?: Lang };
+type MeaningPrefs = Partial<Record<Lang, MeaningLang>>;
+// a line the extra-meanings setting stacks under the main meaning
+type ExtraMeaning = { text: string; label: string; kind: "gloss" | "def" | "example" };
+type ExtraMeanings = "none" | "def" | "all";
 
 const DATA = import.meta.env.BASE_URL + "data/";
 
@@ -32,9 +32,9 @@ const TYPEABLE: Record<Lang, RegExp> = { zh: /^[㐀-鿿]+$/, id: /^[a-zA-Z0-9 '\
 const loadDict = (d: DictInfo) => loadDictFile<DictEntry[]>(d.file).then(data => data.filter(e => TYPEABLE[d.lang].test(e.name)));
 
 const UI = {
-  zh: { learn: "开始学习", library: "词库", mistakes: "间隔复习", articles: "阅读", plan: "学习计划", stats: "数据统计", member: "会员", settings: "设置", language: "语言", start: "开始", pause: "暂停", prompt: "输入上方中文词语", meaning: "三语释义", daily: "今日目标", streak: "连续学习", words: "已学词语", accuracy: "正确率", day: "天", chapter: "中文商务词汇 · 第 1 章", finish: "今日完成度", keyboard: "输入第一个汉字开始", choose: "选择词库", all: "全部分类", search: "搜索词语…", readingTagline: "读经典，照着输入，让文字经过眼睛，也经过手指。", allReadings: "全部", classics: "经典选集", pieces: "篇", readAll: "朗读全文", read: "朗读", lineLabel: "第几句", nextLine: "下一句", typingHelp: "红色字符需要修改；标点和大小写也要与原文一致。", completed: "已完成", completedNote: "你刚刚完整地输入了一篇经典作品。", characters: "字符", timeUsed: "用时", practiceAgain: "再练一次", loading: "正在加载词库…", due: "今日待复习", mastered: "已掌握", learning: "学习中", startReview: "开始复习", reviewing: "复习模式", exitReview: "退出复习", noDueTitle: "暂无到期复习", noDueNote: "继续在“开始学习”里练习。答对的词会按遗忘曲线拉长间隔，答错的词很快再次出现。", reviewHint: "按遗忘曲线：答对间隔变长，答错很快再见" },
-  id: { learn: "Mulai Belajar", library: "Daftar Kata", mistakes: "Ulasan Berkala", articles: "Bacaan", plan: "Rencana Belajar", stats: "Statistik", member: "Anggota", settings: "Pengaturan", language: "Bahasa", start: "Mulai", pause: "Jeda", prompt: "Ketik kata bahasa Indonesia di atas", meaning: "Arti tiga bahasa", daily: "Target hari ini", streak: "Hari berturut-turut", words: "Kata dipelajari", accuracy: "Akurasi", day: "hari", chapter: "Kosakata Bisnis Indonesia · Bab 1", finish: "Progres hari ini", keyboard: "Ketik huruf pertama untuk mulai", choose: "Pilih daftar kata", all: "Semua kategori", search: "Cari kata…", readingTagline: "Baca karya klasik sambil mengetik, agar kata-katanya melewati mata dan jemari.", allReadings: "Semua", classics: "Koleksi klasik", pieces: "bacaan", readAll: "Bacakan seluruh teks", read: "Bacakan", lineLabel: "Baris", nextLine: "Baris berikutnya", typingHelp: "Perbaiki karakter merah; tanda baca dan huruf besar harus sama dengan teks asli.", completed: "Selesai", completedNote: "Kamu baru saja mengetik satu karya klasik secara lengkap.", characters: "karakter", timeUsed: "waktu", practiceAgain: "Latihan lagi", loading: "Memuat kosakata…", due: "Jatuh tempo hari ini", mastered: "Dikuasai", learning: "Dipelajari", startReview: "Mulai ulasan", reviewing: "Mode ulasan", exitReview: "Keluar", noDueTitle: "Belum ada ulasan jatuh tempo", noDueNote: "Terus berlatih di “Mulai Belajar”. Kata yang benar dijadwalkan makin jarang; yang salah muncul lagi segera.", reviewHint: "Kurva lupa: benar makin jarang, salah segera kembali" },
-  en: { learn: "Start Learning", library: "Word Lists", mistakes: "Spaced Review", articles: "Reading", plan: "Study Plan", stats: "Statistics", member: "Membership", settings: "Settings", language: "Language", start: "Start", pause: "Pause", prompt: "Type the English word above", meaning: "Trilingual meaning", daily: "Daily goal", streak: "Study streak", words: "Words learned", accuracy: "Accuracy", day: "days", chapter: "Business English · Chapter 1", finish: "Today's progress", keyboard: "Press any letter key to start", choose: "Choose word list", all: "All categories", search: "Search words…", readingTagline: "Read the classics as you type, letting every line pass through your eyes and fingers.", allReadings: "All", classics: "Classic collection", pieces: "readings", readAll: "Read full text aloud", read: "Read aloud", lineLabel: "Line", nextLine: "Next line", typingHelp: "Correct the red characters; punctuation and capitalization must match the original.", completed: "Completed", completedNote: "You have typed an entire classic work.", characters: "characters", timeUsed: "time", practiceAgain: "Practice again", loading: "Loading vocabulary…", due: "Due today", mastered: "Mastered", learning: "Learning", startReview: "Start review", reviewing: "Review mode", exitReview: "Exit review", noDueTitle: "Nothing due yet", noDueNote: "Keep practicing in “Start Learning”. Correct words are scheduled further out; missed words return soon.", reviewHint: "Forgetting curve: correct spreads out, wrong returns soon" },
+  zh: { learn: "开始学习", library: "词库", mistakes: "间隔复习", articles: "阅读", plan: "学习计划", stats: "数据统计", member: "会员", settings: "设置", language: "语言", start: "开始", pause: "暂停", prompt: "输入上方中文词语", daily: "今日目标", streak: "连续学习", words: "已学词语", accuracy: "正确率", day: "天", chapter: "中文商务词汇 · 第 1 章", finish: "今日完成度", keyboard: "输入第一个汉字开始", choose: "选择词库", all: "全部分类", search: "搜索词语…", readingTagline: "读经典，照着输入，让文字经过眼睛，也经过手指。", allReadings: "全部", classics: "经典选集", pieces: "篇", readAll: "朗读全文", read: "朗读", lineLabel: "第几句", nextLine: "下一句", typingHelp: "红色字符需要修改；标点和大小写也要与原文一致。", completed: "已完成", completedNote: "你刚刚完整地输入了一篇经典作品。", characters: "字符", timeUsed: "用时", practiceAgain: "再练一次", loading: "正在加载词库…", due: "今日待复习", mastered: "已掌握", learning: "学习中", startReview: "开始复习", reviewing: "复习模式", exitReview: "退出复习", noDueTitle: "暂无到期复习", noDueNote: "继续在“开始学习”里练习。答对的词会按遗忘曲线拉长间隔，答错的词很快再次出现。", reviewHint: "按遗忘曲线：答对间隔变长，答错很快再见" },
+  id: { learn: "Mulai Belajar", library: "Daftar Kata", mistakes: "Ulasan Berkala", articles: "Bacaan", plan: "Rencana Belajar", stats: "Statistik", member: "Anggota", settings: "Pengaturan", language: "Bahasa", start: "Mulai", pause: "Jeda", prompt: "Ketik kata bahasa Indonesia di atas", daily: "Target hari ini", streak: "Hari berturut-turut", words: "Kata dipelajari", accuracy: "Akurasi", day: "hari", chapter: "Kosakata Bisnis Indonesia · Bab 1", finish: "Progres hari ini", keyboard: "Ketik huruf pertama untuk mulai", choose: "Pilih daftar kata", all: "Semua kategori", search: "Cari kata…", readingTagline: "Baca karya klasik sambil mengetik, agar kata-katanya melewati mata dan jemari.", allReadings: "Semua", classics: "Koleksi klasik", pieces: "bacaan", readAll: "Bacakan seluruh teks", read: "Bacakan", lineLabel: "Baris", nextLine: "Baris berikutnya", typingHelp: "Perbaiki karakter merah; tanda baca dan huruf besar harus sama dengan teks asli.", completed: "Selesai", completedNote: "Kamu baru saja mengetik satu karya klasik secara lengkap.", characters: "karakter", timeUsed: "waktu", practiceAgain: "Latihan lagi", loading: "Memuat kosakata…", due: "Jatuh tempo hari ini", mastered: "Dikuasai", learning: "Dipelajari", startReview: "Mulai ulasan", reviewing: "Mode ulasan", exitReview: "Keluar", noDueTitle: "Belum ada ulasan jatuh tempo", noDueNote: "Terus berlatih di “Mulai Belajar”. Kata yang benar dijadwalkan makin jarang; yang salah muncul lagi segera.", reviewHint: "Kurva lupa: benar makin jarang, salah segera kembali" },
+  en: { learn: "Start Learning", library: "Word Lists", mistakes: "Spaced Review", articles: "Reading", plan: "Study Plan", stats: "Statistics", member: "Membership", settings: "Settings", language: "Language", start: "Start", pause: "Pause", prompt: "Type the English word above", daily: "Daily goal", streak: "Study streak", words: "Words learned", accuracy: "Accuracy", day: "days", chapter: "Business English · Chapter 1", finish: "Today's progress", keyboard: "Press any letter key to start", choose: "Choose word list", all: "All categories", search: "Search words…", readingTagline: "Read the classics as you type, letting every line pass through your eyes and fingers.", allReadings: "All", classics: "Classic collection", pieces: "readings", readAll: "Read full text aloud", read: "Read aloud", lineLabel: "Line", nextLine: "Next line", typingHelp: "Correct the red characters; punctuation and capitalization must match the original.", completed: "Completed", completedNote: "You have typed an entire classic work.", characters: "characters", timeUsed: "time", practiceAgain: "Practice again", loading: "Loading vocabulary…", due: "Due today", mastered: "Mastered", learning: "Learning", startReview: "Start review", reviewing: "Review mode", exitReview: "Exit review", noDueTitle: "Nothing due yet", noDueNote: "Keep practicing in “Start Learning”. Correct words are scheduled further out; missed words return soon.", reviewHint: "Forgetting curve: correct spreads out, wrong returns soon" },
 };
 
 // prompt above the typing box: what to type (learn lang), written in the interface lang
@@ -44,14 +44,14 @@ const PROMPTS: Record<Lang, Record<Lang, string>> = {
   en: { zh: "Type the Chinese word above", id: "Type the Indonesian word above", en: "Type the English word above" },
 };
 
-const MODAL_T: Record<Lang, { title: string; subtitle: string; ui: string; uiDesc: string; learn: string; learnDesc: string; def: string; defDesc: string; selected: string; cancel: string; save: string }> = {
-  zh: { title: "语言设置", subtitle: "配置界面语言、学习语言和释义语言", ui: "界面语言", uiDesc: "选择应用界面的显示语言", learn: "学习语言", learnDesc: "选择你要练习打字的语言", def: "释义语言", defDesc: "选择单词释义的显示语言", selected: "已选择", cancel: "取消", save: "保存设置" },
-  id: { title: "Pengaturan Bahasa", subtitle: "Atur bahasa antarmuka, bahasa belajar, dan bahasa arti", ui: "Bahasa Antarmuka", uiDesc: "Pilih bahasa tampilan aplikasi", learn: "Bahasa Belajar", learnDesc: "Pilih bahasa yang ingin kamu latih mengetik", def: "Bahasa Arti", defDesc: "Pilih bahasa untuk menampilkan arti kata", selected: "Dipilih", cancel: "Batal", save: "Simpan" },
-  en: { title: "Language Settings", subtitle: "Choose interface, learning, and definition language", ui: "Interface Language", uiDesc: "Language used for menus and labels", learn: "Learning Language", learnDesc: "The language you practice typing", def: "Definition Language", defDesc: "Language used to show word meanings", selected: "Selected", cancel: "Cancel", save: "Save" },
+const MODAL_T: Record<Lang, { title: string; subtitle: string; ui: string; uiDesc: string; learn: string; learnDesc: string; def: string; defDesc: string; defRequired: string; defSame: string; noneDesc: string; selected: string; cancel: string; save: string }> = {
+  zh: { title: "语言设置", subtitle: "配置界面语言、学习语言和释义语言", ui: "界面语言", uiDesc: "选择应用界面的显示语言", learn: "学习语言", learnDesc: "选择你要练习打字的语言", def: "释义用哪种语言", defDesc: "选你最熟悉的语言", defRequired: "请选一项再保存", defSame: "正在学的语言", noneDesc: "只练打字", selected: "已选择", cancel: "取消", save: "保存设置" },
+  id: { title: "Pengaturan Bahasa", subtitle: "Atur bahasa antarmuka, bahasa belajar, dan bahasa arti", ui: "Bahasa Antarmuka", uiDesc: "Pilih bahasa tampilan aplikasi", learn: "Bahasa Belajar", learnDesc: "Pilih bahasa yang ingin kamu latih mengetik", def: "Arti ditampilkan dalam", defDesc: "Pilih bahasa yang paling kamu pahami", defRequired: "Pilih salah satu sebelum menyimpan", defSame: "Bahasa yang sedang dipelajari", noneDesc: "Hanya latihan mengetik", selected: "Dipilih", cancel: "Batal", save: "Simpan" },
+  en: { title: "Language Settings", subtitle: "Choose interface, learning, and meaning language", ui: "Interface Language", uiDesc: "Language used for menus and labels", learn: "Learning Language", learnDesc: "The language you practice typing", def: "Show meanings in", defDesc: "Pick the language you read best", defRequired: "Pick one to save", defSame: "The language you are learning", noneDesc: "Typing only", selected: "Selected", cancel: "Cancel", save: "Save" },
 };
 
 const EYEBROW: Record<string, Record<Lang, string>> = {
-  library: { zh: "三语词汇合集", id: "Koleksi Trilingual", en: "TRILINGUAL COLLECTION" },
+  library: { zh: "词汇库", id: "Koleksi Kosakata", en: "WORD COLLECTIONS" },
   mistakes: { zh: "间隔复习", id: "Ulasan Berkala", en: "SPACED REPETITION" },
   articles: { zh: "照着经典打字", id: "Ketik Karya Klasik", en: "TYPE THE CLASSICS" },
   plan: { zh: "适合你的节奏", id: "Ritme yang Pas", en: "A RHYTHM THAT WORKS" },
@@ -60,11 +60,12 @@ const EYEBROW: Record<string, Record<Lang, string>> = {
 };
 const TX = (zh: string, id: string, en: string, lg: Lang) => lg === "zh" ? zh : lg === "id" ? id : en;
 
-const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: string; defName: string; defDesc: string }[] = [
-  { code: "zh", name: "中文", uiDesc: "中文界面", learnDesc: "练习中文打字与词汇", defName: "中文释义", defDesc: "使用中文释义显示单词含义" },
-  { code: "id", name: "Bahasa Indonesia", uiDesc: "Antarmuka bahasa Indonesia", learnDesc: "Latihan mengetik bahasa Indonesia", defName: "Arti Bahasa Indonesia", defDesc: "Tampilkan arti kata dalam bahasa Indonesia" },
-  { code: "en", name: "English", uiDesc: "English interface", learnDesc: "Practice English typing", defName: "English Definition", defDesc: "Show word meanings in English" },
+const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: string; defDesc: string }[] = [
+  { code: "zh", name: "中文", uiDesc: "中文界面", learnDesc: "练习中文打字与词汇", defDesc: "用中文显示释义" },
+  { code: "id", name: "Bahasa Indonesia", uiDesc: "Antarmuka bahasa Indonesia", learnDesc: "Latihan mengetik bahasa Indonesia", defDesc: "Arti dalam bahasa Indonesia" },
+  { code: "en", name: "English", uiDesc: "English interface", learnDesc: "Practice English typing", defDesc: "Meanings in English" },
 ];
+const LANGS: Lang[] = ["zh", "id", "en"];
 
 const LANGUAGE_META: Record<Lang, { label: string; voice: string; example: string }> = {
   zh: { label: "中文", voice: "zh-CN", example: "中文例句" },
@@ -79,15 +80,48 @@ const CATEGORY_META: Record<WordCategory, Record<Lang, string>> = {
   study: { zh: "学习与政策", id: "Belajar & Kebijakan", en: "Study & Policy" },
 };
 
-const TRANSLATION_ORDER: Record<Lang, Lang[]> = {
-  zh: ["en", "id"],
-  id: ["zh", "en"],
-  en: ["zh", "id"],
+// shown in place of the meaning when the chosen language has none for this word,
+// written in that language rather than falling back to a different one
+const MEANING_MISSING: Record<Lang, string> = { zh: "这个词暂无中文释义", id: "Belum ada arti Indonesia", en: "No English meaning yet" };
+// [written in][language]
+const LANG_NAME: Record<Lang, Record<Lang, string>> = { zh: { zh: "中文", id: "印尼语", en: "英语" }, id: { zh: "Mandarin", id: "Indonesia", en: "Inggris" }, en: { zh: "Chinese", id: "Indonesian", en: "English" } };
+// [written in][meaning language], for the notes that say what a list carries
+const MEANING_NAME: Record<Lang, Record<Lang, string>> = {
+  zh: { zh: "中文释义", id: "印尼语释义", en: "英文释义" },
+  id: { zh: "Arti Mandarin", id: "Arti Indonesia", en: "Arti Inggris" },
+  en: { zh: "Chinese meanings", id: "Indonesian meanings", en: "English meanings" },
 };
+
+function browserTag(): string {
+  // "in" is the legacy code some Android WebViews still report for Indonesian
+  try { const tag = (navigator.language || "").slice(0, 2).toLowerCase(); return tag === "in" ? "id" : tag; } catch { return ""; }
+}
+// The meaning language nobody chose: the interface language when it differs from the
+// learning language, else a different zh/id/en browser locale, else none — a Chinese
+// interface for learning Chinese says nothing about which other language the learner reads.
+function defaultDef(ui: Lang, learn: Lang, browserLang: string): Lang | null {
+  if (ui !== learn) return ui;
+  return (browserLang === "zh" || browserLang === "id" || browserLang === "en") && browserLang !== learn ? browserLang : null;
+}
+// defByLearn holds explicit choices only; def mirrors the one for learn for older tabs
+function writeLangs(ui: Lang, learn: Lang, defByLearn: MeaningPrefs) {
+  try { localStorage.setItem("ketiklab-langs", JSON.stringify({ ui, learn, def: defByLearn[learn], defByLearn, v: 2 })); } catch { /* ignore */ }
+}
+function cleanGlosses(g: Partial<Record<Lang, string>>, learn: Lang): Partial<Record<Lang, string>> {
+  const out: Partial<Record<Lang, string>> = {};
+  for (const l of LANGS) { const s = g[l]?.trim(); if (l !== learn && s) out[l] = s; }
+  return out;
+}
+// trans is English in a zh dictionary and Chinese in the others
+function dictGlosses(d: DictInfo, e: DictEntry): Partial<Record<Lang, string>> {
+  const tr = e.trans.join(d.lang === "zh" ? "; " : "；"), idt = (e.idtrans || []).join("; ");
+  return cleanGlosses(d.lang === "zh" ? { en: tr, id: idt } : { zh: tr, id: idt }, d.lang);
+}
 
 function wordValue(word: Word, language: Lang) {
   return language === "zh" ? word.zh.split("；")[0] : word[language];
 }
+const trioGlosses = (w: Word, lg: Lang) => cleanGlosses({ zh: w.zh, id: w.id, en: w.en }, lg);
 
 function pronunciation(word: Word, language: Lang) {
   if (language === "zh") return word.pinyin ? `普通话 · ${word.pinyin}` : "普通话 · 点击播放标准发音";
@@ -161,12 +195,22 @@ export default function Home() {
   // No accounts yet, so the sidebar profile is whatever name this browser saved.
   const [profileName, setProfileName] = useState("");
   const [reveal, setReveal] = useState(false);
+  // a tap on the hidden-meaning placeholder shows the meaning for the rest of this word
+  const [meaningPeek, setMeaningPeek] = useState(false);
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
   const [view, setView] = useState<View>("learn");
   const [lang, setLang] = useState<Lang>("zh");
   const [uiLang, setUiLang] = useState<Lang>("zh");
-  const [defLang, setDefLang] = useState<Lang>("en");
+  // the meaning language the learner chose per learning language; a missing entry follows defaultDef
+  const [defByLearn, setDefByLearn] = useState<MeaningPrefs>({});
+  const [extraMeanings, setExtraMeanings] = useState<ExtraMeanings>(() => {
+    try { const v = localStorage.getItem("ketiklab-extra-meanings"); return v === "def" || v === "all" ? v : "none"; } catch { return "none"; }
+  });
+  const [meaningVisibility, setMeaningVisibility] = useState<"shown" | "hidden">(() => {
+    try { return localStorage.getItem("ketiklab-meaning-visibility") === "hidden" ? "hidden" : "shown"; } catch { return "shown"; }
+  });
+  const [hidePron, setHidePron] = useState(() => { try { return localStorage.getItem("ketiklab-hide-pron") === "1"; } catch { return false; } });
   const [showLangSetup, setShowLangSetup] = useState(false);
   const [dark, setDark] = useState(false);
   const [running, setRunning] = useState(false);
@@ -223,7 +267,7 @@ export default function Home() {
   // strict-mode flash timers so neither can act on the word that replaced it, and
   // start its repetitions, reveal and slip count from zero — the [index] effect
   // does the same but only fires when the index actually changes
-  const resetWordRun = () => { autoAdvance.current++; finishing.current = false; hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setWrongCountWord(0); };
+  const resetWordRun = () => { autoAdvance.current++; finishing.current = false; hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setMeaningPeek(false); setWrongCountWord(0); };
   const [speechBlocked, setSpeechBlocked] = useState(false);
   const speechPrimed = useRef(false);
   useEffect(() => {
@@ -346,19 +390,28 @@ export default function Home() {
   const refreshSrs = () => { getStats().then(setSrs).catch(() => {}); };
   useEffect(() => { refreshSrs(); }, []);
 
-  // language preferences: restore on first load; show the setup modal on first visit
+  // language preferences: restore on first load; show the setup modal on first visit and
+  // whenever the learning language has no meaning language, chosen or defaulted
   useEffect(() => {
     try {
       const saved = localStorage.getItem("ketiklab-langs");
-      if (saved) {
-        const v = JSON.parse(saved);
-        if (v.ui === "zh" || v.ui === "id" || v.ui === "en") setUiLang(v.ui);
-        if (v.learn === "zh" || v.learn === "id" || v.learn === "en") setLang(v.learn);
-        if ((v.def === "zh" || v.def === "id" || v.def === "en") && v.def !== v.learn) setDefLang(v.def);
-        else if (v.learn) setDefLang(v.learn === "zh" ? "en" : "zh");
+      if (!saved) { setShowLangSetup(true); return; }
+      const v = JSON.parse(saved);
+      const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
+      const ui: Lang = isLang(v?.ui) ? v.ui : "zh";
+      const learn: Lang = isLang(v?.learn) ? v.learn : "zh";
+      const byLearn: MeaningPrefs = {};
+      if (v?.v === 2) {
+        const raw: unknown = v.defByLearn;
+        if (raw && typeof raw === "object") for (const l of LANGS) { const m: unknown = (raw as Record<string, unknown>)[l]; if (m === "none") byLearn[l] = "none"; else if (isLang(m) && m !== l) byLearn[l] = m; }
       } else {
-        setShowLangSetup(true);
+        // before v2 an untouched def was saved as learn en → zh, otherwise en (the dialog started
+        // on English); only a def other than that was the learner's choice, the rest now follows defaultDef
+        if (isLang(v?.def) && v.def !== learn && v.def !== (learn === "en" ? "zh" : "en")) byLearn[learn] = v.def;
+        writeLangs(ui, learn, byLearn);
       }
+      setUiLang(ui); setLang(learn); setDefByLearn(byLearn);
+      if (!byLearn[learn] && !defaultDef(ui, learn, browserTag())) setShowLangSetup(true);
     } catch { setShowLangSetup(true); }
   }, []);
 
@@ -399,16 +452,46 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
 
-  useEffect(() => { setWrongCountWord(0); setReveal(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; }, [index]);
+  useEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; }, [index]);
   useEffect(() => { try { localStorage.setItem("ketiklab-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
   useEffect(() => { try { localStorage.setItem("ketiklab-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
   useEffect(() => { try { localStorage.setItem("ketiklab-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
   useEffect(() => { try { localStorage.setItem("ketiklab-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-extra-meanings", extraMeanings); } catch { /* ignore */ } }, [extraMeanings]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-meaning-visibility", meaningVisibility); } catch { /* ignore */ } }, [meaningVisibility]);
+  useEffect(() => { try { localStorage.setItem("ketiklab-hide-pron", hidePron ? "1" : "0"); } catch { /* ignore */ } }, [hidePron]);
   useEffect(() => { try { localStorage.setItem("ketiklab-name", profileName); } catch { /* ignore */ } }, [profileName]);
   useEffect(() => { try { localStorage.setItem("ketiklab-category", category); } catch { /* ignore */ } }, [category]);
   // a password-reset link, a sign-up confirmation link and the reload that follows a
   // cloud restore all land on the home view; cloud.ts asks for the account panel
   useEffect(() => onAccountWanted(() => setView("account")), []);
+  // A favourite saved before glosses existed holds one meaning as text. Once its trio word
+  // or dictionary is at hand it gets the glosses and follows the meaning choice like the
+  // rest; the stored dict name was localized, so it is matched in all three languages.
+  // Dictionaries are fetched for this only while the favourites are being practised.
+  useEffect(() => {
+    if (!words.length || !favorites.some(f => !f.glosses)) return;
+    let alive = true;
+    const byEn = new Map(words.map(w => [w.en, w]));
+    const dictOf = (f: PracticeItem) => f.dict ? dicts.find(d => d.lang === f.lang && (d.id === f.dictId || [d.name, d.name_id, d.name_en].includes(f.dict))) : undefined;
+    (async () => {
+      if (source === "fav") for (const d of dicts) {
+        if (dictCache.current.has(d.id) || !favorites.some(f => !f.glosses && dictOf(f) === d)) continue;
+        try { dictCache.current.set(d.id, await loadDict(d)); } catch { /* the snapshot stays */ }
+        if (!alive) return;
+      }
+      if (!alive || !mounted.current) return;
+      const upgrade = (f: PracticeItem): PracticeItem => {
+        if (f.glosses) return f;
+        if (!f.dict) { const w = byEn.get(f.key); return w ? { ...f, glosses: trioGlosses(w, f.lang) } : f; }
+        const d = dictOf(f), e = d && dictCache.current.get(d.id)?.find(x => x.name === f.key);
+        // the old snapshot kept the English definition in example
+        return d && e ? { ...f, dictId: d.id, glosses: dictGlosses(d, e), def: e.def || undefined, example: undefined } : f;
+      };
+      setFavorites(list => { const next = list.map(upgrade); return next.some((f, i) => f !== list[i]) ? next : list; });
+    })();
+    return () => { alive = false; };
+  }, [favorites, words, dicts, source]);
 
   // readings gates too: readings[0] is dereferenced unguarded below, and both
   // files resolve from the same Promise.all, so requiring both costs nothing.
@@ -428,43 +511,109 @@ export default function Home() {
   // and English ones; a row the generators wrote without them shows the Chinese
   const dictName = (d: DictInfo) => (uiLang === "id" ? d.name_id : uiLang === "en" ? d.name_en : undefined) || d.name;
   const dictDesc = (d: DictInfo) => (uiLang === "id" ? d.description_id : uiLang === "en" ? d.description_en : undefined) || d.description;
-  // No branch may yield an empty list: `item` is dereferenced unguarded below.
-  // ladderWords cannot be empty here — `ready` means words.json loaded.
-  const dictItem = (d: DictInfo, e: DictEntry): LearnItem => {
-    const useId = uiLang === "id" && !!e.idtrans && e.idtrans.length > 0;
-    return {
+  // Every surface asks these for a word's meaning, keyed on the word's own language, so a
+  // review list mixing zh and en words shows each in the language chosen for it.
+  // meaningFor: null means nothing chosen and no default — the learner still has to pick.
+  const meaningFor = (learn: Lang): MeaningLang | null => defByLearn[learn] ?? defaultDef(uiLang, learn, browserTag());
+  // An English word with no gloss in the chosen language (an idtrans gap) falls back to its English
+  // definition, labelled as one in the reader's language; def: true marks that line.
+  const resolveMeaning = (it: Pick<PracticeItem, "lang" | "glosses" | "def">): { text: string; lang: Lang; label: string; def: boolean } | null => {
+    const ml = meaningFor(it.lang);
+    if (!ml || ml === "none") return null;
+    const text = it.glosses?.[ml];
+    if (text) return { text, lang: ml, label: LANGUAGE_META[ml].label, def: false };
+    return it.glosses && it.lang === "en" && it.def ? { text: it.def, lang: ml, label: TX("英文释义", "Definisi Inggris", "English definition", ml), def: true } : null;
+  };
+  const extrasFor = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "example">): ExtraMeaning[] => {
+    if (extraMeanings === "none") return [];
+    const def: ExtraMeaning[] = it.def ? [{ text: it.def, label: TX("英文释义", "Definisi Inggris", "English definition", uiLang), kind: "def" }] : [];
+    // a definition already on the main line is not repeated under it
+    const r = resolveMeaning(it), main = r?.lang;
+    if (extraMeanings === "def") return it.lang === "en" && !r?.def ? def : [];
+    const glosses = LANGS.flatMap((l): ExtraMeaning[] => { const s = it.glosses?.[l]; return l !== main && s ? [{ text: s, label: LANGUAGE_META[l].label, kind: "gloss" }] : []; });
+    // a zh library's def often repeats its English trans word for word
+    const same = (s?: string) => (s || "").trim().toLowerCase() === (it.def || "").trim().toLowerCase();
+    // a favourite saved before glosses existed kept the dictionary def in example
+    const example: ExtraMeaning[] = it.glosses && it.example ? [{ text: it.example, label: LANGUAGE_META[it.lang].example, kind: "example" }] : [];
+    return [...glosses, ...(r?.def || LANGS.some(l => same(it.glosses?.[l])) ? [] : def), ...example];
+  };
+  // A list with nothing at all in the chosen language says which languages it has instead
+  // of "no meaning yet" on every card. Written in w: the learner's meaning language on a
+  // card, the interface language on the list's own card.
+  const onlyNote = (d: DictInfo, w: Lang) => {
+    const cov = d.coverage, has = cov ? LANGS.filter(l => l !== d.lang && cov[l] > 0).map(l => MEANING_NAME[w][l]).join(" / ") : "";
+    return has
+      ? TX(`这个词库只有${has}`, `Daftar ini hanya punya ${has.replace(/Arti/g, "arti")}`, `This list has ${has} only`, w)
+      : TX("这个词库没有释义", "Daftar ini tidak punya arti", "This list has no meanings", w);
+  };
+  const missingNote = (it: Pick<PracticeItem, "dictId">, ml: Lang) => {
+    const d = it.dictId ? dicts.find(x => x.id === it.dictId) : undefined;
+    return d && d.coverage && !d.coverage[ml] ? onlyNote(d, ml) : MEANING_MISSING[ml];
+  };
+  // the one line a reference list prints: the meaning, a legacy favourite's snapshot, a muted
+  // note when the chosen language has none, or nothing for "none" and for no choice yet
+  const listMeaning = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "meaning" | "dictId">): { text: string; note: boolean } => {
+    const r = resolveMeaning(it);
+    if (r) return { text: r.text, note: false };
+    if (!it.glosses) return { text: it.meaning, note: false };
+    const ml = meaningFor(it.lang);
+    return ml && ml !== "none" ? { text: missingNote(it, ml), note: true } : { text: "", note: false };
+  };
+  const meaningCell = (m: { text: string; note: boolean }) => m.note ? <small className="meaning-missing">{m.text}</small> : <b>{m.text}</b>;
+  // what this learner gets from a list, from the manifest counts; a row without them keeps the old note
+  const coverageNote = (d: DictInfo) => {
+    const cov = d.coverage, ml = meaningFor(d.lang);
+    if (!cov) return d.lang === "zh" ? TX("英文 / 印尼语释义", "arti Inggris / Indonesia", "EN / ID glosses", uiLang) : d.lang === "en" && uiLang === "id" ? "arti Mandarin / Indonesia" : TX("中文释义", "arti Mandarin", "Chinese glosses", uiLang);
+    if (ml === "none") return TX("不显示释义", "Tanpa arti", "No meanings shown", uiLang);
+    if (!ml) return LANGS.filter(l => l !== d.lang && cov[l] > 0).map(l => MEANING_NAME[uiLang][l]).join(" / ");
+    if (!cov[ml]) return onlyNote(d, uiLang);
+    if (cov[ml] >= d.length) return MEANING_NAME[uiLang][ml];
+    return `${MEANING_NAME[uiLang][ml]} · ${Math.floor(cov[ml] / d.length * 100)}% · ${d.lang === "en" && cov.def >= d.length ? TX("其余为英文释义", "sisanya definisi Inggris", "the rest show the English definition", uiLang) : TX("其余暂无释义", "sisanya tanpa arti", "the rest have none", uiLang)}`;
+  };
+  // lists with nothing in this learner's meaning language go to the end of the grid
+  const lacksMeaning = (d: DictInfo) => { const ml = meaningFor(d.lang); return !!d.coverage && ml !== null && ml !== "none" && !d.coverage[ml]; };
+  const dictOrder = dicts.filter(d => !lacksMeaning(d)).concat(dicts.filter(lacksMeaning));
+  const dictItem = (d: DictInfo, e: DictEntry): PracticeItem => {
+    const it: PracticeItem = {
       key: e.name,
       text: e.name,
       sub: d.lang === "zh"
         ? (e.usphone ? `普通话 · ${e.usphone}` : "普通话")
         : e.usphone ? `American English · /${e.usphone}/` : (d.lang === "id" ? "Bahasa Indonesia" : "English"),
-      meaning: useId && e.idtrans ? e.idtrans.join("; ") : e.trans.join("；"),
-      example: e.def || undefined,
+      meaning: "",
       voice: d.lang === "id" ? "id-ID" : d.lang === "zh" ? "zh-CN" : "en-US",
       lang: d.lang,
       dict: dictName(d),
-      meaningLang: useId ? "id" : d.lang === "zh" ? "en" : "zh",
+      dictId: d.id,
+      glosses: dictGlosses(d, e),
+      def: e.def || undefined,
     };
+    it.meaning = resolveMeaning(it)?.text ?? "";
+    return it;
   };
-  const trioItem = (w: Word, lg: Lang = lang): LearnItem => {
+  const trioItem = (w: Word, lg: Lang = lang): PracticeItem => {
     const raw = wordValue(w, lg);
     // "full (after eating)": the gloss tells the library entries apart, but it is
     // not part of what gets typed — it moves next to the pronunciation instead
     const gloss = lg === "zh" ? undefined : raw.match(/\s*\(([^)]*)\)\s*$/)?.[1];
-    return {
+    const it: PracticeItem = {
       key: w.en,
       text: gloss ? raw.replace(/\s*\([^)]*\)\s*$/, "") : raw,
       sub: (lg === "zh" && zhToned(zhMap, wordValue(w, "zh"))
         ? `普通话 · ${zhToned(zhMap, wordValue(w, "zh"))}`
         : pronunciation(w, lg)) + (gloss ? ` · (${gloss})` : ""),
-      meaning: w[fixDef(lg, defLang)],
+      meaning: "",
       example: w.examples?.[lg] as string | undefined,
       voice: LANGUAGE_META[lg].voice,
       lang: lg,
-      meaningLang: fixDef(lg, defLang),
+      glosses: trioGlosses(w, lg),
     };
+    it.meaning = resolveMeaning(it)?.text ?? "";
+    return it;
   };
-  const activeItems: LearnItem[] = source === "fav" && favorites.length
+  // No branch may yield an empty list: `item` is dereferenced unguarded below.
+  // ladderWords cannot be empty here — `ready` means words.json loaded.
+  const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favorites
     : (dictInfo && dictWords && dictWords.length)
     ? dictWords.map(e => dictItem(dictInfo, e))
@@ -492,9 +641,9 @@ export default function Home() {
   const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
-  // a favourite saved before items carried meaningLang: a dictionary word glosses
-  // in Chinese (English for a zh dictionary), a trio word in the definition language
-  const meaningLang: Lang = item.meaningLang ?? (item.dict ? (item.lang === "zh" ? "en" : "zh") : defLang);
+  const itemMeaningLang = meaningFor(item.lang);
+  const itemMeaning = resolveMeaning(item);
+  const itemExtras = extrasFor(item);
   // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
   const trioW = item.dict ? undefined : wordByEn.get(item.key);
@@ -502,6 +651,23 @@ export default function Home() {
   const plainPy = zhPlain(zhMap, targetWord) || trioW?.pinyin || "";
   // a word with no pinyin at all cannot be passed at 打拼音, so that rung types it through the IME
   const zhLadder = practiceLang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPy);
+  // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
+  // screen. The peek is TAB held in the App input, or a tap — 打拼音 owns TAB for its pinyin.
+  const meaningHidden = meaningVisibility === "hidden" && dictation === "off" && !(zhLadder && zhStep === "read") && !reveal && !meaningPeek;
+  // extra lines are a second cue: in dictation they wait for TAB like the letters
+  const extrasShown = (dictation === "off" || reveal) && !meaningHidden;
+  // a word this list has no meaning for in the chosen language: another gloss it does have waits
+  // behind a tap, unless "All languages" already lists it; not for a list that lacks the language outright
+  const missNote = itemMeaningLang && itemMeaningLang !== "none" && !itemMeaning ? missingNote(item, itemMeaningLang) : "";
+  const missOther = missNote && itemMeaningLang && itemMeaningLang !== "none" && missNote === MEANING_MISSING[itemMeaningLang] && !(extraMeanings === "all" && extrasShown)
+    ? LANGS.find(l => l !== itemMeaningLang && !!item.glosses?.[l]) : undefined;
+  // mousedown keeps focus where it is: the pinyin box or the App input
+  const peekButton = (label: string) => <button type="button" className="meaning-peek" onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); setMeaningPeek(true); }}>{label}</button>;
+  const peekLabel = zhLadder ? TX("点一下查看释义", "Ketuk untuk melihat arti", "Tap to see the meaning", uiLang) : TX("按住 TAB 或点一下查看释义", "Tahan TAB atau ketuk untuk melihat arti", "Hold TAB or tap to see the meaning", uiLang);
+  // Hide pronunciation in dictation: only under "hide all" on the steps that print a pronunciation
+  // line, and the word is not read aloud on its own either until CTRL+SPACE or TAB
+  const holdSpeech = hidePron && dictation === "all" && !zhLadder;
+  const pronHidden = holdSpeech && !reveal;
   // 选汉字 distractors: hanzi only, and enough of them — a favourites list holds a
   // few zh words next to English and Indonesian ones
   const zhOwn = Array.from(new Set(learnItems.filter(i => i.lang === "zh").map(i => i.text)));
@@ -560,19 +726,20 @@ export default function Home() {
   const readingProgress = Math.round(((readingLine + Math.min(readingTyped.length / Math.max(readingTarget.length, 1), 1)) / reading.lines.length) * 100);
   // "<lang>:<key>" → the trio word in that language, else a loaded dictionary of that language
   const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
-  function lookupKey(id: string): { text: string; meaning: string } | undefined {
+  type KeyInfo = { text: string; meaning: string; note: boolean };
+  function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
     const w = wordByEn.get(key);
-    if (w) return { text: wordValue(w, lg), meaning: w[fixDef(lg, defLang)] };
+    if (w) { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), meaning: m.text, note: m.note }; }
     for (const d of dicts) {
       if (d.lang !== lg) continue;
       const e = dictCache.current.get(d.id)?.find(x => x.name === key);
-      if (e) return { text: e.name, meaning: e.trans.join("；") };
+      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { text: e.name, meaning: m.text, note: m.note }; }
     }
     return undefined;
   }
-  const dueEntries: { key: string; info: { text: string; meaning: string } }[] = view === "mistakes" && !reviewKeys
-    ? mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter(x => x.info) as { key: string; info: { text: string; meaning: string } }[]
+  const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes" && !reviewKeys
+    ? mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter(x => x.info) as { key: string; info: KeyInfo }[]
     : [];
   const gq = search.trim().toLowerCase();
   const rankMatch = (text: string, meaning: string, q: string): number => {
@@ -584,18 +751,24 @@ export default function Home() {
     if (meaning.toLowerCase().includes(q)) return 4;          // in meaning only
     return 5;
   };
-  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; lang: Lang; dictName?: string; rank: number }[] = [];
+  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; note: boolean; lang: Lang; dictName?: string; rank: number }[] = [];
   let globalTotal = 0;
   if (globalSearch && gq) {
+    // a hit matches on the headword or on any of its meanings (idtrans too, so Indonesian
+    // readers can search in Indonesian) and shows the one meaning line this learner reads
     for (const w of words) {
-      const text = wordValue(w, lang); const meaning = w[defLang];
-      if (`${w.en} ${w.id} ${w.zh} ${meaning}`.toLowerCase().includes(gq)) globalResults.push({ src: "trio", key: w.en, text, sub: pronunciation(w, lang), meaning, lang, rank: rankMatch(text + " " + w.en, meaning, gq) });
+      const text = wordValue(w, lang), hay = `${w.en} ${w.id} ${w.zh}`;
+      if (!hay.toLowerCase().includes(gq)) continue;
+      const m = listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" });
+      globalResults.push({ src: "trio", key: w.en, text, sub: pronunciation(w, lang), meaning: m.text, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
     }
     for (const d of dicts) {
       const data = allDicts[d.id]; if (!data) continue;
       for (const e of data) {
-        const meaning = e.trans.join("；");
-        if (e.name.toLowerCase().includes(gq) || meaning.toLowerCase().includes(gq)) globalResults.push({ src: d.id, key: e.name, text: e.name, sub: e.usphone ? `/${e.usphone}/` : "", meaning, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, meaning, gq) });
+        const hay = `${e.name} ${e.trans.join(" ")} ${(e.idtrans || []).join(" ")}`;
+        if (!hay.toLowerCase().includes(gq)) continue;
+        const m = listMeaning({ lang: d.lang, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id });
+        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: e.usphone ? `/${e.usphone}/` : "", meaning: m.text, note: m.note, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
       }
     }
     globalResults.sort((a, b) => a.rank - b.rank || a.text.length - b.text.length);
@@ -663,7 +836,7 @@ export default function Home() {
       const ni = (index + 1) % Math.max(learnItems.length, 1);
       const nx = learnItems[ni];
       setIndex(ni);
-      if (nx) {
+      if (nx && !holdSpeech) {
         autoSpokenWord.current = `${source}:${nx.key}`;
         window.setTimeout(() => speak(nx.text, nx.voice), 160);
       }
@@ -706,7 +879,7 @@ export default function Home() {
   }
   function toggleFav() {
     if (!item) return;
-    if (!isFav) { setFavorites(list => [{ key: item.key, text: item.text, sub: item.sub, meaning: item.meaning, example: item.example, voice: item.voice, lang: item.lang, dict: item.dict }, ...list].slice(0, 500)); return; }
+    if (!isFav) { setFavorites(list => [{ key: item.key, text: item.text, sub: item.sub, meaning: item.meaning, example: item.example, voice: item.voice, lang: item.lang, dict: item.dict, dictId: item.dictId, glosses: item.glosses, def: item.def }, ...list].slice(0, 500)); return; }
     const remaining = favorites.filter(f => `${f.lang}:${f.key}` !== wordId);
     setFavorites(remaining);
     if (source !== "fav") return;
@@ -797,7 +970,7 @@ export default function Home() {
     const clean = (practiceLang === "zh"
       ? raw.replace(/[^㐀-鿿]/g, "")
       : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "")).slice(0, targetWord.length);
-    if (typed.length === 0 && clean.length > 0 && autoSpokenWord.current !== targetKey) {
+    if (typed.length === 0 && clean.length > 0 && autoSpokenWord.current !== targetKey && !holdSpeech) {
       autoSpokenWord.current = targetKey;
       speak(targetWord, targetVoice);
     }
@@ -844,40 +1017,48 @@ export default function Home() {
   }
   function handleGhostKeys(event: React.KeyboardEvent<HTMLInputElement>) {
     if (isComposing.current || (event.nativeEvent as any).isComposing || event.key === "Process" || (event as any).keyCode === 229) return;
-    if (event.key === "Tab") { event.preventDefault(); setReveal(true); return; }
+    if (event.key === "Tab") {
+      event.preventDefault(); setReveal(true);
+      // held speech: the TAB that shows the pronunciation line also plays it, once per word
+      if (holdSpeech && autoSpokenWord.current !== targetKey) { autoSpokenWord.current = targetKey; speak(targetWord, targetVoice); }
+      return;
+    }
     if (event.key === "Enter") { event.preventDefault(); skipWord(); return; }
     if (event.key === " " && (event.ctrlKey || event.metaKey)) {
       event.preventDefault(); speak(targetWord, targetVoice); return;
     }
   }
-  function persistLangs(ui: Lang, learn: Lang, def: Lang) {
-    try { localStorage.setItem("ketiklab-langs", JSON.stringify({ ui, learn, def })); } catch { /* ignore */ }
-  }
-  function fixDef(learn: Lang, preferred: Lang): Lang {
-    return preferred !== learn ? preferred : learn === "zh" ? "en" : "zh";
-  }
+  // the meaning language lives in defByLearn per learning language, so switching back
+  // brings back the one chosen for it instead of overwriting it
   function changeLanguage(nextLanguage: Lang) {
-    const nextDef = fixDef(nextLanguage, defLang);
     setLang(nextLanguage);
-    setDefLang(nextDef);
     setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setSpeakingWord(null);
-    persistLangs(uiLang, nextLanguage, nextDef);
+    writeLangs(uiLang, nextLanguage, defByLearn);
     setTimeout(() => input.current?.focus(), 30);
   }
-  function saveLangSetup(ui: Lang, learn: Lang, def: Lang) {
-    const finalDef = fixDef(learn, def);
+  function saveLangSetup(ui: Lang, learn: Lang, def: MeaningLang) {
+    const byLearn: MeaningPrefs = { ...defByLearn };
+    byLearn[learn] = def;
     setUiLang(ui);
-    setDefLang(finalDef);
+    setDefByLearn(byLearn);
     if (learn !== lang) {
       setLang(learn);
       setTyped(""); resetWordRun();
       autoSpokenWord.current = null;
       setSpeakingWord(null);
     }
-    persistLangs(ui, learn, finalDef);
+    writeLangs(ui, learn, byLearn);
     setShowLangSetup(false);
+  }
+  // the meaning language for one learning language: the Settings select passes the current one,
+  // the practice card the word's own
+  function changeMeaning(next: MeaningLang, learn: Lang = lang) {
+    const byLearn: MeaningPrefs = { ...defByLearn };
+    byLearn[learn] = next;
+    setDefByLearn(byLearn);
+    writeLangs(uiLang, lang, byLearn);
   }
   function changeCategory(nextCategory: WordFilter) {
     sourceReq.current++; pendingIndex.current = null;
@@ -1159,16 +1340,29 @@ export default function Home() {
             <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
                onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
           {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
-          {!zhLadder && <p className="phonetic">{item.sub}</p>}
+          {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined}>{item.sub}</p>}
+          {/* the meaning sits right under the word stack; the ladder pills come after it */}
+          {(itemMeaningLang !== "none" || (itemExtras.length > 0 && (extrasShown || meaningHidden))) && <div className="meanings">
+            {itemMeaningLang === "none" ? (meaningHidden ? peekButton(peekLabel) : null)
+              // a favourite saved before glosses existed has its text, with no language to name
+              : !itemMeaning && (item.glosses || !item.meaning)
+                ? (itemMeaningLang
+                  ? (missOther && meaningPeek ? <><span className="meaning-missing">{missNote}</span><span><small>{LANGUAGE_META[missOther].label}</small>{item.glosses?.[missOther]}</span></>
+                    : missOther ? peekButton(`${missNote} · ${LANGUAGE_META[missOther].label}`)
+                    : <span className="meaning-missing">{missNote}</span>)
+                  // the dialog sets the current learning language; a review word from another one picks in place
+                  : item.lang === lang ? <button type="button" className="meaning-pick" onClick={e => { e.stopPropagation(); setShowLangSetup(true); }}>{TX("选择释义语言", "Pilih bahasa arti", "Choose a meaning language", uiLang)}</button>
+                  : <select className="meaning-pick" value="" aria-label={TX("释义语言", "Bahasa arti", "Meaning language", uiLang)} onClick={e => e.stopPropagation()} onChange={e => changeMeaning(e.target.value as MeaningLang, item.lang)}><option value="" disabled>{TX("选择释义语言", "Pilih bahasa arti", "Choose a meaning language", uiLang)}</option>{LANG_CARDS.filter(c => c.code !== item.lang).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}<option value="none">{TX("不显示释义", "Tanpa arti", "No meaning", uiLang)}</option></select>)
+              : meaningHidden ? peekButton(peekLabel)
+              : itemMeaning ? <span><small>{itemMeaning.label}</small>{itemMeaning.text}</span>
+              : <span>{item.meaning}</span>}
+            {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small>{x.text}</span>)}
+          </div>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
             {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} onClick={() => { setZhStep(st.id); setTyped(""); resetWordRun(); }}>
               <i>{st.num}</i>{uiLang === "zh" ? st.zh : uiLang === "id" ? st.idn : st.en}
             </button>)}
           </div>}
-          <div className="meanings">
-            <span><small>{LANGUAGE_META[meaningLang].label}</small>{item.meaning}</span>
-            {item.example && <span><small>{item.dict ? (uiLang === "zh" ? "英文释义" : uiLang === "id" ? "Definisi Inggris" : "English definition") : LANGUAGE_META[lang].example}</small>{item.example}</span>}
-          </div>
           {zhLadder ? <ZhSteps
             key={`${wordId}:${loopIx}`}
             step={zhStep}
@@ -1194,7 +1388,7 @@ export default function Home() {
           <h2>{uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} words · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
-          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small>{info ? info.meaning : ""}</small></span>; })}</div>}
+          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined}>{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
             <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>
             {chWrongKeys.length > 0 && <button onClick={practiceChapterWrong}>{uiLang === "zh" ? `练习错词 (${chWrongKeys.length})` : uiLang === "id" ? `Latih kata salah (${chWrongKeys.length})` : `Practice missed (${chWrongKeys.length})`}</button>}
@@ -1210,7 +1404,7 @@ export default function Home() {
       </section>}
 
       {view === "library" && <Panel title={t.library} eyebrow={EYEBROW.library[uiLang]}>
-        <div className="library-section-title"><b>{uiLang === "zh" ? "KetikLab 三语精选" : uiLang === "id" ? "Pilihan Trilingual KetikLab" : "KetikLab Trilingual Collection"}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
+        <div className="library-section-title"><b>{TX("KetikLab 主题词汇", "Kosakata Tematik KetikLab", "KetikLab Words by Topic", uiLang)}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
         <div className="category-tabs">
           {CATEGORIES.map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
         </div>
@@ -1218,9 +1412,9 @@ export default function Home() {
         {dicts.length > 0 && <>
           <div className="library-section-title"><b>{TX("考试词库", "Kamus ujian", "Exam libraries", uiLang)}</b><span>{dicts.reduce((a, d) => a + d.length, 0)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
           <div className="dict-grid">
-            {dicts.map(d => <button key={d.id} className={source === d.id ? "dict-card active" : "dict-card"} onClick={() => selectDict(d)}>
+            {dictOrder.map(d => <button key={d.id} className={source === d.id ? "dict-card active" : "dict-card"} onClick={() => selectDict(d)}>
               <span className={`piece-language ${d.lang}`}>{d.lang === "id" ? "ID" : d.lang === "zh" ? "中" : "EN"}</span>
-              <div><b>{dictName(d)}</b><p>{dictDesc(d)}</p><small>{d.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"} · {d.lang === "zh" ? TX("英文 / 印尼语释义", "arti Inggris / Indonesia", "EN / ID glosses", uiLang) : d.lang === "en" && uiLang === "id" ? "arti Mandarin / Indonesia" : TX("中文释义", "arti Mandarin", "Chinese glosses", uiLang)}</small></div>
+              <div><b>{dictName(d)}</b><p>{dictDesc(d)}</p><small>{d.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"} · {coverageNote(d)}</small></div>
               {source === d.id && <em>✓</em>}
             </button>)}
           </div>
@@ -1231,13 +1425,13 @@ export default function Home() {
           ? (globalLoading
               ? <div className="empty"><b>⏳</b><h3>{uiLang === "zh" ? "正在加载全部词库…" : uiLang === "id" ? "Memuat semua kamus…" : "Loading all libraries…"}</h3></div>
               : (!gq
-                  ? <div className="empty"><b>🌐</b><h3>{uiLang === "zh" ? "输入关键词，在全部词库中搜索" : uiLang === "id" ? "Ketik untuk mencari di semua kamus" : "Type to search across all libraries"}</h3><p>{TX(`三语精选 + ${searchable.length} 个考试词库，共 ${globalCount} 词`, `Pilihan trilingual + ${searchable.length} kamus ujian · ${globalCount} kata`, `Trilingual collection + ${searchable.length} exam libraries · ${globalCount} words`, uiLang)}</p></div>
+                  ? <div className="empty"><b>🌐</b><h3>{uiLang === "zh" ? "输入关键词，在全部词库中搜索" : uiLang === "id" ? "Ketik untuk mencari di semua kamus" : "Type to search across all libraries"}</h3><p>{TX(`主题词汇 + ${searchable.length} 个考试词库，共 ${globalCount} 词`, `Kosakata Tematik + ${searchable.length} kamus ujian · ${globalCount} kata`, `Words by Topic + ${searchable.length} exam libraries · ${globalCount} words`, uiLang)}</p></div>
                   : (globalResults.length
-                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => r.src === "trio" ? gotoTrioWord(words.find(w => w.en === r.key)!) : gotoDictWord(r.src, r.key)}><span className={`res-src ${r.lang}`}>{r.dictName || (uiLang === "zh" ? "精选" : "Trio")}</span><h3>{r.text}</h3><p>{r.sub}</p><div><b>{r.meaning}</b></div></button>)}</div>
+                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => r.src === "trio" ? gotoTrioWord(words.find(w => w.en === r.key)!) : gotoDictWord(r.src, r.key)}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note })}</div></button>)}</div>
                       : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
           : dictInfo
-          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictName(dictInfo)}</em><div><b>{it.meaning}</b></div></button>)}</div>
-          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div><b>{w[defLang]}</b></div></button>)}</div>}
+          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictName(dictInfo)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>
+          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{pronunciation(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
         <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p><a href={DATA + "SOURCES.md"} target="_blank" rel="noreferrer">Open English WordNet · Chinese Open Wordnet · Wordnet Bahasa · wordfreq · CMUdict · pypinyin</a></p><span>{uiLang === "zh" ? "各词库的具体来源与授权见上方链接；其中托福词表取自第三方备考材料，未获再分发授权。" : uiLang === "id" ? "Sumber dan lisensi tiap kamus ada di tautan di atas; daftar TOEFL berasal dari materi pihak ketiga tanpa izin distribusi." : "Per-library sources and licences are linked above; the TOEFL list comes from third-party material with no redistribution licence."}</span></div>
       </Panel>}
 
@@ -1245,7 +1439,7 @@ export default function Home() {
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
         <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : "words in schedule"}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
-        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em>{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
+        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined}>{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
 
       {view === "articles" && <section className="reading-panel">
@@ -1302,7 +1496,8 @@ export default function Home() {
               <span>✓</span><small>{t.completed}</small><h2>{reading.title}</h2><p>{t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
             </div>}
 
-            <div className="reader-footer"><p>{reading.note}</p><div><span>{readingProgress}%</span><i><b style={{width:`${readingProgress}%`}} /></i><time>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</time></div></div>
+            {/* the notes are written in Chinese for pieces in every language */}
+            <div className="reader-footer">{uiLang === "zh" && reading.note && <p>{reading.note}</p>}<div><span>{readingProgress}%</span><i><b style={{width:`${readingProgress}%`}} /></i><time>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</time></div></div>
           </article>
         </div>
       </section>}
@@ -1329,23 +1524,23 @@ export default function Home() {
       </Panel>}
 
       {view === "settings" && <Panel title={t.settings} eyebrow={EYEBROW.settings[uiLang]}>
-        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title={TX("学习语言", "Bahasa belajar", "Learning language", uiLang)} detail="中文 · Bahasa Indonesia · English"><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title={TX("主题", "Tema", "Theme", uiLang)} detail={TX("选择舒适的阅读模式", "Pilih mode yang nyaman", "Choose a comfortable reading mode", uiLang)}><button onClick={()=>setDark(v=>!v)}>{dark ? TX("浅色模式", "Mode terang", "Light mode", uiLang) : TX("深色模式", "Mode gelap", "Dark mode", uiLang)}</button></Setting><Setting title={TX("发音", "Pelafalan", "Pronunciation", uiLang)} detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>{TX("测试发音", "Tes suara", "Test sound", uiLang)} ▶</button></Setting><Setting title={uiLang === "zh" ? "键盘音效" : uiLang === "id" ? "Suara ketik" : "Keyboard sound"} detail={TX("柔和 / 清脆 / 打字机 / 关", "lembut · renyah · mesin tik · mati", "soft · crisp · typewriter · off", uiLang)}><select value={soundProfile} onChange={e=>pickSound(e.target.value as SoundProfile)}><option value="soft">{TX("柔和", "Lembut", "Soft", uiLang)}</option><option value="crisp">{TX("清脆", "Renyah", "Crisp", uiLang)}</option><option value="typewriter">{TX("打字机", "Mesin tik", "Typewriter", uiLang)}</option><option value="off">{TX("关闭", "Mati", "Off", uiLang)}</option></select></Setting><Setting title={uiLang === "zh" ? "每词重复" : uiLang === "id" ? "Ulang tiap kata" : "Repeat each word"} detail={TX("连续打对几遍再进入下一个", "kali diketik benar sebelum kata berikutnya", "times before the next word", uiLang)}><select value={loopTimes} onChange={e=>changeLoop(Number(e.target.value))}><option value={1}>1×</option><option value={2}>2×</option><option value={3}>3×</option></select></Setting><Setting title={TX("学习数据", "Data belajar", "Learning data", uiLang)} detail={TX("仅保存在本设备", "Tersimpan di perangkat ini", "Stored privately on this device", uiLang)}><button onClick={resetProgress}>{TX("重置进度", "Reset progres", "Reset progress", uiLang)}</button></Setting></div>
+        <div className="settings-grid"><Setting title={MODAL_T[uiLang].title} detail={`${MODAL_T[uiLang].ui} + ${MODAL_T[uiLang].learn}`}><button onClick={()=>setShowLangSetup(true)}>{uiLang === "zh" ? "打开设置" : uiLang === "id" ? "Buka" : "Open"}</button></Setting><Setting title={TX("学习语言", "Bahasa belajar", "Learning language", uiLang)} detail={TX("中文、印尼语或英语", "Mandarin, Indonesia, atau Inggris", "Chinese, Indonesian or English", uiLang)}><select value={lang} onChange={e=>changeLanguage(e.target.value as Lang)}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></Setting><Setting title={TX("释义语言", "Bahasa arti", "Meaning language", uiLang)} detail={TX(`学${LANG_NAME.zh[lang]}时显示的释义，每种学习语言分别记住`, `Arti saat belajar bahasa ${LANG_NAME.id[lang]}; diingat per bahasa belajar`, `Meanings while learning ${LANG_NAME.en[lang]}; remembered per learning language`, uiLang)}><select value={meaningFor(lang) ?? ""} onChange={e => changeMeaning(e.target.value as MeaningLang)}>{meaningFor(lang) === null && <option value="" disabled>{TX("请选择", "Pilih", "Choose", uiLang)}</option>}{LANG_CARDS.filter(c => c.code !== lang).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}<option value="none">{TX("不显示释义", "Tanpa arti", "No meaning", uiLang)}</option></select></Setting><Setting title={TX("附加释义", "Arti tambahan", "Extra meanings", uiLang)} detail={TX("在释义下方另起一行；英文释义只用于英文词", "Baris kecil di bawah arti; definisi Inggris hanya untuk kata bahasa Inggris", "Smaller lines under the meaning; the English definition is for English words", uiLang)}><select value={extraMeanings} onChange={e => setExtraMeanings(e.target.value as ExtraMeanings)}><option value="none">{TX("无", "Tidak ada", "None", uiLang)}</option><option value="def">{TX("英文释义", "Definisi Inggris", "English definition", uiLang)}</option><option value="all">{TX("全部语言", "Semua bahasa", "All languages", uiLang)}</option></select></Setting><Setting title={TX("释义", "Arti", "Meaning", uiLang)} detail={TX("默写和认读时照常显示", "Dikte dan Kenali tetap menampilkannya", "Dictation and Recognize still show it", uiLang)}><select value={meaningVisibility} onChange={e => setMeaningVisibility(e.target.value === "hidden" ? "hidden" : "shown")}><option value="shown">{TX("一直显示", "Selalu tampil", "Always shown", uiLang)}</option><option value="hidden">{TX("隐藏（按住 TAB 或点一下查看）", "Disembunyikan (tahan TAB atau ketuk untuk melihat)", "Hidden (hold TAB or tap to peek)", uiLang)}</option></select></Setting><Setting title={TX("默写时隐藏发音行", "Sembunyikan pelafalan saat dikte", "Hide pronunciation in dictation", uiLang)} detail={TX("只在「全隐藏」时生效，也不自动朗读，按 TAB 或 CTRL+SPACE 再听", "Hanya saat dikte Semua; kata tidak dibacakan sampai TAB atau CTRL+SPACE", "Only under Hide all; the word is not read aloud until TAB or CTRL+SPACE", uiLang)}><select value={hidePron ? "1" : "0"} onChange={e => setHidePron(e.target.value === "1")}><option value="0">{TX("关闭", "Mati", "Off", uiLang)}</option><option value="1">{TX("开启", "Nyala", "On", uiLang)}</option></select></Setting><Setting title={TX("主题", "Tema", "Theme", uiLang)} detail={TX("选择舒适的阅读模式", "Pilih mode yang nyaman", "Choose a comfortable reading mode", uiLang)}><button onClick={()=>setDark(v=>!v)}>{dark ? TX("浅色模式", "Mode terang", "Light mode", uiLang) : TX("深色模式", "Mode gelap", "Dark mode", uiLang)}</button></Setting><Setting title={TX("发音", "Pelafalan", "Pronunciation", uiLang)} detail={`${LANGUAGE_META[lang].label} · 0.8×`}><button onClick={()=>speak(targetWord,targetVoice)}>{TX("测试发音", "Tes suara", "Test sound", uiLang)} ▶</button></Setting><Setting title={uiLang === "zh" ? "键盘音效" : uiLang === "id" ? "Suara ketik" : "Keyboard sound"} detail={TX("柔和 / 清脆 / 打字机 / 关", "lembut · renyah · mesin tik · mati", "soft · crisp · typewriter · off", uiLang)}><select value={soundProfile} onChange={e=>pickSound(e.target.value as SoundProfile)}><option value="soft">{TX("柔和", "Lembut", "Soft", uiLang)}</option><option value="crisp">{TX("清脆", "Renyah", "Crisp", uiLang)}</option><option value="typewriter">{TX("打字机", "Mesin tik", "Typewriter", uiLang)}</option><option value="off">{TX("关闭", "Mati", "Off", uiLang)}</option></select></Setting><Setting title={uiLang === "zh" ? "每词重复" : uiLang === "id" ? "Ulang tiap kata" : "Repeat each word"} detail={TX("连续打对几遍再进入下一个", "kali diketik benar sebelum kata berikutnya", "times before the next word", uiLang)}><select value={loopTimes} onChange={e=>changeLoop(Number(e.target.value))}><option value={1}>1×</option><option value={2}>2×</option><option value={3}>3×</option></select></Setting><Setting title={TX("学习数据", "Data belajar", "Learning data", uiLang)} detail={TX("仅保存在本设备", "Tersimpan di perangkat ini", "Stored privately on this device", uiLang)}><button onClick={resetProgress}>{TX("重置进度", "Reset progres", "Reset progress", uiLang)}</button></Setting></div>
       </Panel>}
     </main>
 
-    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} initialDef={defLang} onSave={saveLangSetup} onClose={() => { persistLangs(uiLang, lang, defLang); setShowLangSetup(false); }} />}
+    {/* closing stores nothing: a first visit that never saved asks again on the next load */}
+    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={() => setShowLangSetup(false)} />}
   </div>;
 }
 
-function LangSetup({ initialUi, initialLearn, initialDef, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; initialDef: Lang; onSave: (ui: Lang, learn: Lang, def: Lang) => void; onClose: () => void }) {
+function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang) => void; onClose: () => void }) {
   const [ui, setUi] = useState<Lang>(initialUi);
   const [learn, setLearn] = useState<Lang>(initialLearn);
-  const [def, setDef] = useState<Lang>(initialDef !== initialLearn ? initialDef : initialLearn === "zh" ? "en" : "zh");
+  // null until the learner touches the meaning row; until then the pre-selection follows
+  // the two rows above, and a pick that became the learning language no longer counts
+  const [picked, setPicked] = useState<MeaningLang | null>(null);
+  const def: MeaningLang | null = picked && picked !== learn ? picked : defByLearn[learn] ?? defaultDef(ui, learn, browserTag());
   const mt = MODAL_T[ui];
-  function pickLearn(code: Lang) {
-    setLearn(code);
-    if (def === code) setDef(code === "zh" ? "en" : "zh");
-  }
   return <div className="lang-modal-backdrop" role="dialog" aria-modal="true">
     <div className="lang-modal">
       <button className="lang-modal-close" onClick={onClose} aria-label="Close">✕</button>
@@ -1364,23 +1559,26 @@ function LangSetup({ initialUi, initialLearn, initialDef, onSave, onClose }: { i
         <h3>⌨ {mt.learn}</h3>
         <p>{mt.learnDesc}</p>
         <div className="lang-cards">
-          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => pickLearn(c.code)}>
+          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => setLearn(c.code)}>
             <b>{c.name}</b><small>{c.learnDesc}</small>{learn === c.code && <span>{mt.selected}</span>}
           </button>)}
         </div>
       </div>
       <div className="lang-modal-section">
         <h3>🌐 {mt.def}</h3>
-        <p>{mt.defDesc}</p>
+        <p>{mt.defDesc}{def === null && <b> · {mt.defRequired}</b>}</p>
         <div className="lang-cards">
-          {LANG_CARDS.filter(c => c.code !== learn).map(c => <button key={c.code} className={def === c.code ? "lang-card active" : "lang-card"} onClick={() => setDef(c.code)}>
-            <b>{c.defName}</b><small>{c.defDesc}</small>{def === c.code && <span>{mt.selected}</span>}
+          {LANG_CARDS.map(c => <button key={c.code} className={def === c.code ? "lang-card active" : "lang-card"} disabled={c.code === learn} onClick={() => setPicked(c.code)}>
+            <b>{c.name}</b><small>{c.code === learn ? mt.defSame : c.defDesc}</small>{def === c.code && <span>{mt.selected}</span>}
           </button>)}
+          <button className={def === "none" ? "lang-card active" : "lang-card"} onClick={() => setPicked("none")}>
+            <b>不显示释义 · Tanpa arti · No meaning</b><small>{mt.noneDesc}</small>{def === "none" && <span>{mt.selected}</span>}
+          </button>
         </div>
       </div>
       <div className="lang-modal-actions">
         <button className="lang-modal-cancel" onClick={onClose}>{mt.cancel}</button>
-        <button className="lang-modal-save" onClick={() => onSave(ui, learn, def)}>{mt.save}</button>
+        <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, def); }}>{mt.save}</button>
       </div>
     </div>
   </div>;

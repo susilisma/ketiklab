@@ -140,7 +140,7 @@ export async function saveProgress(userId: string, data: ProgressBlob) {
 export const SYNCED_KEYS = [
   "ketiklab-state", "ketiklab-days", "ketiklab-fav", "ketiklab-chapters",
   "ketiklab-langs", "ketiklab-source", "ketiklab-category", "ketiklab-loop", "ketiklab-input",
-  "ketiklab-name",
+  "ketiklab-name", "ketiklab-extra-meanings", "ketiklab-meaning-visibility", "ketiklab-hide-pron",
 ];
 const PROGRESS_KEYS = ["ketiklab-state", "ketiklab-days", "ketiklab-fav", "ketiklab-chapters"];
 
