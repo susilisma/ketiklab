@@ -5,7 +5,8 @@ name: Build check
 
 on:
   push:
-    branches-ignore: [main]
+    # maintenance-log holds only the daily maintenance reports and ledger; nothing to build
+    branches-ignore: [main, maintenance-log]
   workflow_dispatch:
 
 permissions:
