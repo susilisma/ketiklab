@@ -1,5 +1,10 @@
 # 数据来源与授权 / Data sources and licences
 
+KetikLab 的源代码采用 MIT 许可证（见仓库根目录 `LICENSE`）。本目录下的数据文件**不**因此改为 MIT，
+各自沿用下列来源的授权。
+KetikLab's source code is MIT-licensed (see `LICENSE` at the repository root). The data files in this
+directory are **not** relicensed by that; each keeps the licence of its source, as listed below.
+
 KetikLab 的词库，除下方单独标注来源的文件外，均来自可自由再分发的开放数据，或由项目自行编写。
 Except where a file below states otherwise, KetikLab's word libraries come from openly
 redistributable data or are authored in-house.
