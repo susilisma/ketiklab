@@ -1,6 +1,8 @@
 # KetikLab product demo video, rendered frame by frame with Pillow and encoded with ffmpeg.
-# usage: python render.py <zh|id|en> <v|h> [out_dir]     v = 1080x1920 (9:16), h = 1920x1080 (16:9)
-import sys, os, subprocess, shutil, io, math, random
+# usage: python render.py <zh|id|en> <v|h> [out_dir] [nourl] [frame=6.0 ...]     v = 1080x1920 (9:16), h = 1920x1080 (16:9)
+# One meaning language per render, in the viewer's own language: id and en learn Chinese (实现 → mencapai / achieve);
+# the zh cut is for Chinese speakers learning Indonesian (kesempatan → 机会). frame=<seconds> writes PNGs instead of a video.
+import sys, os, subprocess, shutil, io, json, math, random
 from PIL import Image, ImageDraw, ImageFont
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -8,6 +10,7 @@ LANG = sys.argv[1] if len(sys.argv) > 1 else "zh"
 ORIENT = sys.argv[2] if len(sys.argv) > 2 else "v"
 OUT_DIR = sys.argv[3] if len(sys.argv) > 3 else os.path.dirname(os.path.abspath(__file__))
 NOURL = "nourl" in sys.argv[4:]   # 小红书 treats an on-screen domain as off-platform steering; this cut ends on the wordmark
+FRAMES = [float(a[6:]) for a in sys.argv[4:] if a.startswith("frame=")]
 W, H = (1080, 1920) if ORIENT == "v" else (1920, 1080)
 FPS = 30
 S = W / 1080 if ORIENT == "v" else H / 1080          # scale relative to a 1080-wide phone frame
@@ -24,23 +27,38 @@ def F(size, bold=False):
 def px(v): return round(v * S)
 def ease(t): t = max(0.0, min(1.0, t)); return 1 - (1 - t) ** 3
 def lerp(a, b, t): return a + (b - a) * t
+def fit(d, text, size, bold, maxw):
+    while size > 20 and d.textlength(text, font=F(size, bold)) > maxw: size -= 2
+    return F(size, bold)
 def mix(hex1, hex2, t):
     a = tuple(int(hex1[i:i+2], 16) for i in (1, 3, 5)); b = tuple(int(hex2[i:i+2], 16) for i in (1, 3, 5))
     return tuple(int(lerp(a[i], b[i], t)) for i in range(3))
 
 T = {
-    "hook":   {"zh": ("三种语言", "边打字边背单词"), "id": ("Tiga bahasa", "mengetik sambil menghafal"), "en": ("Three languages", "type it, remember it")},
-    "langs":  {"zh": "中文 · Bahasa Indonesia · English", "id": "Mandarin · Indonesia · Inggris", "en": "Chinese · Indonesian · English"},
-    "card":   {"zh": "拼音在上，汉字在下，照着打", "id": "Pinyin di atas, hanzi di bawah — tinggal ketik", "en": "Pinyin above, character below — just type"},
+    "hook":   {"zh": ("边打字边背单词", "释义用你最熟悉的语言"), "id": ("Ketik sambil menghafal", "artinya dalam bahasamu sendiri"), "en": ("Type it, remember it", "meanings in your own language")},
+    # the learning languages are a choice (或 / atau / or), never joined by "·" as if shown together
+    "langs":  {"zh": "学中文、印尼语或英语", "id": "Belajar Mandarin, Inggris, atau Indonesia", "en": "Learn Chinese, English or Indonesian"},
+    "card":   {"zh": "印尼语单词照着打，释义用中文", "id": "Lihat hanzi dan artinya, ketik pinyin-nya", "en": "See the character and its meaning, type the pinyin"},
     "ladder": {"zh": "中文四步阶梯", "id": "Tangga Mandarin empat langkah", "en": "A four-step Chinese ladder"},
     "steps":  {"zh": ("认读", "打拼音", "选汉字", "输入法"), "id": ("Baca", "Ketik pinyin", "Pilih hanzi", "IME"), "en": ("Read", "Type pinyin", "Pick hanzi", "IME")},
-    "libs":   {"zh": ("三语精选词", "考试词库", "词条总数", "经典朗读"), "id": ("Kata pilihan trilingual", "Kamus ujian", "Total kata", "Bacaan klasik"), "en": ("Curated trilingual words", "Exam libraries", "Words in total", "Classic readings")},
+    "libs":   {"zh": ("主题词汇", "考试词库", "词条总数", "经典朗读"), "id": ("Kosakata Tematik", "Kamus ujian", "Total kata", "Bacaan klasik"), "en": ("Words by Topic", "Exam libraries", "Words in total", "Classic readings")},
     "srs":    {"zh": "艾宾浩斯间隔复习 · 学习日历", "id": "Pengulangan berjarak · kalender belajar", "en": "Spaced repetition · learning calendar"},
     "cta":    {"zh": ("免费", "开源", "无广告"), "id": ("Gratis", "Open source", "Tanpa iklan"), "en": ("Free", "Open source", "No ads")},
     "cta2":   {"zh": "浏览器打开就能用 · 可安装到手机", "id": "Langsung di browser · bisa dipasang di HP", "en": "Runs in the browser · installs on your phone"},
 }
-WORDS = [("实现", "shí xiàn", "shi xian", "mencapai  ·  achieve"), ("机会", "jī huì", "ji hui", "kesempatan  ·  opportunity")]
-LIB_VALUES = (3701, 10, 21600, 161)   # the site total is shown as a floor ("21,600+") so it does not go stale as the library grows
+TARGET = "id" if LANG == "zh" else "zh"
+# (word, pronunciation, meaning): pinyin as typed for Chinese targets, the syllables line for Indonesian ones
+WORDS = {"zh": [("kesempatan", "ke·sem·pat·an", "机会"), ("mencapai", "men·ca·pai", "实现")],
+         "id": [("实现", "shi xian", "mencapai"), ("机会", "ji hui", "kesempatan")],
+         "en": [("实现", "shi xian", "achieve"), ("机会", "ji hui", "opportunity")]}[LANG]
+MEANING_LABEL = {"zh": "中文", "id": "Bahasa Indonesia", "en": "English"}[LANG]
+DATA = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), "public", "data")
+def load(name): return json.load(open(os.path.join(DATA, name), encoding="utf-8"))
+def floor100(n): return n // 100 * 100
+_manifest = load("manifest.json"); _topic = len(load("words.json"))
+# (value, is_floor): growing counts are rounded down to the hundred and shown with "+" so they do not go stale
+LIB_VALUES = ((floor100(_topic), True), (len(_manifest), False),
+              (floor100(_topic + sum(len(load(r["file"])) for r in _manifest)), True), (len(load("readings.json")), False))
 
 def brand(d, x, y, size=1.0):
     s = px(64 * size)
@@ -49,7 +67,7 @@ def brand(d, x, y, size=1.0):
     d.text((x + s + px(18 * size), y + s / 2), "KetikLab", font=F(40 * size, True), fill=TEXT, anchor="lm")
 
 def caption(d, text, y, size=40, color=TEXT, bold=True):
-    d.text((W / 2, y), text, font=F(size, bold), fill=color, anchor="mm")
+    d.text((W / 2, y), text, font=fit(d, text, size, bold, W * 0.9), fill=color, anchor="mm")
 
 def pill(d, x, y, label, size=26, on=True):
     f = F(size, True); w = d.textlength(label, font=f) + px(44); h = px(size * 2.1)
@@ -57,8 +75,16 @@ def pill(d, x, y, label, size=26, on=True):
     d.text((x + w / 2, y + h / 2), label, font=f, fill="white" if on else PURPLE, anchor="mm")
     return w
 
-def word_card(d, cx, cy, cw, ch, word, pinyin, typed, done, alpha):
+def meaning_line(d, cx, y, text, alpha):
+    # the app's .meanings span: accent bar, small language label, one gloss
+    fl, fm = F(26), F(48, True); bw = max(d.textlength(MEANING_LABEL, font=fl), d.textlength(text, font=fm)); x = cx - bw / 2
+    d.rectangle((x - px(24), y - px(50), x - px(20), y + px(50)), fill=mix(BG, PURPLE, alpha))
+    d.text((x, y - px(24)), MEANING_LABEL, font=fl, fill=mix(BG, MUTED, alpha), anchor="lm")
+    d.text((x, y + px(20)), text, font=fm, fill=mix(BG, TEXT, alpha), anchor="lm")
+
+def word_card(d, cx, cy, cw, ch, entry, typed, done, alpha):
     # alpha fades the whole card in; done draws the check state
+    word, pron, meaning = entry
     bg = mix(BG, SURF, alpha); ln = mix(BG, LINE, alpha)
     x0, y0, x1, y1 = cx - cw / 2, cy - ch / 2, cx + cw / 2, cy + ch / 2
     d.rounded_rectangle((x0 + px(8), y0 + px(12), x1 + px(8), y1 + px(12)), px(34), fill=mix(BG, "#e9e9f2", alpha))
@@ -66,41 +92,58 @@ def word_card(d, cx, cy, cw, ch, word, pinyin, typed, done, alpha):
     if alpha < 0.35: return
     tc = mix(BG, TEXT, alpha); pc = mix(BG, PURPLE, alpha); mc = mix(BG, MUTED, alpha)
     d.text((x0 + px(40), y0 + px(52)), "01 / 20", font=F(24, True), fill=pc, anchor="lm")
-    d.text((cx, y0 + ch * 0.27), pinyin, font=F(44, True), fill=pc, anchor="mm")
-    d.text((cx, y0 + ch * 0.47), word, font=F(150, True), fill=tc, anchor="mm")
-    d.text((cx, y0 + ch * 0.66), WORDS[[w[0] for w in WORDS].index(word)][3], font=F(34), fill=mc, anchor="mm")
-    bx0, by0, bx1, by1 = x0 + px(60), y0 + ch * 0.76, x1 - px(60), y0 + ch * 0.76 + px(84)
-    d.rounded_rectangle((bx0, by0, bx1, by1), px(20), fill=BG, outline=MINT if done else PURPLE, width=px(3))
-    f = F(36, True); shown = typed if not done else word_card.full
-    if shown:
-        tw = d.textlength(shown, font=f)
-        d.text((cx, (by0 + by1) / 2), shown, font=f, fill=TEXT, anchor="mm")
-        if not done:
-            d.rectangle((cx + tw / 2 + px(6), by0 + px(20), cx + tw / 2 + px(10), by1 - px(20)), fill=PURPLE)
+    if TARGET == "zh":
+        # 打拼音: no pinyin above the character (the app hides it at this step); syllables fill in below as they are typed
+        d.text((cx, y0 + ch * 0.29), word, font=F(150, True), fill=tc, anchor="mm")
+        meaning_line(d, cx, y0 + ch * 0.49, meaning, alpha)
+        syl = pron.split(" "); f = F(40, True); gap = px(28); done_len = len(typed.replace(" ", ""))
+        shown = [s if done or done_len >= len("".join(syl[:k + 1])) else "•" * len(s) for k, s in enumerate(syl)]
+        widths = [max(d.textlength(t, font=f), d.textlength(s, font=f)) for t, s in zip(shown, syl)]
+        x = cx - (sum(widths) + gap * (len(syl) - 1)) / 2; y = y0 + ch * 0.64
+        for k, t in enumerate(shown):
+            ok = t == syl[k]; now = not ok and done_len >= len("".join(syl[:k])); col = tc if ok else pc if now else mc
+            d.text((x + widths[k] / 2, y), t, font=f, fill=col, anchor="mm")
+            d.rectangle((x, y + px(34), x + widths[k], y + px(37)), fill=col); x += widths[k] + gap
+        bx0, by0, bx1, by1 = x0 + px(60), y0 + ch * 0.76, x1 - px(60), y0 + ch * 0.76 + px(84)
+        d.rounded_rectangle((bx0, by0, bx1, by1), px(20), fill=BG, outline=MINT if done else PURPLE, width=px(3))
+        f = F(36, True); shown = pron if done else typed; tw = d.textlength(shown, font=f) if shown else 0
+        if shown: d.text((cx, (by0 + by1) / 2), shown, font=f, fill=TEXT, anchor="mm")
+        if not done: d.rectangle((cx + tw / 2 + px(6), by0 + px(20), cx + tw / 2 + px(10), by1 - px(20)), fill=PURPLE)
+    else:
+        # Indonesian target: letters turn purple and underline as they are typed; the syllables line sits under the word
+        f = fit(d, word, 130, True, cw - px(120)); x = cx - d.textlength(word, font=f) / 2; base = y0 + ch * 0.36
+        n = len(word) if done else len(typed)
+        for k, c in enumerate(word):
+            lw = d.textlength(c, font=f); col = pc if k < n else tc
+            d.text((x, base), c, font=f, fill=col, anchor="ls")
+            if k < n: d.rectangle((x, base + px(18), x + lw, base + px(22)), fill=col)
+            x += lw
+        d.text((cx, y0 + ch * 0.47), pron, font=F(40), fill=mc, anchor="mm")
+        meaning_line(d, cx, y0 + ch * 0.64, meaning, alpha)
+        d.text((cx, y0 + ch * 0.84), "直接敲键盘  ·  ENTER 跳过", font=F(28), fill=mc, anchor="mm")
     if done:
         r = px(30); d.ellipse((x1 - px(80) - r, y0 + px(52) - r, x1 - px(80) + r, y0 + px(52) + r), fill=MINT)
         d.line((x1 - px(80) - r * 0.45, y0 + px(52), x1 - px(80) - r * 0.1, y0 + px(52) + r * 0.35, x1 - px(80) + r * 0.5, y0 + px(52) - r * 0.4), fill="white", width=px(6), joint="curve")
-word_card.full = ""
 
 # ---------------- scenes: each gets (draw, t) with t in seconds from scene start ----------------
 def sc_hook(d, t):
     a = ease(t / 0.6); y = H * 0.36 + (1 - a) * px(40)
     brand(d, W / 2 - px(150), H * 0.18, 1.15)
-    l1, l2 = T["hook"][LANG]
-    d.text((W / 2, y), l1, font=F(78, True), fill=mix(BG, TEXT, a), anchor="mm")
-    b = ease((t - 0.35) / 0.6); d.text((W / 2, y + px(110)), l2, font=F(78, True), fill=mix(BG, PURPLE, b), anchor="mm")
-    c = ease((t - 0.9) / 0.6); d.text((W / 2, y + px(230)), T["langs"][LANG], font=F(38), fill=mix(BG, MUTED, c), anchor="mm")
+    l1, l2 = T["hook"][LANG]; maxw = px(1080) * 0.9
+    d.text((W / 2, y), l1, font=fit(d, l1, 78, True, maxw), fill=mix(BG, TEXT, a), anchor="mm")
+    b = ease((t - 0.35) / 0.6); d.text((W / 2, y + px(110)), l2, font=fit(d, l2, 78, True, maxw), fill=mix(BG, PURPLE, b), anchor="mm")
+    c = ease((t - 0.9) / 0.6); d.text((W / 2, y + px(230)), T["langs"][LANG], font=fit(d, T["langs"][LANG], 38, False, maxw), fill=mix(BG, MUTED, c), anchor="mm")
 
 def sc_card(d, t, total):
     caption(d, T["card"][LANG], H * 0.12, 42)
     per = total / len(WORDS); i = min(int(t / per), len(WORDS) - 1); lt = t - i * per
-    word, pinyin, full, _ = WORDS[i]; word_card.full = full
+    entry = WORDS[i]; full = entry[1] if TARGET == "zh" else entry[0]
     a = ease(lt / 0.45)
     typing_start, per_char = 1.2, 0.16
     n = int(max(0, lt - typing_start) / per_char); typed = full[:min(n, len(full))]
     done = n >= len(full) + 2
     cw, ch = (W * 0.86, H * 0.5) if ORIENT == "v" else (W * 0.42, H * 0.78)
-    word_card(d, W / 2, H * 0.55, cw, ch, word, pinyin, typed, done, a)
+    word_card(d, W / 2, H * 0.55, cw, ch, entry, typed, done, a)
 
 def sc_ladder(d, t):
     caption(d, T["ladder"][LANG], H * 0.14, 42)
@@ -125,14 +168,14 @@ def sc_libs(d, t):
     cols = 2 if ORIENT == "v" else 4
     bw, bh = (W * 0.4, H * 0.19) if ORIENT == "v" else (W * 0.2, H * 0.4)
     accents = (PURPLE, MINT, AMBER, BLUE)
-    for k, (lab, val) in enumerate(zip(labels, LIB_VALUES)):
+    for k, (lab, (val, floor)) in enumerate(zip(labels, LIB_VALUES)):
         r, c = divmod(k, cols)
         x = W * 0.06 + c * (bw + W * 0.04) if ORIENT == "v" else W * 0.05 + c * (bw + W * 0.0333)
         y = H * 0.29 + r * (bh + H * 0.03) if ORIENT == "v" else H * 0.28
         a = ease((t - k * 0.25) / 0.5); shown = int(val * ease((t - k * 0.25) / 1.4))
         d.rounded_rectangle((x, y, x + bw, y + bh), px(30), fill=mix(BG, SURF, a), outline=mix(BG, LINE, a), width=px(2))
         d.rounded_rectangle((x + px(30), y + px(36), x + px(42), y + bh - px(36)), px(6), fill=mix(BG, accents[k], a))
-        d.text((x + px(70), y + bh * 0.42), f"{shown:,}" + ("+" if val == 21600 and shown == val else ""), font=F(64, True), fill=mix(BG, TEXT, a), anchor="lm")
+        d.text((x + px(70), y + bh * 0.42), f"{shown:,}" + ("+" if floor and shown == val else ""), font=F(64, True), fill=mix(BG, TEXT, a), anchor="lm")
         d.text((x + px(70), y + bh * 0.72), lab, font=F(26), fill=mix(BG, MUTED, a), anchor="lm")
     caption(d, T["langs"][LANG], H * 0.14, 34, MUTED, False)
 
@@ -169,7 +212,8 @@ def sc_cta(d, t):
     c = ease((t - 0.9) / 0.5)
     d.text((W / 2, H * (0.62 if ORIENT == "v" else 0.58)), T["cta2"][LANG], font=F(32), fill=mix(BG, MUTED, c), anchor="mm")
 
-SCENES = [(2.6, sc_hook), (9.0, sc_card), (3.8, sc_ladder), (4.2, sc_libs), (4.4, sc_srs), (3.6, sc_cta)]
+# the zh cut learns Indonesian, so the Chinese ladder scene is left out of it
+SCENES = [(2.6, sc_hook), (9.0, sc_card)] + ([] if TARGET == "id" else [(3.8, sc_ladder)]) + [(4.2, sc_libs), (4.4, sc_srs), (3.6, sc_cta)]
 TOTAL = sum(s[0] for s in SCENES)
 
 def frame(tg):
@@ -195,6 +239,10 @@ def ffmpeg_exe():
 def main():
     os.makedirs(OUT_DIR, exist_ok=True)
     out = os.path.join(OUT_DIR, f"ketiklab-{LANG}-{'9x16' if ORIENT == 'v' else '16x9'}.mp4")
+    if FRAMES:
+        for tg in FRAMES:
+            png = out[:-4] + f"-t{tg:.1f}.png"; frame(tg).save(png); print(png)
+        return
     exe = ffmpeg_exe(); n = int(TOTAL * FPS)
     if not exe:
         gif = out[:-4] + ".gif"; frames = [frame(k / 10).convert("P", palette=Image.ADAPTIVE) for k in range(int(TOTAL * 10))]
