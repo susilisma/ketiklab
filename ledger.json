@@ -1,3 +1,382 @@
 {
-  "items": []
+  "items": [
+    {
+      "fingerprint": "ime-stale-commit-next-word",
+      "title": "输入法步骤：上一个词提交的文字被拿去和下一个词比对（App.tsx:320-323,871-878）",
+      "priority": "P1",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复；已用 CDP composition 复现",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "srs-bare-key-forever-due",
+      "title": "SRS 裸键（13031d0 之前写入）永远到期且无迁移（srs.ts:26,33）",
+      "priority": "P1",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "trio-gloss-quality",
+      "title": "build-trio-queue.py 释义错误率 8–22%，3701–3800 有 22 行错（senses[0] + 跳过已有印尼词元 + omw-id 混马来语）",
+      "priority": "P1",
+      "status": "needs-owner",
+      "commit": "",
+      "reason": "需主人决定回滚/复核范围与是否暂停 Daily word batch；脚本门槛待有写权限后实现",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "seo-url-params-ignored",
+      "title": "SEO 页链接 ?ui=&lib=&view=articles 但 App 不读 URL 参数",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "sw-offline-after-deploy",
+      "title": "部署后离线打不开：CORE 不含 hash 资源，新资源写进旧缓存后被 activate 删除",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "pause-button-unpauses",
+      "title": "暂停按钮 20 ms 后被 onFocus 的 setRunning(true) 取消",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复；真实点击复现",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "account-membership-wording",
+      "title": "账户页会员徽标/会员提示/推广码仍渲染（Account.tsx:284-288,313-315,409-413）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "ime-placeholder-zh-only",
+      "title": "输入法占位符 请用拼音输入 无 id/en 版本（App.tsx:1379）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "srs-orphan-rows-dead-button",
+      "title": "改名/删除的词的 SRS 行永远到期，开始复习按钮静默无反应（App.tsx:1231-1235）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "dictation-masks-ladder-steps",
+      "title": "默写模式在认读/打拼音步骤遮住全部汉字且无法显示（App.tsx:683-688,1342）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "tab-trap-practice-inputs",
+      "title": "TAB/Shift+TAB 在练习输入框被吞，无 Escape，键盘用户被困（ZhSteps.tsx:196, App.tsx:1020）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "langsetup-no-focus-trap",
+      "title": "语言对话框无焦点陷阱，onAnyKey 与拼音框自动聚焦让背后的词被计分",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "settings-select-overflow-id",
+      "title": "印尼语界面 375px 设置页 Arti 下拉宽 427px 溢出（globals.css:24）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复；Playwright 实测",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "roman-numeral-headwords",
+      "title": "en-* 库含 vii/xxx/viii/iii/xii/xiii/xvi/liv/xiv/ccc；indonesian.json 含 iii/abud 占位释义、ppp、idi",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "indonesian-duplicate-headwords",
+      "title": "indonesian.json 9 个重复词头（dari, baru, makanan, baik, kopi, cinta, acara, diantara, pembuatan）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "sources-md-missing-zh-libs",
+      "title": "SOURCES.md 未列 zh-core/zh-plus/zh-upper（OEWN CC BY 4.0）；words.json 署名与生成脚本声明不符",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "zh 库来源表可直接补（推送被 403 拒绝（Claude GitHub App 未安装），未实施修复）；words.json 措辞属许可用语，需主人决定",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "zh-pronunciation-fallback-zh-only",
+      "title": "普通话 · 点击播放标准发音 无 id/en 版本，词库网格 2190 张卡受影响（App.tsx:127）",
+      "priority": "P2",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "curly-apostrophe-not-folded",
+      "title": "弯引号 ’ 未折叠，仅影响 driver's license 两词",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复；范围缩小为 P3",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "keys-dropped-320ms-window",
+      "title": "切词后 320 ms 内按键被丢弃（App.tsx:966）",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "controlled-input-composition-android",
+      "title": "en/id 受控输入框遇 composition 后完全失灵；Gboard 大概率不触发，三星键盘/滑行输入可能触发",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "触发条件需真机验证；代码侧改为非受控可先做",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "cloud-link-stale-snapshot",
+      "title": "首次绑定/合并期间打的词被过期快照覆盖（cloud.ts:246-263）",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "autopush-no-version-check",
+      "title": "两设备并发 autoPush 读-合并-写无版本检查",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "site-yml-shared-concurrency-group",
+      "title": "build 与 deploy 同在并发组 site，pending build 理论上可被挤掉",
+      "priority": "P3",
+      "status": "needs-owner",
+      "commit": "",
+      "reason": "理论风险、无实证；改 workflow 结构建议主人确认",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "readings-duplicate-jingyesi",
+      "title": "readings.json 静夜思 重复（quiet-night / quiet-night-thought）",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "sitemap-root-hreflang-triplicate",
+      "title": "sitemap 根 URL 出现 3 次且 hreflang 全指向 /（build-seo-pages.py:391）",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "review-session-wraps",
+      "title": "复习会话答完后回绕到第 1 个词，无结束卡",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "readme-omits-business-english",
+      "title": "README 三语段落列十库都漏 Business English",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "trio-seo-whole-zh-field",
+      "title": "trio SEO 页中文列打印整个 zh 字段而非第一义",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "webmanifest-no-indonesian",
+      "title": "manifest.webmanifest description 无印尼文、name 仅中文",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "html-lang-static",
+      "title": "<html lang> 不随界面语言更新",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "first-visit-dialog-always-zh",
+      "title": "首访对话框永远先中文，uiLang 不参考浏览器语言",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "aria-labels-english-only",
+      "title": "aria-label 全为英文",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "dead-ui-strings-member-chapter",
+      "title": "UI 字典残留 member/chapter/prompt 与 View 'member'",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "touch-targets-contrast",
+      "title": "语言 select 38px、默写 关 36px、分类条当前项滚出视口、紫字紫底 3.7:1",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "timer-runs-in-other-views",
+      "title": "练习计时器在其他视图继续走",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "recognize-step-counts-as-correct",
+      "title": "认读步骤按空格算已学词与正确率",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "url-error-description-echo",
+      "title": "hash 里任意 error_description 原样显示并切到账户页；忘记密码无 busy",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "email-placeholder-indonesian",
+      "title": "邮箱占位符 nama@email.com 三语相同",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "promote-flush-one-reading",
+      "title": "promote.mjs 手动 flush 每次只放 1 篇阅读",
+      "priority": "P3",
+      "status": "deferred",
+      "commit": "",
+      "reason": "推送被 403 拒绝（Claude GitHub App 未安装），未实施修复",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "paren-headwords-untypable",
+      "title": "带括号词头无法打完（09-14 遗留）",
+      "priority": "P3",
+      "status": "refuted",
+      "commit": "",
+      "reason": "trioItem 已剥掉尾部括号，7 个带括号词头均可打完",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "manifest-indonesian-3037",
+      "title": "manifest 描述印尼语库 3037 词（09-14 遗留）",
+      "priority": "P3",
+      "status": "refuted",
+      "commit": "",
+      "reason": "全仓库无 3037",
+      "date": "2026-09-15"
+    },
+    {
+      "fingerprint": "push-probe-403",
+      "title": "git push 被 403 拒绝（Claude GitHub App 未安装）",
+      "priority": "P0",
+      "status": "needs-owner",
+      "commit": "",
+      "reason": "连续第二次；主人需安装 https://github.com/apps/claude/installations/select_target",
+      "date": "2026-09-15"
+    }
+  ]
 }
