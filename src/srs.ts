@@ -19,41 +19,68 @@ export const INTERVALS = [1, 2, 4, 7, 15, 30, 60, 120];
 const DAY = 24 * 60 * 60 * 1000;
 const RELAPSE_DELAY = 10 * 60 * 1000; // 10 minutes
 
+// Rows written before keys carried a language ("apple" rather than "en:apple").
+// A hanzi key can only be Chinese and is renamed on upgrade; a Latin key may be
+// the trio word in any language or an English or Indonesian dictionary
+// headword, so it stays as it is, invisible to the counts, until the same word
+// is answered under its new key and inherits it (see recordReview).
+const keyed = (en: string) => en.includes(":");
+const HANZI = /^[㐀-鿿]+$/;
+
 class KetikDB extends Dexie {
   reviews!: Table<ReviewRecord, string>;
   constructor() {
     super("ketiklab");
     this.version(1).stores({ reviews: "en, dueAt, step" });
+    this.version(2).stores({ reviews: "en, dueAt, step" }).upgrade(async (tx) => {
+      const table = tx.table<ReviewRecord, string>("reviews");
+      const bare = (await table.toArray()).filter((r) => !keyed(r.en) && HANZI.test(r.en));
+      for (const r of bare) {
+        const en = "zh:" + r.en;
+        const other = await table.get(en);
+        await table.delete(r.en);
+        if (!other || other.updatedAt < r.updatedAt) await table.put({ ...r, en });
+      }
+    });
   }
 }
 
 const db = new KetikDB();
 
 export async function recordReview(en: string, correct: boolean, now = Date.now()): Promise<void> {
-  const existing = await db.reviews.get(en);
-  const prevStep = existing?.step ?? -1;
-  let step: number;
-  let dueAt: number;
-  if (!correct) { step = -1; dueAt = now + RELAPSE_DELAY; }
-  // a correct answer before the word is due (a retried chapter, a repeated word) is
-  // not a recall from memory, so it keeps the rung and the date it already has
-  else if (existing && existing.dueAt > now) { step = prevStep; dueAt = existing.dueAt; }
-  else { step = Math.min(prevStep + 1, INTERVALS.length - 1); dueAt = now + INTERVALS[step] * DAY; }
-  await db.reviews.put({
-    en,
-    step,
-    dueAt,
-    reps: (existing?.reps ?? 0) + 1,
-    lapses: (existing?.lapses ?? 0) + (correct ? 0 : 1),
-    lastResult: correct ? "correct" : "wrong",
-    updatedAt: now,
+  await db.transaction("rw", db.reviews, async () => {
+    let existing = await db.reviews.get(en);
+    // the same word under its old bare key: inherit its ladder position when this
+    // key has none yet, and drop the old row either way so it cannot stay due forever
+    const i = en.indexOf(":");
+    if (i >= 0) {
+      const old = await db.reviews.get(en.slice(i + 1));
+      if (old) { await db.reviews.delete(old.en); if (!existing) existing = { ...old, en }; }
+    }
+    const prevStep = existing?.step ?? -1;
+    let step: number;
+    let dueAt: number;
+    if (!correct) { step = -1; dueAt = now + RELAPSE_DELAY; }
+    // a correct answer before the word is due (a retried chapter, a repeated word) is
+    // not a recall from memory, so it keeps the rung and the date it already has
+    else if (existing && existing.dueAt > now) { step = prevStep; dueAt = existing.dueAt; }
+    else { step = Math.min(prevStep + 1, INTERVALS.length - 1); dueAt = now + INTERVALS[step] * DAY; }
+    await db.reviews.put({
+      en,
+      step,
+      dueAt,
+      reps: (existing?.reps ?? 0) + 1,
+      lapses: (existing?.lapses ?? 0) + (correct ? 0 : 1),
+      lastResult: correct ? "correct" : "wrong",
+      updatedAt: now,
+    });
   });
 }
 
 export type SrsStats = { due: number; learning: number; mastered: number; total: number };
 
 export async function getStats(now = Date.now()): Promise<SrsStats> {
-  const all = await db.reviews.toArray();
+  const all = (await db.reviews.toArray()).filter((r) => keyed(r.en));
   const due = all.filter((r) => r.dueAt <= now).length;
   const mastered = all.filter((r) => r.step >= 4).length;
   const learning = all.length - mastered;
@@ -62,9 +89,15 @@ export async function getStats(now = Date.now()): Promise<SrsStats> {
 
 // "<lang>:<key>" ids of words due for review now, soonest first.
 export async function getDueKeys(now = Date.now(), limit = 60): Promise<string[]> {
-  const all = await db.reviews.where("dueAt").belowOrEqual(now).toArray();
+  const all = (await db.reviews.where("dueAt").belowOrEqual(now).toArray()).filter((r) => keyed(r.en));
   all.sort((a, b) => a.dueAt - b.dueAt);
   return all.slice(0, limit).map((r) => r.en);
+}
+
+// rows for words that no longer exist in any list (renamed or removed by a content
+// update) would otherwise count as due forever
+export async function deleteRecords(keys: string[]): Promise<void> {
+  if (keys.length) await db.reviews.bulkDelete(keys);
 }
 
 export async function getAllRecords(): Promise<ReviewRecord[]> {
@@ -72,7 +105,9 @@ export async function getAllRecords(): Promise<ReviewRecord[]> {
 }
 
 export async function restoreRecords(records: ReviewRecord[]): Promise<void> {
-  const clean = records.filter((r) => r && typeof r.en === "string");
+  const clean = records.filter((r) => r && typeof r.en === "string" && typeof r.dueAt === "number" && typeof r.step === "number")
+    // a backup from before keys carried a language: hanzi keys are Chinese for sure
+    .map((r) => (!keyed(r.en) && HANZI.test(r.en) ? { ...r, en: "zh:" + r.en } : r));
   if (clean.length) await db.reviews.bulkPut(clean);
 }
 
