@@ -332,7 +332,8 @@ def trio_page(lang, words, lib_rows, n_readings):
     # one learning language per page, with the page language's meaning next to it: /zh/ Indonesian word, /id/ and /en/ Chinese
     rows = "\n".join(
         f'<tr><td class="w">{esc(w["id"])}</td><td>{esc(w["zh"])}</td></tr>' if lang == "zh" else
-        f'<tr><td class="w">{esc(w["zh"])}</td><td class="p">{esc(w.get("pinyin") or "")}</td><td>{esc(w[lang])}</td></tr>'
+        # the practice word is the first sense; the pinyin belongs to it, not to the whole "实现；达到" field
+        f'<tr><td class="w">{esc(w["zh"].split("；")[0])}</td><td class="p">{esc(w.get("pinyin") or "")}</td><td>{esc(w[lang])}</td></tr>'
         for w in shown)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
@@ -367,10 +368,14 @@ def sitemap(groups):
     out = ['<?xml version="1.0" encoding="UTF-8"?>',
            '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">']
     for g in groups:
-        for lang, path in g.items():
+        # the root is one page for every language: list it once, and point its language
+        # alternates at the landing pages rather than at itself three times over
+        one = len(set(g.values())) == 1
+        alts = {l: f"/{l}/" for l in g} if one else g
+        for path in dict.fromkeys(g.values()):
             out.append("  <url>")
             out.append(f"    <loc>{SITE}{path}</loc>")
-            for l2, p2 in g.items():
+            for l2, p2 in alts.items():
                 out.append(f'    <xhtml:link rel="alternate" hreflang="{HTML_LANG[l2]}" href="{SITE}{p2}" />')
             out.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE}/" />')
             out.append("  </url>")
@@ -411,7 +416,7 @@ def main():
 
     write(index_path, root_page(index_html, len(readings)))
     write(os.path.join(DIST, "sitemap.xml"), sitemap(groups))
-    urls = sum(len(g) for g in groups)
+    urls = sum(len(set(g.values())) for g in groups)
     print(f"build-seo-pages: {n_pages} pages written, sitemap lists {urls} URLs, "
           f"{len(manifest)} libraries + trio ({len(words)} words) + {len(readings)} readings")
 
