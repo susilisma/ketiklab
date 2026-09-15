@@ -8,14 +8,20 @@ import tailwindcss from "@tailwindcss/vite";
 // https://<user>.github.io/<repo>/ without hard-coding the repo name.
 // public/sw.js is copied verbatim, so without a per-build VERSION every deploy
 // ships byte-identical worker code, the browser never reinstalls it, and caches
-// from earlier deploys are never dropped.
+// from earlier deploys are never dropped. The hashed bundle files are stamped in
+// as well: the worker precaches them, so the app opens offline right after a
+// deploy instead of only after a second online visit.
 const swVersion = () => ({
   name: "sw-version",
   apply: "build" as const,
   closeBundle() {
     const file = resolve("dist/sw.js");
     const stamp = Date.now().toString(36);
-    writeFileSync(file, readFileSync(file, "utf8").replace(/const VERSION = "[^"]*"/, `const VERSION = "kl-${stamp}"`));
+    const html = readFileSync(resolve("dist/index.html"), "utf8");
+    const assets = Array.from(html.matchAll(/(?:src|href)="\.?\/?(assets\/[^"]+)"/g), (m) => "./" + m[1]);
+    writeFileSync(file, readFileSync(file, "utf8")
+      .replace(/const VERSION = "[^"]*"/, `const VERSION = "kl-${stamp}"`)
+      .replace(/const ASSETS = \[\]/, `const ASSETS = ${JSON.stringify(Array.from(new Set(assets)))}`));
   },
 });
 

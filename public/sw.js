@@ -1,7 +1,10 @@
 // KetikLab service worker — offline app shell + data caching.
-// Bump VERSION whenever the caching rules change: activate drops every other
-// cache, and that is the only way an entry stored under old rules ever goes away.
+// VERSION and ASSETS are stamped per build by the sw-version plugin in
+// vite.config.ts: activate drops every other cache, and that is the only way an
+// entry stored under old rules ever goes away.
 const VERSION = "kl-v2";
+// the hashed bundle files of this build, filled in at build time
+const ASSETS = [];
 const CORE = ["./", "./index.html", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./maskable-512.png"];
 // The worker's scope covers the whole origin, but only the app's own document may
@@ -17,14 +20,33 @@ const store = (key, res) => {
 };
 
 self.addEventListener("install", (e) => {
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE)).then(() => self.skipWaiting()));
+  // "reload": the shell must come from the network, not from an HTTP cache that
+  // may still hold the previous deploy's index.html (and its asset names)
+  const fresh = (u) => new Request(u, { cache: "reload" });
+  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE.concat(ASSETS).map(fresh))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
-      .then(() => self.clients.claim()),
-  );
+  e.waitUntil((async () => {
+    // the page that installed this worker was still served by the previous one,
+    // so the content JSON it fetched went into the previous cache; carry it over
+    // before that cache goes, or the next offline open has a shell with no words
+    // (the bundle files of this build are precached above; older ones are not kept)
+    const mine = await caches.open(VERSION);
+    const keys = await caches.keys();
+    for (const k of keys) {
+      if (k === VERSION) continue;
+      const old = await caches.open(k);
+      for (const req of await old.keys()) {
+        if (!new URL(req.url).pathname.includes("/data/")) continue;
+        if (await mine.match(req)) continue;
+        const res = await old.match(req);
+        if (res) await mine.put(req, res);
+      }
+      await caches.delete(k);
+    }
+    await self.clients.claim();
+  })());
 });
 
 self.addEventListener("fetch", (e) => {
@@ -33,13 +55,16 @@ self.addEventListener("fetch", (e) => {
   const url = new URL(req.url);
   if (url.origin !== self.location.origin) return;
 
-  // SPA navigations: network-first, fall back to cached shell offline
+  // SPA navigations: network-first, fall back to cached shell offline. The
+  // language landing pages load the same bundle, so they are shells too.
   if (req.mode === "navigate") {
     const isShell = url.pathname === SHELL || url.pathname === SHELL + "index.html";
+    const isLanding = /^\/(zh|id|en)\/(index\.html)?$/.test(url.pathname);
     e.respondWith(fetch(req).then((res) => {
       if (isShell) store("./index.html", res);
+      else if (isLanding) store(req, res);
       return res;
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(req))));
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(req).then((hit) => hit || (isLanding ? caches.match("./index.html") : undefined)))));
     return;
   }
   // Hashed build assets are immutable: cache-first
