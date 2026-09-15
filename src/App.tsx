@@ -96,6 +96,20 @@ function browserTag(): string {
   // "in" is the legacy code some Android WebViews still report for Indonesian
   try { const tag = (navigator.language || "").slice(0, 2).toLowerCase(); return tag === "in" ? "id" : tag; } catch { return ""; }
 }
+const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
+// The generated landing pages link into the app with ?ui=<lang>, ?lib=<id> and
+// ?view=articles. They are read once here and dropped from the address bar, so a
+// bookmark or a reload does not replay them; the values apply on the first render.
+const ENTRY: { ui: Lang | null; lib: string | null; articles: boolean } = (() => {
+  try {
+    const p = new URLSearchParams(location.search);
+    const ui = p.get("ui"), lib = p.get("lib"), view = p.get("view");
+    if (p.has("ui") || p.has("lib") || p.has("view")) history.replaceState(null, "", location.pathname + location.hash);
+    return { ui: isLang(ui) ? ui : null, lib, articles: view === "articles" };
+  } catch { return { ui: null, lib: null, articles: false }; }
+})();
+// the interface language before any choice: the link's, else the browser's when it is one of ours
+const initialUi = (): Lang => ENTRY.ui ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
 // The meaning language nobody chose: the interface language when it differs from the
 // learning language, else a different zh/id/en browser locale, else none — a Chinese
 // interface for learning Chinese says nothing about which other language the learner reads.
@@ -199,9 +213,10 @@ export default function Home() {
   const [meaningPeek, setMeaningPeek] = useState(false);
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
-  const [view, setView] = useState<View>("learn");
+  const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
   const [lang, setLang] = useState<Lang>("zh");
-  const [uiLang, setUiLang] = useState<Lang>("zh");
+  const [uiLang, setUiLang] = useState<Lang>(initialUi);
+  useEffect(() => { document.documentElement.lang = uiLang === "zh" ? "zh-CN" : uiLang; }, [uiLang]);
   // the meaning language the learner chose per learning language; a missing entry follows defaultDef
   const [defByLearn, setDefByLearn] = useState<MeaningPrefs>({});
   const [extraMeanings, setExtraMeanings] = useState<ExtraMeanings>(() => {
@@ -343,11 +358,15 @@ export default function Home() {
       if (!mounted.current) return;
       setDicts(m);
       // restore the previously selected dictionary — unless the learner has
-      // already picked a list (sourceReq counts every such choice)
+      // already picked a list (sourceReq counts every such choice). A library
+      // page's "practise this list" link names the list instead.
       try {
+        const linked = ENTRY.lib && m.find(x => x.id === ENTRY.lib);
         const savedSource = localStorage.getItem("ketiklab-source");
-        const d = savedSource && m.find(x => x.id === savedSource);
+        const d = linked || (savedSource && m.find(x => x.id === savedSource));
         if (d && !sourceReq.current) {
+          // a first visit from that page is a visit to learn that list's language
+          if (linked) { persistSource(d.id); if (!localStorage.getItem("ketiklab-langs")) setLang(d.lang); }
           loadDict(d).then((data: DictEntry[]) => {
             if (!mounted.current) return;
             dictCache.current.set(d.id, data);
@@ -409,7 +428,6 @@ export default function Home() {
       const saved = localStorage.getItem("ketiklab-langs");
       if (!saved) { setShowLangSetup(true); return; }
       const v = JSON.parse(saved);
-      const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
       const ui: Lang = isLang(v?.ui) ? v.ui : "zh";
       const learn: Lang = isLang(v?.learn) ? v.learn : "zh";
       const byLearn: MeaningPrefs = {};
@@ -1561,7 +1579,8 @@ export default function Home() {
     </main>
 
     {/* closing stores nothing: a first visit that never saved asks again on the next load */}
-    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={() => setShowLangSetup(false)} />}
+    {/* keyed on the learning language: a first visit from a library page learns which one while the dialog is already open */}
+    {showLangSetup && <LangSetup key={lang} initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={() => setShowLangSetup(false)} />}
   </div>;
 }
 
