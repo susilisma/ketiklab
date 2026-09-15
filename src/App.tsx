@@ -1012,6 +1012,8 @@ export default function Home() {
     // the box still shows the previous word (or the rolled-back text) in front of
     // this commit: grade only what was committed since, after the kept prefix
     if (practiceLang === "zh" && staleLen.current > 0) raw = typed + raw.slice(staleLen.current);
+    // iOS and macOS smart punctuation type ’ for the apostrophe in driver's license
+    raw = raw.replace(/[\u2018\u2019\u02BC]/g, "'");
     // Never let the buffer grow past the target: extra keystrokes are simply
     // ignored, the way every other typing trainer behaves.
     const clean = (practiceLang === "zh"
