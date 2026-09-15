@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
-import { recordReview, getStats, getDueKeys, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
+import { recordReview, getStats, getDueKeys, deleteRecords, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, SYNCED_KEYS } from "./cloud";
@@ -1224,8 +1224,11 @@ export default function Home() {
   // both in the trio collection and in an English dictionary: prefer the dictionary
   // being practised, then the trio collection, then the other dictionaries in
   // manifest order.
-  async function resolveReviewRefs(keys: string[]): Promise<ReviewRef[]> {
+  // `report` receives the keys no list holds; complete is false when a dictionary
+  // could not be fetched, so a missing key may still exist there
+  async function resolveReviewRefs(keys: string[], report?: { unresolved: string[]; complete: boolean }): Promise<ReviewRef[]> {
     const found = new Map<string, ReviewRef>();
+    let complete = true;
     const scan = (d: DictInfo, data: DictEntry[]) => {
       const byName = new Map(data.map(e => [e.name, e]));
       for (const k of keys) {
@@ -1240,16 +1243,27 @@ export default function Home() {
       if (found.size === keys.length) break;
       if (!keys.some(k => !found.has(k) && splitId(k)[0] === d.lang)) continue;
       let data = dictCache.current.get(d.id) || allDicts[d.id];
-      if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { continue; } }
+      if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { complete = false; continue; } }
       scan(d, data);
     }
+    if (report) { report.unresolved = keys.filter(k => !found.has(k)); report.complete = complete; }
     return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r);
   }
   async function startReview() {
-    let keys = await getDueKeys();
-    if (!keys.length) keys = mistakes.slice();
+    const due = await getDueKeys();
+    let keys = due.length ? due : mistakes.slice();
     if (!keys.length) return;
-    const refs = await resolveReviewRefs(keys);
+    const report = { unresolved: [] as string[], complete: true };
+    let refs = await resolveReviewRefs(keys, report);
+    // a word renamed or removed by a content update has no list to be practised in:
+    // its row would count as due forever, so it is retired (only once every
+    // dictionary could be checked), and the 错词本 drops it too
+    if (report.complete && report.unresolved.length) {
+      const gone = new Set(report.unresolved);
+      if (due.length) deleteRecords(report.unresolved).then(refreshSrs).catch(() => {});
+      setMistakes(m => m.filter(k => !gone.has(k)));
+      if (!refs.length && due.length && mistakes.length) { keys = mistakes.filter(k => !gone.has(k)); refs = await resolveReviewRefs(keys); }
+    }
     if (!refs.length) return;
     sourceReq.current++;
     setReviewRefs(refs);
