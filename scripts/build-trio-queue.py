@@ -34,6 +34,9 @@ HAN = re.compile(r"^[一-鿿]+$")
 # Ultra-frequent function words have no useful single gloss: "are" resolves to
 # the unit of area, "will" to determination. Skip them outright.
 ZIPF_CEILING = 5.3
+# below this the Indonesian and Chinese wordnet lemmas were wrong in a third of the
+# rows sampled (barnacle → angsa, marmot → kanak-kanak): not worth teaching blind
+ZIPF_FLOOR = 3.3
 STOP = set("""the be to of and a in that have i it for not on with he as you do at this but his by
 from they we say her she or an will my one all would there their what so up out if about who get which go me
 when make can like time no just him know take people into year your good some could them see other than then
@@ -41,6 +44,35 @@ now look only come its over think also back after use two how our work first wel
 any these give day most us is are was were been has had did does am ain aren cant couldnt didnt doesnt dont
 hadnt hasnt havent isnt lets shouldnt thats theres theyre wasnt werent whats wont wouldnt youre youve""".split())
 ASCII_WORD = re.compile(r"^[a-z][a-z\- ]*[a-z]$")
+
+# Wordnet Bahasa lemma lists mix Malaysian usage with Indonesian, and a synset's
+# Indonesian lemmas sometimes translate one of its *other* English members
+# ("career, calling, vocation" carries memanggil, the verb "to call"). Two cheap
+# checks catch most of it: the word must be at least as common in Indonesian
+# text as in Malay, and its form must fit the part of speech of the synset.
+MIN_ID_ZIPF = 3.0          # rarer than this and it is either junk or too obscure to teach
+MALAY_MARGIN = 0.5         # zipf points by which Malay use may exceed Indonesian use
+BASE_VERBS = set("""ada makan minum tidur pergi datang duduk lari jalan bangun mandi
+pulang masuk keluar naik turun tahu mau bisa punya suka jadi lihat dengar bilang
+kerja main tinggal hidup mati lahir tumbuh jatuh buka tutup beli jual bayar kirim
+terima ambil bawa cari kasih tolong pakai lupa ingat mulai tunggu bantu belajar""".split())
+
+def id_zipf(g):
+    try: return zipf_frequency(g, "id")
+    except LookupError: return 0.0
+
+def ms_zipf(g):
+    try: return zipf_frequency(g, "ms")
+    except LookupError: return 0.0
+
+def fits_pos(pos, g):
+    """Reject a verb form for a noun, a noun form for a verb, and so on."""
+    g = g.lower()
+    verbish = len(g) > 4 and g.startswith(("me", "ber", "ter", "di"))
+    if pos == "v": return verbish or g in BASE_VERBS
+    if pos == "n": return not verbish
+    if pos in ("a", "s"): return not (len(g) > 4 and g.startswith(("me", "di")))
+    return True
 
 # ---------------------------------------------------------------- phonetics
 ARPA2IPA = {
@@ -155,6 +187,8 @@ def main():
         z = zipf_frequency(w, "en")
         if z >= ZIPF_CEILING:          # function-word tier, no clean single sense
             continue
+        if z < ZIPF_FLOOR:             # rare words are where the wordnet glosses go wrong most
+            continue
 
         # Quality gate. Wordnet Bahasa lemma lists are unordered and sometimes
         # corrupt, and highly polysemous words translate badly in any case, so:
@@ -164,7 +198,7 @@ def main():
         #   4. Indonesian gloss by Indonesian corpus frequency (order is not
         #      meaningful in omw-id, so pick the synonym learners will meet).
         senses = en_wn.synsets(w)
-        if not senses or len(senses) > 4:
+        if not senses or len(senses) > 3:
             continue
         syn = senses[0]
         ili = syn.ili if isinstance(syn.ili, str) else (syn.ili.id if syn.ili else None)
@@ -180,11 +214,13 @@ def main():
             continue
         id_c = [g for x in idn_wn.synsets(ili=ili) for g in x.lemmas()]
         id_c = [g for g in dict.fromkeys(id_c) if g and not g[:1].isupper() and " " not in g]
-        id_c.sort(key=lambda g: -zipf_frequency(g, "id"))
-        # the most frequent synonym is often already taken by a near-synonym the
-        # library holds, and the next one glosses the sense just as well
-        idw = next((g for g in id_c if zipf_frequency(g, "id") >= 2.0 and g.lower() not in ID), None)
-        if not idw:                                # none free, or all too rare to teach
+        id_c = [g for g in id_c if fits_pos(syn.pos, g) and id_zipf(g) >= MIN_ID_ZIPF and ms_zipf(g) <= id_zipf(g) + MALAY_MARGIN]
+        id_c.sort(key=lambda g: -id_zipf(g))
+        # the most frequent surviving synonym, or nothing: when it is already taken
+        # by a word the library holds, this headword is a near-synonym of that word,
+        # and the next lemma down glossed the batch of 2026-09-14 with junk
+        idw = id_c[0] if id_c else None
+        if not idw or idw.lower() in ID:
             continue
         lexfile = syn.lexfile() or ""
 
