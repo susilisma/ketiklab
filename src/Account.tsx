@@ -86,8 +86,6 @@ export function Account({ uiLang, name, onName }: {
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
   const [err, setErr] = useState("");
-  const [member, setMember] = useState<string | null>(null);
-  const [refCode, setRefCode] = useState<string | null>(null);
   const [profName, setProfName] = useState("");
   const [syncedAt, setSyncedAt] = useState("");
   const [typo, setTypo] = useState<string | null>(null);
@@ -122,7 +120,7 @@ export function Account({ uiLang, name, onName }: {
     const cur = session?.user.id;
     if (lastUid.current !== cur) {
       lastUid.current = cur;
-      setMember(null); setRefCode(null); setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setCloudNewer(false);
+      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setCloudNewer(false);
     }
     if (!session) return;
     let alive = true;
@@ -132,8 +130,6 @@ export function Account({ uiLang, name, onName }: {
       const prof = await loadProfile(uid);
       if (!alive) return;
       if (prof) {
-        setMember(prof.member_until);
-        setRefCode(prof.ref_code);
         setProfName(prof.name || "");
         if (prof.name) onName(prof.name);
         else if (name.trim() && (!linked || linked === uid)) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
@@ -272,7 +268,6 @@ export function Account({ uiLang, name, onName }: {
   if (!ready) return <p className="acct-note">{T("加载中…", "Memuat…", "Loading…", uiLang)}</p>;
 
   if (session) {
-    const active = member && new Date(member) >= new Date();
     return <div className="acct">
       <div className="acct-card">
         <div className="acct-who">
@@ -281,11 +276,6 @@ export function Account({ uiLang, name, onName }: {
             <b>{name.trim() || T("学习者", "Pelajar", "Learner", uiLang)}</b>
             <small>{session.user.email}</small>
           </div>
-          <em className={active ? "acct-badge on" : "acct-badge"}>
-            {active
-              ? T(`会员至 ${member}`, `Anggota s/d ${member}`, `Member until ${member}`, uiLang)
-              : T("免费用户", "Pengguna gratis", "Free learner", uiLang)}
-          </em>
         </div>
 
         {recovering && <form onSubmit={setNewPassword} style={{ marginBottom: 18 }}>
@@ -309,10 +299,6 @@ export function Account({ uiLang, name, onName }: {
             onBlur={() => { if (session && !foreign) saveName(session.user.id, name.trim()).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
-
-        {refCode && <p className="acct-note">
-          {T("你的推广码：", "Kode referralmu: ", "Your referral code: ", uiLang)}<code>{refCode}</code>
-        </p>}
 
         {foreign
           ? <>
@@ -379,7 +365,7 @@ export function Account({ uiLang, name, onName }: {
           <span>{T("邮箱", "Email", "Email", uiLang)}</span>
           <input type="email" required autoComplete="email" value={email}
             onChange={e => { setEmail(e.target.value); setTypo(suggestEmail(e.target.value)); }}
-            placeholder="nama@email.com" />
+            placeholder="name@example.com" />
         </label>
         {typo && <button type="button" className="acct-typo"
           onClick={() => { setEmail(typo); setTypo(null); }}>
@@ -407,9 +393,9 @@ export function Account({ uiLang, name, onName }: {
       {err && <p className="acct-err">{err}</p>}
     </div>
     <p className="acct-note">
-      {T("不登录也能练。登录只是为了让记录跟着你换设备，以及以后认出会员身份。",
-         "Tanpa akun pun tetap bisa latihan. Akun hanya membuat progresmu ikut pindah perangkat dan menandai status anggota.",
-         "You can practise without an account. Signing in only makes your progress portable and marks membership.", uiLang)}
+      {T("不登录也能练。登录只是为了让记录跟着你换设备。",
+         "Tanpa akun pun tetap bisa latihan. Akun hanya membuat progresmu ikut pindah perangkat.",
+         "You can practise without an account. Signing in only makes your progress portable.", uiLang)}
     </p>
   </div>;
 }
