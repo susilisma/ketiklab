@@ -76,7 +76,9 @@ const T = (ui: UiLang, zh: string, idn: string, en: string) => (ui === "zh" ? zh
 // NFD first: tone marks fall away, and ü (also ǖǘǚǜ) is then u + U+0308,
 // which becomes the IME "v" before the strip
 const UMLAUT_U = "u" + String.fromCharCode(0x308);
-const norm = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "");
+// lüe/nüe are the one ü case every IME also takes as lue/nue (no other syllable
+// spells that way), so both spellings meet at "ue" — for the target and the typing alike
+const norm = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "").replace(/([ln])ve/g, "$1ue");
 const focusVisible = (el: Element) => { try { return el.matches(":focus-visible"); } catch { return true; } };
 
 type Props = {
