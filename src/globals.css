@@ -413,6 +413,8 @@ button.profile:hover>i{color:var(--purple)}
 .meaning-pick,.meaning-peek{position:relative;z-index:7;border-radius:999px;padding:6px 16px;font-size:clamp(13px,1.4vh,17px);font-weight:650}
 .meaning-pick{border:0;background:none;color:var(--purple);text-decoration:underline;text-underline-offset:4px}
 select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(--line));background:var(--surface);cursor:pointer}.meaning-pick option{color:#171822}
+/* these three remove the UA outline; a keyboard user still has to see where the focus is */
+.toolbar input:focus-visible,.chapter-select:focus-visible,.language:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-soft)}
 .meaning-peek{border:1.5px dashed var(--line);background:transparent;color:var(--muted)}.meaning-peek:hover{border-color:var(--purple);color:var(--purple)}
 /* keeps its height so the meaning and the input do not move when TAB shows it */
 .phonetic.pron-hidden{visibility:hidden}
