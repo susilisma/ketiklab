@@ -255,6 +255,13 @@ export default function Home() {
   // older choice sees the mismatch and drops its result instead of applying it
   const sourceReq = useRef(0);
   const isComposing = useRef(false);
+  // The IME box is uncontrolled and is only synced to `typed` between compositions.
+  // When a word finishes (or rolls back) while the next composition is already open,
+  // the box cannot be cleared, so its committed text stays in front of the next
+  // commit: compStartLen is what the box held when that composition opened, and
+  // staleLen is how much of the box to ignore when the commit is graded.
+  const compStartLen = useRef(0);
+  const staleLen = useRef(0);
   // set the moment a word is graded, cleared when its advance timer fires: keys
   // that land in that window must not grade the same word again or skip it
   const finishing = useRef(false);
@@ -319,8 +326,13 @@ export default function Home() {
 
   useEffect(() => {
     const el = input.current;
-    if (el && el.classList.contains("ime-input") && !isComposing.current && el.value !== typed) el.value = typed;
+    if (!el || !el.classList.contains("ime-input") || isComposing.current) return;
+    // between compositions the box is made to match `typed`, so nothing stale is left in it
+    if (el.value !== typed) el.value = typed;
+    staleLen.current = 0;
   });
+  // a word left behind while a composition is open: remember what the box still holds
+  const markStale = () => { if (isComposing.current) staleLen.current = compStartLen.current; };
   const t = UI[uiLang];
 
   // The exam libraries live behind manifest.json. Run at mount and again from the
@@ -863,6 +875,7 @@ export default function Home() {
       window.setTimeout(() => {
         if (autoAdvance.current !== token) return;
         finishing.current = false;
+        markStale();
         setTyped(""); setLoopIx(n => n + 1);
         setTimeout(() => input.current?.focus(), 20);
       }, 320);
@@ -871,6 +884,7 @@ export default function Home() {
     window.setTimeout(() => {
       if (autoAdvance.current !== token) return;
       finishing.current = false;
+      markStale();
       setTyped(""); setLoopIx(0);
       const wasWrong = hadWrong.current;
       hadWrong.current = false; lapseRecorded.current = false;
@@ -965,6 +979,9 @@ export default function Home() {
   function handleType(raw: string) {
     if (finishing.current || wrongFlash) return;
     if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
+    // the box still shows the previous word (or the rolled-back text) in front of
+    // this commit: grade only what was committed since, after the kept prefix
+    if (practiceLang === "zh" && staleLen.current > 0) raw = typed + raw.slice(staleLen.current);
     // Never let the buffer grow past the target: extra keystrokes are simply
     // ignored, the way every other typing trainer behaves.
     const clean = (practiceLang === "zh"
@@ -1010,6 +1027,7 @@ export default function Home() {
       const tok = ++flashToken.current;
       window.setTimeout(() => {
         if (flashToken.current !== tok) return;
+        markStale();
         setTyped(fullReset ? "" : targetWord.slice(0, k));
         setWrongFlash(false); input.current?.focus();
       }, 350);
@@ -1376,7 +1394,7 @@ export default function Home() {
             onMiss={() => { if (finishing.current || hadWrong.current) return; hadWrong.current = true; setWrongCountWord(n => n + 1); setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30)); }}
             onSpeak={() => speak()}
           /> : <>
-          <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? "请用拼音输入" : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} value={practiceLang === "zh" ? undefined : typed} defaultValue="" onChange={e=>handleType(e.target.value)} onCompositionStart={()=>{ isComposing.current = true; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>setTypingFocus(false)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
+          <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? "请用拼音输入" : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} value={practiceLang === "zh" ? undefined : typed} defaultValue="" onChange={e=>handleType(e.target.value)} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>setTypingFocus(false)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
           <p className="hint">{TX("直接敲键盘", "Langsung ketik", "Just type", uiLang)} <span>·</span> {inputMode === "soft" ? TX("打错按退格改", "salah? tekan Backspace", "Backspace fixes a mistake", uiLang) : TX("打错自动回退", "salah = mundur otomatis", "a mistake rolls back", uiLang)} &nbsp;&nbsp; ENTER <span>·</span> {TX("跳过", "lewati", "skip", uiLang)} &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> {TX("重播发音", "ulang suara", "replay", uiLang)}</p>
           </>}
           {wrongCountWord >= 3 && <button className="skip-btn" onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
