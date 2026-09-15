@@ -9,6 +9,8 @@
 .source-note b{font-size:12px;color:var(--purple);letter-spacing:.8px;text-transform:uppercase}
 .source-note p{font-size:13px;font-weight:750;margin:7px 0}
 .source-note p a{color:inherit;text-decoration:underline;text-underline-offset:3px;text-decoration-color:var(--purple)}
+/* the licence link is the one tap target in the library under 40 px on a phone */
+@media(pointer:coarse),(max-width:640px){.source-note p a{display:inline-block;padding:11px 0}}
 .source-note p a:hover{color:var(--purple)}
 .source-note span{color:var(--muted);font-size:12px;line-height:1.6}
 @media(max-width:640px){.category-tabs{margin-top:-5px}.category-tabs button{padding:8px 11px}.toolbar{align-items:stretch}.toolbar>span{display:flex;align-items:center}.source-note{padding:16px}}
