@@ -1268,7 +1268,9 @@ export default function Home() {
   // could not be fetched, so a missing key may still exist there
   async function resolveReviewRefs(keys: string[], report?: { unresolved: string[]; complete: boolean }): Promise<ReviewRef[]> {
     const found = new Map<string, ReviewRef>();
-    let complete = true;
+    // no manifest yet (still loading, or failed) means no dictionary was checked: a
+    // key it holds must not be taken for a removed word and retired
+    let complete = dicts.length > 0;
     const scan = (d: DictInfo, data: DictEntry[]) => {
       const byName = new Map(data.map(e => [e.name, e]));
       for (const k of keys) {
@@ -1306,6 +1308,9 @@ export default function Home() {
     }
     if (!refs.length) return;
     sourceReq.current++;
+    // 认读 only shows the word and schedules nothing, so a review held on that rung
+    // would never clear a single due word; it starts one rung up
+    if (zhStep === "read") setZhStep("pinyin");
     setReviewRefs(refs);
     setReviewKeys(keys);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
@@ -1431,7 +1436,7 @@ export default function Home() {
             {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small>{x.text}</span>)}
           </div>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
-            {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} onClick={() => { setZhStep(st.id); setTyped(""); resetWordRun(); }}>
+            {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} disabled={!!reviewKeys && st.id === "read"} onClick={() => { setZhStep(st.id); setTyped(""); resetWordRun(); }}>
               <i>{st.num}</i>{uiLang === "zh" ? st.zh : uiLang === "id" ? st.idn : st.en}
             </button>)}
           </div>}
