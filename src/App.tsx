@@ -1237,7 +1237,12 @@ export default function Home() {
     if (w) { if (lg !== lang) changeLanguage(lg); practiceWord(w, lg); return; }
     for (const d of dicts) if (d.lang === lg && dictCache.current.get(d.id)?.some(e => e.name === key)) { gotoDictWord(d.id, key); return; }
   }
-  function start() { setRunning(v => !v); setTimeout(() => input.current?.focus(), 20); }
+  // the click moved focus to the button; refocusing the input would run its onFocus,
+  // which sets running again, so only a start gives the focus back
+  function start() {
+    if (running) { setRunning(false); return; }
+    setRunning(true); setTimeout(() => input.current?.focus(), 20);
+  }
   // Keys are "<lang>:<word key>". Within a language an English key can still exist
   // both in the trio collection and in an English dictionary: prefer the dictionary
   // being practised, then the trio collection, then the other dictionaries in
