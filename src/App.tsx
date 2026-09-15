@@ -105,7 +105,10 @@ const ENTRY: { ui: Lang | null; lib: string | null; articles: boolean } = (() =>
     const p = new URLSearchParams(location.search);
     const ui = p.get("ui"), lib = p.get("lib"), view = p.get("view");
     if (p.has("ui") || p.has("lib") || p.has("view")) history.replaceState(null, "", location.pathname + location.hash);
-    return { ui: isLang(ui) ? ui : null, lib, articles: view === "articles" };
+    // the landing pages /zh/ /id/ /en/ embed the app: opening one is opening the app in that
+    // language, whatever the browser's locale says (a saved choice still wins, see the restore effect)
+    const path = location.pathname.match(/^\/(zh|id|en)\/(index\.html)?$/)?.[1];
+    return { ui: isLang(ui) ? ui : isLang(path) ? path : null, lib, articles: view === "articles" };
   } catch { return { ui: null, lib: null, articles: false }; }
 })();
 // the interface language before any choice: the link's, else the browser's when it is one of ours
