@@ -324,7 +324,11 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
     return path, static_page(lang, title, f"{name}: {desc}", path, body, lambda l: f"/{l}/lib/{row['id']}/", lib_rows, n_readings)
 
 
-def trio_page(lang, words, lib_rows, n_readings):
+# the app reads the same file when a row carries no pinyin of its own (App.tsx zhToneText)
+first_zh = lambda w: w["zh"].split("；")[0]
+
+
+def trio_page(lang, words, lib_rows, n_readings, zh_pinyin):
     name = T["trio"][lang]; desc = T["trio_desc"][lang]
     n = len(words); shown = words[:ENTRIES_PER_PAGE]
     title = f"{name} — {fmt('count', lang, n=num(n, lang))} | KetikLab"
@@ -333,7 +337,7 @@ def trio_page(lang, words, lib_rows, n_readings):
     rows = "\n".join(
         f'<tr><td class="w">{esc(w["id"])}</td><td>{esc(w["zh"])}</td></tr>' if lang == "zh" else
         # the practice word is the first sense; the pinyin belongs to it, not to the whole "实现；达到" field
-        f'<tr><td class="w">{esc(w["zh"].split("；")[0])}</td><td class="p">{esc(w.get("pinyin") or "")}</td><td>{esc(w[lang])}</td></tr>'
+        f'<tr><td class="w">{esc(first_zh(w))}</td><td class="p">{esc(w.get("pinyin") or zh_pinyin.get(first_zh(w), "").split("|")[0])}</td><td>{esc(w[lang])}</td></tr>'
         for w in shown)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
@@ -391,6 +395,7 @@ def main():
     manifest = load_json("manifest.json")
     words = load_json("words.json")
     readings = load_json("readings.json")
+    zh_pinyin = load_json("zh-pinyin.json")
     dict_entries = {row["id"]: load_json(row["file"]) for row in manifest}
     n_pages = 0
     groups = [{l: "/" for l in LANGS}]  # the root is one page in every language
@@ -406,7 +411,7 @@ def main():
             write(os.path.join(DIST, path.strip("/"), "index.html"), page); n_pages += 1
         groups.append({l: f"/{l}/lib/{row['id']}/" for l in LANGS})
     for lang in LANGS:
-        path, page = trio_page(lang, words, manifest, len(readings))
+        path, page = trio_page(lang, words, manifest, len(readings), zh_pinyin)
         write(os.path.join(DIST, path.strip("/"), "index.html"), page); n_pages += 1
     groups.append({l: f"/{l}/lib/trio/" for l in LANGS})
     for lang in LANGS:
