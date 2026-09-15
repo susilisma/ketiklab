@@ -285,6 +285,9 @@ export default function Home() {
   const finishing = useRef(false);
   // a slip on any repetition of a looped word is its one lapse
   const lapseRecorded = useRef(false);
+  // the Pause button was pressed: the word-advance and rollback timers must not hand
+  // the focus back to the input, whose onFocus would start the clock again
+  const pausedByButton = useRef(false);
   const flashToken = useRef(0);
   const [sessionWords, setSessionWords] = useState(0);
   const cancelFlash = () => { flashToken.current++; setWrongFlash(false); };
@@ -879,7 +882,7 @@ export default function Home() {
         autoSpokenWord.current = `${source}:${nx.key}`;
         window.setTimeout(() => speak(nx.text, nx.voice), 160);
       }
-      setTimeout(() => input.current?.focus(), 20);
+      setTimeout(() => { if (!pausedByButton.current) input.current?.focus(); }, 20);
     }
   }
   function finishWord() {
@@ -1056,7 +1059,7 @@ export default function Home() {
         if (flashToken.current !== tok) return;
         markStale();
         setTyped(fullReset ? "" : targetWord.slice(0, k));
-        setWrongFlash(false); input.current?.focus();
+        setWrongFlash(false); if (!pausedByButton.current) input.current?.focus();
       }, 350);
     }
   }
@@ -1251,7 +1254,7 @@ export default function Home() {
   // the click moved focus to the button; refocusing the input would run its onFocus,
   // which sets running again, so only a start gives the focus back
   function start() {
-    if (running) { setRunning(false); return; }
+    if (running) { pausedByButton.current = true; setRunning(false); return; }
     setRunning(true); setTimeout(() => input.current?.focus(), 20);
   }
   // Keys are "<lang>:<word key>". Within a language an English key can still exist
@@ -1442,7 +1445,7 @@ export default function Home() {
             onMiss={() => { if (finishing.current || hadWrong.current) return; hadWrong.current = true; setWrongCountWord(n => n + 1); setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30)); }}
             onSpeak={() => speak()}
           /> : <>
-          <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} value={practiceLang === "zh" ? undefined : typed} defaultValue="" onChange={e=>handleType(e.target.value)} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>setTypingFocus(false)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
+          <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} value={practiceLang === "zh" ? undefined : typed} defaultValue="" onChange={e=>handleType(e.target.value)} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; pausedByButton.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>setTypingFocus(false)} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
           <p className="hint">{TX("直接敲键盘", "Langsung ketik", "Just type", uiLang)} <span>·</span> {inputMode === "soft" ? TX("打错按退格改", "salah? tekan Backspace", "Backspace fixes a mistake", uiLang) : TX("打错自动回退", "salah = mundur otomatis", "a mistake rolls back", uiLang)} &nbsp;&nbsp; ENTER <span>·</span> {TX("跳过", "lewati", "skip", uiLang)} &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> {TX("重播发音", "ulang suara", "replay", uiLang)}</p>
           </>}
           {wrongCountWord >= 3 && <button className="skip-btn" onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
