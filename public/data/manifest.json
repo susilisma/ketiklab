@@ -8,10 +8,10 @@
   "description_id": "Kata umum bahasa Indonesia · urut frekuensi",
   "description_en": "Common Indonesian words · ordered by frequency",
   "lang": "id",
-  "length": 3036,
+  "length": 3023,
   "file": "indonesian.json",
   "coverage": {
-   "zh": 3036,
+   "zh": 3023,
    "id": 0,
    "en": 0,
    "def": 0
@@ -44,13 +44,13 @@
   "description_id": "Frekuensi Zipf 4.3–9.0",
   "description_en": "Zipf frequency 4.3–9.0",
   "lang": "en",
-  "length": 2591,
+  "length": 2590,
   "file": "en-core.json",
   "coverage": {
-   "zh": 2591,
-   "id": 2312,
+   "zh": 2590,
+   "id": 2311,
    "en": 0,
-   "def": 2591
+   "def": 2590
   }
  },
  {
@@ -80,13 +80,13 @@
   "description_id": "Frekuensi Zipf 3.5–3.85",
   "description_en": "Zipf frequency 3.5–3.85",
   "lang": "en",
-  "length": 2134,
+  "length": 2131,
   "file": "en-upper.json",
   "coverage": {
-   "zh": 2134,
-   "id": 1600,
+   "zh": 2131,
+   "id": 1599,
    "en": 0,
-   "def": 2134
+   "def": 2131
   }
  },
  {
@@ -98,13 +98,13 @@
   "description_id": "Frekuensi Zipf 3.15–3.5",
   "description_en": "Zipf frequency 3.15–3.5",
   "lang": "en",
-  "length": 2445,
+  "length": 2439,
   "file": "en-academic.json",
   "coverage": {
-   "zh": 2445,
-   "id": 1648,
+   "zh": 2439,
+   "id": 1647,
    "en": 0,
-   "def": 2445
+   "def": 2439
   }
  },
  {
