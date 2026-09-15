@@ -1372,7 +1372,7 @@ export default function Home() {
 
   return <div className={`app${dark ? " dark" : ""}${running && view === "learn" ? " focused" : ""}`}>
     <aside className="sidebar">
-      <button className="brand" onClick={() => setView("learn")} aria-label="KetikLab home"><span>KL</span><b>KetikLab</b></button>
+      <button className="brand" onClick={() => setView("learn")} aria-label={TX("KetikLab 首页", "Beranda KetikLab", "KetikLab home", uiLang)}><span>KL</span><b>KetikLab</b></button>
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} title={t[item.id]} aria-label={t[item.id]} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
         <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, DAILY_GOAL)}/{DAILY_GOAL}</b></span><div><i style={{width:`${Math.min(todayCount / DAILY_GOAL * 100, 100)}%`}} /></div></div>
@@ -1388,7 +1388,7 @@ export default function Home() {
       <header>
         <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictName(dictInfo) : source === "fav" ? TX("我的收藏", "Favorit saya", "My favorites", uiLang) : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}{ladderNarrowed ? ` / ${activeWords.length}` : ""}</b></button>
         <div className="header-actions">
-          <button className="round" onClick={() => setDark(v => !v)} aria-label="Dark mode">{dark ? "☀" : "☾"}</button>
+          <button className="round" onClick={() => setDark(v => !v)} aria-label={TX("深色模式", "Mode gelap", "Dark mode", uiLang)}>{dark ? "☀" : "☾"}</button>
           <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Indonesia</option><option value="en">English</option></select></label>
           <button className={running ? "primary running" : "primary"} onClick={start}>{running ? t.pause : t.start}<span>→</span></button>
         </div>
@@ -1396,17 +1396,17 @@ export default function Home() {
 
       {view === "learn" && <section className="learn-view">
         {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${reviewKeys.length > reviewItems.length ? ` / ${reviewKeys.length}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata jatuh tempo di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
-        <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label="Prev chapter">‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label="Jump to chapter">{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label="Next chapter">›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
+        <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row">{!zhLadder && <span className="mode-group"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</span>}{!zhLadder && <span className="mode-sep" />}<span className="mode-group"><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", TX("自动回退", "Mundur otomatis", "Auto rollback", uiLang)], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); cancelFlash(); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</span></div>
         {!chapterFinished && <>
         <div className={practiceLang === "zh" ? "word-card zh-compact" : "word-card"} onClick={() => input.current?.focus()}>
           {!typingFocus && !zhLadder && <div className="type-veil" onClick={() => input.current?.focus()}><b>{uiLang === "zh" ? (running ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (running ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (running ? "Press any key to continue" : "Press any key to start")}</b></div>}
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
-          <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label="Play pronunciation">▶</button>
+          <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label={TX("播放发音", "Putar pelafalan", "Play pronunciation", uiLang)}>▶</button>
           {speechBlocked && <button className="speech-unlock" onClick={e => { e.stopPropagation(); speechPrimed.current = false; setSpeechBlocked(false); speak(); }}>
             {uiLang === "zh" ? "点此启用发音" : uiLang === "id" ? "Ketuk untuk mengaktifkan suara" : "Tap to enable sound"}
           </button>}
-          <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label="Favorite">{isFav ? "★" : "☆"}</button>
+          <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label={isFav ? TX("取消收藏", "Hapus dari favorit", "Remove from favorites", uiLang) : TX("收藏", "Tambah ke favorit", "Add to favorites", uiLang)}>{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
           {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
             <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
@@ -1559,7 +1559,7 @@ export default function Home() {
                   {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTyped[i] === character ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character}</span>)}
                 </div>
                 <div className="reading-input-wrap">
-                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (v === readingTarget) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={reading.lang === "zh" ? "照着上方文字输入……" : reading.lang === "id" ? "Ketik baris di atas…" : "Type the line above…"} spellCheck={false} />
+                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (v === readingTarget) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={TX("照着上方文字输入……", "Ketik baris di atas…", "Type the line above…", uiLang)} spellCheck={false} />
                   <button className={readingTyped === readingTarget ? "ready" : ""} onClick={() => submitReading()} disabled={readingTyped !== readingTarget}>{t.nextLine} <span>↵</span></button>
                 </div>
                 {readingTyped && readingTyped !== readingTarget && <p className="typing-help">{t.typingHelp}</p>}
@@ -1619,7 +1619,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
   useEffect(() => { first.current?.focus(); }, []);
   return <div className="lang-modal-backdrop" role="dialog" aria-modal="true" onKeyDown={e => { if (e.key === "Escape") onClose(); }}>
     <div className="lang-modal">
-      <button className="lang-modal-close" onClick={onClose} aria-label="Close">✕</button>
+      <button className="lang-modal-close" onClick={onClose} aria-label={mt.cancel}>✕</button>
       <h2>{mt.title}</h2>
       <p className="lang-modal-subtitle">{mt.subtitle}</p>
       <div className="lang-modal-section">
