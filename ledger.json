@@ -229,10 +229,10 @@
    "fingerprint": "review-session-wraps",
    "title": "复习会话答完后回绕到第 1 个词，无结束卡",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "约 6 行：atEnd && reviewKeys 走章节结束卡并调 exitReview；本次已到 12 项上限",
-   "date": "2026-09-15"
+   "status": "fixed",
+   "commit": "642da74",
+   "reason": "复习答完最后一词进完成卡（复习完成 / 退出复习），计数与用时独立；Chromium en/zh 各验证；已合入 main",
+   "date": "2026-09-16"
   },
   {
    "fingerprint": "readme-omits-business-english",
@@ -303,8 +303,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "已量化；select/关 各 1 行 CSS；分类条 4 行 scrollIntoView；对比度改品牌色由主人定",
-   "date": "2026-09-15"
+   "reason": "今日渲染检查复测：语言 select 90×38、默写「关」36 宽仍在；紫字紫底未复测；分类条未动",
+   "date": "2026-09-16"
   },
   {
    "fingerprint": "timer-runs-in-other-views",
@@ -481,10 +481,10 @@
    "fingerprint": "word-wraps-mid-word",
    "title": "多词词头换行断在词中间（pelayan/an、ser/vice）：每个字符一个 span 且空格换成 nbsp + overflow-wrap:anywhere（App.tsx:1405, globals.css:350）",
    "priority": "P2",
-   "status": "deferred",
-   "reason": "已验证 1 行修法（空格后加 <wbr/>），本次已到 12 项上限，明日第一项",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "已合入 main 53fd828；Chromium 375/768：所有换行都落在空格后（dinas penanaman / modal dan / pelayanan terpadu / satu pintu）",
+   "date": "2026-09-16",
+   "commit": "35f752f"
   },
   {
    "fingerprint": "dictation-hides-extras-on-ladder",
@@ -500,9 +500,9 @@
    "title": "restoreRecords 接受 NaN/秒/字符串 reps 的行（srs.ts:108）",
    "priority": "P3",
    "status": "deferred",
-   "reason": "2 行：Number.isFinite + Number()",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入；已加 step 夹在 [-1,7]；node 断言通过",
+   "date": "2026-09-16",
+   "commit": "faeb61c"
   },
   {
    "fingerprint": "due-today-means-due-now",
@@ -517,10 +517,10 @@
    "fingerprint": "review-page-contradictory-empty-state",
    "title": "复习会话进行中打开间隔复习页显示「暂无到期复习」空态（App.tsx:777,1505）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "1 行",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "空态只在无到期无错词时显示；已合入 main",
+   "date": "2026-09-16",
+   "commit": "5fd0b58"
   },
   {
    "fingerprint": "reset-progress-never-reaches-cloud",
@@ -607,9 +607,9 @@
    "fingerprint": "history-json-stale",
    "title": "history.json 今日 3813 vs 实际 3792（手删后快照未跑）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "下次小时任务自动改正，无读者",
-   "date": "2026-09-15",
+   "status": "fixed",
+   "reason": "小时任务已自动改正：2026-09-15 行 3879 = 实际",
+   "date": "2026-09-16",
    "commit": ""
   },
   {
@@ -617,8 +617,8 @@
    "title": "在线 3 组中文首义重复（课程/方法/污染）",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "在线词条，主人决定",
-   "date": "2026-09-15",
+   "reason": "今日两位审词者再次确认（课程/方法/污染），仍待主人",
+   "date": "2026-09-16",
    "commit": ""
   },
   {
@@ -634,36 +634,36 @@
    "fingerprint": "queue-doubtful-glosses",
    "title": "队列 87 行里约 11 行释义可疑（ignorant→jahil、spectator→pemerhati、clarify→menjelaskan…）",
    "priority": "P3",
-   "status": "needs-owner",
-   "reason": "队列行小时任务会放出；列于报告供主人复核",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "队列已全部放出；其中 spectator→penonton、seasonal、alley、probable 今日改正；ignorant→jahil、clarify→menjelaskan 经校验者判为 KBBI 可接受未改；其余见 reports/gloss-candidates-2026-09-16.md",
+   "date": "2026-09-16",
+   "commit": "53fd828"
   },
   {
    "fingerprint": "sw-landing-offline-fallback-dead",
    "title": "离线打开从未在线访问过的 /zh/ /id/ /en/：回退到根 shell，但相对资源路径解析到 /zh/assets/…，应用不挂载",
    "priority": "P2",
-   "status": "deferred",
-   "reason": "1 行：CORE 加 ./zh/ ./id/ ./en/；本次已到 12 项上限，明日第二项",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "CORE 预缓存 ./zh/ ./id/ ./en/，未缓存的落地页离线时 302 到 /?ui=<lang>；Chromium 离线打开 /id/ 挂载、删掉 /en/ 后重定向并挂载；已合入 main",
+   "date": "2026-09-16",
+   "commit": "bd4c26a"
   },
   {
    "fingerprint": "sw-landing-deploy-race-dead-page",
    "title": "部署后 10 分钟内回访 /zh/（HTTP 缓存里的旧 HTML + 新 worker 已删旧资源）出现只有爬虫文案的死页",
    "priority": "P2",
-   "status": "deferred",
-   "reason": "SW-1 的 CORE 改动同时刷新其 HTTP 缓存；带查询串的 shell 再加 cache:no-cache 一行",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "壳与落地页导航改用 cache:\"no-cache\" 向服务器再验证，不再拿 HTTP 缓存里上一版 HTML；已合入 main",
+   "date": "2026-09-16",
+   "commit": "bd4c26a"
   },
   {
    "fingerprint": "sw-first-visit-no-data-offline",
    "title": "首次访问只加载一次后离线：数据 JSON 在 worker 接管前取的，未缓存，离线显示「内容加载失败」",
    "priority": "P3",
    "status": "deferred",
-   "reason": "约 4 行：activate 时补取三个 data 文件",
-   "date": "2026-09-15",
+   "reason": "今日 Chromium 复现仍在：只在线打开一次就离线，/id/ 挂载但显示「Gagal memuat konten」；约 4 行 activate 补取 data 文件；明日",
+   "date": "2026-09-16",
    "commit": ""
   },
   {
@@ -680,18 +680,18 @@
    "title": "阅读器「第 n 句」绿色 #39a97a 在白底 2.95:1",
    "priority": "P3",
    "status": "deferred",
-   "reason": "1 行换色",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
+   "date": "2026-09-16",
+   "commit": "5ea3ce4"
   },
   {
    "fingerprint": "css-meaning-pick-options-dark",
    "title": "深色模式 select.meaning-pick 的 option 深字深底 1.04:1",
    "priority": "P3",
    "status": "deferred",
-   "reason": "1 行 option{background:#fff}",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
+   "date": "2026-09-16",
+   "commit": "a512340"
   },
   {
    "fingerprint": "css-danger-button-contrast",
@@ -706,10 +706,10 @@
    "fingerprint": "landing-page-ignores-path-lang",
    "title": "/en/ /id/ 落地页嵌入应用包，启动后界面语言取浏览器语言而非路径语言：法语/中文浏览器开 /en/ 得到中文界面与中文对话框",
    "priority": "P2",
-   "status": "deferred",
-   "reason": "2 行：ENTRY 无 ?ui 时从路径段 zh|id|en 取；本次已到 12 项上限，明日第三项",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "ENTRY 取路径段 zh|id|en；Chromium：fr-FR 开 /en/ 得英文对话框，en-US 开 /id/ 得印尼语，已保存中文的老用户开 /en/ 仍中文；已合入 main",
+   "date": "2026-09-16",
+   "commit": "3a5aa4d"
   },
   {
    "fingerprint": "restore-swaps-list-mid-word",
@@ -800,6 +800,411 @@
    "reason": "约 10 行 lazy useState；未观察到实际丢失",
    "date": "2026-09-15",
    "commit": ""
+  },
+  {
+   "fingerprint": "cloud-url-login-csrf-autolink",
+   "title": "地址栏 hash 里的 access_token 被 auth-js 变成会话后，账户页自动把未绑定设备的进度上传并绑定到该账号：一条带他人 token 的链接就能拿走学习记录（cloud.ts detectSessionInUrl + Account.tsx 自动 linkThisDevice）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "8d05b34",
+   "reason": "来自链接的会话只看不绑：账户页提示并等「立即同步」；同一守卫不再让外来账号的名字覆盖本机名字。Chromium 模拟 Supabase：旧行为会 POST progress，新版无 POST、sync-uid 为空，点立即同步后才上传；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "review-empty-state-vs-due",
+   "title": "间隔复习页在有 N 个到期词（词典未加载或干净首日）时仍显示「暂无到期复习」空态，与上方按钮矛盾",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "5fd0b58",
+   "reason": "空态只在无到期无错词时；否则一行说明 N 个词到期/错词在别的词库；Chromium 验证；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "append-batch-zh-first-sense-dedup",
+   "title": "append-batch.mjs 按整个 zh 字段去重而非按义项：手编行「污染；弄脏」会与在线「污染」并存，两张卡同一个练习词",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "a8c640e",
+   "reason": "按「；」拆义项对在线与批次去重；实测 污染；弄脏 被拒、新词通过；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "a11y-focus-indicator-removed",
+   "title": "词库搜索框、章节 select、顶栏语言 select 去掉 outline 且无替代焦点样式，键盘用户看不到焦点（globals.css outline:0）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "6e3ea34",
+   "reason": "加 :focus-visible / :focus-within 紫环；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "indonesian-json-english-rows",
+   "title": "indonesian.json 含 20 个纯英文词（and/you/are/not/like/out/time/make/see/said/next/posted/reserved/chairs/world/story/cup/cream/camp/pan）按英文义释义，印尼语学习者被要求当印尼语打",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "fdfaaa4",
+   "reason": "删除 20 行（KBBI 与 omw-id 均无），manifest length/coverage 3023→3003；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "reading-list-rows-overlap",
+   "title": "阅读列表是限高 flex 列，行默认可收缩：64 篇中文被压到 48px 而内容 63px，作者行压在下一行体裁上（所有视口）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "8f8a7d5",
+   "reason": "flex-shrink:0；Chromium 375：64 行各 87px 无重叠；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "zh-pinyin-lue-rejected",
+   "title": "打拼音只认 lve/nve，策略（1 级词）等 8 词按各大输入法都接受的 lue/nue 打会判错并记遗忘（ZhSteps.tsx norm）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "dcb16f8",
+   "reason": "norm 把 l/n+ve 与 ue 归一；Chromium：celue 通过，无错记；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "zh-pinyin-overshoot-freeze",
+   "title": "打拼音一次粘贴/自动更正多字后，回退设成整个目标，输入框此后忽略所有按键（ZhSteps.tsx:193）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "7162825",
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入；Chromium：粘贴 faguiny 后回退到 fagu，可继续",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "mistakes-list-omits-unloaded-dicts",
+   "title": "错词本只列本会话已加载词库的词，词典错词在切回主题词后重开被静默漏掉，与按钮数量不一致",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "218395b",
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入；Chromium：打开页面后 97 ms 内取到 en-core 并列出 said",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "en-dicts-def-cut-mid-word",
+   "title": "build-en-dicts.py 在第 120 字符硬截断，385 条在线英文定义断在词中间（…passage of time or）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "9628c05",
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入；合入后还需主人手动跑 Rebuild English word libraries 才更新四个 en-* 文件（整体重生成，建议抽查）",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "ui-keyboard-zh-hanzi-prompt",
+   "title": "UI.keyboard 中文臂「输入第一个汉字开始」对学英语/印尼语也显示",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "cf56ee7",
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "source-note-link-34px",
+   "title": "词库页授权链接 304×34.5px，是 375px 唯一新的 <40px 触控目标",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "5adf74b",
+   "reason": "已修好，在分支 claude/daily-2026-09-16（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "foreign-account-name-overwrites-local",
+   "title": "设备已绑 A 时 B 登录，B 的资料名先覆盖本机 ketiklab-name，再被写回 A 的资料",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "8d05b34",
+   "reason": "与登录链接守卫同一提交；已合入 main",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "trio-gloss-corrections-0916",
+   "title": "在线主题词 49 行释义错误（印尼语错义/马来义 15 行、中文首义为定义片段或化学名 34 行）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "53fd828",
+   "reason": "查找者 109 条建议，独立校验者同意 100 项，按 50 行上限取 49 行（配对项同进同出，x-ray 因含拉丁字母未改）；拼音/音节提示重生成，id 与中文首义全库唯一；其余见 reports/gloss-candidates-2026-09-16.md",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "id-dict-trio-shared-identity",
+   "title": "主题词按 en 键、印尼语词典按词头键，练印尼语时 id:<en> 与词典同形词共用进度/收藏/SRS（air/udara 等 13 组，去掉英文词后剩 air、cup、platform、chat、happy、like、live、full…）",
+   "priority": "P1",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "根治要改主题词的进度标识（按所打文本键 id:udara）并迁移旧行 id:<en>（SRS/错词本/收藏，约 20–40 行），属进度标识改动，由主人定；本次删掉 indonesian.json 里的 20 个英文词后碰撞从 13 组降到 4 组同形词",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "indonesian-json-colloquial-loans",
+   "title": "indonesian.json 仍含口语英语借词 happy/full/live/nice/bye/list/quote/top/spot/thread/update/website/review/game/cup 等，释义为英文原义",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "是否算印尼语词汇由主人定（KBBI 未收，但印尼日常口语常用）；本次只删了 20 个纯英文词",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "en-dicts-rebuild-for-def-clip",
+   "title": "385 条英文定义仍在第 120 字符处截断（脚本已修，四个 en-* 库要重跑 Rebuild English word libraries 才更新）",
+   "priority": "P2",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "重建会整体重生成 4 个词库，输出可能随上游词网/词频包变化，建议主人手动 dispatch 并抽查",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "chapters-max-merge-never-regresses",
+   "title": "云端合并对 ketiklab-chapters 取最大值：重练早章或回绕到第 1 章后账户页永远提示「云端有本机没有的记录」，合并又跳回最后一章（cloud.ts:196-199）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "2 行：chapters 改为 over 胜出并移出 PROGRESS_KEYS；本次超上限",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "signout-global-scope-kills-other-devices",
+   "title": "退出登录用 auth-js 默认 scope global，另一台设备一小时内被踢下线且不再自动同步（cloud.ts:98）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "1 行 scope:\"local\"，但「退出是否退出所有设备」是产品决定",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "signout-drops-unpushed-minute",
+   "title": "退出登录前不推送，最近 ≤60 s 的进度只在本机；换账号「只用云端」后丢失（cloud.ts:96-99）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "3 行：signOut 前 pushProgress",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "import-silently-skips-srs-restore",
+   "title": "导入备份时 restoreRecords 失败被吞掉，仍刷新页面，复习阶梯为空无提示（App.tsx importProgress）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "3 行：失败走 alert",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "same-day-counts-max-not-sum",
+   "title": "同一天两台设备各打 12 词，合并取 max=12 而非 24，目标/热力图偏低（cloud.ts:196-199）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "按设备分桶再求和约 20 行，属数据模型改动",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "first-link-cloud-langs-override-fresh-choice",
+   "title": "新设备刚在首访对话框选好语言，登录合并后云端的 ketiklab-langs 覆盖之（cloud.ts:258）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "3 行：未绑定路径保留本机 ketiklab-langs",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "replace-with-no-cloud-row-blanks-device",
+   "title": "新账号（云端无行）点「只用云端记录」清空本机全部同步键，重开出现首访对话框（cloud.ts:250-255）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "4 行：无云端行时保留设置键，或隐藏按钮",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "lang-select-inert-with-dictionary",
+   "title": "打开词典或收藏时顶栏学习语言 select 只改 lang 不换词表，卡片仍出英文词（App.tsx changeLanguage）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "3 行：dictInfo.lang !== next 时回到主题词",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "settings-selects-no-accessible-name",
+   "title": "设置页 7 个 select 与词库搜索框、阅读输入框无可访问名称，读屏无法区分（App.tsx Setting）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 6 行 aria-label/htmlFor",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "reading-textarea-clips-on-phone",
+   "title": "阅读输入框固定 44px 高、overflow hidden，手机上超过约 38 字的行（131 行）换行后首行滚出视野（globals.css .reading-input-wrap textarea）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "1 行媒体查询 height:auto;min-height:66px",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "og-image-alt-chinese-on-landing",
+   "title": "/id/ /en/ 落地页 og:image:alt 仍是中文（build-seo-pages.py language_page 未改写）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 3 行",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "landing-cache-keyed-with-query",
+   "title": "sw.js 落地页按完整 URL（含 ?utm）存缓存，离线打开无参数的 /id/ 会 miss（sw.js navigate 分支）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "改 store/match 用 url.pathname；本次已改该分支，明日顺手",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "seo-cells-no-lang-attr",
+   "title": "生成页的外语单元格无 lang 属性，读屏用页面语言念中文/印尼语词（build-seo-pages.py 表格行）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "2–3 行",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "promote-burst-after-hand-emptied-queue",
+   "title": "手动清空队列时 promote.mjs 不记 drained，重新入队后下一小时一次放出 75 词而非 12（09-15 07:37 实发）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "3 行：nothing-due 分支写 drained",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "queue-rows-typeability",
+   "title": "append-batch.mjs 不检查可打性，手编行 zh \"P值\"/en \"cost/benefit\" 会上线且打不完",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 4 行 TYPEABLE 正则",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "topic-words-without-any-pinyin",
+   "title": "126 个主题词首义既不在 zh-pinyin.json 也无自带 pinyin（概率值、敲门、倒水…），打拼音档被跳过、发音行退化",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 6 行扩 build-zh-dicts.py 的 pinmap 到 words.json 并重生成 zh-pinyin.json",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "anki-front-keeps-parenthetical",
+   "title": "export-anki.py 英文牌正面保留 (after eating) 等括号注（6 条）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "1 行",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "rebuild-en-dicts-no-cache-no-tolerance",
+   "title": "rebuild-en-dicts.yml 无 wn 缓存、下载无 || true，瞬时失败即整跑失败",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 6 行照抄 zh 工作流",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "chapter-run-survives-same-key-list-change",
+   "title": "重点当前词库/分类或切换 en↔id 学习语言时 sourceKey 不变，章节统计与完成卡不重置（App.tsx selectDict/changeCategory/changeLanguage）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 5 行 resetChapterRun()",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "fav-remove-last-slot-replays-chapter",
+   "title": "收藏列表最后一个词上取消收藏，index 回绕重放前面的词，章节计数超出词数（App.tsx toggleFav）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 3 行",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "rung-change-restarts-review",
+   "title": "复习中点选汉字/换语言使 sourceKey 变化，复习从第 1 词重来且计数清零（App.tsx [sourceKey] 效果）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "1 行：reviewKeys 时不重置 index",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "soft-mode-skip-unreachable",
+   "title": "退格改错模式每词最多记 1 次错，「跳过这个词」按钮（≥3 错）永不出现",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "1 行",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "soft-mode-beeps-on-backspace",
+   "title": "退格改错模式下退格删除错字时也蜂鸣（App.tsx soft 分支）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "1 行：只在 clean.length > typed.length 时响",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "pinyin-tab-peek-scored",
+   "title": "打拼音档按 TAB 看拼音记为一次错（onMiss → SRS 遗忘 + 错词本），而输入法档的 TAB 不计分（ZhSteps.tsx:198）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "「不给偷看计分」是设计原则，但打拼音档的 TAB 是看答案；是否例外由主人定；提示文字也未说明 ENTER 跳过与 TAB 计错",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "zh-tab-peek-stuck-on-blur",
+   "title": "打拼音档按住 TAB 时 Escape/点别处，keyup 落到 body，整词拼音保持可见（ZhSteps.tsx:198-202）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "1 个 onBlur 属性（App 输入框已修同类问题 0aab2ba）",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "zh-choose-no-number-keys",
+   "title": "选汉字档不支持 1–4 数字键选项，键盘用户须 Tab 四次",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 6 行",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "ladder-degrades-when-zh-pinyin-missing",
+   "title": "zh-pinyin.json 取不到时 useZhMap 给 {}，阶梯静默退化为全部 3879 词、194 章，章节位置错位",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "约 8 行：报错而非退化",
+   "date": "2026-09-16"
+  },
+  {
+   "fingerprint": "review-single-word-zhsteps-dead",
+   "title": "只有一个复习词时打拼音/选汉字答对后 setIndex(0) 无变化，ZhSteps 不重挂载，输入框死掉，只能 Enter（记一次遗忘）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "642da74",
+   "reason": "同一提交修复复习回绕；Chromium：一个中文复习词打拼音答对后出完成卡，退出后输入框正常",
+   "date": "2026-09-16"
   }
  ]
 }
