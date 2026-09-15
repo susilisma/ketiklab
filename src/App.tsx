@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, deleteRecords, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
@@ -1416,7 +1416,9 @@ export default function Home() {
           {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
             <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
                onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
-          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><span key={i} className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>)}</h1>}
+          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
+              the <wbr> after it is the only break opportunity: without one, overflow-wrap:anywhere
+              splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
           {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined}>{item.sub}</p>}
           {/* the meaning sits right under the word stack; the ladder pills come after it */}
           {(itemMeaningLang !== "none" || (itemExtras.length > 0 && (extrasShown || meaningHidden))) && <div className="meanings">
