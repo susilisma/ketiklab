@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
   loadProfile, saveName, pushProgress, linkThisDevice, applyLocal, linkedUid, linkDevice,
-  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, type SyncNote,
+  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionFromLink, type SyncNote,
 } from "./cloud";
 
 type Lang = "zh" | "id" | "en";
@@ -94,6 +94,9 @@ export function Account({ uiLang, name, onName }: {
   const [newPw, setNewPw] = useState("");
   // the data on this device belongs to a different account than the one signed in
   const [foreign, setForeign] = useState(false);
+  // signed in through a link on a device that belongs to no account yet: joining
+  // the two is the learner's click, not the link's
+  const [linkOnly, setLinkOnly] = useState(false);
   const [cloudNewer, setCloudNewer] = useState(false);
   const [note, setNote] = useState<SyncNote>("");
   const [urlErr, setUrlErr] = useState("");
@@ -120,23 +123,29 @@ export function Account({ uiLang, name, onName }: {
     const cur = session?.user.id;
     if (lastUid.current !== cur) {
       lastUid.current = cur;
-      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setCloudNewer(false);
+      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setLinkOnly(false); setCloudNewer(false);
     }
     if (!session) return;
     let alive = true;
     (async () => {
       const uid = session.user.id;
       const linked = linkedUid();
+      // a session from a link (confirmation, reset — or a link someone else made with
+      // their own tokens) may look at this account but does not take this device's
+      // data with it until 立即同步 is pressed; a device linked to another account
+      // keeps its name too
+      const untrusted = (!!linked && linked !== uid) || (!linked && sessionFromLink());
       const prof = await loadProfile(uid);
       if (!alive) return;
       if (prof) {
         setProfName(prof.name || "");
-        if (prof.name) onName(prof.name);
-        else if (name.trim() && (!linked || linked === uid)) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
+        if (prof.name && !untrusted) onName(prof.name);
+        else if (!prof.name && name.trim() && !untrusted) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
       }
       if (recovering) return;
       try {
         if (linked && linked !== uid) { setForeign(true); return; }
+        if (!linked && sessionFromLink()) { setLinkOnly(true); return; }
         if (linked === uid) {
           const { cloudHasMore } = await pushProgress(uid);
           if (!alive) return;
@@ -221,7 +230,7 @@ export function Account({ uiLang, name, onName }: {
       if (linked && linked !== uid) { setForeign(true); return; }
       const { cloudHasMore } = await pushProgress(uid);
       if (name.trim()) await saveName(uid, name.trim());
-      linkDevice(uid);
+      linkDevice(uid); setLinkOnly(false);
       setCloudNewer(cloudHasMore);
       setSyncedAt(new Date().toLocaleTimeString());
       setMsg(T("已同步。", "Tersinkron.", "Synced.", uiLang));
@@ -316,6 +325,12 @@ export function Account({ uiLang, name, onName }: {
                 </button>
               </div>
             </>
+          : linkOnly
+          ? <p className="acct-note">
+              {T("你是通过邮件里的链接登录的。确认这是你的账号后，点「立即同步」把这台设备上的学习记录加入账号。",
+                 "Kamu masuk lewat tautan di email. Kalau ini memang akunmu, tekan “Sinkronkan sekarang” untuk menggabungkan data di perangkat ini ke akun.",
+                 "You signed in through an emailed link. If this is your account, press “Sync now” to add this device's progress to it.", uiLang)}
+            </p>
           : cloudNewer && <p className="acct-note">
               {T("云端有这台设备还没有的记录。", "Cloud punya data yang belum ada di perangkat ini.", "The cloud has progress this device does not.", uiLang)}
               <button className="acct-link" style={{ marginTop: 0, marginLeft: 6 }} onClick={pullNow} disabled={busy}>

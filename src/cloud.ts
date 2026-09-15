@@ -64,12 +64,19 @@ let session: Session | null = null;
 // a sign-up confirmation link also arrives with tokens in the hash; that sign-in
 // should land on the account page rather than silently on the home view
 let fromLink = (() => { try { return location.hash.includes("access_token="); } catch { return false; } })();
+// A session that came out of the URL was not typed in here: anyone can put their own
+// tokens in a link and send it round. Nothing on this device is joined to such a
+// session until the learner presses 立即同步 (Account checks this before linking).
+let viaLink = false;
+export function sessionFromLink() { return viaLink; }
 function tidyUrl() {
   try { if (/#(access_token|error)|#$/.test(location.href)) history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ }
 }
 supabase.auth.onAuthStateChange((event, s) => {
   session = s;
   if (event === "PASSWORD_RECOVERY") { recovery = true; ss.set(RECOVERY_KEY, "1"); }
+  if (event === "SIGNED_IN") viaLink = fromLink;
+  if (event === "SIGNED_OUT") viaLink = false;
   if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; wantAccount(); }
   tidyUrl();
 });
