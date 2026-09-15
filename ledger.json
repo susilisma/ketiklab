@@ -4,153 +4,153 @@
       "fingerprint": "ime-stale-commit-next-word",
       "title": "输入法步骤：上一个词提交的文字被拿去和下一个词比对（App.tsx:320-323,871-878）",
       "priority": "P1",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "d83be82",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "srs-bare-key-forever-due",
       "title": "SRS 裸键（13031d0 之前写入）永远到期且无迁移（srs.ts:26,33）",
       "priority": "P1",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "fb90e83",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "trio-gloss-quality",
       "title": "build-trio-queue.py 释义错误率 8–22%，3701–3800 有 22 行错（senses[0] + 跳过已有印尼词元 + omw-id 混马来语）",
       "priority": "P1",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "c215271, c6a6b33",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "seo-url-params-ignored",
       "title": "SEO 页链接 ?ui=&lib=&view=articles 但 App 不读 URL 参数",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "871fe11",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "sw-offline-after-deploy",
       "title": "部署后离线打不开：CORE 不含 hash 资源，新资源写进旧缓存后被 activate 删除",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "43b19c2",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "pause-button-unpauses",
       "title": "暂停按钮 20 ms 后被 onFocus 的 setRunning(true) 取消",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "caf9eba",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "account-membership-wording",
       "title": "账户页会员徽标/会员提示/推广码仍渲染（Account.tsx:284-288,313-315,409-413）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "2aa4e72",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "ime-placeholder-zh-only",
       "title": "输入法占位符 请用拼音输入 无 id/en 版本（App.tsx:1379）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "69cac40",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "srs-orphan-rows-dead-button",
       "title": "改名/删除的词的 SRS 行永远到期，开始复习按钮静默无反应（App.tsx:1231-1235）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "1c7cdba",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "dictation-masks-ladder-steps",
       "title": "默写模式在认读/打拼音步骤遮住全部汉字且无法显示（App.tsx:683-688,1342）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "886d600",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "tab-trap-practice-inputs",
       "title": "TAB/Shift+TAB 在练习输入框被吞，无 Escape，键盘用户被困（ZhSteps.tsx:196, App.tsx:1020）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "886d600",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "langsetup-no-focus-trap",
       "title": "语言对话框无焦点陷阱，onAnyKey 与拼音框自动聚焦让背后的词被计分",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "886d600",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "settings-select-overflow-id",
       "title": "印尼语界面 375px 设置页 Arti 下拉宽 427px 溢出（globals.css:24）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "69cac40",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "roman-numeral-headwords",
       "title": "en-* 库含 vii/xxx/viii/iii/xii/xiii/xvi/liv/xiv/ccc；indonesian.json 含 iii/abud 占位释义、ppp、idi",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "c5c9cb1",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "indonesian-duplicate-headwords",
       "title": "indonesian.json 9 个重复词头（dari, baru, makanan, baik, kopi, cinta, acara, diantara, pembuatan）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "c5c9cb1",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "sources-md-missing-zh-libs",
       "title": "SOURCES.md 未列 zh-core/zh-plus/zh-upper（OEWN CC BY 4.0）；words.json 署名与生成脚本声明不符",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "b84193e",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "zh-pronunciation-fallback-zh-only",
       "title": "普通话 · 点击播放标准发音 无 id/en 版本，词库网格 2190 张卡受影响（App.tsx:127）",
       "priority": "P2",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "69cac40",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
@@ -211,9 +211,9 @@
       "fingerprint": "readings-duplicate-jingyesi",
       "title": "readings.json 静夜思 重复（quiet-night / quiet-night-thought）",
       "priority": "P3",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "c5c9cb1",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
@@ -265,18 +265,18 @@
       "fingerprint": "html-lang-static",
       "title": "<html lang> 不随界面语言更新",
       "priority": "P3",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "871fe11",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
       "fingerprint": "first-visit-dialog-always-zh",
       "title": "首访对话框永远先中文，uiLang 不参考浏览器语言",
       "priority": "P3",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "871fe11",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
@@ -337,9 +337,9 @@
       "fingerprint": "email-placeholder-indonesian",
       "title": "邮箱占位符 nama@email.com 三语相同",
       "priority": "P3",
-      "status": "deferred",
+      "status": "fixed",
       "commit": "2aa4e72",
-      "reason": "已在本地分支 claude/daily-2026-09-15 修复并通过本地门禁与行为测试；推送 403，随 bundle 交付，待主人推送后改为 fixed",
+      "reason": "已合入 main c6a6b33，Build check 成功",
       "date": "2026-09-15"
     },
     {
@@ -373,9 +373,9 @@
       "fingerprint": "push-probe-403",
       "title": "git push 与 GitHub API 写入均 403（Claude GitHub App 未安装）",
       "priority": "P0",
-      "status": "needs-owner",
+      "status": "fixed",
       "commit": "",
-      "reason": "连续第二次；本次修复以 git bundle 交付，主人需安装 App 或从本地推送",
+      "reason": "主人在会话中把 ketiklab 加入 Claude GitHub App 授权，推送恢复",
       "date": "2026-09-15"
     }
   ]
