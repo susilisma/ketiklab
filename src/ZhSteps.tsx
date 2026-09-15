@@ -101,7 +101,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const target = norm(plain);
 
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
-  useEffect(() => { if (step === "pinyin") setTimeout(() => box.current?.focus(), 20); }, [step, word]);
+  // not while a dialog is open: the box would pull the focus out from under it
+  useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
 
   /* step 1 — recognise, advance on SPACE / ENTER */
   useEffect(() => {
@@ -193,7 +194,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         }
       }}
       onKeyDown={e => {
-        if (e.key === "Tab") { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
+        // Shift+TAB and Escape leave the box, so the page stays reachable by keyboard
+        if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
+        if (e.key === "Escape") box.current?.blur();
         if (e.key === "Enter") { e.preventDefault(); onSkip(); }
       }}
       onKeyUp={e => { if (e.key === "Tab") setPeek(false); }}
