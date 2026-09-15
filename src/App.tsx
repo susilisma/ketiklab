@@ -338,6 +338,9 @@ export default function Home() {
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
       isComposing.current = false;
       input.current?.focus();
+      // the veil says "press any key": a SPACE is the gesture, not the first letter —
+      // left alone it lands in the freshly focused box and is graded as a wrong key
+      if (e.key === " ") e.preventDefault();
     };
     window.addEventListener("keydown", onAnyKey);
     return () => window.removeEventListener("keydown", onAnyKey);
