@@ -462,7 +462,8 @@ export default function Home() {
     } catch { /* ignore */ }
   }, []);
   useEffect(() => { try { localStorage.setItem("ketiklab-state", JSON.stringify({ correct, attempts, mistakes })); } catch { /* ignore */ } }, [correct, attempts, mistakes]);
-  useEffect(() => { if (!running) return; const timer = setInterval(() => setSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [running]);
+  // the clock belongs to the practice card: it pauses while another view is open
+  useEffect(() => { if (!running || view !== "learn") return; const timer = setInterval(() => setSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [running, view]);
   // the reading state outlives the reading panel, so the clock must stop when the learner leaves it
   useEffect(() => { if (!readingActive || readingDone || view !== "articles") return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone, view]);
 
