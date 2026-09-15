@@ -5,8 +5,12 @@ name: Daily word batch
 # Dedup is against the live library + the current queue, so runs never repeat.
 
 on:
-  schedule:
-    - cron: "20 21 * * *"   # 04:20 WIB
+  # The schedule stays off until the batch can go out without a human reading it:
+  # the 2026-09-15 test run of the gated generator still glossed about one row in
+  # five wrongly (lack → kemauan, resemble → bersamaan, eminent → terbilang).
+  # Run it by hand and review queue/words.json before the hourly release.
+  # schedule:
+  #   - cron: "20 21 * * *"   # 04:20 WIB
   workflow_dispatch:
     inputs:
       count:

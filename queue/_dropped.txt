@@ -1,0 +1,24 @@
+# Headwords a reviewer removed from words.json or the queue. build-trio-queue.py
+# never generates them again; add one per line when you drop a row.
+abrupt
+aired
+amuse
+anil
+anna
+anti
+conscious
+cunt
+divers
+enterprise
+failing
+flesh
+helping
+illness
+nth
+pamper
+par
+pause
+pleasant
+proper
+pula
+rid

@@ -26,6 +26,10 @@ from pypinyin import pinyin, Style
 ROOT = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")
 LIVE = os.path.join(ROOT, "public", "data", "words.json")
 QUEUE = os.path.join(ROOT, "queue", "words.json")
+# headwords a reviewer took out of the library or the queue, one per line: the
+# de-duplication only knows what is present, so without this list every removed
+# row came back as a fresh candidate the next day
+DROPPED = os.path.join(ROOT, "queue", "_dropped.txt")
 
 WORDS = int(os.environ.get("WORDS") or (sys.argv[1] if len(sys.argv) > 1 else 100))
 QUEUE_CAP = int(os.environ.get("QUEUE_CAP", 400))
@@ -44,6 +48,18 @@ now look only come its over think also back after use two how our work first wel
 any these give day most us is are was were been has had did does am ain aren cant couldnt didnt doesnt dont
 hadnt hasnt havent isnt lets shouldnt thats theres theyre wasnt werent whats wont wouldnt youre youve""".split())
 ASCII_WORD = re.compile(r"^[a-z][a-z\- ]*[a-z]$")
+# a synset the wordnet itself marks as offensive is never taught, nor a headword
+# whose everyday use is a slur whatever its first synset says
+PROFANITY = set("""cunt fuck fucking shit bitch nigger nigga faggot fag whore slut cock dick pussy
+asshole arse bastard retard retarded twat wanker bollocks cum jizz tits""".split())
+OFFENSIVE = re.compile(r"\b(offensive|vulgar|obscene|disparaging|derogatory|slur|profanity|taboo)\b", re.I)
+# a Chinese lemma that is a definition rather than a word: "与海军有关", "为了慈善",
+# "使引起注意", "似是而非的话"; real headwords are at most four characters
+ZH_FRAGMENT = re.compile(r"^(与|为了|使|令人|有关|关于|属于)|(有关|的|之|地)$")
+ZH_MAX_LEN = 4
+# an Indonesian lemma with more senses than this is a generic word (kapal, lain,
+# tahan, seni, mengubah) that omw-id lists under many synsets it only loosely fits
+MAX_ID_SENSES = 3
 
 # Wordnet Bahasa lemma lists mix Malaysian usage with Indonesian, and a synset's
 # Indonesian lemmas sometimes translate one of its *other* English members
@@ -71,8 +87,15 @@ def fits_pos(pos, g):
     verbish = len(g) > 4 and g.startswith(("me", "ber", "ter", "di"))
     if pos == "v": return verbish or g in BASE_VERBS
     if pos == "n": return not verbish
-    if pos in ("a", "s"): return not (len(g) > 4 and g.startswith(("me", "di")))
+    # me-...-kan is a common adjective shape (menyenangkan, mengejutkan); a plain
+    # me- or di- form is a verb
+    if pos in ("a", "s"): return not (len(g) > 4 and g.startswith(("me", "di")) and not g.endswith("kan"))
+    # an adverb is not a bare adjective or noun with a verb prefix either
+    if pos == "r": return not verbish
     return True
+
+def clean_zh(g):
+    return bool(HAN.match(g)) and len(g) <= ZH_MAX_LEN and not ZH_FRAGMENT.search(g)
 
 # ---------------------------------------------------------------- phonetics
 ARPA2IPA = {
@@ -104,6 +127,8 @@ def toned(zh):
 
 def syllables(word):
     """Rough Indonesian syllabification for the reading hint."""
+    if " " in word:
+        return " ".join(syllables(p) or p for p in word.split(" "))
     v = "aeiouAEIOU"
     out, cur = [], ""
     for i, ch in enumerate(word):
@@ -169,6 +194,11 @@ def main():
     EN, ID, ZH = index(live)
     qe, qi, qz = index(queue)
     EN |= qe; ID |= qi; ZH |= qz
+    try:
+        with open(DROPPED, encoding="utf-8") as f:
+            EN |= {ln.strip().lower() for ln in f if ln.strip() and not ln.startswith("#")}
+    except FileNotFoundError:
+        pass
 
     en_wn  = wn.Wordnet("oewn:2024")
     cmn_wn = wn.Wordnet("omw-cmn:1.4")
@@ -182,7 +212,7 @@ def main():
         if len(picked) >= WORDS:
             break
         seen_scan += 1
-        if len(w) < 3 or not ASCII_WORD.match(w) or w.lower() in EN or w in STOP:
+        if len(w) < 3 or not ASCII_WORD.match(w) or w.lower() in EN or w in STOP or w in PROFANITY:
             continue
         z = zipf_frequency(w, "en")
         if z >= ZIPF_CEILING:          # function-word tier, no clean single sense
@@ -207,14 +237,17 @@ def main():
         lemmas = syn.lemmas()
         if not lemmas or lemmas[0].lower() != w or any(l[:1].isupper() for l in lemmas):
             continue
+        if OFFENSIVE.search(syn.definition() or "") or any(OFFENSIVE.search(x.definition() or "") for x in senses[1:]):
+            continue
 
         zh_g = [g.split("+")[0].strip() for x in cmn_wn.synsets(ili=ili) for g in x.lemmas()]
-        zh_g = [g for g in dict.fromkeys(zh_g) if HAN.match(g)][:3]
+        zh_g = [g for g in dict.fromkeys(zh_g) if clean_zh(g)][:3]
         if not zh_g:
             continue
         id_c = [g for x in idn_wn.synsets(ili=ili) for g in x.lemmas()]
         id_c = [g for g in dict.fromkeys(id_c) if g and not g[:1].isupper() and " " not in g]
-        id_c = [g for g in id_c if fits_pos(syn.pos, g) and id_zipf(g) >= MIN_ID_ZIPF and ms_zipf(g) <= id_zipf(g) + MALAY_MARGIN]
+        id_c = [g for g in id_c if fits_pos(syn.pos, g) and id_zipf(g) >= MIN_ID_ZIPF and ms_zipf(g) <= id_zipf(g) + MALAY_MARGIN
+                and len(idn_wn.synsets(g)) <= MAX_ID_SENSES]
         id_c.sort(key=lambda g: -id_zipf(g))
         # the most frequent surviving synonym, or nothing: when it is already taken
         # by a word the library holds, this headword is a near-synonym of that word,
