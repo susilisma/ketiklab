@@ -784,7 +784,7 @@ export default function Home() {
     }
     return undefined;
   }
-  const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes" && !reviewKeys
+  const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes"
     ? mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter(x => x.info) as { key: string; info: KeyInfo }[]
     : [];
   const gq = search.trim().toLowerCase();
@@ -1525,7 +1525,11 @@ export default function Home() {
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
         <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : "words in schedule"}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
-        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined}>{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>) : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
+        {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
+            clean run with no missed word, have no entry here but are still due above */}
+        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined}>{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>)
+          : srs.due || mistakes.length ? <div className="empty"><b>◎</b><h3>{TX("错词本里没有可显示的词", "Buku kesalahan kosong", "Nothing to list here", uiLang)}</h3><p>{srs.due ? TX(`有 ${srs.due} 个词到期，点上方「开始复习」。`, `${srs.due} kata jatuh tempo — tekan “Mulai ulasan” di atas.`, `${srs.due} ${srs.due === 1 ? "word is" : "words are"} due: press “Start review” above.`, uiLang) : TX("错过的词在别的词库里，打开那个词库后会显示。", "Kata yang salah ada di daftar lain; buka daftar itu untuk melihatnya.", "The missed words belong to another list; open it to see them here.", uiLang)}</p></div>
+          : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
 
       {view === "articles" && <section className="reading-panel">
