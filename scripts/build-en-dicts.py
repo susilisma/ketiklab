@@ -93,7 +93,16 @@ def entry(w, en, cmn, idn):
     if pick is None:
         return None
     _, zh, idg, defi = pick
-    return {"name": w, "trans": zh, "idtrans": idg, "def": defi[:120], "usphone": ipa(w)}
+    return {"name": w, "trans": zh, "idtrans": idg, "def": clip(defi), "usphone": ipa(w)}
+
+
+def clip(defi, n=120):
+    """A long definition ends at a word boundary with an ellipsis, not mid-word at
+    character 120 ("...average duration or passage of time or")."""
+    if len(defi) <= n:
+        return defi
+    cut = defi[:n].rsplit(" ", 1)[0].rstrip(" ,;:")
+    return (cut or defi[:n]) + "…"
 
 
 BANDS = [
