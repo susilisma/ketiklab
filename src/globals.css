@@ -187,6 +187,10 @@
 .reading-group-head span{font-size:11px;font-weight:800;color:var(--purple);letter-spacing:.5px}
 .reading-group-head em{font-style:normal;font-size:10px;color:var(--muted);background:var(--bg);border-radius:8px;padding:2px 8px}
 .reading-list button{grid-template-columns:32px 1fr!important}
+/* the list is a capped flex column, and flex children shrink by default: 64 rows were
+   squeezed to their 48 px minimum while holding 63 px of text, each author line drawn
+   over the next row's genre line */
+.reading-list button{flex-shrink:0}
 
 /* ---- global dictionary search (round 7) ---- */
 .toolbar{flex-wrap:wrap}
