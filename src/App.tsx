@@ -433,6 +433,19 @@ export default function Home() {
 
   const refreshSrs = () => { getStats().then(setSrs).catch(() => {}); };
   useEffect(() => { refreshSrs(); }, []);
+  // The 错词本 can only list a word whose list is at hand: a dictionary missed word from a
+  // list not opened this session was silently left out, so the list disagreed with the
+  // button above it. Fetch those dictionaries (as 开始复习 does) and render again.
+  const [, setDictTick] = useState(0);
+  useEffect(() => {
+    if (!ready || view !== "mistakes" || !mistakes.length || !dicts.length) return;
+    const missing = mistakes.filter(k => !lookupKey(k));
+    if (!missing.length) return;
+    let alive = true;
+    resolveReviewRefs(missing).then(() => { if (alive) setDictTick(n => n + 1); }).catch(() => {});
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [view, mistakes, dicts]);
 
   // language preferences: restore on first load; show the setup modal on first visit and
   // whenever the learning language has no meaning language, chosen or defaulted
