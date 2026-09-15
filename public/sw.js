@@ -5,7 +5,10 @@
 const VERSION = "kl-v2";
 // the hashed bundle files of this build, filled in at build time
 const ASSETS = [];
-const CORE = ["./", "./index.html", "./manifest.webmanifest",
+// The language landing pages are shells too (they carry <base href="/"> and load the
+// same bundle), so they are precached: served the root shell instead, /zh/ resolved
+// the bundle's relative asset URLs under /zh/assets/ and the app never mounted.
+const CORE = ["./", "./index.html", "./zh/", "./id/", "./en/", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./maskable-512.png"];
 // The worker's scope covers the whole origin, but only the app's own document may
 // become the offline shell — never /ops/, sitemap.xml or a JSON file opened in a tab.
@@ -59,12 +62,18 @@ self.addEventListener("fetch", (e) => {
   // language landing pages load the same bundle, so they are shells too.
   if (req.mode === "navigate") {
     const isShell = url.pathname === SHELL || url.pathname === SHELL + "index.html";
-    const isLanding = /^\/(zh|id|en)\/(index\.html)?$/.test(url.pathname);
-    e.respondWith(fetch(req).then((res) => {
+    const landing = url.pathname.match(/^\/(zh|id|en)\/(index\.html)?$/);
+    // "no-cache": a shell is revalidated with the server rather than taken from the HTTP
+    // cache, which for ten minutes after a deploy still holds the previous HTML — and
+    // that HTML names bundle files this worker's activate has just dropped
+    const shellReq = isShell || landing ? new Request(req.url, { cache: "no-cache", credentials: "same-origin" }) : req;
+    e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) store("./index.html", res);
-      else if (isLanding) store(req, res);
+      else if (landing) store(req, res);
       return res;
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(req).then((hit) => hit || (isLanding ? caches.match("./index.html") : undefined)))));
+    // a landing page never visited before this worker installed: send the browser to the
+    // root shell in that language rather than serving it under /zh/, where it cannot mount
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
     return;
   }
   // Hashed build assets are immutable: cache-first
