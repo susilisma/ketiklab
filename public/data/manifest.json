@@ -8,10 +8,10 @@
   "description_id": "Kata umum bahasa Indonesia · urut frekuensi",
   "description_en": "Common Indonesian words · ordered by frequency",
   "lang": "id",
-  "length": 3023,
+  "length": 3003,
   "file": "indonesian.json",
   "coverage": {
-   "zh": 3023,
+   "zh": 3003,
    "id": 0,
    "en": 0,
    "def": 0
