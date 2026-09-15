@@ -47,7 +47,10 @@ const readings = JSON.parse(readFileSync(READINGS_JSON, "utf8"));
 // existing keys
 const enSet = new Set(words.map((w) => String(w.en).toLowerCase()));
 const idSet = new Set(words.map((w) => String(w.id).toLowerCase()));
-const zhSet = new Set(words.map((w) => String(w.zh)));
+// every Chinese sense, not the whole field: the practice word is the first sense, and
+// "污染；弄脏" next to a live "污染" gives two cards the same word to type
+const zhSenses = (w) => String(w.zh).split("；").map((x) => x.trim()).filter(Boolean);
+const zhSet = new Set(words.flatMap(zhSenses));
 const readIdSet = new Set(readings.map((r) => r.id));
 const readTA = new Set(readings.map((r) => (r.title + "|" + r.author).toLowerCase()));
 
@@ -87,9 +90,10 @@ for (const raw of newWords) {
   const { obj, err } = materializeWord(raw);
   if (err) { skip.words.push(err); continue; }
   const kEn = obj.en.toLowerCase(), kId = obj.id.toLowerCase();
-  if (enSet.has(kEn) || idSet.has(kId) || zhSet.has(obj.zh)) { skip.words.push("dup-existing"); continue; }
-  if (bEn.has(kEn) || bId.has(kId) || bZh.has(obj.zh)) { skip.words.push("dup-in-batch"); continue; }
-  bEn.add(kEn); bId.add(kId); bZh.add(obj.zh);
+  const kZh = zhSenses(obj);
+  if (enSet.has(kEn) || idSet.has(kId) || kZh.some((z) => zhSet.has(z))) { skip.words.push("dup-existing"); continue; }
+  if (bEn.has(kEn) || bId.has(kId) || kZh.some((z) => bZh.has(z))) { skip.words.push("dup-in-batch"); continue; }
+  bEn.add(kEn); bId.add(kId); kZh.forEach((z) => bZh.add(z));
   kept.words.push(obj);
 }
 
