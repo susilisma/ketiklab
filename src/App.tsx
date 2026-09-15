@@ -870,11 +870,13 @@ export default function Home() {
     setDayCounts(m => ({ ...m, [todayStr(0)]: (m[todayStr(0)] || 0) + 1 }));
   }
   function advanceOrFinishChapter(wasWrong: boolean) {
-    // a review answer is not part of the chapter's tally, or the summary after
-    // 退出复习 counts words from other lists
-    if (!reviewKeys) { setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId]))); }
+    // a review session keeps its own tally: exitReview clears it, so the summary
+    // after 退出复习 never counts words from other lists
+    setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
     const atEnd = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1;
-    if (!reviewKeys && atEnd) {
+    // a review that answered its last word used to wrap round to the first one
+    // and go on for ever; it ends on the same card a chapter does
+    if (atEnd) {
       setChElapsed(Math.round((Date.now() - chapterStart.current) / 1000));
       setChapterFinished(true);
       setRunning(false);
@@ -1004,7 +1006,7 @@ export default function Home() {
     resolveReviewRefs(keys).then(refs => {
       if (!refs.length) return;
       setReviewRefs(refs); setReviewKeys(keys);
-      setChapterFinished(false); setChDone(0);
+      setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = Date.now();
       setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
       setRunning(true);
       setTimeout(() => input.current?.focus(), 30);
@@ -1316,7 +1318,7 @@ export default function Home() {
     if (zhStep === "read") setZhStep("pinyin");
     setReviewRefs(refs);
     setReviewKeys(keys);
-    setChapterFinished(false); setChDone(0); setChWrongKeys([]);
+    setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = Date.now();
     setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
     setView("learn"); setRunning(true);
     setTimeout(() => input.current?.focus(), 40);
@@ -1466,15 +1468,17 @@ export default function Home() {
         <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
-          <span>✓</span><small>{uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
-          <h2>{uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
+          <span>✓</span><small>{reviewKeys ? TX("复习完成", "ULASAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
+          <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} words · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
           {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined}>{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
-            <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>
+            {/* after a review: practise its missed words again or leave it; the chapter buttons belong to a chapter */}
+            {!reviewKeys && <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>}
             {chWrongKeys.length > 0 && <button onClick={practiceChapterWrong}>{uiLang === "zh" ? `练习错词 (${chWrongKeys.length})` : uiLang === "id" ? `Latih kata salah (${chWrongKeys.length})` : `Practice missed (${chWrongKeys.length})`}</button>}
-            <button className="go" onClick={nextChapter}>{uiLang === "zh" ? "下一章" : uiLang === "id" ? "Bab berikutnya" : "Next chapter"} →</button>
+            {reviewKeys ? <button className="go" onClick={exitReview}>{t.exitReview} →</button>
+              : <button className="go" onClick={nextChapter}>{uiLang === "zh" ? "下一章" : uiLang === "id" ? "Bab berikutnya" : "Next chapter"} →</button>}
           </div>
         </div>}
         <div className="metrics">
