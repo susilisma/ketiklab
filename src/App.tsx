@@ -939,7 +939,8 @@ export default function Home() {
         finishing.current = false;
         markStale();
         setTyped(""); setLoopIx(n => n + 1);
-        setTimeout(() => input.current?.focus(), 20);
+        // a pause pressed meanwhile stays a pause: the refocus would run onFocus and restart
+        setTimeout(() => { if (!pausedByButton.current) input.current?.focus(); }, 20);
       }, 320);
       return;
     }
