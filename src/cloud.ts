@@ -67,16 +67,19 @@ let fromLink = (() => { try { return location.hash.includes("access_token="); } 
 // A session that came out of the URL was not typed in here: anyone can put their own
 // tokens in a link and send it round. Nothing on this device is joined to such a
 // session until the learner presses 立即同步 (Account checks this before linking).
-let viaLink = false;
-export function sessionFromLink() { return viaLink; }
+// The mark is the other way round and durable: the uid whose password was typed on
+// this device. An in-memory "came from a link" flag was lost on the next load (auth-js
+// keeps the session and re-emits SIGNED_IN with no hash), and a second tab never had it.
+const TYPED_KEY = "ketiklab-typed-uid";
+export function sessionTyped(uid: string) { try { return localStorage.getItem(TYPED_KEY) === uid; } catch { return false; } }
+function markTyped(uid: string | undefined) { try { if (uid) localStorage.setItem(TYPED_KEY, uid); } catch { /* ignore */ } }
 function tidyUrl() {
   try { if (/#(access_token|error)|#$/.test(location.href)) history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ }
 }
 supabase.auth.onAuthStateChange((event, s) => {
   session = s;
   if (event === "PASSWORD_RECOVERY") { recovery = true; ss.set(RECOVERY_KEY, "1"); }
-  if (event === "SIGNED_IN") viaLink = fromLink;
-  if (event === "SIGNED_OUT") viaLink = false;
+  if (event === "SIGNED_OUT") { try { localStorage.removeItem(TYPED_KEY); } catch { /* ignore */ } }
   if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; wantAccount(); }
   tidyUrl();
 });
@@ -91,12 +94,14 @@ export async function signUp(email: string, password: string, name: string) {
     email, password, options: { data: { name } },
   });
   if (error) throw error;
+  markTyped(data.user?.id);
   return data;
 }
 
 export async function signIn(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
+  markTyped(data.user?.id);
   return data;
 }
 

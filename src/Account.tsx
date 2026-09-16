@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
   loadProfile, saveName, pushProgress, linkThisDevice, applyLocal, linkedUid, linkDevice,
-  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionFromLink, type SyncNote,
+  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, type SyncNote,
 } from "./cloud";
 
 type Lang = "zh" | "id" | "en";
@@ -134,7 +134,7 @@ export function Account({ uiLang, name, onName }: {
       // their own tokens) may look at this account but does not take this device's
       // data with it until 立即同步 is pressed; a device linked to another account
       // keeps its name too
-      const untrusted = (!!linked && linked !== uid) || (!linked && sessionFromLink());
+      const untrusted = (!!linked && linked !== uid) || (!linked && !sessionTyped(uid));
       const prof = await loadProfile(uid);
       if (!alive) return;
       if (prof) {
@@ -145,7 +145,7 @@ export function Account({ uiLang, name, onName }: {
       if (recovering) return;
       try {
         if (linked && linked !== uid) { setForeign(true); return; }
-        if (!linked && sessionFromLink()) { setLinkOnly(true); return; }
+        if (!linked && !sessionTyped(uid)) { setLinkOnly(true); return; }
         if (linked === uid) {
           const { cloudHasMore } = await pushProgress(uid);
           if (!alive) return;
@@ -305,7 +305,7 @@ export function Account({ uiLang, name, onName }: {
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
           <input value={name} maxLength={24} onChange={e => onName(e.target.value)}
-            onBlur={() => { if (session && !foreign) saveName(session.user.id, name.trim()).catch(e2 => setErr(humanError(e2, uiLang))); }}
+            onBlur={() => { if (session && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
