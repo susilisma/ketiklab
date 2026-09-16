@@ -1106,7 +1106,8 @@ export default function Home() {
       if (holdSpeech && autoSpokenWord.current !== targetKey) { autoSpokenWord.current = targetKey; speak(targetWord, targetVoice); }
       return;
     }
-    if (event.key === "Enter") { event.preventDefault(); skipWord(); return; }
+    // a held key auto-repeats ~30/s and each repeat was a skip with a recorded lapse
+    if (event.key === "Enter") { event.preventDefault(); if (!event.repeat) skipWord(); return; }
     if (event.key === " " && (event.ctrlKey || event.metaKey)) {
       event.preventDefault(); speak(targetWord, targetVoice); return;
     }

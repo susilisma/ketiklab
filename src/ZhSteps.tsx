@@ -205,7 +205,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         // Shift+TAB and Escape leave the box, so the page stays reachable by keyboard
         if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
         if (e.key === "Escape") box.current?.blur();
-        if (e.key === "Enter") { e.preventDefault(); onSkip(); }
+        if (e.key === "Enter") { e.preventDefault(); if (!e.repeat) onSkip(); }
       }}
       onKeyUp={e => { if (e.key === "Tab") setPeek(false); }}
       // Escape or a tap elsewhere while TAB is held: the keyup lands outside the box,
