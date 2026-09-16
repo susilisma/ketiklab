@@ -5,6 +5,12 @@ on:
     branches: [main]
   schedule:
     - cron: "7 * * * *"
+  # The rebuild workflows push their libraries with GITHUB_TOKEN, and a push made
+  # with that token never starts an on: push run; the hourly run then skips the
+  # deploy whenever the queue promoted nothing. So a finished rebuild starts one.
+  workflow_run:
+    workflows: ["Rebuild English word libraries", "Rebuild Chinese word libraries"]
+    types: [completed]
   workflow_dispatch:
     inputs:
       count:
@@ -23,6 +29,8 @@ jobs:
   # there it would take the pending slot from a push's build and that push would
   # stay undeployed. Pushes skip straight to the gate.
   promote:
+    # a rebuild that failed pushed nothing: nothing to deploy
+    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
     runs-on: ubuntu-latest
     concurrency:
       group: promote
