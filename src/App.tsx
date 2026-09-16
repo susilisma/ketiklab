@@ -202,6 +202,8 @@ export default function Home() {
   // ids whose file did not arrive on the last 🌐 load; they stay out of allDicts
   // so the next load tries them again instead of searching an empty list
   const [globalFailed, setGlobalFailed] = useState<string[]>([]);
+  // a library card whose file could not be fetched (offline, 5xx): named in a banner with a retry
+  const [dictLoadError, setDictLoadError] = useState<DictInfo | null>(null);
   const [chapter, setChapter] = useState(0);
   const [chapterFinished, setChapterFinished] = useState(false);
   const [chDone, setChDone] = useState(0);
@@ -1160,14 +1162,14 @@ export default function Home() {
     changeCategory(nextCategory);
   }
   async function selectDict(d: DictInfo) {
-    setSearch("");
+    setSearch(""); setDictLoadError(null);
     const req = ++sourceReq.current;
     let data = dictCache.current.get(d.id);
     if (!data) {
       try {
         data = await loadDict(d);
         dictCache.current.set(d.id, data);
-      } catch { return; }
+      } catch { if (req === sourceReq.current) setDictLoadError(d); return; }
       if (req !== sourceReq.current) return;
     }
     pendingIndex.current = null;
@@ -1518,6 +1520,7 @@ export default function Home() {
           {CATEGORIES.map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
         </div>
         {dictsError && <div className="review-banner"><span>⚠ {TX("考试词库加载失败", "Kamus ujian gagal dimuat", "Exam libraries failed to load", uiLang)}</span><button onClick={loadManifest}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
+        {dictLoadError && <div className="review-banner"><span>⚠ {TX(`${dictName(dictLoadError)} 加载失败`, `${dictName(dictLoadError)} gagal dimuat`, `${dictName(dictLoadError)} failed to load`, uiLang)}</span><button onClick={() => selectDict(dictLoadError)}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
         {dicts.length > 0 && <>
           <div className="library-section-title"><b>{TX("考试词库", "Kamus ujian", "Exam libraries", uiLang)}</b><span>{dicts.reduce((a, d) => a + d.length, 0)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
           <div className="dict-grid">
