@@ -414,7 +414,11 @@ export default function Home() {
     // otherwise throw at favorites.some(...) on every load until site data is cleared
     try {
       const f = JSON.parse(localStorage.getItem("ketiklab-fav") || "[]");
-      const favs: PracticeItem[] = Array.isArray(f) ? f.filter((x: unknown) => !!x && typeof x === "object" && typeof (x as PracticeItem).key === "string" && typeof (x as PracticeItem).text === "string" && typeof (x as PracticeItem).lang === "string") : [];
+      // every field the card renders as text must be text: an object in sub/meaning/example/def
+      // (a hand-edited backup, a cloud blob) reached JSX and white-screened every load, since
+      // ketiklab-source="fav" is persisted and main.tsx has no error boundary
+      const str = (v: unknown) => v === undefined || typeof v === "string";
+      const favs: PracticeItem[] = Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })) : [];
       setFavorites(favs);
       // "fav" is not a manifest id, so the dictionary restore above never matches it
       if (favs.length && localStorage.getItem("ketiklab-source") === "fav") setSource("fav");
