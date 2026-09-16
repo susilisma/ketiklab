@@ -122,8 +122,11 @@ def ipa(word):
         out.append(ARPA2IPA.get(base, ""))
     return "".join(out)
 
+FIXES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "pinyin-fixes.json"), encoding="utf-8"))
 def toned(zh):
-    return " ".join(p[0] for p in pinyin(zh, style=Style.TONE))
+    # readings pypinyin guesses wrong are pinned in pinyin-fixes.json (see build-zh-dicts.py)
+    fixed = FIXES.get(zh)
+    return fixed if fixed else " ".join(p[0] for p in pinyin(zh, style=Style.TONE))
 
 def syllables(word):
     """Rough Indonesian syllabification for the reading hint."""

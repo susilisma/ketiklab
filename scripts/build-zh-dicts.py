@@ -23,7 +23,7 @@ Quality gates, learned the hard way on the English pipeline:
 
 Usage: python3 scripts/build-zh-dicts.py
 """
-import importlib.util, json, os, re, warnings
+import importlib.util, json, os, re, unicodedata, warnings
 warnings.filterwarnings("ignore")
 
 import wn
@@ -54,11 +54,19 @@ BANDS = [
     ("zh-upper", "中文高阶词", "进阶中文词",   "Kata tingkat atas Mandarin", "Advanced Chinese",     "Kata Mandarin tingkat lanjut",         "Higher-level Chinese words",      2200, 999999),
 ]
 
+# pypinyin takes the first heteronym (长凳 zhǎng, 弹跳 dàn, 分子 fèn); the readings the
+# library teaches are pinned in pinyin-fixes.json and win over the guess
+FIXES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "pinyin-fixes.json"), encoding="utf-8"))
+def strip_tones(s):
+    return "".join(c for c in unicodedata.normalize("NFD", s) if not unicodedata.combining(c)).replace("u\u0308", "v")
+
 def toned(word):
-    return " ".join(p[0] for p in pinyin(word, style=Style.TONE))
+    fixed = FIXES.get(word)
+    return fixed if fixed else " ".join(p[0] for p in pinyin(word, style=Style.TONE))
 
 def plain(word):
-    return " ".join(p[0] for p in pinyin(word, style=Style.NORMAL))
+    fixed = FIXES.get(word)
+    return strip_tones(fixed) if fixed else " ".join(p[0] for p in pinyin(word, style=Style.NORMAL))
 
 def clean_lemmas(raw):
     out = []
