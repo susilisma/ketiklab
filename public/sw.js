@@ -76,13 +76,16 @@ self.addEventListener("fetch", (e) => {
     // cache, which for ten minutes after a deploy still holds the previous HTML — and
     // that HTML names bundle files this worker's activate has just dropped
     const shellReq = isShell || landing ? new Request(req.url, { cache: "no-cache", credentials: "same-origin" }) : req;
+    // a landing page is cached under its bare path: stored under the full URL, a visit
+    // with ?utm_source=… never served the plain /id/ offline, and each query made a copy
+    const landingKey = landing ? `./${landing[1]}/` : null;
     e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) store("./index.html", res);
-      else if (landing) store(req, res);
+      else if (landingKey) store(landingKey, res);
       return res;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(landingKey || req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
     return;
   }
   // Hashed build assets are immutable: cache-first
