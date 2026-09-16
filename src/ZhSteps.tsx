@@ -208,6 +208,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         if (e.key === "Enter") { e.preventDefault(); onSkip(); }
       }}
       onKeyUp={e => { if (e.key === "Tab") setPeek(false); }}
+      // Escape or a tap elsewhere while TAB is held: the keyup lands outside the box,
+      // so the peek must end with the focus or the whole answer stays on screen
+      onBlur={() => setPeek(false)}
       autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false}
     />
     <p className="zh-tip">
