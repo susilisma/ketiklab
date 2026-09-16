@@ -81,7 +81,9 @@ function advance(clock, { count, effectiveHours, hoursPerItem, drained, now }) {
 }
 
 const readJson = (p, fallback) => {
-  try { return JSON.parse(readFileSync(p, "utf8")); } catch { return fallback; }
+  // only a missing file is the fallback: a syntax error in a hand-reviewed queue must fail
+  // the run, not read as "nothing queued" for ever
+  try { return JSON.parse(readFileSync(p, "utf8")); } catch (e) { if (e && e.code === "ENOENT") return fallback; throw e; }
 };
 
 const qWords = readJson(Q_WORDS, []);

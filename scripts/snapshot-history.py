@@ -14,7 +14,7 @@ def load(path, fallback):
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    except Exception:
+    except FileNotFoundError:
         return fallback
 
 words = load(LIVE, [])

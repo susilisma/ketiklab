@@ -170,7 +170,9 @@ def load(path, fallback):
     try:
         with open(path, encoding="utf-8") as f:
             return json.load(f)
-    except Exception:
+    except FileNotFoundError:
+        # a queue that does not parse must stop the run: read as [] it would be
+        # overwritten with the new rows and the hand-reviewed batch lost
         return fallback
 
 def index(rows):
