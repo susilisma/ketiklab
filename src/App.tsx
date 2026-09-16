@@ -609,14 +609,17 @@ export default function Home() {
   };
   // the one line a reference list prints: the meaning, a legacy favourite's snapshot, a muted
   // note when the chosen language has none, or nothing for "none" and for no choice yet
-  const listMeaning = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "meaning" | "dictId">): { text: string; note: boolean } => {
+  // A line that is really the English definition (an idtrans gap) carries its label, as the
+  // practice card does: unlabelled, it read as one more Indonesian or Chinese gloss.
+  const listMeaning = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "meaning" | "dictId">): { text: string; note: boolean; label?: string } => {
     const r = resolveMeaning(it);
-    if (r) return { text: r.text, note: false };
+    if (r) return { text: r.text, note: false, label: r.def ? r.label : undefined };
     if (!it.glosses) return { text: it.meaning, note: false };
     const ml = meaningFor(it.lang);
     return ml && ml !== "none" ? { text: missingNote(it, ml), note: true } : { text: "", note: false };
   };
-  const meaningCell = (m: { text: string; note: boolean }) => m.note ? <small className="meaning-missing">{m.text}</small> : <b>{m.text}</b>;
+  const defTag = (label?: string) => label ? <i className="meaning-def">{label} · </i> : null;
+  const meaningCell = (m: { text: string; note: boolean; label?: string }) => m.note ? <small className="meaning-missing">{m.text}</small> : <b>{defTag(m.label)}{m.text}</b>;
   // what this learner gets from a list, from the manifest counts; a row without them keeps the old note
   const coverageNote = (d: DictInfo) => {
     const cov = d.coverage, ml = meaningFor(d.lang);
@@ -785,15 +788,15 @@ export default function Home() {
   const readingProgress = Math.round(((readingLine + Math.min(readingTyped.length / Math.max(readingTarget.length, 1), 1)) / reading.lines.length) * 100);
   // "<lang>:<key>" → the trio word in that language, else a loaded dictionary of that language
   const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
-  type KeyInfo = { text: string; meaning: string; note: boolean };
+  type KeyInfo = { text: string; meaning: string; note: boolean; label?: string };
   function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
     const w = wordByEn.get(key);
-    if (w) { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), meaning: m.text, note: m.note }; }
+    if (w) { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), meaning: m.text, note: m.note, label: m.label }; }
     for (const d of dicts) {
       if (d.lang !== lg) continue;
       const e = dictCache.current.get(d.id)?.find(x => x.name === key);
-      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { text: e.name, meaning: m.text, note: m.note }; }
+      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { text: e.name, meaning: m.text, note: m.note, label: m.label }; }
     }
     return undefined;
   }
@@ -810,7 +813,7 @@ export default function Home() {
     if (meaning.toLowerCase().includes(q)) return 4;          // in meaning only
     return 5;
   };
-  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; note: boolean; lang: Lang; dictName?: string; rank: number }[] = [];
+  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; note: boolean; label?: string; lang: Lang; dictName?: string; rank: number }[] = [];
   let globalTotal = 0;
   if (globalSearch && gq) {
     // a hit matches on the headword or on any of its meanings (idtrans too, so Indonesian
@@ -827,7 +830,7 @@ export default function Home() {
         const hay = `${e.name} ${e.trans.join(" ")} ${(e.idtrans || []).join(" ")}`;
         if (!hay.toLowerCase().includes(gq)) continue;
         const m = listMeaning({ lang: d.lang, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id });
-        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: e.usphone ? `/${e.usphone}/` : "", meaning: m.text, note: m.note, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
+        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: e.usphone ? `/${e.usphone}/` : "", meaning: m.text, note: m.note, label: m.label, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
       }
     }
     globalResults.sort((a, b) => a.rank - b.rank || a.text.length - b.text.length);
@@ -1485,7 +1488,7 @@ export default function Home() {
           <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} words · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
-          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined}>{info ? info.meaning : ""}</small></span>; })}</div>}
+          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
             {/* after a review: practise its missed words again or leave it; the chapter buttons belong to a chapter */}
             {!reviewKeys && <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>}
@@ -1526,7 +1529,7 @@ export default function Home() {
               : (!gq
                   ? <div className="empty"><b>🌐</b><h3>{uiLang === "zh" ? "输入关键词，在全部词库中搜索" : uiLang === "id" ? "Ketik untuk mencari di semua kamus" : "Type to search across all libraries"}</h3><p>{TX(`主题词汇 + ${searchable.length} 个考试词库，共 ${globalCount} 词`, `Kosakata Tematik + ${searchable.length} kamus ujian · ${globalCount} kata`, `Words by Topic + ${searchable.length} exam libraries · ${globalCount} words`, uiLang)}</p></div>
                   : (globalResults.length
-                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => r.src === "trio" ? gotoTrioWord(words.find(w => w.en === r.key)!) : gotoDictWord(r.src, r.key)}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note })}</div></button>)}</div>
+                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => r.src === "trio" ? gotoTrioWord(words.find(w => w.en === r.key)!) : gotoDictWord(r.src, r.key)}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note, label: r.label })}</div></button>)}</div>
                       : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
           : dictInfo
           ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictName(dictInfo)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>
@@ -1540,7 +1543,7 @@ export default function Home() {
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
         {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
             clean run with no missed word, have no entry here but are still due above */}
-        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined}>{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>)
+        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined}>{defTag(x.info.label)}{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>)
           : srs.due || mistakes.length ? <div className="empty"><b>◎</b><h3>{TX("错词本里没有可显示的词", "Buku kesalahan kosong", "Nothing to list here", uiLang)}</h3><p>{srs.due ? TX(`有 ${srs.due} 个词到期，点上方「开始复习」。`, `${srs.due} kata jatuh tempo — tekan “Mulai ulasan” di atas.`, `${srs.due} ${srs.due === 1 ? "word is" : "words are"} due: press “Start review” above.`, uiLang) : TX("错过的词在别的词库里，打开那个词库后会显示。", "Kata yang salah ada di daftar lain; buka daftar itu untuk melihatnya.", "The missed words belong to another list; open it to see them here.", uiLang)}</p></div>
           : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
