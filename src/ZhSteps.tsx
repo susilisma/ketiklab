@@ -186,7 +186,11 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       onChange={e => {
         if (target.length > 0 && typed.length >= target.length) return;
         const v = norm(e.target.value);
-        if (target.startsWith(v)) {
+        // norm reads a finished "lve"/"nve" as "lue"/"nue", but the learner gets there
+        // one key at a time: "celv" is on its way to "celve" for 策略, so a trailing
+        // l/n + v is accepted when the target goes on with "ue" at that point
+        const onItsWay = /[ln]v$/.test(v) && target.startsWith(v.slice(0, -1) + "ue");
+        if (target.startsWith(v) || onItsWay) {
           setTyped(v);
           if (v.length === target.length && v.length > 0) { onSpeak(); onPass(); }
         } else {
