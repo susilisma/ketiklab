@@ -10,6 +10,8 @@ const ASSETS = [];
 // the bundle's relative asset URLs under /zh/assets/ and the app never mounted.
 const CORE = ["./", "./index.html", "./zh/", "./id/", "./en/", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./maskable-512.png"];
+// the content the app fetches at start-up: without it an offline shell shows no words
+const DATA_CORE = ["./data/words.json", "./data/readings.json", "./data/manifest.json", "./data/zh-pinyin.json"];
 // The worker's scope covers the whole origin, but only the app's own document may
 // become the offline shell — never /ops/, sitemap.xml or a JSON file opened in a tab.
 const SHELL = new URL("./", self.location).pathname;
@@ -47,6 +49,13 @@ self.addEventListener("activate", (e) => {
         if (res) await mine.put(req, res);
       }
       await caches.delete(k);
+    }
+    // a first visit fetched the content JSON before any worker was in charge, so nothing
+    // carried it over: an offline reopen then had the shell and "content failed to load".
+    // Fetch what the app needs at start-up now, best effort, if it is not cached yet.
+    for (const u of DATA_CORE) {
+      if (await mine.match(u)) continue;
+      try { const res = await fetch(u); if (res.ok) await mine.put(u, res); } catch { /* offline already: the next online open fills it */ }
     }
     await self.clients.claim();
   })());
