@@ -497,6 +497,9 @@ export default function Home() {
 
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
+    // a review session is its own list: picking another rung or learning language
+    // changes the key but not the words, so the session keeps its place and its tally
+    if (reviewKeys) return;
     let saved = 0;
     try { saved = Math.max(0, Math.floor(Number(JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}")[sourceKey]) || 0)); } catch { /* ignore */ }
     setChapter(saved);
