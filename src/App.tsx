@@ -1323,7 +1323,8 @@ export default function Home() {
     return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r);
   }
   async function startReview() {
-    const due = await getDueKeys();
+    // no IndexedDB (a browser that blocks storage): the 错词本 review needs none of it
+    const due = await getDueKeys().catch(() => [] as string[]);
     let keys = due.length ? due : mistakes.slice();
     if (!keys.length) return;
     const report = { unresolved: [] as string[], complete: true };
