@@ -79,9 +79,13 @@ self.addEventListener("fetch", (e) => {
     // a landing page is cached under its bare path: stored under the full URL, a visit
     // with ?utm_source=… never served the plain /id/ offline, and each query made a copy
     const landingKey = landing ? `./${landing[1]}/` : null;
+    // a generated page (/zh/lib/en-core/, /id/readings/ …) is a plain document: kept
+    // once seen, so a page read online opens offline instead of failing to load
+    const generated = !isShell && !landing && /^\/(zh|id|en)\//.test(url.pathname);
     e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) store("./index.html", res);
       else if (landingKey) store(landingKey, res);
+      else if (generated) store(req, res);
       return res;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
