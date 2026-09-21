@@ -304,6 +304,10 @@ export default function Home() {
   // start its repetitions, reveal and slip count from zero — the [index] effect
   // does the same but only fires when the index actually changes
   const resetWordRun = () => { autoAdvance.current++; finishing.current = false; hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setMeaningPeek(false); setWrongCountWord(0); };
+  // every path that starts a list from its first word: the chapter's tally, its finish
+  // card and its clock start over too — choosing the list that is already open used to
+  // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
+  const resetChapterRun = () => { setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
   const [speechBlocked, setSpeechBlocked] = useState(false);
   const speechPrimed = useRef(false);
   useEffect(() => {
@@ -1156,7 +1160,7 @@ export default function Home() {
     sourceReq.current++; pendingIndex.current = null;
     setReviewKeys(null);
     setCategory(nextCategory);
-    setIndex(0);
+    setIndex(0); resetChapterRun();
     setTyped("");
     setSearch("");
     resetWordRun();
@@ -1185,7 +1189,7 @@ export default function Home() {
     setDictWords(data);
     setSource(d.id);
     persistSource(d.id);
-    setReviewKeys(null); setIndex(0); setTyped(""); resetWordRun();
+    setReviewKeys(null); setIndex(0); resetChapterRun(); setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setView("learn");
     setTimeout(() => input.current?.focus(), 40);
@@ -1193,7 +1197,7 @@ export default function Home() {
   function selectFav() {
     sourceReq.current++; pendingIndex.current = null;
     setSource("fav"); persistSource("fav");
-    setReviewKeys(null); setIndex(0); setTyped(""); resetWordRun();
+    setReviewKeys(null); setIndex(0); resetChapterRun(); setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setView("learn"); setTimeout(() => input.current?.focus(), 40);
   }
