@@ -235,7 +235,8 @@ export default function Home() {
   });
   const [hidePron, setHidePron] = useState(() => { try { return localStorage.getItem("ketiklab-hide-pron") === "1"; } catch { return false; } });
   const [showLangSetup, setShowLangSetup] = useState(false);
-  const [dark, setDark] = useState(false);
+  // read before the first render, so a saved dark theme never paints light first
+  const [dark, setDark] = useState(() => { try { return localStorage.getItem("ketiklab-dark") === "1"; } catch { return false; } });
   const [running, setRunning] = useState(false);
   const [typingFocus, setTypingFocus] = useState(false);
   const [index, setIndex] = useState(0);
@@ -432,7 +433,6 @@ export default function Home() {
       // "fav" is not a manifest id, so the dictionary restore above never matches it
       if (favs.length && localStorage.getItem("ketiklab-source") === "fav") setSource("fav");
     } catch { /* ignore */ }
-    try { if (localStorage.getItem("ketiklab-dark") === "1") setDark(true); } catch { /* ignore */ }
     try { if (localStorage.getItem("ketiklab-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
     try {
@@ -528,7 +528,9 @@ export default function Home() {
 
   useEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; }, [index]);
   useEffect(() => { try { localStorage.setItem("ketiklab-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
-  useEffect(() => { try { localStorage.setItem("ketiklab-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
+  // the class on <html> gives the body the dark background too (the rubber-band area
+  // above and below the app on phones), and index.html sets it before the app mounts
+  useEffect(() => { document.documentElement.classList.toggle("dark", dark); try { localStorage.setItem("ketiklab-dark", dark ? "1" : "0"); } catch { /* ignore */ } }, [dark]);
   useEffect(() => { try { localStorage.setItem("ketiklab-fav", JSON.stringify(favorites)); } catch { /* ignore */ } }, [favorites]);
   useEffect(() => { try { localStorage.setItem("ketiklab-input", inputMode); } catch { /* ignore */ } }, [inputMode]);
   useEffect(() => { try { localStorage.setItem("ketiklab-extra-meanings", extraMeanings); } catch { /* ignore */ } }, [extraMeanings]);
