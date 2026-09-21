@@ -128,19 +128,60 @@ def toned(zh):
     fixed = FIXES.get(zh)
     return fixed if fixed else " ".join(p[0] for p in pinyin(zh, style=Style.TONE))
 
+# PUEBI-style, without a morphological analyser: V·CV (bu·ku), VC·CV (kan·tor), VC·CCV
+# (in·stru·men); ng, ny, kh, sy are one consonant (sa·ngat, ting·gal, a·khir); the
+# diphthongs ai/au/ei/oi stay together only at the end of a word (pan·dai, pu·lau) and
+# every other vowel pair is two syllables (bu·ah, ma·in, di·a). Prefixes come out
+# phonologically (me·ngam·bil), which is what a reading hint needs. The old rule split
+# only at V-C-V, so "mencapai" came out as menca·pai and "kantor" not at all.
+VOWELS = set("aeiou")
+DIGRAPHS = ("ng", "ny", "kh", "sy")
+FINAL_DIPHTHONGS = ("ai", "au", "ei", "oi")
+
+def _syllabify(word):
+    w = word.lower()
+    if not w.isalpha():
+        return ""
+    units, i = [], 0
+    while i < len(w):
+        if w[i] not in VOWELS and w[i:i + 2] in DIGRAPHS:
+            units.append(w[i:i + 2]); i += 2
+        else:
+            units.append(w[i]); i += 1
+    cuts, n = set(), len(units)
+    for k, u in enumerate(units):
+        if u not in VOWELS:
+            continue
+        j = k + 1
+        while j < n and units[j] not in VOWELS:
+            j += 1
+        if j >= n:
+            break
+        cons = j - k - 1
+        if cons == 0:
+            if not (j == n - 1 and u + units[j] in FINAL_DIPHTHONGS):
+                cuts.add(k + 1)
+        elif cons == 1:
+            cuts.add(k + 1)
+        else:
+            cuts.add(k + 2)
+    if not cuts:
+        return ""
+    out, pos, cur = [], 0, ""
+    for k, u in enumerate(units):
+        if k in cuts:
+            out.append(word[pos:pos + len(cur)]); pos += len(cur); cur = ""
+        cur += u
+    out.append(word[pos:])
+    return "·".join(out)
+
 def syllables(word):
-    """Rough Indonesian syllabification for the reading hint."""
+    """Rough Indonesian syllabification for the reading hint; "" for a single syllable."""
     if " " in word:
         return " ".join(syllables(p) or p for p in word.split(" "))
-    v = "aeiouAEIOU"
-    out, cur = [], ""
-    for i, ch in enumerate(word):
-        cur += ch
-        if ch in v and i + 2 < len(word) and word[i + 1] not in v and word[i + 2] in v:
-            out.append(cur); cur = ""
-    if cur:
-        out.append(cur)
-    return "·".join(out) if len(out) > 1 else ""
+    if "-" in word:
+        return "-".join(_syllabify(p) or p for p in word.split("-"))
+    return _syllabify(word)
 
 # ---------------------------------------------------------------- taxonomy
 DAILY = {"noun.food","noun.body","noun.animal","noun.plant","noun.person","noun.time",
