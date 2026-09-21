@@ -114,6 +114,11 @@ BANDS = [
 ]
 
 SKIP = re.compile(r"[^a-z]")
+# Roman numerals (iii, vii, xxx, liv, ccc …) rank high in the frequency list and have
+# wordnet entries, so a rebuild used to put them back after they were dropped by hand;
+# "mix" is the one real word that spells like one
+ROMAN = re.compile(r"^m{0,3}(cm|cd|d?c{0,3})(xc|xl|l?x{0,3})(ix|iv|v?i{0,3})$")
+ROMAN_WORDS = {"mix"}
 # ultra-high-frequency function words carry no learning value in a typing trainer
 STOP = set("""the be to of and a in that have i it for not on with he as you do at this but his by
 from they we say her she or an will my one all would there their what so up out if about who get which go me
@@ -127,7 +132,8 @@ def build():
     idn = wn.Wordnet("omw-id:1.4")
 
     candidates = [w for w in top_n_list("en", 60000)
-                  if len(w) >= 3 and not SKIP.search(w) and w not in STOP]
+                  if len(w) >= 3 and not SKIP.search(w) and w not in STOP
+                  and not (ROMAN.match(w) and w not in ROMAN_WORDS)]
 
     buckets = {b[0]: [] for b in BANDS}
     seen = set()
