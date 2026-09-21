@@ -39,6 +39,13 @@ jobs:
       cancel-in-progress: false
     outputs:
       go: ${{ steps.gate.outputs.go }}
+    # Job-level, because the push step re-runs promote.mjs after a rejected push:
+    # set on the promote step alone, a manual flush retried by that loop released
+    # by elapsed time instead of the count the dispatch asked for.
+    env:
+      # Only a manual run pins a fixed count. Scheduled runs leave this empty and
+      # release by elapsed time, because GitHub delivers cron events irregularly.
+      WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '' }}
     steps:
       - uses: actions/checkout@v5
         if: github.event_name != 'push'
@@ -49,10 +56,6 @@ jobs:
       - name: Promote queued content (hourly + manual runs)
         id: promote
         if: github.event_name != 'push'
-        env:
-          # Only a manual run pins a fixed count. Scheduled runs leave this empty and
-          # release by elapsed time, because GitHub delivers cron events irregularly.
-          WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '' }}
         run: node scripts/promote.mjs
       - name: Push promoted content
         if: steps.promote.outputs.changed == 'true'
