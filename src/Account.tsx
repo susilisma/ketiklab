@@ -144,7 +144,9 @@ export function Account({ uiLang, name, onName }: {
       }
       if (recovering) return;
       try {
-        if (linked && linked !== uid) { setForeign(true); return; }
+        // a device linked to another account, reached by a session from a link: the note
+        // about the link comes first, and the merge/replace choice waits for a confirmation
+        if (linked && linked !== uid) { setForeign(true); setLinkOnly(!sessionTyped(uid)); return; }
         if (!linked && !sessionTyped(uid)) { setLinkOnly(true); return; }
         if (linked === uid) {
           const { cloudHasMore } = await pushProgress(uid);
@@ -309,7 +311,20 @@ export function Account({ uiLang, name, onName }: {
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
-        {foreign
+        {foreign && linkOnly
+          ? <>
+              <p className="acct-note">
+                {T("你是通过邮件里的链接登录的，而这台设备上的学习记录属于另一个账号。确认这是你的账号后再决定怎么处理。",
+                   "Kamu masuk lewat tautan di email, dan data belajar di perangkat ini milik akun lain. Pastikan dulu ini akunmu sebelum memutuskan.",
+                   "You signed in through an emailed link, and the progress on this device belongs to another account. Make sure this is your account before deciding.", uiLang)}
+              </p>
+              <div className="acct-actions">
+                <button className="acct-btn" onClick={() => setLinkOnly(false)} disabled={busy}>
+                  {T("这是我的账号", "Ini akunku", "This is my account", uiLang)}
+                </button>
+              </div>
+            </>
+          : foreign
           ? <>
               <p className="acct-note">
                 {T("这台设备上的学习记录属于另一个账号。要怎么处理？",
