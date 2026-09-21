@@ -391,7 +391,7 @@ button.profile:hover>i{color:var(--purple)}
 .word-card{margin-top:var(--word-air);padding:var(--card-pad-t) clamp(12px,4vw,64px) 24px}
 .word-card.zh-compact{margin-top:max(var(--air-min),calc(var(--word-top-zh) - var(--header-h) - var(--strip-h) - var(--card-pad-t)));padding:var(--card-pad-t) clamp(12px,4vw,48px) 20px}
 .chapter-complete{margin-top:var(--word-air)}
-.word-card h1{font-size:var(--word);line-height:1.15;letter-spacing:.07em;margin:0 0 4px}
+.word-card h1{font-size:calc(var(--word) * var(--word-scale,1));line-height:1.15;letter-spacing:.07em;margin:0 0 4px}
 .word-card h1.target-word.id{letter-spacing:.05em}
 .word-card h1.target-word.zh{font-size:var(--word-zh);line-height:1.2;letter-spacing:.16em}
 .word-card.zh-compact h1.target-word.zh{font-size:var(--word-zh-ladder)}

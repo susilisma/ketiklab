@@ -723,6 +723,10 @@ export default function Home() {
   const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
+  // a single unhyphenated token longer than 13 letters (heteroskedastisitas) does
+  // not fit the card at the base size and broke mid-word; the word is scaled to fit
+  const longestToken = practiceLang === "zh" ? 0 : Math.max(0, ...targetWord.split(/[ -]/).map(tk => tk.length));
+  const wordScale = longestToken > 13 ? 13 / longestToken : 1;
   const itemMeaningLang = meaningFor(item.lang);
   const itemMeaning = resolveMeaning(item);
   // 选汉字 hides the hanzi and asks for it: the Chinese example sentence contains that very
@@ -1465,7 +1469,7 @@ export default function Home() {
           {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
             <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
                onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
-          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
+          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
               the <wbr> after it is the only break opportunity: without one, overflow-wrap:anywhere
               splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
           {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined}>{item.sub}</p>}
