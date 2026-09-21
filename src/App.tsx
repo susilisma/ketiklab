@@ -272,7 +272,10 @@ export default function Home() {
   // instead of fetching the same ten files a second time
   const globalLoad = useRef<Promise<void> | null>(null);
   const mounted = useRef(true);
-  const chapterStart = useRef(Date.now());
+  // where the session clock stood when the chapter began: its difference is the time
+  // shown on the finish card, so pauses and time in other views do not count
+  const chapterStart = useRef(0);
+  const secondsRef = useRef(0);
   const pendingIndex = useRef<number | null>(null);
   // bumped by every choice of list; a dictionary fetch that was started for an
   // older choice sees the mismatch and drops its result instead of applying it
@@ -486,6 +489,7 @@ export default function Home() {
   useEffect(() => { try { localStorage.setItem("ketiklab-state", JSON.stringify({ correct, attempts, mistakes })); } catch { /* ignore */ } }, [correct, attempts, mistakes]);
   // the clock belongs to the practice card: it pauses while another view is open
   useEffect(() => { if (!running || view !== "learn") return; const timer = setInterval(() => setSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [running, view]);
+  useEffect(() => { secondsRef.current = seconds; }, [seconds]);
   // the reading state outlives the reading panel, so the clock must stop when the learner leaves it
   useEffect(() => { if (!readingActive || readingDone || view !== "articles") return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone, view]);
 
@@ -510,7 +514,7 @@ export default function Home() {
     try { saved = Math.max(0, Math.floor(Number(JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}")[sourceKey]) || 0)); } catch { /* ignore */ }
     setChapter(saved);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
-    chapterStart.current = Date.now();
+    chapterStart.current = secondsRef.current;
     if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; }
     else setIndex(0);
     setTyped("");
@@ -903,7 +907,7 @@ export default function Home() {
     // a review that answered its last word used to wrap round to the first one
     // and go on for ever; it ends on the same card a chapter does
     if (atEnd) {
-      setChElapsed(Math.round((Date.now() - chapterStart.current) / 1000));
+      setChElapsed(Math.max(0, secondsRef.current - chapterStart.current));
       setChapterFinished(true);
       setRunning(false);
     } else {
@@ -1020,7 +1024,7 @@ export default function Home() {
       localStorage.setItem("ketiklab-chapters", JSON.stringify(m));
     } catch { /* ignore */ }
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
-    chapterStart.current = Date.now();
+    chapterStart.current = secondsRef.current;
     setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
     setTimeout(() => input.current?.focus(), 30);
   }
@@ -1033,7 +1037,7 @@ export default function Home() {
     resolveReviewRefs(keys).then(refs => {
       if (!refs.length) return;
       setReviewRefs(refs); setReviewKeys(keys);
-      setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = Date.now();
+      setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
       setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
       setRunning(true);
       setTimeout(() => input.current?.focus(), 30);
@@ -1230,7 +1234,7 @@ export default function Home() {
     const ch = Math.floor(gi / 20);
     writeChapter(sourceKey, ch); setChapter(ch);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
-    chapterStart.current = Date.now();
+    chapterStart.current = secondsRef.current;
     pendingIndex.current = null;
     setIndex(gi % 20);
   }
@@ -1347,7 +1351,7 @@ export default function Home() {
     if (zhStep === "read") setZhStep("pinyin");
     setReviewRefs(refs);
     setReviewKeys(keys);
-    setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = Date.now();
+    setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
     setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
     setView("learn"); setRunning(true);
     setTimeout(() => input.current?.focus(), 40);
@@ -1356,7 +1360,7 @@ export default function Home() {
   function exitReview() {
     setReviewKeys(null);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
-    chapterStart.current = Date.now();
+    chapterStart.current = secondsRef.current;
     setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
   }
   function practiceWord(w: Word, lg: Lang = lang) {
