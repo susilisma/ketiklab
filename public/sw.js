@@ -55,7 +55,9 @@ self.addEventListener("activate", (e) => {
     // Fetch what the app needs at start-up now, best effort, if it is not cached yet.
     for (const u of DATA_CORE) {
       if (await mine.match(u)) continue;
-      try { const res = await fetch(u); if (res.ok) await mine.put(u, res); } catch { /* offline already: the next online open fills it */ }
+      // bounded: the page this worker just took over queues every fetch until activate
+      // settles, so a stalled download here must not hold the app for minutes
+      try { const res = await fetch(u, { signal: AbortSignal.timeout(8000) }); if (res.ok) await mine.put(u, res); } catch { /* offline already: the next online open fills it */ }
     }
     await self.clients.claim();
   })());
