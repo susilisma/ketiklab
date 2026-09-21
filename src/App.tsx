@@ -716,7 +716,9 @@ export default function Home() {
   const targetWord = item.text;
   const itemMeaningLang = meaningFor(item.lang);
   const itemMeaning = resolveMeaning(item);
-  const itemExtras = extrasFor(item);
+  // 选汉字 hides the hanzi and asks for it: the Chinese example sentence contains that very
+  // word, so on that rung it is not shown (the other extra lines carry no hanzi to give away)
+  const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && zhStep === "choose" && x.kind === "example"));
   // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
   const trioW = item.dict ? undefined : wordByEn.get(item.key);
