@@ -289,4 +289,12 @@ async function autoPush() {
   try { await pushProgress(uid, local); } catch { /* the next tick retries */ } finally { pushing = false; }
 }
 setInterval(autoPush, 60000);
+// Another tab re-linked this device (signed out and in as someone else, "use the cloud
+// copy only"): this tab still holds the previous account's progress in memory, and its
+// next write-back or autoPush would carry it into the new account. It starts over
+// from storage instead. (The tab that made the change gets no event of its own.)
+const bootLinked = linkedUid();
+try {
+  window.addEventListener("storage", (e) => { if (e.key === SYNC_UID_KEY && linkedUid() !== bootLinked) location.reload(); });
+} catch { /* no window: nothing to guard */ }
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") void autoPush(); });
