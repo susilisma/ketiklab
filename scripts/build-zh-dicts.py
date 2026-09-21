@@ -58,7 +58,9 @@ BANDS = [
 # library teaches are pinned in pinyin-fixes.json and win over the guess
 FIXES = json.load(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "pinyin-fixes.json"), encoding="utf-8"))
 def strip_tones(s):
-    return "".join(c for c in unicodedata.normalize("NFD", s) if not unicodedata.combining(c)).replace("u\u0308", "v")
+    # ü becomes the IME "v" before the combining marks go: stripped first, the diaeresis
+    # was gone and nǚ turned into "nu", which the pinyin rung then graded against
+    return "".join(c for c in unicodedata.normalize("NFD", s).replace("u\u0308", "v") if not unicodedata.combining(c))
 
 def toned(word):
     fixed = FIXES.get(word)
@@ -162,8 +164,11 @@ def main():
         # every practice word needs a pinyin ladder entry or step 2/3 breaks
         for r in rows:
             w = r["name"]
-            if w not in pinmap:
-                pinmap[w] = f"{toned(w)}|{plain(w)}|4"
+            # a pinned reading also replaces an entry already in the map, which used to
+            # keep the old guess while the library's usphone showed the fix
+            if w not in pinmap or w in FIXES:
+                level = pinmap[w].split("|")[2] if w in pinmap else "4"
+                pinmap[w] = f"{toned(w)}|{plain(w)}|{level}"
         print(f"{dict_id}: {len(rows)} words")
 
     with open(pin_path, "w", encoding="utf-8") as f:
