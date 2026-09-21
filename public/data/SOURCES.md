@@ -30,9 +30,13 @@ official word list is used in them, and none uses an examination trademark as it
 
 `en-business.json`
 
-词条、中文释义与印尼语释义**全部由本项目自行编写**（商务语域），不含任何第三方数据。
+词条、中文释义与印尼语释义**全部由本项目自行编写**（商务语域）；只有美式音标取自 CMUdict。
 Headwords and both the Chinese and Indonesian glosses are **entirely authored in-house**
-for business register. This file contains no third-party data.
+for business register; only the US pronunciations come from CMUdict.
+
+| 用途 | 来源 | 授权 |
+|---|---|---|
+| 美式音标 US pronunciation | [CMUdict](https://github.com/cmusphinx/cmudict) | BSD-2-Clause |
 
 `en-toefl.json`
 
