@@ -79,7 +79,6 @@ const UMLAUT_U = "u" + String.fromCharCode(0x308);
 // lüe/nüe are the one ü case every IME also takes as lue/nue (no other syllable
 // spells that way), so both spellings meet at "ue" — for the target and the typing alike
 const norm = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "").replace(/([ln])ve/g, "$1ue");
-const focusVisible = (el: Element) => { try { return el.matches(":focus-visible"); } catch { return true; } };
 
 type Props = {
   step: ZhStep;
@@ -100,6 +99,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const [peek, setPeek] = useState(false);
   const [picked, setPicked] = useState<string | null>(null);
   const box = useRef<HTMLInputElement>(null);
+  // how the focused control got its focus (a ref: the effect below re-runs on every render)
+  const byPointer = useRef(false);
   const target = norm(plain);
 
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
@@ -109,18 +110,24 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   /* step 1 — recognise, advance on SPACE / ENTER */
   useEffect(() => {
     if (step !== "read" || !active) return;
+    // how the focused control got its focus. :focus-visible cannot tell at keydown time:
+    // Chromium already counts the key being pressed as keyboard use, so a ▶ or ★ that was
+    // clicked with the mouse took SPACE for itself and the rung stopped advancing
+    const down = () => { byPointer.current = true; };
     const on = (e: KeyboardEvent) => {
+      if (e.key === "Tab") { byPointer.current = false; return; }
       if (e.key !== " " && e.key !== "Enter") return;
       if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
       const t = e.target instanceof HTMLElement ? e.target : null;
       // fields, dialogs and a control the learner tabbed to keep their own keys;
-      // a button that was merely clicked (no focus ring) still lets SPACE advance
+      // a button that was merely clicked still lets SPACE advance
       if (t && t.closest("[role=dialog], input, textarea, select, [contenteditable=true]")) return;
-      if (t && t !== document.body && !t.classList.contains("zh-go") && t.closest("button, a, [role=button]") && focusVisible(t)) return;
+      if (t && t !== document.body && !t.classList.contains("zh-go") && t.closest("button, a, [role=button]") && !byPointer.current) return;
       e.preventDefault(); onPass();
     };
+    window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", on);
-    return () => window.removeEventListener("keydown", on);
+    return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", on); };
   }, [step, word, onPass, active]);
 
   /* step 3 — options: correct answer plus three same-level distractors */
