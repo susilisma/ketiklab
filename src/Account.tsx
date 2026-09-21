@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
-  loadProfile, saveName, pushProgress, linkThisDevice, applyLocal, linkedUid, linkDevice,
+  loadProfile, saveName, pushProgress, linkThisDevice, applyLocal, collectLocal, linkedUid, linkDevice,
   recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, type SyncNote,
 } from "./cloud";
 
@@ -230,8 +230,12 @@ export function Account({ uiLang, name, onName }: {
     try {
       const linked = linkedUid();
       if (linked && linked !== uid) { setForeign(true); return; }
-      const { cloudHasMore } = await pushProgress(uid);
-      if (name.trim()) await saveName(uid, name.trim());
+      // the account's own name wins, as it does on a typed sign-in: a session from a
+      // link used to rename the account after whoever last used this device (the blob
+      // pushed here carries it too, ahead of App's write-back of the name to storage)
+      const { cloudHasMore } = await pushProgress(uid, profName ? { ...collectLocal(), "ketiklab-name": profName } : collectLocal());
+      if (profName) onName(profName);
+      else if (name.trim()) await saveName(uid, name.trim());
       linkDevice(uid); setLinkOnly(false);
       setCloudNewer(cloudHasMore);
       setSyncedAt(new Date().toLocaleTimeString());
