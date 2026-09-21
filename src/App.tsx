@@ -690,8 +690,11 @@ export default function Home() {
   };
   // No branch may yield an empty list: `item` is dereferenced unguarded below.
   // ladderWords cannot be empty here — `ready` means words.json loaded.
+  // a topic favourite froze "点击播放标准发音" in the interface language of the day it was
+  // starred; the line is rebuilt for the current one (a dictionary favourite's has no such text)
+  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : wordByEn.get(f.key); return w ? { ...f, sub: trioItem(w, f.lang).sub } : f; });
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
-    ? favorites
+    ? favItems()
     : (dictInfo && dictWords && dictWords.length)
     ? dictWords.map(e => dictItem(dictInfo, e))
     : ladderWords.map(w => trioItem(w));
