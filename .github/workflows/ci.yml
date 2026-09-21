@@ -51,6 +51,11 @@ jobs:
             exit 1
           fi
 
+      # the deploy runs this after the build and it asserts the shape of index.html;
+      # a branch that broke it used to pass here and fail the deploy of main
+      - name: Generate language landing pages, library pages and sitemap
+        run: python3 scripts/build-seo-pages.py dist
+
       - name: Commit the regenerated lockfile
         if: github.event_name == 'push'
         run: |
