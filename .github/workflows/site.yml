@@ -29,8 +29,10 @@ jobs:
   # there it would take the pending slot from a push's build and that push would
   # stay undeployed. Pushes skip straight to the gate.
   promote:
-    # a rebuild that failed pushed nothing: nothing to deploy
-    if: github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success'
+    # a rebuild that failed pushed nothing: nothing to deploy. Only main is ever
+    # promoted or deployed: dispatched on another branch, the run used to append the
+    # queue to that branch, push it there and hand that build to Pages.
+    if: github.ref == 'refs/heads/main' && (github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     concurrency:
       group: promote
