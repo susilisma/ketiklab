@@ -75,6 +75,17 @@ def main():
     words = json.load(open(os.path.join(ROOT, "public", "data", "words.json"), encoding="utf-8"))
     if isinstance(words, dict) and "words" in words:
         words = words["words"]
+    # most rows carry no pinyin of their own: the app reads it from zh-pinyin.json
+    # ("词": "toned|plain|level"), and the Chinese deck must do the same
+    try:
+        zh_pinyin = json.load(open(os.path.join(ROOT, "public", "data", "zh-pinyin.json"), encoding="utf-8"))
+    except (OSError, ValueError):
+        zh_pinyin = {}
+    for w in words:
+        if not w.get("pinyin"):
+            toned = zh_pinyin.get(learn_word(w, "zh"), "").split("|")[0]
+            if toned:
+                w["pinyin"] = toned
     os.makedirs(OUT_DIR, exist_ok=True)
     for deck in DECKS:
         export(words, *deck)
