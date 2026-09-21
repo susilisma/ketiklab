@@ -130,6 +130,16 @@ const out = execFileSync(process.execPath, [join(ROOT, "scripts", "append-batch.
 console.log(out);
 rmSync(batchPath, { force: true });
 
+// a row that failed validation (a typo in a hand-reviewed category or level, a missing
+// field) is not promoted; draining it anyway would delete it from the queue on a green
+// run, so the run fails and the queue is left as it was for someone to fix
+const summary = JSON.parse(out);
+const invalid = [...(summary.skipReasons?.words ?? []), ...(summary.skipReasons?.readings ?? [])].filter((r) => !r.startsWith("dup-"));
+if (invalid.length) {
+  console.error(`promote: ${invalid.length} queued row(s) failed validation (${[...new Set(invalid)].join(", ")}); the queue is left untouched`);
+  process.exit(1);
+}
+
 // drain promoted items from the queue regardless of dup-skips
 writeFileSync(Q_WORDS, JSON.stringify(qWords.slice(takeWords.length), null, 0));
 if (takeReading.length) writeFileSync(Q_READS, JSON.stringify(qReads.slice(takeReading.length), null, 1));
@@ -145,7 +155,6 @@ writeFileSync(STATE, JSON.stringify({
   }),
 }, null, 1) + "\n");
 
-const summary = JSON.parse(out);
 const promoted = (summary.words?.added ?? 0) + (summary.readings?.added ?? 0);
 console.log(`promoted: ${promoted} | words left in queue: ${qWords.length - takeWords.length} | readings left: ${qReads.length - takeReading.length}`);
 setOutput(true);
