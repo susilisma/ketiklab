@@ -79,7 +79,9 @@ function tidyUrl() {
 supabase.auth.onAuthStateChange((event, s) => {
   session = s;
   if (event === "PASSWORD_RECOVERY") { recovery = true; ss.set(RECOVERY_KEY, "1"); }
-  if (event === "SIGNED_OUT") { try { localStorage.removeItem(TYPED_KEY); } catch { /* ignore */ } }
+  // a sign-out from another tab ends a password recovery too, or the form stayed up
+  // for the next, ordinary sign-in and the sync effect kept returning early
+  if (event === "SIGNED_OUT") { finishRecovery(); try { localStorage.removeItem(TYPED_KEY); } catch { /* ignore */ } }
   if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; wantAccount(); }
   tidyUrl();
 });
