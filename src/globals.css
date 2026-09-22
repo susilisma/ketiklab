@@ -441,7 +441,9 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 .ghost-input,.toolbar input,.acct-field input,.copy-row input,.reading-input-wrap textarea,.language select,.chapter-nav .chapter-select,select.meaning-pick{font-size:16px}
 }
 /* short laptops (1366x768, 1280x800, 1280x720): tighter card, smaller tiles, 40px nav rows */
-@media(min-width:641px) and (max-height:800px){.nav{height:40px}.phonetic{margin:4px 0 10px}.meanings{gap:8px}.word-card{padding-bottom:12px}.word-card .hint{margin-top:12px}.metric{padding:10px 14px}.metric strong{font-size:17px}}
+/* the "press any key" pill sits 20px + 34px up from the card's bottom edge; with the 12px padding
+   and 12px hint margin below it here, the meaning line ends 43px up, so the pill covered its lower half */
+@media(min-width:641px) and (max-height:800px){.nav{height:40px}.phonetic{margin:4px 0 10px}.meanings{gap:8px}.word-card{padding-bottom:12px}.word-card .hint{margin-top:12px}.type-veil{padding-bottom:4px}.metric{padding:10px 14px}.metric strong{font-size:17px}}
 @media(min-width:641px) and (max-width:1279px) and (max-height:800px){.nav{height:50px}}
 /* landscape phones: the stats row is un-pinned and the page may scroll vertically */
 @media(max-height:560px){.metrics{margin-top:12px}}
