@@ -127,6 +127,9 @@
 .mode-row button.active{background:var(--purple-soft);color:var(--purple);border-color:color-mix(in srgb,var(--purple) 30%,transparent);font-weight:700}
 .mode-row em{font-style:normal;font-size:10px;color:var(--purple);margin-left:4px}
 .letter.masked{color:transparent;border-bottom:2px solid var(--line)}
+/* a wrong key under dictation: the letter stays hidden (the span holds the answer) but its
+   underline turns red, or in 退格改错 mode nothing showed which position needs BACKSPACE */
+.letter.wrong.masked{border-color:#ec5f6f}
 .target-word .letter.masked{text-shadow:none}
 .skip-btn{margin-top:16px;border:1px solid var(--line);background:var(--bg);color:#d65360;border-radius:11px;padding:9px 16px;font-size:12px;font-weight:700}
 .skip-btn:hover{border-color:#d65360}
