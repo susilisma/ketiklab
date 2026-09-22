@@ -200,6 +200,8 @@
 .global-toggle{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:12px;padding:0 14px;min-height:44px;font-size:12px;font-weight:700;white-space:nowrap}
 .global-toggle:hover{border-color:var(--purple);color:var(--purple)}
 .global-toggle.on{background:var(--purple-soft);color:var(--purple);border-color:color-mix(in srgb,var(--purple) 30%,transparent)}
+/* the badge is absolutely positioned on the headword's first line, so the card reserves that line for it */
+.vocab-card:has(.res-src){padding-top:44px}
 .res-src{position:absolute;right:14px;top:13px;font-size:9px;font-weight:800;letter-spacing:.3px;color:var(--purple);background:var(--purple-soft);border-radius:7px;padding:3px 7px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .res-src.id{color:#1b6b4e;background:#e1f6ec}
 .res-src.zh{color:#8a5a0e;background:#fff0d7}
@@ -439,7 +441,9 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 /* chapter-nav and the ladder pills already say where the learner is; the tips are keyboard instructions — kept only while they carry the skip button */
 .prevnext,.zh-tip{display:none}.zh-tip:has(.zh-skip){display:flex}
 .word-card h1{letter-spacing:.04em}.word-card h1.target-word.id{letter-spacing:.03em}.word-card h1.target-word.zh{letter-spacing:.12em}
-.metrics .metric{flex-direction:column;justify-content:center;gap:2px;padding:8px 4px;text-align:center}.metrics .metric>i{width:24px;height:3px;order:2}.metrics .metric div{align-items:center}.metrics .metric strong{font-size:15px}.metrics .metric span{line-height:1.2}
+.metrics .metric{flex-direction:column;justify-content:center;gap:2px;padding:8px 4px;text-align:center}.metrics .metric>i{width:24px;height:3px;order:2}.metrics .metric div{align-items:center}.metrics .metric strong{font-size:15px}.metrics .metric span{line-height:1.2;min-height:2.4em}
+/* 8px more for the header title: "Business & Work · 614" was 3px short of its count */
+.header-actions{gap:6px}
 /* 16px so iOS Safari does not zoom the page on focus; the invisible ghost input and the two selects trigger it too (.chapter-nav outranks the 12px floor below) */
 .ghost-input,.toolbar input,.acct-field input,.copy-row input,.reading-input-wrap textarea,.language select,.chapter-nav .chapter-select,select.meaning-pick{font-size:16px}
 }
