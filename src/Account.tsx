@@ -174,7 +174,9 @@ export function Account({ uiLang, name, onName }: {
     try {
       const addr = email.trim();
       if (mode === "up") {
-        const res = await signUp(addr, password, formName.trim() || name.trim());
+        // a blank Name falls back to this device's name only while the device belongs to
+        // nobody: on a device linked to another account that name is the previous user's
+        const res = await signUp(addr, password, formName.trim() || (linkedUid() ? "" : name.trim()));
         // With confirmation on, signing up an address that already has an account
         // returns a placeholder user with no identities instead of an error, and
         // sends no email.
@@ -233,8 +235,12 @@ export function Account({ uiLang, name, onName }: {
       // the account's own name wins, as it does on a typed sign-in: a session from a
       // link used to rename the account after whoever last used this device (the blob
       // pushed here carries it too, ahead of App's write-back of the name to storage)
-      const { cloudHasMore } = await pushProgress(uid, profName ? { ...collectLocal(), "ketiklab-name": profName } : collectLocal());
-      if (profName) onName(profName);
+      // On a device linked to this account the field is the name (its blur has just saved
+      // it); the click that blurred it used to push the stale profile name and snap the
+      // field, the header and storage back to it.
+      const own = linked === uid ? name.trim() : profName;
+      const { cloudHasMore } = await pushProgress(uid, own ? { ...collectLocal(), "ketiklab-name": own } : collectLocal());
+      if (own) { onName(own); setProfName(own); }
       else if (name.trim()) await saveName(uid, name.trim());
       linkDevice(uid); setLinkOnly(false);
       setCloudNewer(cloudHasMore);
@@ -263,6 +269,8 @@ export function Account({ uiLang, name, onName }: {
       if (done === "reloading") return;
       setForeign(false);
       setSyncedAt(new Date().toLocaleTimeString());
+      // no reload on this path, so the header would keep the previous user's name
+      onName(profName);
       setMsg(done === "uploaded"
         ? T("这台设备上的学习记录已上传到你的账号。",
             "Data di perangkat ini sudah diunggah ke akunmu.",

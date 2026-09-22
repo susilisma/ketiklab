@@ -259,6 +259,11 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   const cloud: ProgressBlob = r.data ?? {};
   const local = collectLocal();
   const wasLinked = linkedUid() !== null;
+  // Account only links a device that is unlinked or linked to a different account, so
+  // wasLinked means the name stored here is another person's: the account's own name
+  // (even none) replaces it, or a nameless account was named after the previous user
+  // on every one of its devices
+  if (wasLinked) local["ketiklab-name"] = profileName;
   // a reload is only worth it when the marker stuck: with storage refused, the next
   // visit would link and reload all over again
   if (how === "replace") {
@@ -270,7 +275,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   }
   if (!r.data) { await saveProgress(userId, local); linkDevice(userId); return "uploaded"; }
   const merged = mergeProgress(local, cloud);
-  if (profileName) merged["ketiklab-name"] = profileName;
+  if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
   await saveProgress(userId, merged);
   linkDevice(userId);
   if (linkedUid() !== userId || canon(merged) === canon(local)) return "same";
