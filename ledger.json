@@ -1345,10 +1345,10 @@
    "fingerprint": "fav-sub-frozen-in-snapshot-language",
    "title": "收藏时把界面语言的「点击播放标准发音」文案冻结进 sub，换界面语言后收藏卡仍显示旧语言",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "6003eb9",
-   "reason": "主题词收藏按当前 uiLang 重建 sub；校验者 Chromium：en 界面显示 tap to hear pronunciation，词典收藏不变；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "chapter-time-includes-pauses",
@@ -1363,28 +1363,28 @@
    "fingerprint": "flush-retry-drops-count",
    "title": "site.yml WORDS_PER_RUN 只在 promote 步骤，推送重试循环重跑 promote.mjs 时按时间放 12 词",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "5e18c22",
-   "reason": "env 提到 job 级；校验者确认 inputs 上下文在 job env 合法；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "en-business-sources-claims-no-third-party",
    "title": "SOURCES.md 说 en-business.json 不含第三方数据，但 344/347 行 usphone 来自 CMUdict",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "d623c0c",
-   "reason": "说明改为「只有音标取自 CMUdict」并加表格行；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "anki-zh-deck-no-pinyin-fallback",
    "title": "export-anki.py 只读行内 pinyin，中→印牌 2036/3879 张无读音",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "9677ead",
-   "reason": "回退 zh-pinyin.json；实跑 3879/3879 有读音；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "dark-white-on-purple-3.25",
@@ -1399,28 +1399,28 @@
    "fingerprint": "dark-load-flash-and-light-body",
    "title": "保存深色后每次打开先浅色再渐变到深色；body 背景在深色下仍是浅色",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "4eb1ecb",
-   "reason": "dark 用 lazy useState、index.html 内联脚本设 html.dark、html.dark 共用深色令牌；校验者与 54 格渲染：首帧 html.dark、body rgb(17,18,24)；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "sw-visited-seo-pages-not-offline",
    "title": "在线看过的 /zh/lib/… 等生成页离线打开 ERR_FAILED",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "da7c1bd",
-   "reason": "navigate 分支对 /zh|id|en/ 下的其他页面 store；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "long-single-token-mid-word-break",
    "title": "375px 单个 ≥16 字母词头在词中断行",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "1918693",
-   "reason": "无连字符单词 >13 字母时按 13/长度缩放字号（--word-scale）；Chromium：heteroskedastisitas 375px 单行 25.6px；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "reading-genre-era-raw",
@@ -1570,46 +1570,46 @@
    "fingerprint": "ci-no-seo-step",
    "title": "Build check 不跑 build-seo-pages.py：改坏 index.html 结构的分支绿了，合入后 main 部署在生成页步骤失败",
    "priority": "P2",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "c974e7c",
-   "reason": "ci.yml 在 Build 后加该步骤；校验者确认 runner 有 python3、脚本只用标准库；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "zh-rebuild-never-refreshes-pinned-map",
    "title": "build-zh-dicts.py 对已在 zh-pinyin.json 的词不刷新（pinyin-fixes 只改 usphone 不改判分表），strip_tones 先去组合符再换 ü→v 使 nǚ 变 nu",
    "priority": "P2",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "a553a4a",
-   "reason": "FIXES 中的词覆盖表项并保留 level，ü 先转 v；校验者：nǚ ér→nv er；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "recovery-flag-survives-remote-signout",
    "title": "别的标签退出登录后，恢复链接打开的标签仍显示「设置新密码」，之后正常密码登录也停留在该表单且不同步",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "9af4c14",
-   "reason": "SIGNED_OUT 时 finishRecovery()；校验者 Chromium 确认；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "css-status-text-contrast-0921",
    "title": "浅色：收藏胶囊 3.16:1、本章完成标签 2.95:1、阅读器红色提示 3.68:1、账户绿字 3.35:1、语言小标 3.85–4.27:1、错字标记 3.15:1；深色：账户红字 3.53:1",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "eb43dc9",
-   "reason": "换墨色并补深色覆盖，全部 ≥4.5:1（4.7–6.4，按公式计算）；54 格渲染无回归；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "sw-activate-fill-can-stall-page",
    "title": "sw activate 里补取 4 个数据文件无超时，skipWaiting 接管的页面在 activate 结束前所有 fetch 排队，一次挂起的下载可卡住应用数分钟",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "304e077",
-   "reason": "fetch 加 AbortSignal.timeout(8000)；已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "srs-lapse-retry-keeps-step",
@@ -1786,10 +1786,10 @@
    "fingerprint": "reader-wrong-char-contrast",
    "title": "阅读器错字标记对比度（已随 css-status-text-contrast-0921 一起修，在分支）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "eb43dc9",
-   "reason": "已修好并验证，在分支 claude/daily-2026-09-21（Build check 成功），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-21"
+   "reason": "今日在昨日构建重跑测试（12/12 通过）后合入，最终树再跑一遍仍通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
   },
   {
    "fingerprint": "whatsapp-cta-contrast-latent",
@@ -1853,6 +1853,303 @@
    "commit": "",
    "reason": "官方缩写与专名，判分 toLowerCase；不改",
    "date": "2026-09-21"
+  },
+  {
+   "fingerprint": "review-exit-keeps-stale-chapter",
+   "title": "退出复习后当前列表落在复习开始前那个列表的章节，下一章把它写进真实位置（App.tsx [sourceKey] 效果在复习中跳过恢复，exitReview 不再读）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "5a4fdf0",
+   "reason": "exitReview 用 savedChapter(sourceKey)；两个查找者与校验者各自复现（语言切换 / 认读→复习→退出）；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "srs-counts-stale-while-app-open",
+   "title": "到期数只在挂载与答题后重算：应用开着时到期的词不显示、徽标无、开始复习禁用，直到刷新",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "c08394d",
+   "reason": "视图切换、visibilitychange、每 60 s refreshSrs；两个查找者浏览器复现；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "signup-inherits-previous-users-name",
+   "title": "共用设备上留空名字注册 / 合并无名账号时用上一个用户的显示名（Account.tsx signUp 回退、cloud.ts linkThisDevice 不换名）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "3020a10",
+   "reason": "注册回退只在未绑定设备；wasLinked 时账号名（含空）替换本机名；chooseLink onName(profName)；校验者两条路径复现；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "veil-pill-covers-meaning-short-laptops",
+   "title": "1366×768 / 1280×720 / 1024×768 闲置态「按任意键开始」胶囊盖住释义行下半 12px（globals.css max-height:800 块）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "58022b5",
+   "reason": ".type-veil padding-bottom 4px；校验者量得 12px → 0px；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "readme-daily-generation-schedule-off",
+   "title": "README / SOURCES.md 说词库每天 04:20 WIB 自动生成，实际 daily-words.yml 日程自 09-15 关闭、队列为空",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "03263aa",
+   "reason": "文案改为分批手动生成、人工校订、小时任务放出；workflow 头注释同改；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "indonesian-json-lookup-failure-as-gloss",
+   "title": "indonesian.json ikn / egianus 的释义是模型查找失败句「无法找到该词的定义。」，应用当释义加粗印出，coverage 算已覆盖",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "a121076",
+   "reason": "与 55 行释义修正同一提交；append-batch 是否拒绝「无法找到」类释义待主人；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "replace-keeps-other-accounts-srs",
+   "title": "「只用云端记录」只清 localStorage 同步键，上一账号的 SRS 阶梯（IndexedDB）留给新账号：徽标、复习、备份、重置都当作自己的",
+   "priority": "P2",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "校验者复现；SRS 行从不上云，清掉即毁掉上一账号唯一的一份，留着则归新账号——阶梯按设备还是按账号由主人定；若按按钮字面意思清空，1 行 resetAll()",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "trio-gloss-corrections-0923",
+   "title": "在线主题词 31 行释义错误（印尼语英文/非 KBBI 形 19 行、中文首义 14 行）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "266418e",
+   "reason": "查找者复核昨日 D 节并通读提出 35 行，校验者同意 30 / 修改 2 / 不同意 2 / 不确定 1，应用 31 行；pinyin/idSyllables 按脚本重生成，全库 id/首义唯一；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "indonesian-json-wrong-glosses-0923",
+   "title": "indonesian.json 55 行释义错误（英文假朋友、专名当普通词、地名非标准译名、错义）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "a121076",
+   "reason": "查找者提 56，校验者同意 54 / 修改 2，应用 55（wan/wobo/zafran/sejauh 不确定未改）；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "dictation-soft-wrong-letter-invisible",
+   "title": "默写 + 退格改错：错键 .letter.wrong.masked 被 .masked 覆盖成透明灰线，看不出哪个位置要退格",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "4ead1c1",
+   "reason": "只给下划线上红（校验者指出查找者的 letterVisible 修法会把答案红字露出）；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "category-tab-dead-while-global-search-on",
+   "title": "🌐 全部词库开着时点分类/词库卡/收藏：标签点亮但网格仍是搜索空态、0 张卡",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "dfb8dff",
+   "reason": "changeCategory/selectDict/selectFav setGlobalSearch(false)；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "copy-four-strings-0923",
+   "title": "英文会话栏「Press any letter key」与遮罩不一致；印尼语退出复习「Keluar」与退出登录同词；每词重复说明句在印/英残缺；印尼语错词本空态标题「kosong」在有到期词时为假",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "f55d84e",
+   "reason": "校验者逐条确认（Keluar 判为可接受，为对齐而改）；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "example-label-in-own-language",
+   "title": "附加释义=全部语言时例句标签用例句语言（英文界面见 中文例句）而非界面语言",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "a3be313",
+   "reason": "EXAMPLE_LABEL[uiLang][lang]；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "rename-then-sync-now-snaps-back",
+   "title": "改名后点立即同步：字段、表头、localStorage、云 blob 都弹回旧名字（pushNow 用过期 profName）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b2f97d6",
+   "reason": "绑定本账号的设备以字段为准并同步 profName；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "synced-at-time-in-browser-locale",
+   "title": "「上次同步」时间用浏览器 locale（印尼/中文界面见 9:57:53 PM）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b2f97d6",
+   "reason": "stamp() 按界面语言 zh-CN / id-ID / en-US；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "global-search-source-tag-overlaps-headword",
+   "title": "🌐 结果卡来源徽标绝对定位在词头首行上，长词头（business classification code）被盖住 17–39px",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b68b923",
+   "reason": ".vocab-card:has(.res-src){padding-top:44px}；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "metric-label-wrap-misaligns-numbers-375",
+   "title": "375 指标标签两行（Words learned / Hari berturut-turut）时数字比其他格高 7px",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b68b923",
+   "reason": "标签 min-height 2.4em；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "header-library-title-drops-count-375",
+   "title": "375 英/印界面顶栏「Business & Work · 614」差 3px 被截成「…」；档位缩窄的「53 / 614」差 28px",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b68b923",
+   "reason": "header-actions gap 6px 解决 3px 的情形；「53 / 614」仍截，需改措辞（需主人）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "sw-generated-page-cache-keyed-with-query",
+   "title": "sw 生成页按完整 URL（含 ?utm）存缓存，纯路径离线 miss，每个 query 一份副本",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "0ef7639",
+   "reason": "pageKey = pathname；校验者离线复现；旧构建失败、新构建通过；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "srs-legacy-step-below-minus-one-nan-due",
+   "title": "srs.ts 旧备份 step<-1 的行答对取 INTERVALS[-2] → dueAt NaN，永不到期却计入学习中",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "bbd5ae6",
+   "reason": "prevStep 夹到 [-1,7]；fake-indexeddb：-3→0、0→1、7→7、\"3\"→4、NaN→0；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "duplicate-sense-inside-one-gloss",
+   "title": "7 行释义同一义项印两遍（indonesian baru/baik/cinta/acara/pembuatan/panjang、en-toefl defensive）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "bf42972",
+   "reason": "合并为不重复的义项列表；全库扫描 0 重复；已合入 main bf42972（Build check #26 成功、0 注解；Build and deploy #656 成功，build+deploy 均运行，部署 = main bf42972）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "seo-readings-page-title-bare-number",
+   "title": "阅读页生成页 <title>「经典朗读 — 160」无单位，词库页有「2,590 词」",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "a6301a0",
+   "reason": "已修好并验证（dist 三个 title 160 篇 / bacaan / readings），在分支 claude/daily-2026-09-23（Build check #26 成功），受每次 12 项上限未合入 main，明日第一批合入",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "finish-card-raw-key-for-dictionary-favourite",
+   "title": "完成卡把未加载词典的收藏错词印成 en:said、无释义（lookupKey 不看正在练的列表）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "在完成卡处从 learnItems 解析（校验者：不要放进 lookupKey，否则错词本效果不再取词典）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "space-swallowed-after-refocus-mid-phrase",
+   "title": "打完短语前半后点 ▶/Escape 再按空格被 onAnyKey 吞掉，需第二次空格",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "typedRef 为空时才 preventDefault；注意暂停遮罩与拼音框",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "start-review-silent-when-dictionary-unreachable",
+   "title": "到期词只在取不到的词典里时，开始复习点了没反应、无横幅（resolveReviewRefs catch 后 refs 空即 return）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "report.complete=false 时显示 review-banner + 重试",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "import-file-input-not-cleared-after-failure",
+   "title": "导入失败后再选同名文件不触发 change",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "onChange 里 e.target.value=\"\"",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "lang-setup-learn-change-keeps-foreign-dictionary",
+   "title": "首访对话框从 ?lib=en-core 进来改学习语言为中文并保存后仍练 Core English（saveLangSetup 不动 source）；比账上 lang-select-inert-with-dictionary 更宽",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "saveLangSetup 中 learn 与打开词典语言不同时回到主题词（changeLanguage 部分仍属主人）；注意 loadDict 晚到的竞态",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "failed-first-link-never-retried",
+   "title": "首次输入密码登录时 progress 读取失败 → 设备未绑定，autoPush 永不重试，直到再开账户页",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "在 Account 效果里监听 online 重试 linkThisDevice（校验者不建议改 autoPush 语义）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "zh-choose-options-fixed-order-per-word",
+   "title": "选汉字档四个选项与答案位置对每个词固定，重练/换设备都一样，且排序平局偏向答案在第 1 格",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "seed 混入每次挂载的 nonce；未在浏览器确认",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "session-hint-collapses-to-ellipsis-375",
+   "title": "375 会话栏提示缩成「…」/「PR…」，中文档位无遮罩时没有别的提示",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "手机用短字符串（按任意键 / Tekan tombol / Press a key）",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "id-word-list-terminology-drift",
+   "title": "印尼语词库页 Daftar Kata / Koleksi Kosakata / Kamus ujian 三种叫法（约 15 处 + 生成页 + README）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "kamus 不算错，统一与否是风格；若统一用 daftar kata 需一次改齐",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "append-batch-accepts-lookup-failure-gloss",
+   "title": "append-batch.mjs / 生成器不拒绝「无法找到 / 未找到 / 找不到」类释义，查找失败句可再上线",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "是否加门槛由主人定；ikn/egianus 已改",
+   "date": "2026-09-23"
+  },
+  {
+   "fingerprint": "gloss-candidates-unsure-0923",
+   "title": "校验者不同意或不确定：nasty、interlude（保留）、regulatory capture penangkapan regulator、appeasement 首义顺序、marmot en/id 不对应、wan/wobo/zafran/sejauh",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "见 reports/gloss-candidates-2026-09-23.md",
+   "date": "2026-09-23"
   }
  ]
 }
