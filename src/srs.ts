@@ -57,7 +57,10 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
       const old = await db.reviews.get(en.slice(i + 1));
       if (old) { await db.reviews.delete(old.en); if (!existing) existing = { ...old, en }; }
     }
-    const prevStep = existing?.step ?? -1;
+    // clamped on read as well as on restore: a row imported before restoreRecords clamped
+    // (step -3) answered correctly took INTERVALS[-2] and got a NaN dueAt, never due again
+    const rawStep = Number(existing?.step);
+    const prevStep = Number.isFinite(rawStep) ? Math.max(-1, Math.min(INTERVALS.length - 1, Math.trunc(rawStep))) : -1;
     let step: number;
     let dueAt: number;
     if (!correct) { step = -1; dueAt = now + RELAPSE_DELAY; }
