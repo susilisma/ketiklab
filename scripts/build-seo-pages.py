@@ -89,6 +89,7 @@ T = {
     "practice": {"zh": "练这个词库", "id": "Latih kamus ini", "en": "Practise this library"},
     "lang_names": {"zh": "中文", "id": "Bahasa Indonesia", "en": "English"},
     "count": {"zh": "{n} 词", "id": "{n} kata", "en": "{n} words"},
+    "pieces": {"zh": "{n} 篇", "id": "{n} bacaan", "en": "{n} readings"},
 }
 READ_LANG = {"zh": "中文", "id": "Bahasa Indonesia", "en": "English"}
 
@@ -352,7 +353,7 @@ def trio_page(lang, words, lib_rows, n_readings, zh_pinyin):
 def readings_page(lang, readings, lib_rows):
     name = T["readings"][lang]; n = len(readings)
     desc = fmt("read_desc", lang, n=n)
-    title = f"{name} — {n} | KetikLab"
+    title = f"{name} — {fmt('pieces', lang, n=n)} | KetikLab"
     cols = T["cols_read"][lang]
     rows = "\n".join(
         f'<tr><td class="w">{esc(r["title"])}</td><td>{esc(r.get("author") or "")}</td><td>{esc(str(r.get("era") or ""))}</td>'
