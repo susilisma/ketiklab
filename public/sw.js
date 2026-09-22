@@ -84,14 +84,16 @@ self.addEventListener("fetch", (e) => {
     // a generated page (/zh/lib/en-core/, /id/readings/ …) is a plain document: kept
     // once seen, so a page read online opens offline instead of failing to load
     const generated = !isShell && !landing && /^\/(zh|id|en)\//.test(url.pathname);
+    // keyed by path like a landing page: stored under the full URL, a page opened from a
+    // shared link with ?utm_… never served its plain address offline, and each query made a copy
+    const pageKey = landingKey || (generated ? url.pathname : null);
     e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) store("./index.html", res);
-      else if (landingKey) store(landingKey, res);
-      else if (generated) store(req, res);
+      else if (pageKey) store(pageKey, res);
       return res;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(landingKey || req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
     return;
   }
   // Hashed build assets are immutable: cache-first
