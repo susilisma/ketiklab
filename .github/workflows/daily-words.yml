@@ -1,6 +1,6 @@
 name: Daily word batch
 
-# Generates ~100 fresh trilingual words a day into queue/words.json.
+# Generates a batch of fresh trilingual words into queue/words.json (by hand, see below).
 # The hourly "Build and deploy" run drains the queue into public/data/words.json.
 # Dedup is against the live library + the current queue, so runs never repeat.
 

@@ -11,7 +11,7 @@ Type words and classic readings; the site teaches you the vocabulary while you t
 
 ## What is in it
 
-Counts as of 2026-09-15; the library grows on a schedule (see *Content pipeline* below).
+Counts as of 2026-09-15. New words are generated in batches, reviewed by hand, and released by the hourly job (see *Content pipeline* below).
 
 | | |
 |---|---|
@@ -98,8 +98,8 @@ GitHub Actions（`.github/workflows/site.yml`）在每次 push 到 `main` 时构
 
 ### Content pipeline
 - 追加工具：`node scripts/append-batch.mjs [--dry-run] <batch.json>` — 词条支持元组 `[en,id,zh,category,level?]` 或完整对象；自动 schema 校验 + 去重（词按 en/id/zh；朗读按 id 与 title+author）+ 幂等。例句只保留提交时给出的，不再自动生成。
-- 自动更新全部跑在 GitHub Actions 上，不依赖任何本机计划任务：
-  - `daily-words.yml`：每天 04:20 WIB 从开放词网中挑选候选词写入 `queue/words.json`；挑不到时明确报错而不是静默通过。
+- 发布流程跑在 GitHub Actions 上，不依赖任何本机计划任务：
+  - `daily-words.yml`：手动触发（workflow_dispatch）从开放词网中挑选候选词写入 `queue/words.json`，人工校订后由小时任务放出；定时运行已关闭，等生成器的释义质量达标再开。挑不到时明确报错而不是静默通过。
   - `site.yml`：每小时第 7 分跑一次，`scripts/promote.mjs` 按时间速率（约每小时 12 词、每 6 小时 1 篇朗读，词与朗读各有独立时钟）从 queue 提升到 `public/data/`，`scripts/snapshot-history.py` 记录词库规模供 `/ops/` 看板使用；只有内容真的变了才触发部署。
 - 词库重建：`scripts/build-en-dicts.py`、`scripts/build-zh-dicts.py`、`scripts/build-toefl-dict.py`（来源与授权见 `public/data/SOURCES.md`）。
 

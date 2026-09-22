@@ -84,8 +84,8 @@ Authored and generated in-house.
 
 `words.json`（主题词汇 / Kosakata Tematik / Words by Topic）
 
-前约 2,200 条由本项目自行编写；其后的条目由 `scripts/build-trio-queue.py` 每日生成，并经人工校订。
-The first ~2,200 entries are authored in-house; later entries are generated daily by
+前约 2,200 条由本项目自行编写；其后的条目由 `scripts/build-trio-queue.py` 分批生成，并经人工校订。
+The first ~2,200 entries are authored in-house; later entries are generated in batches by
 `scripts/build-trio-queue.py` and reviewed by hand.
 
 | 用途 | 来源 | 授权 |
