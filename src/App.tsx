@@ -445,7 +445,16 @@ export default function Home() {
   }, []);
 
   const refreshSrs = () => { getStats().then(setSrs).catch(() => {}); };
-  useEffect(() => { refreshSrs(); }, []);
+  // Rows come due while the app stays open (a lapse 10 minutes on, a PWA left open overnight)
+  // and the counts used to move only after the next answer: the badge, the 到期 tile and
+  // 开始复习 said 0 until a reload. Recounted when a view opens, when the tab comes back and once a minute.
+  useEffect(() => { refreshSrs(); }, [view]);
+  useEffect(() => {
+    const onVisible = () => { if (document.visibilityState === "visible") refreshSrs(); };
+    document.addEventListener("visibilitychange", onVisible);
+    const timer = setInterval(refreshSrs, 60000);
+    return () => { document.removeEventListener("visibilitychange", onVisible); clearInterval(timer); };
+  }, []);
   // The 错词本 can only list a word whose list is at hand: a dictionary missed word from a
   // list not opened this session was silently left out, so the list disagreed with the
   // button above it. Fetch those dictionaries (as 开始复习 does) and render again.
