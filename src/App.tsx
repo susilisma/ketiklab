@@ -67,10 +67,17 @@ const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: string;
 ];
 const LANGS: Lang[] = ["zh", "id", "en"];
 
-const LANGUAGE_META: Record<Lang, { label: string; voice: string; example: string }> = {
-  zh: { label: "中文", voice: "zh-CN", example: "中文例句" },
-  id: { label: "Bahasa Indonesia", voice: "id-ID", example: "Contoh bahasa Indonesia" },
-  en: { label: "English", voice: "en-US", example: "English example" },
+const LANGUAGE_META: Record<Lang, { label: string; voice: string }> = {
+  zh: { label: "中文", voice: "zh-CN" },
+  id: { label: "Bahasa Indonesia", voice: "id-ID" },
+  en: { label: "English", voice: "en-US" },
+};
+// [written in][language of the example]: the label above an example sentence, in the
+// interface language like the other labels on the card (it used to be in the example's own)
+const EXAMPLE_LABEL: Record<Lang, Record<Lang, string>> = {
+  zh: { zh: "中文例句", id: "印尼语例句", en: "英文例句" },
+  id: { zh: "Contoh Mandarin", id: "Contoh Indonesia", en: "Contoh Inggris" },
+  en: { zh: "Chinese example", id: "Indonesian example", en: "English example" },
 };
 
 const CATEGORY_META: Record<WordCategory, Record<Lang, string>> = {
@@ -622,7 +629,7 @@ export default function Home() {
     // a zh library's def often repeats its English trans word for word
     const same = (s?: string) => (s || "").trim().toLowerCase() === (it.def || "").trim().toLowerCase();
     // a favourite saved before glosses existed kept the dictionary def in example
-    const example: ExtraMeaning[] = it.glosses && it.example ? [{ text: it.example, label: LANGUAGE_META[it.lang].example, kind: "example" }] : [];
+    const example: ExtraMeaning[] = it.glosses && it.example ? [{ text: it.example, label: EXAMPLE_LABEL[uiLang][it.lang], kind: "example" }] : [];
     return [...glosses, ...(r?.def || LANGS.some(l => same(it.glosses?.[l])) ? [] : def), ...example];
   };
   // A list with nothing at all in the chosen language says which languages it has instead
