@@ -1179,6 +1179,8 @@ export default function Home() {
   }
   function changeCategory(nextCategory: WordFilter) {
     sourceReq.current++; pendingIndex.current = null;
+    // choosing a list is leaving the 🌐 search: with it on, the tab lit up but the grid kept the search's empty state
+    setGlobalSearch(false);
     setReviewKeys(null);
     setCategory(nextCategory);
     setIndex(0); resetChapterRun();
@@ -1210,6 +1212,7 @@ export default function Home() {
     setDictWords(data);
     setSource(d.id);
     persistSource(d.id);
+    setGlobalSearch(false);
     setReviewKeys(null); setIndex(0); resetChapterRun(); setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setView("learn");
@@ -1218,6 +1221,7 @@ export default function Home() {
   function selectFav() {
     sourceReq.current++; pendingIndex.current = null;
     setSource("fav"); persistSource("fav");
+    setGlobalSearch(false);
     setReviewKeys(null); setIndex(0); resetChapterRun(); setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setView("learn"); setTimeout(() => input.current?.focus(), 40);
