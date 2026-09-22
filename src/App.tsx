@@ -509,14 +509,17 @@ export default function Home() {
 
   const sourceKey = source === "trio" ? trioChapterKey(category, lang, zhStep) : source;
 
+  // the chapter saved for a list; exitReview reads it too, since the restore effect below
+  // sits out a review, and the list current at its end may not be the one it started from
+  const savedChapter = (key: string) => {
+    try { return Math.max(0, Math.floor(Number(JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}")[key]) || 0)); } catch { return 0; }
+  };
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
     // a review session is its own list: picking another rung or learning language
     // changes the key but not the words, so the session keeps its place and its tally
     if (reviewKeys) return;
-    let saved = 0;
-    try { saved = Math.max(0, Math.floor(Number(JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}")[sourceKey]) || 0)); } catch { /* ignore */ }
-    setChapter(saved);
+    setChapter(savedChapter(sourceKey));
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; }
@@ -1371,9 +1374,13 @@ export default function Home() {
     setView("learn"); setRunning(true);
     setTimeout(() => input.current?.focus(), 40);
   }
-  // the chapter restarts at word 1, so its tally and clock restart with it
+  // the chapter restarts at word 1, so its tally and clock restart with it. The rung or
+  // learning language may have changed during the review (开始复习 itself moves 认读 up to
+  // 打拼音): the list now current opens at its own saved chapter, not at the one the
+  // review started from — which 下一章 then wrote over the real position
   function exitReview() {
     setReviewKeys(null);
+    setChapter(savedChapter(sourceKey));
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
     chapterStart.current = secondsRef.current;
     setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
