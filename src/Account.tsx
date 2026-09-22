@@ -101,6 +101,8 @@ export function Account({ uiLang, name, onName }: {
   const [note, setNote] = useState<SyncNote>("");
   const [urlErr, setUrlErr] = useState("");
   const lastUid = useRef<string | undefined>(undefined);
+  // the "last synced" time in the interface language, not the browser's locale
+  const stamp = () => new Date().toLocaleTimeString(uiLang === "zh" ? "zh-CN" : uiLang === "id" ? "id-ID" : "en-US");
 
   useEffect(() => {
     let alive = true;
@@ -161,7 +163,7 @@ export function Account({ uiLang, name, onName }: {
                 "This device's progress has been uploaded to your account.", uiLang)
             : T("已同步。", "Tersinkron.", "Synced.", uiLang));
         }
-        setSyncedAt(new Date().toLocaleTimeString());
+        setSyncedAt(stamp());
       } catch (e2: unknown) { if (alive) setErr(humanError(e2, uiLang)); }
     })();
     return () => { alive = false; };
@@ -244,7 +246,7 @@ export function Account({ uiLang, name, onName }: {
       else if (name.trim()) await saveName(uid, name.trim());
       linkDevice(uid); setLinkOnly(false);
       setCloudNewer(cloudHasMore);
-      setSyncedAt(new Date().toLocaleTimeString());
+      setSyncedAt(stamp());
       setMsg(T("已同步。", "Tersinkron.", "Synced.", uiLang));
     } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
     finally { setBusy(false); }
@@ -267,10 +269,10 @@ export function Account({ uiLang, name, onName }: {
     try {
       const done = await linkThisDevice(session.user.id, how, profName);
       if (done === "reloading") return;
-      setForeign(false);
-      setSyncedAt(new Date().toLocaleTimeString());
       // no reload on this path, so the header would keep the previous user's name
       onName(profName);
+      setForeign(false);
+      setSyncedAt(stamp());
       setMsg(done === "uploaded"
         ? T("这台设备上的学习记录已上传到你的账号。",
             "Data di perangkat ini sudah diunggah ke akunmu.",
@@ -319,7 +321,7 @@ export function Account({ uiLang, name, onName }: {
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
           <input value={name} maxLength={24} onChange={e => onName(e.target.value)}
-            onBlur={() => { if (session && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).catch(e2 => setErr(humanError(e2, uiLang))); }}
+            onBlur={() => { if (session && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
