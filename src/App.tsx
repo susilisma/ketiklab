@@ -353,11 +353,19 @@ export default function Home() {
   const zhMap = useZhMap(DATA);
   useEffect(() => { try { localStorage.setItem("ketiklab-zh-step", zhStep); } catch { /* ignore */ } }, [zhStep]);
   useEffect(() => {
+    // how the focused control got its focus (as ZhSteps does): a button the learner tabbed
+    // to keeps its SPACE, one that was merely clicked still lets SPACE mean "any key"
+    let byPointer = false;
+    const down = () => { byPointer = true; };
     const onAnyKey = (e: KeyboardEvent) => {
+      if (e.key === "Tab") { byPointer = false; return; }
       // with the language dialog open its buttons hold focus; a key must not reach the word behind it
       if (view !== "learn" || showLangSetup) return;
       const el = document.activeElement as HTMLElement | null;
       if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable)) return;
+      // SPACE on a keyboard-focused button is that button's activation (下一章, 暂停, ★, a
+      // ladder pill): swallowed here it did nothing, and ENTER was the only way to press it
+      if (e.key === " " && el && el !== document.body && el.closest("button, a, [role=button]") && !byPointer) return;
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
       isComposing.current = false;
       input.current?.focus();
@@ -365,8 +373,9 @@ export default function Home() {
       // left alone it lands in the freshly focused box and is graded as a wrong key
       if (e.key === " ") e.preventDefault();
     };
+    window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", onAnyKey);
-    return () => window.removeEventListener("keydown", onAnyKey);
+    return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", onAnyKey); };
   }, [view, showLangSetup]);
 
   useEffect(() => {
