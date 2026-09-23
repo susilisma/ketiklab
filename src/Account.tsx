@@ -138,9 +138,13 @@ export function Account({ uiLang, name, onName }: {
       // keeps its name too
       const untrusted = (!!linked && linked !== uid) || (!linked && !sessionTyped(uid));
       const prof = await loadProfile(uid);
-      if (!alive) return;
+      // the first link of a typed sign-in outlasts the panel: leaving it during the profile
+      // round-trip used to abandon the link, and autoPush never links a device on its own,
+      // so nothing was backed up for the rest of the session and nothing said so
+      const firstLink = !linked && sessionTyped(uid) && !recovering;
+      if (!alive && !firstLink) return;
       if (prof) {
-        setProfName(prof.name || "");
+        if (alive) setProfName(prof.name || "");
         if (prof.name && !untrusted) onName(prof.name);
         else if (!prof.name && name.trim() && !untrusted) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
       }
