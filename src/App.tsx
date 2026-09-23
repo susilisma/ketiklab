@@ -441,7 +441,8 @@ export default function Home() {
     }).catch(() => { if (alive) setDataError(true); });
     loadManifest();
     { const sp = initSoundPref(); setSoundProfileState(sp.profile); }
-    try { const lp = Number(localStorage.getItem("ketiklab-loop")); if (lp >= 1 && lp <= 5) setLoopTimes(lp); } catch { /* ignore */ }
+    // whole numbers only: a 3.5 from a hand-edited backup drew three dots and asked for four passes
+    try { const lp = Number(localStorage.getItem("ketiklab-loop")); if (Number.isInteger(lp) && lp >= 1 && lp <= 5) setLoopTimes(lp); } catch { /* ignore */ }
     // stored values are shape-checked: a hand-edited backup that put "{}" here would
     // otherwise throw at favorites.some(...) on every load until site data is cleared
     try {
