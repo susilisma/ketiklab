@@ -144,12 +144,14 @@ export function Account({ uiLang, name, onName }: {
         if (prof.name && !untrusted) onName(prof.name);
         else if (!prof.name && name.trim() && !untrusted) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
       }
-      if (recovering) return;
       try {
         // a device linked to another account, reached by a session from a link: the note
-        // about the link comes first, and the merge/replace choice waits for a confirmation
+        // about the link comes first, and the merge/replace choice waits for a confirmation.
+        // Before the recovery check: a recovery link is a link like any other (anyone can
+        // add type=recovery to their own tokens), and it used to skip both guards
         if (linked && linked !== uid) { setForeign(true); setLinkOnly(!sessionTyped(uid)); return; }
         if (!linked && !sessionTyped(uid)) { setLinkOnly(true); return; }
+        if (recovering) return;
         if (linked === uid) {
           const { cloudHasMore } = await pushProgress(uid);
           if (!alive) return;
@@ -233,7 +235,7 @@ export function Account({ uiLang, name, onName }: {
     setErr(""); setMsg(""); setBusy(true);
     try {
       const linked = linkedUid();
-      if (linked && linked !== uid) { setForeign(true); return; }
+      if (linked && linked !== uid) { setForeign(true); setLinkOnly(!sessionTyped(uid)); return; }
       // the account's own name wins, as it does on a typed sign-in: a session from a
       // link used to rename the account after whoever last used this device (the blob
       // pushed here carries it too, ahead of App's write-back of the name to storage)
