@@ -203,9 +203,12 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         } else {
           onMiss();
           setWrong(n => n + 1);
-          // never roll back to the whole target: a paste or an autocorrect that put in
-          // several letters at once used to leave the box full, and it then ignored every key
-          setTyped(target.slice(0, Math.max(0, Math.min(v.length - 1, target.length - 1))));
+          // roll back to what was right so far — never to a slice of the target: a paste or
+          // an autocorrect that put in several letters at once used to leave the box full
+          // (then dead to every key) and, cut by one letter, spelled the answer out
+          let k = 0;
+          while (k < v.length && k < target.length && v[k] === target[k]) k++;
+          setTyped(v.slice(0, k));
         }
       }}
       onKeyDown={e => {
