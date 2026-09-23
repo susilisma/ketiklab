@@ -805,6 +805,8 @@ export default function Home() {
   const targetVoice = item.voice;
   const targetKey = `${source}:${item.key}`;
   const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
+  // English is the one interface language that inflects: "1 days" / "1 words" read as errors
+  const enOne = (n: number, one: string, many: string) => uiLang === "en" && n === 1 ? one : many;
   function seededVisible(i: number): boolean {
     let h = (i + 7) * 2654435761 >>> 0;
     for (let k = 0; k < targetWord.length; k++) h = ((h * 31) + targetWord.charCodeAt(k)) >>> 0;
@@ -1586,7 +1588,7 @@ export default function Home() {
         {chapterFinished && <div className="reading-complete chapter-complete">
           <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
           <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
-          <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} words · ${chWrongKeys.length} missed`}</p>
+          <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
           {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
@@ -1601,7 +1603,7 @@ export default function Home() {
           <Metric value={correct} label={t.words} accent="violet" />
           <Metric value={`${accuracy}%`} label={t.accuracy} accent="mint" />
           <Metric value={sessionWords && seconds ? Math.round(sessionWords / seconds * 60) : 0} label="WPM" accent="amber" />
-          <Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="blue" />
+          <Metric value={`${streakDays} ${enOne(streakDays, "day", t.day)}`} label={t.streak} accent="blue" />
         </div>
       </section>}
 
@@ -1640,7 +1642,7 @@ export default function Home() {
 
       {view === "mistakes" && <Panel title={t.mistakes} eyebrow={EYEBROW.mistakes[uiLang]}>
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
-        <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : "words in schedule"}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
+        <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : `${enOne(srs.total, "word", "words")} in schedule`}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
         {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
             clean run with no missed word, have no entry here but are still due above */}
@@ -1712,12 +1714,12 @@ export default function Home() {
       {view === "plan" && <Panel title={t.plan} eyebrow={EYEBROW.plan[uiLang]}>
         <div className="plan-layout">
           <div className="goal-card"><span>{t.finish}</span><strong>{goalPct}%</strong><div className="goal-ring" style={{"--p":`${goalPct*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount, DAILY_GOAL)}</b><small>/{DAILY_GOAL} {TX("词", "kata", "words", uiLang)}</small></div></div>
-          <div className="week">{last7.map((d, i) => <div className={i === 6 ? "today" : d.count >= DAILY_GOAL ? "done" : ""} key={i}><span>{d.label}</span><b>{i === 6 ? d.count : d.count >= DAILY_GOAL ? "✓" : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", "words", uiLang)}` : TX("未练", "Kosong", "None", uiLang)}</small></div>)}</div>
+          <div className="week">{last7.map((d, i) => <div className={i === 6 ? "today" : d.count >= DAILY_GOAL ? "done" : ""} key={i}><span>{d.label}</span><b>{i === 6 ? d.count : d.count >= DAILY_GOAL ? "✓" : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", enOne(d.count, "word", "words"), uiLang)}` : TX("未练", "Kosong", "None", uiLang)}</small></div>)}</div>
         </div>
       </Panel>}
 
       {view === "stats" && <Panel title={t.stats} eyebrow={EYEBROW.stats[uiLang]}>
-        <div className="stats-top"><Metric value={totalTyped} label={uiLang === "zh" ? "累计打词" : uiLang === "id" ? "Total kata" : "Total typed"} accent="violet"/><Metric value={`${streakDays} ${t.day}`} label={t.streak} accent="mint"/><Metric value={activeDays} label={uiLang === "zh" ? "学习天数" : uiLang === "id" ? "Hari aktif" : "Active days"} accent="amber"/><Metric value={srs.mastered} label={t.mastered} accent="blue"/></div>
+        <div className="stats-top"><Metric value={totalTyped} label={uiLang === "zh" ? "累计打词" : uiLang === "id" ? "Total kata" : "Total typed"} accent="violet"/><Metric value={`${streakDays} ${enOne(streakDays, "day", t.day)}`} label={t.streak} accent="mint"/><Metric value={activeDays} label={uiLang === "zh" ? "学习天数" : uiLang === "id" ? "Hari aktif" : "Active days"} accent="amber"/><Metric value={srs.mastered} label={t.mastered} accent="blue"/></div>
         <div className="chart-card"><div><h3>{uiLang === "zh" ? "学习日历" : uiLang === "id" ? "Kalender belajar" : "Learning calendar"}</h3><p>{uiLang === "zh" ? "最近 13 周，颜色越深当天练得越多" : uiLang === "id" ? "13 minggu terakhir — makin gelap, makin banyak" : "Last 13 weeks — darker = more"}</p></div>
           <div className="heatmap">{Array.from({ length: 13 }, (_, wk) => <div key={wk} className="heat-col">{Array.from({ length: 7 }, (_, dy) => { const cell = heat[wk * 7 + dy]; return <i key={dy} className={`heat l${cell ? heatLevel(cell.count) : 0}`} title={cell ? `${cell.day}: ${cell.count}` : ""} />; })}</div>)}</div>
           <div className="heat-legend"><span>{TX("少", "sedikit", "less", uiLang)}</span><i className="heat l0"/><i className="heat l1"/><i className="heat l2"/><i className="heat l3"/><i className="heat l4"/><span>{TX("多", "banyak", "more", uiLang)}</span></div>
