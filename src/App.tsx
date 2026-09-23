@@ -233,7 +233,11 @@ export default function Home() {
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
   const [lang, setLang] = useState<Lang>("zh");
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
-  useEffect(() => { document.documentElement.lang = uiLang === "zh" ? "zh-CN" : uiLang; }, [uiLang]);
+  // the tab, the history entries and the installed app's window carry the title too
+  useEffect(() => {
+    document.documentElement.lang = uiLang === "zh" ? "zh-CN" : uiLang;
+    document.title = TX("KetikLab — 打字背单词：学中文、印尼语或英语", "KetikLab — Latihan mengetik: Mandarin, Inggris, atau Indonesia", "KetikLab — Typing practice: Chinese, Indonesian or English", uiLang);
+  }, [uiLang]);
   // the meaning language the learner chose per learning language; a missing entry follows defaultDef
   const [defByLearn, setDefByLearn] = useState<MeaningPrefs>({});
   const [extraMeanings, setExtraMeanings] = useState<ExtraMeanings>(() => {
