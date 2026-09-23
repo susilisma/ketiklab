@@ -19,7 +19,8 @@ const SHELL = new URL("./", self.location).pathname;
 // Error and redirect responses are never stored: with cache-first assets a cached
 // 404/503 would blank the site until the next code deploy.
 const store = (key, res) => {
-  if (!res.ok) return;
+  // ok covers 206 too: a partial response stored whole would be served as the file
+  if (res.status !== 200) return;
   const copy = res.clone();
   caches.open(VERSION).then((c) => c.put(key, copy));
 };
