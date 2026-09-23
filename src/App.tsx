@@ -1361,6 +1361,8 @@ export default function Home() {
   // which sets running again, so only a start gives the focus back
   function start() {
     if (running) { pausedByButton.current = true; setRunning(false); return; }
+    // the finish card has no word to type: 开始 would only start the clock on nothing
+    if (chapterFinished) return;
     setRunning(true); setTimeout(() => input.current?.focus(), 20);
   }
   // Keys are "<lang>:<word key>". Within a language an English key can still exist
