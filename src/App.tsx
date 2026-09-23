@@ -289,6 +289,8 @@ export default function Home() {
   // older choice sees the mismatch and drops its result instead of applying it
   const sourceReq = useRef(0);
   const isComposing = useRef(false);
+  // what the box holds, for the window-level key handler that has no render to read it from
+  const typedRef = useRef("");
   // The IME box is uncontrolled and is only synced to `typed` between compositions.
   // When a word finishes (or rolls back) while the next composition is already open,
   // the box cannot be cleared, so its committed text stays in front of the next
@@ -372,8 +374,10 @@ export default function Home() {
       // hanzi it is what the next key must land in, or typing does nothing at all
       (input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox"))?.focus();
       // the veil says "press any key": a SPACE is the gesture, not the first letter —
-      // left alone it lands in the freshly focused box and is graded as a wrong key
-      if (e.key === " ") e.preventDefault();
+      // left alone it lands in the freshly focused box and is graded as a wrong key.
+      // Half-way through a phrase (the box lost its focus to ▶ or Escape) the SPACE is
+      // the next letter, and swallowing it meant pressing it twice
+      if (e.key === " " && !typedRef.current) e.preventDefault();
     };
     window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", onAnyKey);
@@ -521,6 +525,7 @@ export default function Home() {
   // the clock belongs to the practice card: it pauses while another view is open
   useEffect(() => { if (!running || view !== "learn") return; const timer = setInterval(() => setSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [running, view]);
   useEffect(() => { secondsRef.current = seconds; }, [seconds]);
+  useEffect(() => { typedRef.current = typed; }, [typed]);
   // the reading state outlives the reading panel, so the clock must stop when the learner leaves it
   useEffect(() => { if (!readingActive || readingDone || view !== "articles") return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone, view]);
 
