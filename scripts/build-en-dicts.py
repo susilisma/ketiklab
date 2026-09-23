@@ -11,7 +11,7 @@ Sources (all redistributable, attribution kept in public/data/SOURCES.md):
 Output: public/data/en-core.json / en-plus.json / en-upper.json / en-academic.json
 Format: {"name","trans":[zh...],"idtrans":[id...],"def":"english gloss","usphone":"ipa"}
 """
-import importlib.util, json, os, re, sys, warnings
+import importlib.util, json, os, re, sys, unicodedata, warnings
 warnings.filterwarnings("ignore")
 
 import wn
@@ -61,6 +61,9 @@ def is_han(g):
 def clean_gloss(g):
     # omw-cmn encodes part-of-speech tails like "不安+的"; strip them
     g = g.split("+")[0].strip()
+    # a private-use or format character in the source (terrier's "狗的一种\ue019")
+    # has no glyph and printed as a box on the meaning line
+    g = "".join(c for c in g if unicodedata.category(c) not in ("Co", "Cn", "Cf")).strip()
     return g
 
 
