@@ -368,7 +368,9 @@ export default function Home() {
       if (e.key === " " && el && el !== document.body && el.closest("button, a, [role=button]") && !byPointer) return;
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
       isComposing.current = false;
-      input.current?.focus();
+      // 打拼音 has its own box in place of the App input: after Escape or a tap on the
+      // hanzi it is what the next key must land in, or typing does nothing at all
+      (input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox"))?.focus();
       // the veil says "press any key": a SPACE is the gesture, not the first letter —
       // left alone it lands in the freshly focused box and is graded as a wrong key
       if (e.key === " ") e.preventDefault();
