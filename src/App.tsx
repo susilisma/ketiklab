@@ -1165,6 +1165,10 @@ export default function Home() {
   // brings back the one chosen for it instead of overwriting it
   function changeLanguage(nextLanguage: Lang) {
     setLang(nextLanguage);
+    // en and id share a chapter key, so the [sourceKey] effect does not start the new list's
+    // run: the finish card of the English chapter stayed up over the Indonesian list
+    // (a review session is its own list and keeps its place, as with a rung change)
+    if (!reviewKeys) { setIndex(0); resetChapterRun(); }
     setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setSpeakingWord(null);
@@ -1178,6 +1182,7 @@ export default function Home() {
     setDefByLearn(byLearn);
     if (learn !== lang) {
       setLang(learn);
+      if (!reviewKeys) { setIndex(0); resetChapterRun(); }
       setTyped(""); resetWordRun();
       autoSpokenWord.current = null;
       setSpeakingWord(null);
