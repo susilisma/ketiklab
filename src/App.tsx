@@ -1112,11 +1112,12 @@ export default function Home() {
       if (current.length === expected.length && current.length > 0) finishWord();
     } else if (inputMode === "soft") {
       // Soft mode: keep what was typed, mark the bad letters red, let BACKSPACE
-      // undo them. Only count one mistake per word so the stats stay meaningful.
-      errorBeep();
+      // undo them. The word is one mistake for the stats and the 错词本 however many
+      // keys go wrong, but every wrong key counts towards the skip button, and a
+      // BACKSPACE that leaves a red letter standing is not a new slip and makes no sound.
+      if (clean.length > typed.length) { errorBeep(); setWrongCountWord(n => n + 1); }
       if (!hadWrong.current) {
         hadWrong.current = true;
-        setWrongCountWord(n => n + 1);
         setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
       }
       setTyped(clean);
