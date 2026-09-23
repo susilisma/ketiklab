@@ -162,6 +162,8 @@ const NAV: { id: Exclude<View, "account">; icon: string }[] = [
 ];
 
 const EMPTY_STATS: SrsStats = { due: 0, learning: 0, mastered: 0, total: 0 };
+// the weekday initials under the 7-day bars and the plan, Sunday first, in the interface language
+const DAY_LETTERS: Record<Lang, string> = { zh: "日一二三四五六", id: "MSSRKJS", en: "SMTWTFS" };
 const DAILY_GOAL = 20;
 const CATEGORIES: WordFilter[] = ["all", "daily", "business", "indonesia", "study"];
 // What a backup file may carry: the synced progress plus this device's own
@@ -828,7 +830,7 @@ export default function Home() {
   }
   const last7 = Array.from({ length: 7 }, (_, k) => {
     const off = 6 - k; const d = new Date(); d.setDate(d.getDate() - off);
-    return { label: "SMTWTFS"[d.getDay()], count: dayCounts[todayStr(off)] || 0 };
+    return { label: DAY_LETTERS[uiLang][d.getDay()], count: dayCounts[todayStr(off)] || 0 };
   });
   const last7max = Math.max(1, ...last7.map(x => x.count));
   const todayCount = dayCounts[todayStr(0)] || 0;
