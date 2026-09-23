@@ -1188,6 +1188,9 @@ export default function Home() {
     sourceReq.current++; pendingIndex.current = null;
     // choosing a list is leaving the 🌐 search: with it on, the tab lit up but the grid kept the search's empty state
     setGlobalSearch(false);
+    // out of a review whose rung or language changed: the [sourceKey] effect sat the review
+    // out, and when the key is the one already current it will not fire now either
+    if (reviewKeys) setChapter(savedChapter(trioChapterKey(nextCategory, lang, zhStep)));
     setReviewKeys(null);
     setCategory(nextCategory);
     setIndex(0); resetChapterRun();
