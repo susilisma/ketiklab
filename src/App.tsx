@@ -1476,7 +1476,7 @@ export default function Home() {
 
     <main className="main">
       <header>
-        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b>{dictInfo ? dictName(dictInfo) : source === "fav" ? TX("我的收藏", "Favorit saya", "My favorites", uiLang) : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])} · {reviewKeys ? learnItems.length : activeItems.length}{ladderNarrowed ? ` / ${activeWords.length}` : ""}</b></button>
+        <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b><span>{dictInfo ? dictName(dictInfo) : source === "fav" ? TX("我的收藏", "Favorit saya", "My favorites", uiLang) : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])}</span><span>{` · ${reviewKeys ? learnItems.length : activeItems.length}${ladderNarrowed ? ` / ${activeWords.length}` : ""}`}</span></b></button>
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label={TX("深色模式", "Mode gelap", "Dark mode", uiLang)}>{dark ? "☀" : "☾"}</button>
           <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Indonesia</option><option value="en">English</option></select></label>
