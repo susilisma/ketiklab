@@ -1563,7 +1563,8 @@ export default function Home() {
           </>}
           {wrongCountWord >= 3 && <button className="skip-btn" onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
         </div>
-        <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>
+        {/* 选汉字 draws its distractors from the neighbouring words: printing them here gave one away */}
+        {!(practiceLang === "zh" && zhStep === "choose") && <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>}
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
           <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
