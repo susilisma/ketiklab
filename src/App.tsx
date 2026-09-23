@@ -471,6 +471,9 @@ export default function Home() {
   // and the counts used to move only after the next answer: the badge, the 到期 tile and
   // 开始复习 said 0 until a reload. Recounted when a view opens, when the tab comes back and once a minute.
   useEffect(() => { refreshSrs(); }, [view]);
+  // the box is unmounted with the learn view and no blur fires for that: the flag that
+  // says it holds the focus stayed true, so the view came back without its veil
+  useEffect(() => { if (view !== "learn") setTypingFocus(false); }, [view]);
   useEffect(() => {
     const onVisible = () => { if (document.visibilityState === "visible") refreshSrs(); };
     document.addEventListener("visibilitychange", onVisible);
