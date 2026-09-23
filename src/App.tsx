@@ -1564,7 +1564,7 @@ export default function Home() {
             {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small>{x.text}</span>)}
           </div>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
-            {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} disabled={!!reviewKeys && st.id === "read"} onClick={() => { setZhStep(st.id); setTyped(""); resetWordRun(); }}>
+            {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} disabled={!!reviewKeys && st.id === "read"} onClick={() => { if (finishing.current) return; setZhStep(st.id); setTyped(""); resetWordRun(); }}>
               <i>{st.num}</i>{uiLang === "zh" ? st.zh : uiLang === "id" ? st.idn : st.en}
             </button>)}
           </div>}
