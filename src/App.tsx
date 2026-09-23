@@ -1282,7 +1282,9 @@ export default function Home() {
   // Opening a word harder than the current rung is an explicit request for that
   // word, so climb to the step that holds it instead of landing somewhere else.
   function stepForWord(w: Word, lg: Lang = lang): ZhStep {
-    if (lg !== "zh" || zhStep === "hanzi") return zhStep;
+    // an empty map (zh-pinyin.json still on its way) rates every word level 4: climbing on
+    // that would persist 输入法 for a level-1 word opened from the library a second early
+    if (lg !== "zh" || zhStep === "hanzi" || !Object.keys(zhMap).length) return zhStep;
     const level = zhLevel(zhMap, w.zh.split("；")[0]);
     if (level <= zhMaxLevel(zhStep)) return zhStep;
     const next = ZH_STEPS.find(st => zhMaxLevel(st.id) >= level);
