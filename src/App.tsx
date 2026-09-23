@@ -1398,6 +1398,8 @@ export default function Home() {
     // dictionary could be checked), and the 错词本 drops it too
     if (report.complete && report.unresolved.length) {
       const gone = new Set(report.unresolved);
+      // the retired keys leave the session too, or the banner counted them (2 / 3)
+      keys = keys.filter(k => !gone.has(k));
       if (due.length) deleteRecords(report.unresolved).then(refreshSrs).catch(() => {});
       setMistakes(m => m.filter(k => !gone.has(k)));
       if (!refs.length && due.length && mistakes.length) { keys = mistakes.filter(k => !gone.has(k)); refs = await resolveReviewRefs(keys); }
