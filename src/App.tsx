@@ -770,8 +770,9 @@ export default function Home() {
   // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
   // screen. The peek is TAB held in the App input, or a tap — 打拼音 owns TAB for its pinyin.
   const meaningHidden = meaningVisibility === "hidden" && dictation === "off" && !(zhLadder && zhStep === "read") && !reveal && !meaningPeek;
-  // extra lines are a second cue: in dictation they wait for TAB like the letters
-  const extrasShown = (dictation === "off" || reveal) && !meaningHidden;
+  // extra lines are a second cue: in dictation they wait for TAB like the letters — but the
+  // ladder rungs have no dictation (letterVisible ignores it there) and no TAB to reveal
+  const extrasShown = (dictation === "off" || reveal || zhLadder) && !meaningHidden;
   // a word this list has no meaning for in the chosen language: another gloss it does have waits
   // behind a tap, unless "All languages" already lists it; not for a list that lacks the language outright
   const missNote = itemMeaningLang && itemMeaningLang !== "none" && !itemMeaning ? missingNote(item, itemMeaningLang) : "";
