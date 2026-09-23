@@ -11,7 +11,8 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
 });
 
-export type Profile = { id: string; name: string; member_until: string | null; ref_code: string | null };
+// member_until / ref_code are no longer read (the membership page is unused): optional so nothing else has to change
+export type Profile = { id: string; name: string; member_until?: string | null; ref_code?: string | null };
 export type ProgressBlob = Record<string, unknown>;
 export type SyncNote = "restored" | "merged" | "switched" | "";
 
@@ -121,7 +122,7 @@ export async function resetPassword(email: string) {
 
 export async function loadProfile(userId: string): Promise<Profile | null> {
   const { data, error } = await supabase
-    .from("profiles").select("id,name,member_until,ref_code").eq("id", userId).maybeSingle();
+    .from("profiles").select("id,name").eq("id", userId).maybeSingle();
   if (error) return null;
   return (data as Profile) ?? null;
 }
