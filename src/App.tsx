@@ -1454,6 +1454,8 @@ export default function Home() {
       if (source !== "trio") { setSource("trio"); persistSource("trio"); }
     }
     setTyped(""); resetWordRun(); autoSpokenWord.current = null; setView("learn");
+    // a dictionary word opened from the library lands in the box; a topic word did not
+    setTimeout(() => input.current?.focus(), 60);
   }
   function resetProgress() {
     if (!window.confirm(TX("确定清除全部学习进度？此操作无法撤销（可先在数据统计页导出备份）", "Hapus semua progres? Tidak bisa dibatalkan (ekspor cadangan dulu di halaman statistik)", "Erase all progress? This cannot be undone (export a backup from Stats first)", uiLang))) return;
