@@ -553,9 +553,12 @@ export default function Home() {
 
   // the chapter saved for a list; exitReview reads it too, since the restore effect below
   // sits out a review, and the list current at its end may not be the one it started from
-  const savedChapter = (key: string) => {
-    try { return Math.max(0, Math.floor(Number(JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}")[key]) || 0)); } catch { return 0; }
+  // ketiklab-chapters as an object: a backup or a cloud row may hold a string or an array
+  // there, and writing a key into that never stuck, so every reload went back to chapter 1
+  const readChapters = (): Record<string, unknown> => {
+    try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
   };
+  const savedChapter = (key: string) => Math.max(0, Math.floor(Number(readChapters()[key])) || 0);
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
     // a review session is its own list: picking another rung or learning language
@@ -1085,7 +1088,7 @@ export default function Home() {
     sourceReq.current++;
     setChapter(target);
     try {
-      const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}");
+      const m = readChapters();
       m[sourceKey] = target;
       localStorage.setItem("ketiklab-chapters", JSON.stringify(m));
     } catch { /* ignore */ }
@@ -1304,7 +1307,7 @@ export default function Home() {
     if (next) ensureAllDicts();
   }
   function writeChapter(key: string, ch: number) {
-    try { const m = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); m[key] = ch; localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
+    try { const m = readChapters(); m[key] = ch; localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
   }
   // Land on position gi of the list that is already open. The learn view shows one
   // 20-word chapter, so a whole-list index has to become chapter + offset; and since
