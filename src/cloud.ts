@@ -117,6 +117,13 @@ export async function signIn(email: string, password: string) {
 
 export async function signOut() {
   finishRecovery();
+  // the last minute of typing sits on this device until autoPush's next tick; a sign-out
+  // followed by "use the cloud copy only" for another account used to drop it. Bounded,
+  // so an outage does not hold the sign-out; offline, the data stays here as before.
+  const uid = session?.user.id;
+  if (uid && linkedUid() === uid) {
+    try { await Promise.race([pushProgress(uid), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
+  }
   try { await supabase.auth.signOut(); } catch { /* ignore */ }
 }
 
