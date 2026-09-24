@@ -1428,7 +1428,10 @@ export default function Home() {
       }
     };
     if (dictInfo && dictWords) scan(dictInfo, dictWords);
-    for (const k of keys) { const [lg, en] = splitId(k); const w = wordByEn.get(en); if (w && !found.has(k)) found.set(k, { key: k, w, lang: lg }); }
+    // a key from a hand-edited backup may carry a prefix that is no language ("fr:achieve"):
+    // rendered, wordValue(w, "fr") is undefined and the review white-screened; left unresolved
+    // it is retired like a removed word
+    for (const k of keys) { const [lg, en] = splitId(k); const w = wordByEn.get(en); if (w && isLang(lg) && !found.has(k)) found.set(k, { key: k, w, lang: lg }); }
     for (const d of dicts) {
       if (found.size === keys.length) break;
       if (!keys.some(k => !found.has(k) && splitId(k)[0] === d.lang)) continue;
