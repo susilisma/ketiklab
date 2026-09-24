@@ -99,7 +99,7 @@ The first ~2,200 entries are authored in-house; later entries are generated in b
 ## 阅读材料 / Reading passages
 
 `readings.json` — 收录公共领域（public domain）文本，另有两篇本站原创的印尼语练习短文（`pagi-di-kantor`、`kunjungan-ke-toko`，版权归本站，非公共领域）；每篇的 `note` 字段标注作者、年代、来源与授权状态。
-Public-domain texts only; each entry's `note` field records author, era, source and licence status.
+Public-domain texts plus two KetikLab practice pieces in Indonesian (`pagi-di-kantor`, `kunjungan-ke-toko`, KetikLab copyright, not public domain); each entry's `note` field records author, era, source and licence status.
 
 ## 署名要求 / Attribution
 
