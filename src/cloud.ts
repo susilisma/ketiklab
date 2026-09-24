@@ -47,7 +47,10 @@ ss.set(NOTE_KEY, "");
 let urlError = (() => {
   try {
     const p = new URLSearchParams(location.hash.slice(1));
-    return p.get("error_code") || p.get("error") || (p.get("error_description") ? "link_error" : "");
+    // a code is a short snake_case token; anything else in these parameters is text someone put
+    // in the link, and is reported as an invalid link without being shown
+    const code = p.get("error_code") || p.get("error") || (p.get("error_description") ? "link_error" : "");
+    return code && !/^[a-z_]{1,40}$/.test(code) ? "link_error" : code;
   } catch { return ""; }
 })();
 export function noteAfterReload(n: SyncNote) { ss.set(NOTE_KEY, n); }
