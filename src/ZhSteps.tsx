@@ -33,6 +33,11 @@ const HINTS: Record<ZhStep, [string, string, string]> = {
   ],
 };
 
+// how the focused control got its focus, shared by every instance: the component is keyed
+// per word and remounts on each pass, and a ref inside it forgot the click that focused the
+// 认读 pill, so only the first SPACE after a pill click advanced
+const pointerFocus = { current: false };
+
 export function zhStepHint(step: ZhStep, ui: UiLang) {
   const h = HINTS[step];
   return ui === "zh" ? h[0] : ui === "id" ? h[1] : h[2];
@@ -100,7 +105,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const [picked, setPicked] = useState<string | null>(null);
   const box = useRef<HTMLInputElement>(null);
   // how the focused control got its focus (a ref: the effect below re-runs on every render)
-  const byPointer = useRef(false);
+  const byPointer = pointerFocus;
   const target = norm(plain);
 
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
@@ -108,8 +113,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   // click that switches to 认读 lands before that rung's effect exists — subscribed there
   // alone, a pill clicked from 打拼音 kept SPACE and ENTER dead until the next click elsewhere
   useEffect(() => {
-    const down = () => { byPointer.current = true; };
-    const key = (e: KeyboardEvent) => { if (e.key === "Tab") byPointer.current = false; };
+    const down = () => { pointerFocus.current = true; };
+    const key = (e: KeyboardEvent) => { if (e.key === "Tab") pointerFocus.current = false; };
     window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", key, true);
     return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", key, true); };
