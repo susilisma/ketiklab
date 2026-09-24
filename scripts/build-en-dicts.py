@@ -170,9 +170,17 @@ def build():
         })
     buckets["en-business"] = biz
 
+    # pinned corrections: rows where the WordNet pass picks a rare synset (water → 小便, dog →
+    # 法兰克福香肠) and glosses corrected by hand. Applied last, so a rebuild keeps them instead
+    # of putting the wrong sense back (scripts/en-gloss-fixes.json, keyed by library then headword)
+    fixes_path = os.path.join(os.path.dirname(__file__), "en-gloss-fixes.json")
+    fixes = json.load(open(fixes_path, encoding="utf-8")) if os.path.exists(fixes_path) else {}
     manifest_rows = []
     for key, zh_name, id_name, en_name, lo, hi in BANDS:
         rows = buckets[key]
+        for row in rows:
+            for field, value in fixes.get(key, {}).get(row["name"], {}).items():
+                row[field] = value
         # no word count or gloss languages here: the app's library card prints the count and
         # which meaning this reader gets from the coverage the manifest carries
         if lo is None:
