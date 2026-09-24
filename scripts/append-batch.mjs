@@ -91,8 +91,10 @@ for (const raw of newWords) {
   if (err) { skip.words.push(err); continue; }
   const kEn = obj.en.toLowerCase(), kId = obj.id.toLowerCase();
   const kZh = zhSenses(obj);
-  if (enSet.has(kEn) || idSet.has(kId) || kZh.some((z) => zhSet.has(z))) { skip.words.push("dup-existing"); continue; }
-  if (bEn.has(kEn) || bId.has(kId) || kZh.some((z) => bZh.has(z))) { skip.words.push("dup-in-batch"); continue; }
+  // the reason names the row: promote.mjs prints a duplicate as a warning, since a drained
+  // row is gone from the queue and "promoted: 0" in the log was all that said so
+  if (enSet.has(kEn) || idSet.has(kId) || kZh.some((z) => zhSet.has(z))) { skip.words.push(`dup-existing: ${obj.en} / ${obj.id} / ${obj.zh}`); continue; }
+  if (bEn.has(kEn) || bId.has(kId) || kZh.some((z) => bZh.has(z))) { skip.words.push(`dup-in-batch: ${obj.en} / ${obj.id} / ${obj.zh}`); continue; }
   bEn.add(kEn); bId.add(kId); kZh.forEach((z) => bZh.add(z));
   kept.words.push(obj);
 }
@@ -105,8 +107,8 @@ for (const r of newReadings) {
   if (!LANGS.has(lang)) { skip.readings.push("bad-lang"); continue; }
   if (!Array.isArray(lines) || lines.length < 2 || !lines.every((l) => typeof l === "string" && l.trim())) { skip.readings.push("bad-lines"); continue; }
   const ta = (title + "|" + author).toLowerCase();
-  if (readIdSet.has(id) || readTA.has(ta)) { skip.readings.push("dup-existing"); continue; }
-  if (bRid.has(id)) { skip.readings.push("dup-in-batch"); continue; }
+  if (readIdSet.has(id) || readTA.has(ta)) { skip.readings.push(`dup-existing: ${id}`); continue; }
+  if (bRid.has(id)) { skip.readings.push(`dup-in-batch: ${id}`); continue; }
   bRid.add(id);
   kept.readings.push({ id, lang, title, author, era, genre, lines, note });
 }
