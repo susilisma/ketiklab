@@ -318,12 +318,19 @@ export function Account({ uiLang, name, onName }: {
   if (!ready) return <p className="acct-note">{T("加载中…", "Memuat…", "Loading…", uiLang)}</p>;
 
   if (session) {
+    // a device linked to another account: the card is about the signed-in account, so it
+    // shows that account's name, and the field cannot rename the device's owner (the edit
+    // used to change the header and storage and was then dropped by the merge)
+    // The same holds for an unlinked device opened by a link session (linkOnly): its
+    // "sync now" pushes the account's profile name, so an edit here would be dropped too
+    const untrustedView = foreign || linkOnly;
+    const shownName = untrustedView ? profName : name;
     return <div className="acct">
       <div className="acct-card">
         <div className="acct-who">
-          <span>{(Array.from(name.trim())[0] || session.user.email?.[0] || "?").toUpperCase()}</span>
+          <span>{(Array.from(shownName.trim())[0] || session.user.email?.[0] || "?").toUpperCase()}</span>
           <div>
-            <b>{name.trim() || T("学习者", "Pelajar", "Learner", uiLang)}</b>
+            <b>{shownName.trim() || T("学习者", "Pelajar", "Learner", uiLang)}</b>
             <small>{session.user.email}</small>
           </div>
         </div>
@@ -345,8 +352,8 @@ export function Account({ uiLang, name, onName }: {
 
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
-          <input value={name} maxLength={24} onChange={e => onName(e.target.value)}
-            onBlur={() => { if (session && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
+          <input value={shownName} maxLength={24} readOnly={untrustedView} onChange={e => { if (!untrustedView) onName(e.target.value); }}
+            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
