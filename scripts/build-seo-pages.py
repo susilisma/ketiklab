@@ -82,9 +82,9 @@ T = {
     "cols_trio": {"zh": ("印尼语", "中文释义"), "id": ("Mandarin", "Pinyin", "Arti"), "en": ("Chinese", "Pinyin", "English")},
     "cols_read": {"zh": ("篇名", "作者", "年代", "语言", "开头"), "id": ("Judul", "Penulis", "Era", "Bahasa", "Baris pertama"), "en": ("Title", "Author", "Era", "Language", "Opening line")},
     "read_desc": {
-        "zh": "{n} 篇公共领域经典作品，逐句照着输入：中文、印尼语、英语各有。",
-        "id": "{n} karya klasik domain publik untuk diketik baris demi baris, dalam bahasa Mandarin, Indonesia, dan Inggris.",
-        "en": "{n} public-domain classics to type through line by line, in Chinese, Indonesian and English.",
+        "zh": "{n} 篇朗读，逐句照着输入：{pd} 篇公共领域经典作品，中文、印尼语、英语各有，另有本站原创练习短文。",
+        "id": "{n} bacaan untuk diketik baris demi baris: {pd} karya klasik domain publik dalam bahasa Mandarin, Indonesia, dan Inggris, plus teks latihan buatan KetikLab.",
+        "en": "{n} readings to type through line by line: {pd} public-domain classics in Chinese, Indonesian and English, plus KetikLab practice texts.",
     },
     "practice": {"zh": "练这个词库", "id": "Latih kamus ini", "en": "Practise this library"},
     "lang_names": {"zh": "中文", "id": "Bahasa Indonesia", "en": "English"},
@@ -352,7 +352,9 @@ def trio_page(lang, words, lib_rows, n_readings, zh_pinyin):
 
 def readings_page(lang, readings, lib_rows):
     name = T["readings"][lang]; n = len(readings)
-    desc = fmt("read_desc", lang, n=n)
+    # the two KetikLab practice texts are not public domain: counted apart from the classics
+    pd = len([r for r in readings if r.get("author") != "KetikLab"])
+    desc = fmt("read_desc", lang, n=n, pd=pd)
     title = f"{name} — {fmt('pieces', lang, n=n)} | KetikLab"
     cols = T["cols_read"][lang]
     rows = "\n".join(
