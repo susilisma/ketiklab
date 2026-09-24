@@ -820,6 +820,9 @@ export default function Home() {
     // the ladder steps have no letter-by-letter input and no TAB to reveal: 认读 exists to
     // show the word, 打拼音 and 选汉字 need it on screen, so dictation applies from 输入法 on
     if (dictation === "off" || reveal || zhLadder) return true;
+    // a separator (space, hyphen, apostrophe) is not a letter to recall: masked, "cash flow"
+    // was nine identical underlines with no word boundary, and "cashf" was graded wrong
+    if (!/\p{L}/u.test(targetWord[i])) return true;
     if (typed[i] && (practiceLang === "zh" ? typed[i] === targetWord[i] : typed[i].toLowerCase() === targetWord[i].toLowerCase())) return true;
     if (dictation === "all") return false;
     if (dictation === "vowel") return practiceLang === "zh" ? seededVisible(i) : !"aeiouAEIOU".includes(targetWord[i]);
