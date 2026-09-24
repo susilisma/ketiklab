@@ -72,6 +72,9 @@ function humanError(e: unknown, l: Lang): string {
   // the hash of a dead link carries a code (access_denied, otp_expired above) — never its text
   if (m === "access_denied" || m === "link_error" || m.startsWith("invalid_"))
     return T("这个链接无效，请重新申请一封。", "Tautan ini tidak valid. Minta yang baru.", "That link is not valid. Request a new one.", l);
+  // "For security purposes, you can only request this after 60 seconds."
+  if (m.includes("for security purposes") || m.includes("only request this after"))
+    return T("操作太频繁，请等一分钟再试。", "Terlalu sering. Coba lagi satu menit lagi.", "Too many requests. Try again in a minute.", l);
   return raw;
 }
 
