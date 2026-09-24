@@ -329,8 +329,8 @@
    "title": "hash 里任意 error_description 原样显示并切到账户页（已确认是文本渲染，非 XSS）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "9a6a355",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "commit": "9a6a355 + b8f209e",
+   "reason": "校验者 A 驳回首版（#error_code=<文本> 仍原样打印）；b8f209e 只接受 snake_case 代码、渲染只走两句固定文案，5 个注入用例全部固定文案；在分支 claude/daily-2026-09-25，明日合入",
    "date": "2026-09-25"
   },
   {
@@ -2507,8 +2507,8 @@
    "title": "en-toefl.json 5 行把英文残片当释义：pacific「(」、stem「v. (」、favor「in」、etc「et」、exaggerate「ex出+ag强+」；build-toefl-dict.py cut_at_english 只在 3 个拉丁字母处截断",
    "priority": "P1",
    "status": "deferred",
-   "commit": "94ef2ae",
-   "reason": "脚本只保留含汉字且无 + 的片段并剥离 ()（）；5 行手改；manifest 不变；三库 0 个无汉字释义；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "commit": "94ef2ae + aa1683e",
+   "reason": "脚本只保留含汉字且无 + 的片段并剥离 ()（）；5 行手改；manifest 不变；三库 0 个无汉字释义；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；aa1683e 放宽过滤（只去结尾开括号、只丢拉丁+粘连片段），tropical 行顺手修",
    "date": "2026-09-25"
   },
   {
@@ -2543,8 +2543,8 @@
    "title": "从打拼音/选汉字点 认读 胶囊后 SPACE/ENTER 死，直到点别处（pointerdown 追踪器只在认读效果里订阅）",
    "priority": "P2",
    "status": "deferred",
-   "commit": "eb07ff8",
-   "reason": "追踪器移到组件全生命周期；点胶囊后 SPACE → 02 / 20（旧 01 / 20）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "commit": "eb07ff8 + 105a527",
+   "reason": "追踪器移到组件全生命周期；点胶囊后 SPACE → 02 / 20（旧 01 / 20）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；校验者 B：首版只第一次 SPACE 有效（按词重挂载归零），105a527 改模块级标志，连按 SPACE×3+ENTER 02→05",
    "date": "2026-09-25"
   },
   {
@@ -2552,8 +2552,8 @@
    "title": "中文收藏词的行被重新释义后（09-21 起 17 行），收藏 教学大纲 显示 课程体系 的拼音 kè chéng tǐ xì，打拼音把正确拼音判错并记遗忘",
    "priority": "P2",
    "status": "deferred",
-   "commit": "7356383",
-   "reason": "trioW 仅在仍指向该词时使用，否则读收藏自带的「普通话 · …」；认读注音 jiào xué dà gāng（旧 kè chéng tǐ xì）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "commit": "7356383 + be54a8a",
+   "reason": "trioW 仅在仍指向该词时使用，否则读收藏自带的「普通话 · …」；认读注音 jiào xué dà gāng（旧 kè chéng tǐ xì）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；校验者 B 发现带括号注的 6 个 en/id 收藏不再重建发音行，be54a8a 用去括号 text 比对修复",
    "date": "2026-09-25"
   },
   {
@@ -2570,8 +2570,8 @@
    "title": "「160 篇公共领域经典」把 2 篇 2026 年本站原创练习短文（pagi-di-kantor、kunjungan-ke-toko）算进公共领域：README 三语、生成页 read_desc、SOURCES.md「仅收录公共领域文本」",
    "priority": "P2",
    "status": "deferred",
-   "commit": "ba28ee3",
-   "reason": "生成页从数据算公共领域篇数（158）+ 总数；README/SOURCES 点名两篇练习短文；dist 三语阅读页均含 158；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "commit": "ba28ee3 + d8c4d2c",
+   "reason": "生成页从数据算公共领域篇数（158）+ 总数；README/SOURCES 点名两篇练习短文；dist 三语阅读页均含 158；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；校验者 B：三语落地页与 SOURCES 英文行仍说全是公共领域，d8c4d2c 补齐",
    "date": "2026-09-25"
   },
   {
@@ -2824,6 +2824,33 @@
    "status": "needs-owner",
    "commit": "",
    "reason": "是否给本站练习短文单独分组名（内容元数据展示，属主人定）",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "readings-accented-letters-untypable",
+   "title": "poison-tree、world-too-much 含 è，美式键盘无法打出（校验者 B 残留）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "P3：比对时折叠重音字母（NFD 去 combining marks），或数据改 e",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "tablet-nav-50px-row-tight",
+   "title": "1024×700 短笔记本 50px nav 行里两行标签刚好放满，字体回落更高会溢出（校验者 A）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "P3：该媒体块 .nav min-height 或 line-height 再收 0.05",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "manifest-down-banner-for-everyone",
+   "title": "manifest.json 失败时学习页横幅对所有学习者显示（含只练主题词的），9c6efc6 的可见变化（校验者 A 设计提醒）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "P3：仅当 ketiklab-source 或 ?lib 指向词典时在学习页显示",
    "date": "2026-09-25"
   }
  ]
