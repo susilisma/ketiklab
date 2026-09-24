@@ -84,6 +84,13 @@ function humanError(e: unknown, l: Lang): string {
   return raw;
 }
 
+/** A dead link's hash is untrusted: two outcomes are ever printed, never its text. */
+function linkError(code: string, l: Lang): string {
+  return /expired/.test(code)
+    ? T("这个链接已失效或过期，请重新申请一封。", "Tautan ini sudah kedaluwarsa. Minta yang baru.", "That link has expired. Request a new one.", l)
+    : T("这个链接无效，请重新申请一封。", "Tautan ini tidak valid. Minta yang baru.", "That link is not valid. Request a new one.", l);
+}
+
 export function Account({ uiLang, name, onName }: {
   uiLang: Lang;
   name: string;
@@ -402,7 +409,7 @@ export function Account({ uiLang, name, onName }: {
         {syncedAt && <p className="acct-note">{T("上次同步 ", "Sinkron terakhir ", "Last synced ", uiLang)}{syncedAt}</p>}
         {noteText && <p className="acct-ok">{noteText}</p>}
         {msg && <p className="acct-ok">{msg}</p>}
-        {urlErr && <p className="acct-err">{humanError(urlErr, uiLang)}</p>}
+        {urlErr && <p className="acct-err">{linkError(urlErr, uiLang)}</p>}
         {err && <p className="acct-err">{err}</p>}
       </div>
       <p className="acct-note">
@@ -457,7 +464,7 @@ export function Account({ uiLang, name, onName }: {
       </button>}
       {noteText && <p className="acct-ok">{noteText}</p>}
       {msg && <p className="acct-ok">{msg}</p>}
-      {urlErr && <p className="acct-err">{humanError(urlErr, uiLang)}</p>}
+      {urlErr && <p className="acct-err">{linkError(urlErr, uiLang)}</p>}
       {err && <p className="acct-err">{err}</p>}
     </div>
     <p className="acct-note">
