@@ -47,15 +47,18 @@ jobs:
       # release by elapsed time, because GitHub delivers cron events irregularly.
       WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '' }}
     steps:
+      # a finished rebuild only needs its libraries deployed: promoting there too meant a
+      # queue row that failed validation failed the run and the rebuilt libraries stayed
+      # undeployed, with the run blaming the queue
       - uses: actions/checkout@v5
-        if: github.event_name != 'push'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
       - uses: actions/setup-node@v5
-        if: github.event_name != 'push'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         with:
           node-version: 22
       - name: Promote queued content (hourly + manual runs)
         id: promote
-        if: github.event_name != 'push'
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
         run: node scripts/promote.mjs
       - name: Push promoted content
         if: steps.promote.outputs.changed == 'true'
