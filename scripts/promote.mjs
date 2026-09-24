@@ -139,6 +139,11 @@ if (invalid.length) {
   console.error(`promote: ${invalid.length} queued row(s) failed validation (${[...new Set(invalid)].join(", ")}); the queue is left untouched`);
   process.exit(1);
 }
+// a duplicate is drained on a green run (the queue must move forward), so it is announced:
+// a hand-written row whose secondary sense matched a live sense used to vanish in silence
+for (const r of [...(summary.skipReasons?.words ?? []), ...(summary.skipReasons?.readings ?? [])]) {
+  if (r.startsWith("dup-")) console.log(`::warning title=promote: queued row skipped as a duplicate::${r}`);
+}
 
 // drain promoted items from the queue regardless of dup-skips
 writeFileSync(Q_WORDS, JSON.stringify(qWords.slice(takeWords.length), null, 0));
