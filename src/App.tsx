@@ -779,7 +779,9 @@ export default function Home() {
   // ladderWords cannot be empty here — `ready` means words.json loaded.
   // a topic favourite froze "点击播放标准发音" in the interface language of the day it was
   // starred; the line is rebuilt for the current one (a dictionary favourite's has no such text)
-  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : wordByEn.get(f.key); return w ? { ...f, sub: trioItem(w, f.lang).sub } : f; });
+  // the current row's pronunciation line, but only while the row still names the saved word:
+  // 17 rows were re-glossed since 09-21, and 教学大纲 was printed with the pinyin of 课程体系
+  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : wordByEn.get(f.key); return w && wordValue(w, f.lang) === f.text ? { ...f, sub: trioItem(w, f.lang).sub } : f; });
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favItems()
     : (dictInfo && dictWords && dictWords.length)
@@ -820,8 +822,12 @@ export default function Home() {
   // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
   const trioW = item.dict ? undefined : wordByEn.get(item.key);
-  const zhToneText = zhToned(zhMap, targetWord) || trioW?.pinyin || "";
-  const plainPy = zhPlain(zhMap, targetWord) || trioW?.pinyin || "";
+  // a favourite keeps the sense it was saved with; the row may have been re-glossed since, so
+  // its pinyin is trusted only while it still names this word, else the saved line is read
+  const trioRow = trioW && (practiceLang !== "zh" || wordValue(trioW, "zh") === targetWord) ? trioW : undefined;
+  const savedPy = /普通话 · (.+)$/.exec(item.sub || "")?.[1] || "";
+  const zhToneText = zhToned(zhMap, targetWord) || trioRow?.pinyin || savedPy;
+  const plainPy = zhPlain(zhMap, targetWord) || trioRow?.pinyin || savedPy;
   // a word with no pinyin at all cannot be passed at 打拼音, so that rung types it through the IME
   const zhLadder = practiceLang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPy);
   // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
