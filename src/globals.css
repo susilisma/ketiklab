@@ -300,7 +300,7 @@
 @keyframes veil-breathe{0%,100%{opacity:.5}50%{opacity:1}}
 .word-card:has(.type-veil) .target-word,.word-card:has(.type-veil) .phonetic,
 .word-card:has(.type-veil) .meanings>span{opacity:.55;transition:opacity .25s}
-@media(prefers-reduced-motion:reduce){.type-veil b{animation:none;opacity:.8}}
+@media(prefers-reduced-motion:reduce){.type-veil b{animation:none;opacity:.8}.sound.speaking,.loading-mark,.target-word.shake,.zh-options button.no,.target-line span.cursor{animation:none}.loading-mark{opacity:1}}
 .word-card:has(.type-veil) .hint{visibility:hidden}
 /* ---- per-browser profile name (no accounts yet) ---- */
 button.profile{width:100%;text-align:left;cursor:pointer;font:inherit;color:inherit}
