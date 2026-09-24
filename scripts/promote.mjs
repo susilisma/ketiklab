@@ -132,19 +132,23 @@ if (!takeWords.length && !takeReading.length) {
 const batchPath = join(ROOT, "queue", "_promote-batch.json");
 writeFileSync(batchPath, JSON.stringify({ words: takeWords, readings: takeReading }));
 
-const out = execFileSync(process.execPath, [join(ROOT, "scripts", "append-batch.mjs"), batchPath], { encoding: "utf8" });
-console.log(out);
-rmSync(batchPath, { force: true });
-
 // a row that failed validation (a typo in a hand-reviewed category or level, a missing
 // field) is not promoted; draining it anyway would delete it from the queue on a green
-// run, so the run fails and the queue is left as it was for someone to fix
-const summary = JSON.parse(out);
-const invalid = [...(summary.skipReasons?.words ?? []), ...(summary.skipReasons?.readings ?? [])].filter((r) => !r.startsWith("dup-"));
+// run, so the run fails and the queue is left as it was for someone to fix. Checked on a
+// dry run first: the real run used to append the valid rows to words.json before the
+// verdict, so a local run was left with a changed file and a queue that said otherwise
+const appendBatch = (dry) => JSON.parse(execFileSync(process.execPath,
+  [join(ROOT, "scripts", "append-batch.mjs"), ...(dry ? ["--dry-run"] : []), batchPath], { encoding: "utf8" }));
+const check = appendBatch(true);
+const invalid = [...(check.skipReasons?.words ?? []), ...(check.skipReasons?.readings ?? [])].filter((r) => !r.startsWith("dup-"));
 if (invalid.length) {
+  rmSync(batchPath, { force: true });
   console.error(`promote: ${invalid.length} queued row(s) failed validation (${[...new Set(invalid)].join(", ")}); the queue is left untouched`);
   process.exit(1);
 }
+const summary = appendBatch(false);
+console.log(JSON.stringify(summary));
+rmSync(batchPath, { force: true });
 
 // drain promoted items from the queue regardless of dup-skips
 writeFileSync(Q_WORDS, JSON.stringify(qWords.slice(takeWords.length), null, 0));
