@@ -104,18 +104,27 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const target = norm(plain);
 
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
+  // how the focused control got its focus: tracked for the component's whole life, since the
+  // click that switches to 认读 lands before that rung's effect exists — subscribed there
+  // alone, a pill clicked from 打拼音 kept SPACE and ENTER dead until the next click elsewhere
+  useEffect(() => {
+    const down = () => { byPointer.current = true; };
+    const key = (e: KeyboardEvent) => { if (e.key === "Tab") byPointer.current = false; };
+    window.addEventListener("pointerdown", down, true);
+    window.addEventListener("keydown", key, true);
+    return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", key, true); };
+  }, []);
   // not while a dialog is open: the box would pull the focus out from under it
   useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
 
   /* step 1 — recognise, advance on SPACE / ENTER */
   useEffect(() => {
     if (step !== "read" || !active) return;
-    // how the focused control got its focus. :focus-visible cannot tell at keydown time:
-    // Chromium already counts the key being pressed as keyboard use, so a ▶ or ★ that was
-    // clicked with the mouse took SPACE for itself and the rung stopped advancing
-    const down = () => { byPointer.current = true; };
+    // :focus-visible cannot tell at keydown time how the control got its focus: Chromium
+    // already counts the key being pressed as keyboard use, so a ▶ or ★ that was clicked
+    // with the mouse took SPACE for itself and the rung stopped advancing (byPointer above)
     const on = (e: KeyboardEvent) => {
-      if (e.key === "Tab") { byPointer.current = false; return; }
+      if (e.key === "Tab") return;
       if (e.key !== " " && e.key !== "Enter") return;
       if (e.repeat || e.ctrlKey || e.metaKey || e.altKey || e.isComposing) return;
       const t = e.target instanceof HTMLElement ? e.target : null;
@@ -125,9 +134,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       if (t && t !== document.body && !t.classList.contains("zh-go") && t.closest("button, a, [role=button]") && !byPointer.current) return;
       e.preventDefault(); onPass();
     };
-    window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", on);
-    return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", on); };
+    return () => { window.removeEventListener("keydown", on); };
   }, [step, word, onPass, active]);
 
   /* step 3 — options: correct answer plus three same-level distractors */
