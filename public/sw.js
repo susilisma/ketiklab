@@ -46,7 +46,10 @@ self.addEventListener("activate", (e) => {
       if (k === VERSION) continue;
       const old = await caches.open(k);
       for (const req of await old.keys()) {
-        if (!new URL(req.url).pathname.includes("/data/")) continue;
+        // the content JSON, and the generated pages read while online (/zh/lib/en-core/,
+        // /id/readings/ …): a deploy used to drop them, so a page read yesterday failed offline
+        const path = new URL(req.url).pathname;
+        if (!path.includes("/data/") && !/^\/(zh|id|en)\/./.test(path)) continue;
         if (await mine.match(req)) continue;
         const res = await old.match(req);
         if (res) await mine.put(req, res);
