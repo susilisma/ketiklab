@@ -111,7 +111,10 @@ export async function restoreRecords(records: ReviewRecord[]): Promise<void> {
   // finite numbers only: a NaN dueAt is never due and never counted, and a string
   // reps would be concatenated on the next answer ("31" after "3" + 1)
   const num = (v: unknown, fallback: number) => (Number.isFinite(Number(v)) && v !== null && v !== "" ? Number(v) : fallback);
-  const clean = records.filter((r) => r && typeof r.en === "string" && Number.isFinite(r.dueAt) && Number.isFinite(r.step))
+  // a keyed row must name a language the app has: "fr:achieve" from a hand-edited backup
+  // used to come back due and crash the review that tried to render it
+  const knownLang = (en: string) => !keyed(en) || /^(zh|id|en):/.test(en);
+  const clean = records.filter((r) => r && typeof r.en === "string" && knownLang(r.en) && Number.isFinite(r.dueAt) && Number.isFinite(r.step))
     .map((r) => ({ ...r, step: Math.max(-1, Math.min(INTERVALS.length - 1, Math.trunc(r.step))), reps: num(r.reps, 0), lapses: num(r.lapses, 0), updatedAt: num(r.updatedAt, r.dueAt), lastResult: r.lastResult === "wrong" ? "wrong" as const : "correct" as const }))
     // a backup from before keys carried a language: hanzi keys are Chinese for sure
     .map((r) => (!keyed(r.en) && HANZI.test(r.en) ? { ...r, en: "zh:" + r.en } : r));
