@@ -18,11 +18,13 @@ const SHELL = new URL("./", self.location).pathname;
 
 // Error and redirect responses are never stored: with cache-first assets a cached
 // 404/503 would blank the site until the next code deploy.
+// Returns the put, so a fetch handler can hand it to e.waitUntil: a background refresh
+// that outlived the response used to be cut off with the worker on a slow network.
 const store = (key, res) => {
   // ok covers 206 too: a partial response stored whole would be served as the file
-  if (res.status !== 200) return;
+  if (res.status !== 200) return Promise.resolve();
   const copy = res.clone();
-  caches.open(VERSION).then((c) => c.put(key, copy));
+  return caches.open(VERSION).then((c) => c.put(key, copy)).catch(() => {});
 };
 
 self.addEventListener("install", (e) => {
@@ -89,8 +91,8 @@ self.addEventListener("fetch", (e) => {
     // shared link with ?utm_… never served its plain address offline, and each query made a copy
     const pageKey = landingKey || (generated ? url.pathname : null);
     e.respondWith(fetch(shellReq).then((res) => {
-      if (isShell) store("./index.html", res);
-      else if (pageKey) store(pageKey, res);
+      if (isShell) e.waitUntil(store("./index.html", res));
+      else if (pageKey) e.waitUntil(store(pageKey, res));
       return res;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
@@ -100,7 +102,7 @@ self.addEventListener("fetch", (e) => {
   // Hashed build assets are immutable: cache-first
   if (url.pathname.includes("/assets/")) {
     e.respondWith(caches.match(req).then((hit) => hit || fetch(req).then((res) => {
-      store(req, res);
+      e.waitUntil(store(req, res));
       return res;
     })));
     return;
@@ -113,17 +115,18 @@ self.addEventListener("fetch", (e) => {
   // Content JSON: stale-while-revalidate (instant + refreshes in background)
   if (url.pathname.includes("/data/")) {
     e.respondWith(caches.match(req).then((hit) => {
-      const net = fetch(req).then((res) => {
-        store(req, res);
-        return res;
-      }).catch(() => hit);
-      return hit || net;
+      const net = fetch(req);
+      // the event is still open here (the response is pending), so the refresh can be
+      // registered now; once the cached copy has been returned the worker may be stopped
+      // before the network answers, and an unregistered put with it
+      e.waitUntil(net.then((res) => store(req, res)).catch(() => {}));
+      return hit || net.catch(() => hit);
     }));
     return;
   }
   // Everything else: network, fall back to cache
   e.respondWith(fetch(req).then((res) => {
-    store(req, res);
+    e.waitUntil(store(req, res));
     return res;
   }).catch(() => caches.match(req)));
 });
