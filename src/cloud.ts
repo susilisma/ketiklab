@@ -42,7 +42,14 @@ export function onAccountWanted(f: () => void): () => void {
 const NOTE_KEY = "ketiklab-sync-note";
 let note = ss.get(NOTE_KEY) as SyncNote;
 ss.set(NOTE_KEY, "");
-let urlError = (() => { try { return new URLSearchParams(location.hash.slice(1)).get("error_description") || ""; } catch { return ""; } })();
+// the code, never error_description: that text is whatever the link carried, and it used
+// to be printed on the account page as if the site had said it
+let urlError = (() => {
+  try {
+    const p = new URLSearchParams(location.hash.slice(1));
+    return p.get("error_code") || p.get("error") || (p.get("error_description") ? "link_error" : "");
+  } catch { return ""; }
+})();
 export function noteAfterReload(n: SyncNote) { ss.set(NOTE_KEY, n); }
 export function takeNote(): SyncNote { const n = note; note = ""; return n; }
 export function takeUrlError(): string { const e = urlError; urlError = ""; return e; }
