@@ -383,7 +383,7 @@ button.profile:hover>i{color:var(--purple)}
 /* icon rail: icon over a 12px label; title/aria-label carry the full name when it ellipsizes */
 @media(min-width:641px) and (max-width:1279px){
 .sidebar{padding:14px 6px 12px calc(6px + env(safe-area-inset-left,0px))}.brand{justify-content:center;padding:0 0 16px}.brand>span{width:40px;height:40px}.brand b,.mini-progress,.profile div,.profile>i{display:none}.sidebar nav{gap:2px}
-.nav{position:relative;flex-direction:column;justify-content:center;gap:4px;height:58px;padding:0 4px;font-size:12px;line-height:1;text-align:center;border-radius:12px}.nav i{width:auto;font-size:20px}.nav span{display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.1;font-size:11px}.nav-badge{position:absolute;top:6px;right:8px;margin:0;min-width:18px;height:18px}
+.nav{position:relative;flex-direction:column;justify-content:center;gap:4px;height:58px;padding:0 4px;font-size:12px;line-height:1;text-align:center;border-radius:12px}.nav i{width:auto;font-size:20px}.nav span{display:block;max-width:100%;white-space:normal;overflow-wrap:anywhere;line-height:1.05}.nav-badge{position:absolute;top:6px;right:8px;margin:0;min-width:18px;height:18px}
 .profile{padding:12px 0 0;justify-content:center;border-top:0}.profile>span{width:40px;height:40px}button.profile:hover{border-radius:11px}
 }
 /* bottom bar */
