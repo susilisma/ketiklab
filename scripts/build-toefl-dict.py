@@ -45,6 +45,7 @@ NOTE = re.compile(r"【")
 INLINE = re.compile(r"\[[^\]]*\]")
 ETYM = re.compile(r"(来自|缩写自|形变|得名于|拉丁语|拉丁文|希腊语|古英语|法语|同\s)")
 LATIN3 = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ]{3,}")
+HAN = re.compile(r"[一-鿿]")
 
 # pypdf hands back the PDF's glyphs as CJK radical code points (⽯ U+2F6F for
 # 石), which no IME produces, so a search for the real character would never
@@ -88,8 +89,10 @@ def glosses(body):
     out = []
     for g in re.split(r"[;；]", text):
         g = re.sub(r"^[英美]\s*", "", INLINE.sub("", g).strip())
-        g = cut_at_english(ETYM.split(g)[0]).strip(" ,，、=→")
-        if g:
+        g = cut_at_english(ETYM.split(g)[0]).strip(" ,，、=→()（）")
+        # what is left after the cut must still be Chinese: a two-letter English word ("in",
+        # "et"), a lone "(" or the PDF's root mnemonic ("ex出+ag强+") is not a meaning
+        if g and HAN.search(g) and "+" not in g:
             out.append(g)
     return out
 
