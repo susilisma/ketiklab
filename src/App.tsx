@@ -817,7 +817,10 @@ export default function Home() {
   // Hide pronunciation in dictation: only under "hide all" on the steps that print a pronunciation
   // line, and the word is not read aloud on its own either until CTRL+SPACE or TAB
   const holdSpeech = hidePron && dictation === "all" && !zhLadder;
-  const pronHidden = holdSpeech && !reveal;
+  // the Indonesian line "Bahasa Indonesia · men·ca·pai" is the spelling with dots: under any
+  // dictation it is masked with the letters, or every id dictation mode showed the answer
+  const subSpellsWord = practiceLang === "id" && !item.dict && !!trioW?.idSyllables;
+  const pronHidden = (holdSpeech || (dictation !== "off" && !zhLadder && subSpellsWord)) && !reveal;
   // 选汉字 distractors: hanzi only, and enough of them — a favourites list holds a
   // few zh words next to English and Indonesian ones
   const zhOwn = Array.from(new Set(learnItems.filter(i => i.lang === "zh").map(i => i.text)));
