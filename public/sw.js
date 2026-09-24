@@ -93,13 +93,18 @@ self.addEventListener("fetch", (e) => {
     // keyed by path like a landing page: stored under the full URL, a page opened from a
     // shared link with ?utm_… never served its plain address offline, and each query made a copy
     const pageKey = landingKey || (generated ? url.pathname : null);
+    // GitHub Pages answers /zh or /zh/lib/en-core with a redirect to the slash form; offline,
+    // the same redirect comes from here when the slash form is cached (the bare form never is)
+    const slashForm = !url.pathname.endsWith("/") && /^\/(zh|id|en)(\/|$)/.test(url.pathname) ? url.pathname + "/" : null;
     e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) e.waitUntil(store("./index.html", res));
       else if (pageKey) e.waitUntil(store(pageKey, res));
       return res;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit
+      || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)
+      || (slashForm ? caches.match(slashForm).then((slashHit) => slashHit ? Response.redirect(new URL(slashForm + url.search, self.location).href, 301) : undefined) : undefined)))));
     return;
   }
   // Hashed build assets are immutable: cache-first
