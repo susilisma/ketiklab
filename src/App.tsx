@@ -120,6 +120,10 @@ const ENTRY: { ui: Lang | null; lib: string | null; articles: boolean } = (() =>
 })();
 // the interface language before any choice: the link's, else the browser's when it is one of ours
 const initialUi = (): Lang => ENTRY.ui ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
+// the document's own title and language as served (index.html is Chinese; /en/ and /id/ carry
+// their SEO titles), read before any effect rewrites them
+const PAGE_TITLE = document.title;
+const PAGE_LANG: Lang = (() => { const l = document.documentElement.lang.slice(0, 2); return isLang(l) ? l as Lang : "zh"; })();
 // The meaning language nobody chose: the interface language when it differs from the
 // learning language, else a different zh/id/en browser locale, else none — a Chinese
 // interface for learning Chinese says nothing about which other language the learner reads.
@@ -233,10 +237,12 @@ export default function Home() {
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
   const [lang, setLang] = useState<Lang>("zh");
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
-  // the tab, the history entries and the installed app's window carry the title too
+  // the tab, the history entries and the installed app's window carry the title too. A
+  // landing page (/en/, /id/) ships its own title in its language: kept while the interface
+  // stays in that language, or the tab, history and a rendering crawler lost it on mount
   useEffect(() => {
     document.documentElement.lang = uiLang === "zh" ? "zh-CN" : uiLang;
-    document.title = TX("KetikLab — 打字背单词：学中文、印尼语或英语", "KetikLab — Latihan mengetik: Mandarin, Inggris, atau Indonesia", "KetikLab — Typing practice: Chinese, Indonesian or English", uiLang);
+    document.title = uiLang === PAGE_LANG ? PAGE_TITLE : TX("KetikLab — 打字背单词：学中文、印尼语或英语", "KetikLab — Latihan mengetik: Mandarin, Inggris, atau Indonesia", "KetikLab — Typing practice: Chinese, Indonesian or English", uiLang);
   }, [uiLang]);
   // the meaning language the learner chose per learning language; a missing entry follows defaultDef
   const [defByLearn, setDefByLearn] = useState<MeaningPrefs>({});
