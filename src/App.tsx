@@ -193,6 +193,8 @@ function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, ste
 
 // A chapter position belongs to a rung: 商务工作 holds 53 words at 认读 and 590 at
 // 输入法, so "第 3 章" is not the same 20 words in both.
+// the reader's texts and a keyboard: ’ ‘ ʼ → ', “ ” → ", – — → -
+const foldTypography = (s: string) => s.replace(/[\u2018\u2019\u02BC]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, "-");
 const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
   `trio:${cat}${lang === "zh" && step !== "hanzi" ? ":" + step : ""}`;
 
@@ -876,8 +878,13 @@ export default function Home() {
     ? (["zh", "id", "en"] as const).map(lg => ({ label: readingLangName[lg], items: filteredReadings.filter(pc => pc.lang === lg) })).filter(g => g.items.length)
     : (() => { const m = new Map<string, ReadingPiece[]>(); filteredReadings.forEach(pc => { if (!m.has(pc.genre)) m.set(pc.genre, []); m.get(pc.genre)!.push(pc); }); return [...m.entries()].map(([label, items]) => ({ label, items })); })();
   const readingTarget = reading.lines[readingLine] || "";
+  // the texts keep their typographic marks (summer’s day, Dickinson's dashes); a keyboard
+  // types ' " -, so the line is graded with both sides folded — 24 of the 47 English pieces
+  // could not be finished by typing, and one had no key for — at all
+  const readingTargetF = foldTypography(readingTarget), readingTypedF = foldTypography(readingTyped);
+  const readingLineDone = readingTypedF === readingTargetF;
   const readingAccuracy = readingTyped.length
-    ? Math.round(readingTyped.split("").filter((character, i) => character === readingTarget[i]).length / readingTyped.length * 100)
+    ? Math.round(readingTypedF.split("").filter((character, i) => character === readingTargetF[i]).length / readingTyped.length * 100)
     : 100;
   const readingProgress = Math.round(((readingLine + Math.min(readingTyped.length / Math.max(readingTarget.length, 1), 1)) / reading.lines.length) * 100);
   // "<lang>:<key>" → the trio word in that language, else a loaded dictionary of that language
@@ -1512,7 +1519,7 @@ export default function Home() {
   }
   function submitReading(typedNow?: string) {
     readingAuto.current++;
-    if ((typedNow ?? readingTyped) !== readingTarget) return;
+    if (foldTypography(typedNow ?? readingTyped) !== readingTargetF) return;
     if (readingLine === reading.lines.length - 1) { setReadingDone(true); setReadingActive(false); return; }
     setReadingLine(line => line + 1); setReadingTyped("");
     setTimeout(() => readingInput.current?.focus(), 30);
@@ -1723,13 +1730,13 @@ export default function Home() {
               <div className="line-practice">
                 <div className="line-meta"><span>{uiLang === "zh" ? `第 ${readingLine + 1} / ${reading.lines.length} 句` : `${t.lineLabel} ${readingLine + 1} / ${reading.lines.length}`}</span><b>{readingAccuracy}% {t.accuracy}</b></div>
                 <div className={`target-line ${reading.lang}`}>
-                  {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTyped[i] === character ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character}</span>)}
+                  {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTypedF[i] === readingTargetF[i] ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character}</span>)}
                 </div>
                 <div className="reading-input-wrap">
-                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (v === readingTarget) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={TX("照着上方文字输入……", "Ketik baris di atas…", "Type the line above…", uiLang)} spellCheck={false} />
-                  <button className={readingTyped === readingTarget ? "ready" : ""} onClick={() => submitReading()} disabled={readingTyped !== readingTarget}>{t.nextLine} <span>↵</span></button>
+                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (foldTypography(v) === readingTargetF) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={TX("照着上方文字输入……", "Ketik baris di atas…", "Type the line above…", uiLang)} spellCheck={false} />
+                  <button className={readingLineDone ? "ready" : ""} onClick={() => submitReading()} disabled={!readingLineDone}>{t.nextLine} <span>↵</span></button>
                 </div>
-                {readingTyped && readingTyped !== readingTarget && <p className="typing-help">{t.typingHelp}</p>}
+                {readingTyped && !readingLineDone && <p className="typing-help">{t.typingHelp}</p>}
               </div>
             </> : <div className="reading-complete">
               <span>✓</span><small>{t.completed}</small><h2>{reading.title}</h2><p>{t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
