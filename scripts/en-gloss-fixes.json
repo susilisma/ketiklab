@@ -1,0 +1,633 @@
+{
+ "_comment": "Pinned corrections applied by build-en-dicts.py after the WordNet pass: rows where the generator picked a rare synset (water → 小便) or where a gloss was corrected by hand. Keyed by library id, then headword; each entry replaces the fields it names.",
+ "en-core": {
+  "water": {
+   "trans": [
+    "水"
+   ],
+   "idtrans": [
+    "air"
+   ],
+   "def": "the clear liquid that falls as rain and fills rivers and seas"
+  },
+  "dog": {
+   "trans": [
+    "狗"
+   ],
+   "idtrans": [
+    "anjing"
+   ],
+   "def": "a common four-legged animal kept as a pet or for work"
+  },
+  "song": {
+   "trans": [
+    "歌曲"
+   ],
+   "idtrans": [
+    "lagu"
+   ],
+   "def": "a short piece of music with words that is sung"
+  },
+  "sorry": {
+   "trans": [
+    "对不起",
+    "抱歉"
+   ],
+   "idtrans": [
+    "maaf",
+    "menyesal"
+   ],
+   "def": "feeling regret or sympathy; said to apologise"
+  },
+  "training": {
+   "trans": [
+    "训练",
+    "培训"
+   ],
+   "idtrans": [
+    "pelatihan",
+    "latihan"
+   ],
+   "def": "the process of learning the skills needed for a job or activity"
+  },
+  "entire": {
+   "trans": [
+    "整个",
+    "全部"
+   ],
+   "idtrans": [
+    "seluruh",
+    "utuh"
+   ],
+   "def": "whole; with nothing left out"
+  },
+  "thus": {
+   "trans": [
+    "因此"
+   ],
+   "idtrans": [
+    "oleh karena itu",
+    "demikian"
+   ],
+   "def": "as a result; in this way"
+  },
+  "kid": {
+   "trans": [
+    "孩子"
+   ],
+   "idtrans": [
+    "anak"
+   ],
+   "def": "a child or young person"
+  },
+  "horse": {
+   "trans": [
+    "马"
+   ],
+   "idtrans": [
+    "kuda"
+   ],
+   "def": "a large four-legged animal that people ride or use to pull loads"
+  },
+  "cake": {
+   "trans": [
+    "蛋糕"
+   ],
+   "idtrans": [
+    "kue"
+   ],
+   "def": "a sweet baked food made from flour, eggs, sugar and butter"
+  },
+  "chicken": {
+   "trans": [
+    "鸡",
+    "鸡肉"
+   ],
+   "idtrans": [
+    "ayam",
+    "daging ayam"
+   ],
+   "def": "a farm bird kept for its eggs and meat; its meat as food"
+  },
+  "none": {
+   "trans": [
+    "没有一个",
+    "无"
+   ],
+   "idtrans": [
+    "tidak ada",
+    "tidak satu pun"
+   ],
+   "def": "not one; not any"
+  },
+  "till": {
+   "trans": [
+    "直到"
+   ],
+   "idtrans": [
+    "sampai",
+    "hingga"
+   ],
+   "def": "up to the time that; until"
+  },
+  "fifth": {
+   "trans": [
+    "第五"
+   ],
+   "idtrans": [
+    "kelima"
+   ],
+   "def": "coming after the fourth; number five in a series"
+  },
+  "trip": {
+   "trans": [
+    "旅行"
+   ],
+   "idtrans": [
+    "perjalanan"
+   ],
+   "def": "a journey to a place and back"
+  },
+  "flight": {
+   "trans": [
+    "航班",
+    "飞行"
+   ],
+   "idtrans": [
+    "penerbangan"
+   ],
+   "def": "a journey by aircraft; the act of flying"
+  },
+  "feed": {
+   "trans": [
+    "喂养",
+    "供给"
+   ],
+   "idtrans": [
+    "memberi makan",
+    "memasok"
+   ],
+   "def": "to give food to a person or animal; to supply"
+  },
+  "shoes": {
+   "trans": [
+    "鞋"
+   ],
+   "idtrans": [
+    "sepatu"
+   ],
+   "def": "coverings for the feet, usually with a firm sole"
+  },
+  "arrest": {
+   "trans": [
+    "逮捕"
+   ],
+   "idtrans": [
+    "menangkap",
+    "penangkapan"
+   ],
+   "def": "(of the police) to take someone into custody"
+  },
+  "ban": {
+   "trans": [
+    "禁止",
+    "禁令"
+   ],
+   "idtrans": [
+    "melarang",
+    "larangan"
+   ],
+   "def": "to forbid officially; an official prohibition"
+  },
+  "plate": {
+   "trans": [
+    "盘子"
+   ],
+   "idtrans": [
+    "piring"
+   ],
+   "def": "a flat dish that food is served or eaten from"
+  },
+  "incident": {
+   "trans": [
+    "事件"
+   ],
+   "idtrans": [
+    "kejadian",
+    "peristiwa",
+    "insiden"
+   ],
+   "def": "an event, especially an unpleasant or unusual one"
+  },
+  "gang": {
+   "trans": [
+    "帮派"
+   ],
+   "idtrans": [
+    "geng",
+    "gerombolan"
+   ],
+   "def": "a group of people who act together, often criminals"
+  },
+  "graduate": {
+   "trans": [
+    "毕业生",
+    "毕业"
+   ],
+   "idtrans": [
+    "lulusan",
+    "lulus"
+   ],
+   "def": "a person who has completed a degree or course; to complete one"
+  },
+  "appointment": {
+   "trans": [
+    "预约",
+    "任命"
+   ],
+   "idtrans": [
+    "janji temu",
+    "pengangkatan"
+   ],
+   "def": "an arrangement to meet at a set time; the naming of someone to a post"
+  },
+  "heading": {
+   "trans": [
+    "标题"
+   ],
+   "idtrans": [
+    "judul",
+    "tajuk"
+   ],
+   "def": "a title at the top of a page or section"
+  },
+  "province": {
+   "trans": [
+    "省"
+   ],
+   "idtrans": [
+    "provinsi"
+   ],
+   "def": "a main administrative division of a country"
+  },
+  "rolling": {
+   "trans": [
+    "滚动"
+   ],
+   "idtrans": [
+    "bergulir",
+    "menggelinding"
+   ],
+   "def": "moving by turning over and over"
+  },
+  "founder": {
+   "trans": [
+    "创始人"
+   ],
+   "idtrans": [
+    "pendiri"
+   ],
+   "def": "a person who starts an organisation or institution"
+  },
+  "formal": {
+   "trans": [
+    "正式的"
+   ],
+   "idtrans": [
+    "resmi",
+    "formal"
+   ],
+   "def": "following official rules or conventions; not casual"
+  },
+  "gross": {
+   "trans": [
+    "总的",
+    "粗俗的"
+   ],
+   "idtrans": [
+    "bruto",
+    "kasar"
+   ],
+   "def": "total, before anything is deducted; coarse or vulgar"
+  },
+  "bath": {
+   "trans": [
+    "洗澡",
+    "浴缸"
+   ],
+   "idtrans": [
+    "mandi",
+    "bak mandi"
+   ],
+   "def": "the act of washing the body in water; a tub for it"
+  },
+  "naked": {
+   "trans": [
+    "裸体的"
+   ],
+   "idtrans": [
+    "telanjang"
+   ],
+   "def": "wearing no clothes"
+  },
+  "swimming": {
+   "trans": [
+    "游泳"
+   ],
+   "idtrans": [
+    "berenang",
+    "renang"
+   ],
+   "def": "the activity of moving through water using the body"
+  },
+  "rail": {
+   "trans": [
+    "铁轨",
+    "栏杆"
+   ],
+   "idtrans": [
+    "rel",
+    "pegangan",
+    "susuran"
+   ],
+   "def": "a metal bar that trains run on; a bar to hold or lean on"
+  },
+  "repair": {
+   "trans": [
+    "修理"
+   ],
+   "idtrans": [
+    "memperbaiki",
+    "perbaikan"
+   ],
+   "def": "to fix something that is broken or damaged"
+  },
+  "steal": {
+   "trans": [
+    "偷"
+   ],
+   "idtrans": [
+    "mencuri"
+   ],
+   "def": "to take something that belongs to someone else without permission"
+  },
+  "congratulations": {
+   "trans": [
+    "祝贺"
+   ],
+   "idtrans": [
+    "selamat",
+    "ucapan selamat"
+   ],
+   "def": "words said to praise someone for a success"
+  },
+  "translation": {
+   "trans": [
+    "翻译"
+   ],
+   "idtrans": [
+    "terjemahan",
+    "penerjemahan"
+   ],
+   "def": "the rendering of words from one language into another"
+  },
+  "drove": {
+   "trans": [
+    "驾驶",
+    "畜群"
+   ],
+   "idtrans": [
+    "mengemudi",
+    "kawanan ternak"
+   ],
+   "def": "past tense of drive; a herd of animals being moved together"
+  },
+  "reader": {
+   "trans": [
+    "读者"
+   ],
+   "idtrans": [
+    "pembaca"
+   ],
+   "def": "a person who reads"
+  },
+  "column": {
+   "trans": [
+    "列",
+    "专栏",
+    "柱"
+   ],
+   "idtrans": [
+    "kolom",
+    "tiang"
+   ],
+   "def": "a vertical line of text or numbers; a regular newspaper article; a tall pillar"
+  },
+  "constitutional": {
+   "trans": [
+    "宪法的"
+   ],
+   "idtrans": [
+    "konstitusional"
+   ],
+   "def": "relating to or allowed by a constitution"
+  },
+  "shake": {
+   "trans": [
+    "摇动"
+   ],
+   "idtrans": [
+    "mengguncang",
+    "menggoyang"
+   ],
+   "def": "to move quickly up and down or from side to side"
+  },
+  "purple": {
+   "trans": [
+    "紫色"
+   ],
+   "idtrans": [
+    "ungu"
+   ],
+   "def": "the colour between red and blue"
+  },
+  "discrimination": {
+   "trans": [
+    "歧视"
+   ],
+   "idtrans": [
+    "diskriminasi"
+   ],
+   "def": "unfair treatment of people because of their race, sex, age or the like"
+  },
+  "devil": {
+   "trans": [
+    "魔鬼"
+   ],
+   "idtrans": [
+    "iblis",
+    "setan"
+   ],
+   "def": "an evil spirit; Satan"
+  },
+  "window": {
+   "trans": [
+    "窗户"
+   ],
+   "idtrans": [
+    "jendela"
+   ],
+   "def": "an opening in a wall with glass that lets in light and air"
+  },
+  "spread": {
+   "trans": [
+    "传播",
+    "蔓延"
+   ],
+   "idtrans": [
+    "menyebar",
+    "menyebarkan"
+   ],
+   "def": "to extend over a wider area; to open out"
+  },
+  "iron": {
+   "trans": [
+    "铁",
+    "熨斗"
+   ],
+   "idtrans": [
+    "besi",
+    "setrika"
+   ],
+   "def": "a strong grey metal; a tool heated to smooth clothes"
+  },
+  "flat": {
+   "trans": [
+    "平的",
+    "公寓"
+   ],
+   "idtrans": [
+    "datar",
+    "rata",
+    "apartemen"
+   ],
+   "def": "level and smooth; a set of rooms for living in"
+  },
+  "ray": {
+   "trans": [
+    "光线"
+   ],
+   "idtrans": [
+    "sinar"
+   ],
+   "def": "a narrow beam of light"
+  },
+  "developing": {
+   "trans": [
+    "发展中的"
+   ],
+   "idtrans": [
+    "berkembang",
+    "sedang berkembang"
+   ],
+   "def": "growing or becoming more advanced, said of a country or economy"
+  },
+  "hang": {
+   "trans": [
+    "悬挂"
+   ],
+   "idtrans": [
+    "menggantung"
+   ],
+   "def": "to fasten or be held from above so that the lower part is free"
+  },
+  "delivery": {
+   "trans": [
+    "交付",
+    "分娩"
+   ],
+   "idtrans": [
+    "pengiriman",
+    "persalinan"
+   ],
+   "def": "the bringing of goods to a place; the birth of a child"
+  },
+  "singing": {
+   "trans": [
+    "唱歌"
+   ],
+   "idtrans": [
+    "menyanyi",
+    "bernyanyi"
+   ],
+   "def": "making music with the voice"
+  },
+  "global": {
+   "trans": [
+    "全球的"
+   ],
+   "idtrans": [
+    "global",
+    "sedunia"
+   ],
+   "def": "relating to the whole world"
+  },
+  "very": {
+   "trans": [
+    "非常"
+   ],
+   "idtrans": [
+    "sangat"
+   ],
+   "def": "to a high degree"
+  },
+  "keep": {
+   "trans": [
+    "保持",
+    "保留"
+   ],
+   "idtrans": [
+    "menjaga",
+    "menyimpan"
+   ],
+   "def": "to continue to have or hold; to stay in a state"
+  },
+  "company": {
+   "trans": [
+    "公司"
+   ],
+   "idtrans": [
+    "perusahaan"
+   ],
+   "def": "a business organisation that sells goods or services"
+  },
+  "wild": {
+   "trans": [
+    "野生的",
+    "狂野的",
+    "失控的"
+   ],
+   "idtrans": [
+    "liar"
+   ],
+   "def": "living or growing in nature, not tamed; uncontrolled"
+  }
+ },
+ "en-plus": {
+  "slept": {
+   "trans": [
+    "睡觉",
+    "可供住宿"
+   ]
+  }
+ },
+ "en-academic": {
+  "lawless": {
+   "trans": [
+    "无法无天",
+    "无政府的",
+    "无秩序的"
+   ]
+  }
+ }
+}
