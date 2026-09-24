@@ -1509,8 +1509,11 @@ export default function Home() {
   }
   function changeReadingFilter(code: ReadingLang) {
     setReadingLang(code);
+    // the piece in hand stays, with its group open, while the filter still holds it: every
+    // filter click used to jump to the first piece and drop the lines already typed
+    if (code === "all" || reading.lang === code) { setOpenReadingGroup(code === "all" ? readingLangName[reading.lang] : reading.genre); return; }
     setOpenReadingGroup(null);
-    const first = readings.find(pc => code === "all" || pc.lang === code);
+    const first = readings.find(pc => pc.lang === code);
     if (first && first.id !== readingId) chooseReading(first.id);
   }
   function chooseReading(id: string) {
