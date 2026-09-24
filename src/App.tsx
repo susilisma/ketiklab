@@ -1068,7 +1068,11 @@ export default function Home() {
         const data = JSON.parse(String(reader.result));
         if (data.app !== "ketiklab") throw new Error("bad file");
         if (data.local && typeof data.local === "object") for (const [k, v] of Object.entries(data.local)) if (BACKUP_KEYS.has(k) && typeof v === "string") localStorage.setItem(k, v);
-        if (Array.isArray(data.reviews)) await restoreRecords(data.reviews).catch(() => {});
+        // the review ladder lives in IndexedDB; a refused write there used to be swallowed and
+        // the page reloaded with an empty ladder and no word about it
+        let reviewsLost = false;
+        if (Array.isArray(data.reviews)) await restoreRecords(data.reviews).catch(() => { reviewsLost = true; });
+        if (reviewsLost) alert(TX("设置和进度已导入，但复习记录没有恢复：浏览器拒绝了数据库写入，请重试一次。", "Pengaturan dan progres sudah diimpor, tetapi jadwal pengulangan tidak dipulihkan: browser menolak penulisan basis data. Coba sekali lagi.", "Settings and progress were imported, but the review schedule was not restored: the browser refused the database write. Try once more.", uiLang));
         window.location.reload();
       } catch { alert(TX("导入失败：文件格式不对", "Impor gagal: format file tidak valid", "Import failed: invalid file", uiLang)); }
     };
