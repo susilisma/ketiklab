@@ -415,6 +415,8 @@ export default function Home() {
     setDictsError(false);
     loadDictFile<DictInfo[]>("manifest.json").then((m: DictInfo[]) => {
       if (!mounted.current) return;
+      // valid JSON of the wrong shape (an error object) reached dicts.filter and blanked the page
+      if (!Array.isArray(m)) throw new Error("manifest is not a list");
       setDicts(m);
       // restore the previously selected dictionary — unless the learner has
       // already picked a list (sourceReq counts every such choice). A library
@@ -454,6 +456,9 @@ export default function Home() {
       fetch(DATA + "readings.json").then(r => r.json()),
     ]).then(([w, r]: [Word[], ReadingPiece[]]) => {
       if (!alive) return;
+      // an error object or an empty list where the content should be: reported like a failed
+      // fetch, instead of a blank page (words.filter) or a spinner that never ends
+      if (!Array.isArray(w) || !w.length || !Array.isArray(r) || !r.length) { setDataError(true); return; }
       setWords(w);
       setReadings(r);
       if (r.length) setReadingId(r[0].id);
