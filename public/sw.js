@@ -93,15 +93,20 @@ self.addEventListener("fetch", (e) => {
     // keyed by path like a landing page: stored under the full URL, a page opened from a
     // shared link with ?utm_… never served its plain address offline, and each query made a copy
     const pageKey = landingKey || (generated ? url.pathname : null);
-    e.respondWith(fetch(shellReq).then((res) => {
-      if (isShell) e.waitUntil(store("./index.html", res));
-      else if (pageKey) e.waitUntil(store(pageKey, res));
-      return res;
+    // GitHub Pages answers /zh or /zh/lib/en-core with a redirect to the slash form; offline,
+    // the same redirect comes from here when the slash form is cached (the bare form never is)
+    const slashForm = !url.pathname.endsWith("/") && /^\/(zh|id|en)(\/|$)/.test(url.pathname) ? url.pathname + "/" : null;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
     // a generated page never opened is sent the same way, in its language, instead of
     // resolving to nothing and leaving the browser's own error page
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit || ((landing || generated) ? Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}`, self.location).href, 302) : undefined)))));
+    const toShell = () => (landing || generated) ? Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}`, self.location).href, 302) : undefined;
+    e.respondWith(fetch(shellReq).then((res) => {
+      if (isShell) e.waitUntil(store("./index.html", res));
+      else if (pageKey) e.waitUntil(store(pageKey, res));
+      return res;
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit
+      || (slashForm ? caches.match(slashForm).then((slashHit) => slashHit ? Response.redirect(new URL(slashForm + url.search, self.location).href, 301) : toShell()) : toShell())))));
     return;
   }
   // Hashed build assets are immutable: cache-first
