@@ -781,7 +781,7 @@ export default function Home() {
   // starred; the line is rebuilt for the current one (a dictionary favourite's has no such text)
   // the current row's pronunciation line, but only while the row still names the saved word:
   // 17 rows were re-glossed since 09-21, and 教学大纲 was printed with the pinyin of 课程体系
-  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : wordByEn.get(f.key); return w && wordValue(w, f.lang) === f.text ? { ...f, sub: trioItem(w, f.lang).sub } : f; });
+  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : wordByEn.get(f.key); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f; });
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favItems()
     : (dictInfo && dictWords && dictWords.length)
