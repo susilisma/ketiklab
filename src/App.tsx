@@ -195,6 +195,20 @@ function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, ste
 // 输入法, so "第 3 章" is not the same 20 words in both.
 // the reader's texts and a keyboard: ’ ‘ ʼ → ', “ ” → ", – — → -
 const foldTypography = (s: string) => s.replace(/[\u2018\u2019\u02BC]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, "-");
+// stored values are shape-checked: a hand-edited backup that put "{}" here would otherwise
+// throw at favorites.some(...) on every load until site data is cleared. Every field the card
+// renders as text must be text: an object in sub/meaning/example/def (a hand-edited backup, a
+// cloud blob) reached JSX and white-screened every load, since ketiklab-source="fav" is
+// persisted and main.tsx has no error boundary
+function cleanFavorites(f: unknown): PracticeItem[] {
+  const str = (v: unknown) => v === undefined || typeof v === "string";
+  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })) : [];
+}
+function cleanDayCounts(dc: unknown): Record<string, number> {
+  const clean: Record<string, number> = {};
+  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number") clean[k] = n;
+  return clean;
+}
 const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
   `trio:${cat}${lang === "zh" && step !== "hanzi" ? ":" + step : ""}`;
 
@@ -470,25 +484,30 @@ export default function Home() {
     // stored values are shape-checked: a hand-edited backup that put "{}" here would
     // otherwise throw at favorites.some(...) on every load until site data is cleared
     try {
-      const f = JSON.parse(localStorage.getItem("ketiklab-fav") || "[]");
-      // every field the card renders as text must be text: an object in sub/meaning/example/def
-      // (a hand-edited backup, a cloud blob) reached JSX and white-screened every load, since
-      // ketiklab-source="fav" is persisted and main.tsx has no error boundary
-      const str = (v: unknown) => v === undefined || typeof v === "string";
-      const favs: PracticeItem[] = Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })) : [];
+      const favs = cleanFavorites(JSON.parse(localStorage.getItem("ketiklab-fav") || "[]"));
       setFavorites(favs);
       // "fav" is not a manifest id, so the dictionary restore above never matches it
       if (favs.length && localStorage.getItem("ketiklab-source") === "fav") setSource("fav");
     } catch { /* ignore */ }
     try { if (localStorage.getItem("ketiklab-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
-    try {
-      const dc: unknown = JSON.parse(localStorage.getItem("ketiklab-days") || "{}");
-      const clean: Record<string, number> = {};
-      if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number") clean[k] = n;
-      setDayCounts(clean);
-    } catch { /* ignore */ }
+    try { setDayCounts(cleanDayCounts(JSON.parse(localStorage.getItem("ketiklab-days") || "{}"))); } catch { /* ignore */ }
     return () => { alive = false; mounted.current = false; };
+  }, []);
+  // Another tab (or the installed app beside a browser tab) wrote its progress: this tab takes
+  // it over, or its next write of the in-memory copy dropped what the other tab typed — two
+  // words in tab B were gone after one word in tab A. An identical write fires no event.
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.newValue === null) return;
+      try {
+        if (e.key === "ketiklab-days") setDayCounts(cleanDayCounts(JSON.parse(e.newValue)));
+        else if (e.key === "ketiklab-fav") setFavorites(cleanFavorites(JSON.parse(e.newValue)));
+        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter((k: unknown) => typeof k === "string") : []); }
+      } catch { /* a value this tab cannot read is left to the next write */ }
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const refreshSrs = () => { getStats().then(setSrs).catch(() => {}); };
