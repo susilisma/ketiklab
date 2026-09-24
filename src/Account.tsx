@@ -31,7 +31,7 @@ function suggestEmail(raw: string): string | null {
 
 /** Supabase speaks English error codes; learners deserve their own language. */
 function humanError(e: unknown, l: Lang): string {
-  const ae = (e && typeof e === "object" ? e : {}) as { name?: string; status?: number; message?: string };
+  const ae = (e && typeof e === "object" ? e : {}) as { name?: string; status?: number; message?: string; code?: string };
   const raw = typeof e === "string" ? e : ae.message || String(e);
   const m = raw.toLowerCase();
   // A dead connection carries the browser's own wording — Chrome "Failed to fetch",
@@ -53,6 +53,12 @@ function humanError(e: unknown, l: Lang): string {
     return T("邮箱或密码不对。也请检查邮箱有没有打错字母。",
              "Email atau kata sandi salah. Cek juga ejaan emailmu.",
              "Wrong email or password. Double-check the spelling of your email too.", l);
+  // GoTrue's request throttle (about 30 sign-ins in five minutes from one address — a
+  // classroom behind one router) is not the email limit it used to be reported as
+  if (ae.code === "over_request_rate_limit" || m.includes("request rate limit"))
+    return T("这个网络的尝试次数太多，请等几分钟再试。",
+             "Terlalu banyak percobaan dari jaringan ini. Tunggu beberapa menit, lalu coba lagi.",
+             "Too many attempts from this network. Wait a few minutes and try again.", l);
   if (m.includes("rate limit"))
     return T("发信次数达到上限，请等一小时再试。",
              "Batas pengiriman email tercapai. Coba lagi satu jam lagi.",
