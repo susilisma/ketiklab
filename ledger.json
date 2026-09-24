@@ -329,9 +329,9 @@
    "title": "hash 里任意 error_description 原样显示并切到账户页（已确认是文本渲染，非 XSS）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "6 行：改读 error_code",
-   "date": "2026-09-15"
+   "commit": "9a6a355",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "email-placeholder-indonesian",
@@ -490,10 +490,10 @@
    "fingerprint": "dictation-hides-extras-on-ladder",
    "title": "输入法档开了默写后切到认读/打拼音/选汉字，附加释义被隐藏且无控件可关（App.tsx:692）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
-   "commit": "1220e34"
+   "status": "fixed",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25",
+   "commit": "5f35686"
   },
   {
    "fingerprint": "srs-restore-accepts-nan",
@@ -536,9 +536,9 @@
    "title": "忘记密码连按两次显示英文 For security purposes… 原文（Account.tsx:72）",
    "priority": "P3",
    "status": "deferred",
-   "reason": "3 行映射到已有翻译分支",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；仅映射了 For security purposes（冷却期）一句，其余原文回落仍在（见 postgrest-errors-raw-and-rename-reverts-silently）",
+   "date": "2026-09-25",
+   "commit": "c9286d2"
   },
   {
    "fingerprint": "account-offline-expired-session",
@@ -562,19 +562,19 @@
    "fingerprint": "profile-select-dead-columns",
    "title": "cloud.ts 仍 select member_until, ref_code；若列被删则资料加载失败",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
-   "commit": "0337cd4"
+   "status": "fixed",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25",
+   "commit": "29ba46d"
   },
   {
    "fingerprint": "library-topic-word-no-focus",
    "title": "从词库点主题词进入学习页不聚焦输入框，点词典词则聚焦（practiceWord 缺 focus）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
-   "commit": "a4eb54c"
+   "status": "fixed",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25",
+   "commit": "0c71750"
   },
   {
    "fingerprint": "prefers-color-scheme-ignored",
@@ -670,10 +670,10 @@
    "fingerprint": "sw-store-accepts-206",
    "title": "store() 会缓存 206 部分响应（目前无 Range 请求，潜在）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
-   "commit": "9f41091"
+   "status": "fixed",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25",
+   "commit": "241db63"
   },
   {
    "fingerprint": "css-line-meta-green-contrast",
@@ -698,9 +698,9 @@
    "title": "重置进度按钮 #d65360 白底 3.99:1",
    "priority": "P3",
    "status": "deferred",
-   "reason": "1 行换色",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25",
+   "commit": "e2904f1"
   },
   {
    "fingerprint": "landing-page-ignores-path-lang",
@@ -734,27 +734,27 @@
    "title": "ketiklab-chapters 不是对象时（备份/云端）章节位置永远存不上，每次刷新都回第 1 章",
    "priority": "P3",
    "status": "deferred",
-   "reason": "约 5 行 readChapters 助手",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25",
+   "commit": "9fa600d"
   },
   {
    "fingerprint": "review-banner-counts-retired-keys",
    "title": "开始复习时已退休的键仍留在 reviewKeys，横幅显示 2 / 3",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
-   "commit": "dd16cd8"
+   "status": "fixed",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25",
+   "commit": "b383ffd"
   },
   {
    "fingerprint": "lib-link-fetch-failure-silent",
    "title": "?lib= 指向的词典文件取不到时静默落到主题词，且失败 id 已写入 ketiklab-source",
    "priority": "P3",
    "status": "deferred",
-   "reason": "2 行：catch 设 dictsError，persistSource 移入 then",
-   "date": "2026-09-15",
-   "commit": ""
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25",
+   "commit": "9c6efc6"
   },
   {
    "fingerprint": "topic-page-cta-lands-on-saved-dictionary",
@@ -778,18 +778,18 @@
    "fingerprint": "weekday-letters-english-only",
    "title": "学习计划/统计的星期字母 SMTWTFS 三语相同",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
-   "commit": "4e0c3e5"
+   "status": "fixed",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25",
+   "commit": "ca60678"
   },
   {
    "fingerprint": "loop-non-integer",
    "title": "ketiklab-loop=3.5（备份/云端）时点显示 3 个、实际要打 4 遍",
    "priority": "P3",
    "status": "deferred",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24",
+   "reason": "昨日已修好并验证，今日重跑测试通过（reverify t08/t10/t15/t16/t17），受 12 项上限仍在分支 claude/daily-2026-09-25，明日合入",
+   "date": "2026-09-25",
    "commit": "044c252"
   },
   {
@@ -977,18 +977,18 @@
    "title": "退出登录前不推送，最近 ≤60 s 的进度只在本机；换账号「只用云端」后丢失（cloud.ts:96-99）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "3 行：signOut 前 pushProgress",
-   "date": "2026-09-16"
+   "commit": "a3bed08",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "import-silently-skips-srs-restore",
    "title": "导入备份时 restoreRecords 失败被吞掉，仍刷新页面，复习阶梯为空无提示（App.tsx importProgress）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "3 行：失败走 alert",
-   "date": "2026-09-16"
+   "commit": "5dd4fa0",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "same-day-counts-max-not-sum",
@@ -1624,10 +1624,10 @@
    "fingerprint": "pinyin-rung-focus-lost-after-escape",
    "title": "打拼音档按 Escape 或点汉字后再打字无反应（onAnyKey 只聚焦 App 的 input，ZhSteps 的框不在其列）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "3df02da",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "status": "fixed",
+   "commit": "d21d95a",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "pinyin-rung-umlaut-no-hint",
@@ -1642,10 +1642,10 @@
    "fingerprint": "choose-rung-prevnext-reveals-distractor",
    "title": "选汉字档下方的 ‹上一词 下一词› 打印章内汉字，34% 的题有一个干扰项被排除",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "38b777a",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "status": "fixed",
+   "commit": "cefa2db",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "import-overwrites-newer-srs-rows",
@@ -1723,10 +1723,10 @@
    "fingerprint": "typing-focus-stale-on-unmount",
    "title": "输入框随视图卸载时 typingFocus 不复位：回到学习页无遮罩、时钟在走、无焦点",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "277d936",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "status": "fixed",
+   "commit": "bd96023",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "start-button-on-finish-card",
@@ -1734,8 +1734,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "46e700e",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "reason": "昨日已修好并验证，今日重跑测试通过（reverify t08/t10/t15/t16/t17），受 12 项上限仍在分支 claude/daily-2026-09-25，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "dictation-tab-peek-full-credit",
@@ -1778,9 +1778,9 @@
    "title": "深色模式下选汉字对错反馈、完成 ✓ 圆、空态图标、学习计划已完成日保持浅色底",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "约 3 行 .dark 覆盖",
-   "date": "2026-09-21"
+   "commit": "150b231",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "reader-wrong-char-contrast",
@@ -1804,10 +1804,10 @@
    "fingerprint": "plural-one-days-english",
    "title": "英文界面「1 days」「1 words」「1 readings」硬编码复数",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "6681d89",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "status": "fixed",
+   "commit": "be97e99",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "a11y-dialog-and-inputs-unnamed",
@@ -2065,10 +2065,10 @@
    "fingerprint": "space-swallowed-after-refocus-mid-phrase",
    "title": "打完短语前半后点 ▶/Escape 再按空格被 onAnyKey 吞掉，需第二次空格",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "0e09816",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "status": "fixed",
+   "commit": "b433f7b",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "start-review-silent-when-dictionary-unreachable",
@@ -2083,10 +2083,10 @@
    "fingerprint": "import-file-input-not-cleared-after-failure",
    "title": "导入失败后再选同名文件不触发 change",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "c5b06c6",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "status": "fixed",
+   "commit": "4672c91",
+   "reason": "已合入 main（64e7f24..241db63，昨日分支重跑测试 17/17 通过后 cherry-pick），Build check #28 成功 0 注解，Build and deploy #669 成功",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "lang-setup-learn-change-keeps-foreign-dictionary",
@@ -2247,8 +2247,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "3801476",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "reason": "昨日已修好并验证，今日重跑测试通过（reverify t08/t10/t15/t16/t17），受 12 项上限仍在分支 claude/daily-2026-09-25，明日合入；须与 150ab68（落地页保留自身 SEO 标题）一起合入，单独合入会让 /en/ /id/ 落地页标题被应用标题覆盖",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "backup-note-drops-contents-id-en",
@@ -2256,8 +2256,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "1b4e43d",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "reason": "昨日已修好并验证，今日重跑测试通过（reverify t08/t10/t15/t16/t17），受 12 项上限仍在分支 claude/daily-2026-09-25，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "zh-rung-switch-in-finish-window-double-counts",
@@ -2265,35 +2265,35 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "ffe29f0",
-   "reason": "已修好并验证（校验者逐项 before/after），在分支 claude/daily-2026-09-24（Build check #27 成功、0 注解），受每次 12 项上限未合入 main，明日第一批合入",
-   "date": "2026-09-24"
+   "reason": "昨日已修好并验证，今日重跑测试通过（reverify t08/t10/t15/t16/t17），受 12 项上限仍在分支 claude/daily-2026-09-25，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "dictation-hide-all-masks-separators",
    "title": "默写全隐藏/随机把 cash flow 的空格也遮住：九条相同下划线看不出词界，打 cashf 判错并记错词与遗忘",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "1 行：letterVisible 对非字母/汉字字符返回 true",
-   "date": "2026-09-24"
+   "commit": "2acf625",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "veil-says-start-after-mid-word-pause",
    "title": "打到一半点暂停，遮罩仍说「按任意键开始」而非「继续」",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "1 行：running || typed || seconds",
-   "date": "2026-09-24"
+   "commit": "0b738cb",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "saved-dictionary-manifest-failure-silent",
    "title": "老用户 ketiklab-source=en-core 而 manifest 500 时静默落到主题词、学习页无横幅无重试",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "学习页也渲染 dictsError 横幅（lib-link-fetch-failure-silent 的无链接变体）",
-   "date": "2026-09-24"
+   "commit": "9c6efc6",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "pull-in-other-tab-overwritten-by-stale-tab",
@@ -2309,27 +2309,27 @@
    "title": "已绑定他人账号的设备上注册填名字，未登录前就覆盖本机 ketiklab-name",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "1 行：!linkedUid() 时才 onName",
-   "date": "2026-09-24"
+   "commit": "fdc9cfc",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "foreign-session-card-shows-device-owner-name",
    "title": "foreign 状态下账户卡显示设备主人的名字与首字母、名字框可改但被丢弃",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "显示 profName 并 readOnly",
-   "date": "2026-09-24"
+   "commit": "55f5413",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "id-nav-label-ellipsis-tablet",
    "title": "641–1279px 印尼语侧栏「Pengulangan Berjarak」127px 在 95px 框里省略成「Pengulangan …」",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "该媒体块允许换行或缩短 nav 串",
-   "date": "2026-09-24"
+   "commit": "1ea70f7 + a061b6b",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "sound-fav-buttons-crowd-long-headword-375",
@@ -2354,36 +2354,36 @@
    "title": "离线打开 /zh 或 /zh/lib/en-core（无尾斜杠）ERR_FAILED，虽然带斜杠的形式已缓存",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "sw 导航回退里合成 301 到斜杠形式",
-   "date": "2026-09-24"
+   "commit": "42dc272",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "sw-deploy-drops-visited-generated-pages",
    "title": "activate 只把 /data/ 搬进新缓存，部署后读过的生成页离线打不开",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "sw.js:46 也保留 /(zh|id|en)/ 路径",
-   "date": "2026-09-24"
+   "commit": "88985df",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "sw-background-cache-put-outside-waituntil",
    "title": "SWR 的后台刷新与 store() 的 put 不在 e.waitUntil 里，慢网下 worker 被回收可能丢掉 words.json 刷新",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "store 返回 promise 并 e.waitUntil",
-   "date": "2026-09-24"
+   "commit": "78b1fc3",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "placeholder-contrast-light",
    "title": "浅色主题拼音/IME 占位符 3.08:1，搜索/阅读/账户字段 UA 默认占位符 3.32–3.37:1",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "一条 ::placeholder 规则 color:var(--muted);opacity:1",
-   "date": "2026-09-24"
+   "commit": "4c8fa3a",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "reader-upcoming-lines-contrast",
@@ -2399,27 +2399,27 @@
    "title": ".finish-wrong b 13px 与 .skip-btn 12px #d65360 在 #f6f7fb 上 3.73:1",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "与 css-danger-button-contrast 同色，一起换",
-   "date": "2026-09-24"
+   "commit": "e2904f1",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "reduced-motion-leaves-infinite-animations",
    "title": "prefers-reduced-motion 只停遮罩动画，sound-pulse / lt-pulse / word-shake 仍跑",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "媒体块补 animation:none",
-   "date": "2026-09-24"
+   "commit": "2bd9714",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "has-selector-no-fallback-hides-skip-on-phones",
    "title": ".zh-tip:has(.zh-skip){display:flex} 无回退：不支持 :has 的浏览器手机上三次错后的跳过按钮永不显示",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "用类名切换代替 :has",
-   "date": "2026-09-24"
+   "commit": "b44b98b",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "render-blocking-google-fonts-in-offline-shell",
@@ -2435,27 +2435,27 @@
    "title": "promote.mjs 先真跑 append-batch 再读校验结果：一行无效时有效行已追加进 words.json 却说「队列未动」并 exit 1（GitHub 上 runner 丢弃，本地跑会脏）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "先 --dry-run 校验再真跑",
-   "date": "2026-09-24"
+   "commit": "b88ec9b",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "manual-flush-nonnumeric-count-deploys-nothing",
    "title": "手动 dispatch 的 WORDS_PER_RUN 打错字（abc）→「fixed NaN → 0 words」exit 0，gate 仍 go=true，绿灯部署无变化的树",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "校验计数为 ≥1 整数，空串仍走时钟路径",
-   "date": "2026-09-24"
+   "commit": "0550f42",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "bad-queue-row-blocks-rebuild-deploy",
    "title": "队列含无效行时 promote 也在 workflow_run 上跑并失败，重建的词库不会部署且运行报的是队列错",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "promote 步骤只在 schedule / workflow_dispatch 上运行",
-   "date": "2026-09-24"
+   "commit": "183a80a",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
   },
   {
    "fingerprint": "build-job-keeps-write-token-during-npm-install",
@@ -2483,6 +2483,348 @@
    "commit": "",
    "reason": "见 reports/gloss-candidates-2026-09-24.md",
    "date": "2026-09-24"
+  },
+  {
+   "fingerprint": "reader-smart-punctuation-untypable",
+   "title": "阅读器逐字比对保留 ’ ‘ — 等排版符号：24/47 篇英文（含 Sonnet 18 首句）与 1 篇印尼语无法用键盘打完，— 无键可打",
+   "priority": "P1",
+   "status": "deferred",
+   "commit": "668eb2b",
+   "reason": "比对两侧折叠 ’‘ʼ→' “”→\" –—→-；Sonnet 18 首句用直引号 → Line 2 / 4、0 红格（旧：卡在 Line 1）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "two-tabs-last-writer-wins-progress",
+   "title": "两个标签页（或已安装应用 + 浏览器）各写整份内存副本：A 打 3、B 打 2、A 再打 1 → 只剩 4 个，autoPush 上传的也是 4",
+   "priority": "P1",
+   "status": "deferred",
+   "commit": "2364b94",
+   "reason": "storage 监听重读 ketiklab-days/-state/-fav；两标签页交替各打一词后 days 总数 3、correct 3（旧 2）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "toefl-glosses-english-residue",
+   "title": "en-toefl.json 5 行把英文残片当释义：pacific「(」、stem「v. (」、favor「in」、etc「et」、exaggerate「ex出+ag强+」；build-toefl-dict.py cut_at_english 只在 3 个拉丁字母处截断",
+   "priority": "P1",
+   "status": "deferred",
+   "commit": "94ef2ae",
+   "reason": "脚本只保留含汉字且无 + 的片段并剥离 ()（）；5 行手改；manifest 不变；三库 0 个无汉字释义；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "reading-filter-discards-current-piece",
+   "title": "阅读页点任何语言筛选（包括当前的和 全部）都跳到该筛选第一篇并清掉已打的行",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "7e79728",
+   "reason": "筛选仍包含当前篇时保留并展开其分组；春晓打完 1 句点 全部 → 仍是春晓 第 2 / 4 句（旧：Sonnet 18 第 1 句）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "id-dictation-syllable-line-spells-answer",
+   "title": "学印尼语的三种默写模式都在遮住的词下面印「Bahasa Indonesia · men·ca·pai」拼写",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "4810bee",
+   "reason": "任何默写下音节行随字母一起遮住（TAB 显示）；隐元音 → .phonetic pron-hidden（旧无）；英语 IPA / 中文拼音不变；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "invalid-lang-srs-key-white-screens-review",
+   "title": "备份里 reviews 键 fr:achieve 会恢复并到期，开始复习渲染 wordValue(w,\"fr\") 崩溃 → #root 空白，每次点都白屏直到重置进度",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "78c74b6",
+   "reason": "restoreRecords 丢弃前缀不是 zh/id/en 的键；resolveReviewRefs 对非语言前缀不解析（退休）；导入后徽标 0、无 pageerror（旧：pageerror + 空 root）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "read-rung-dead-keys-after-pill-click",
+   "title": "从打拼音/选汉字点 认读 胶囊后 SPACE/ENTER 死，直到点别处（pointerdown 追踪器只在认读效果里订阅）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "eb07ff8",
+   "reason": "追踪器移到组件全生命周期；点胶囊后 SPACE → 02 / 20（旧 01 / 20）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "fav-frozen-text-current-row-pinyin",
+   "title": "中文收藏词的行被重新释义后（09-21 起 17 行），收藏 教学大纲 显示 课程体系 的拼音 kè chéng tǐ xì，打拼音把正确拼音判错并记遗忘",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "7356383",
+   "reason": "trioW 仅在仍指向该词时使用，否则读收藏自带的「普通话 · …」；认读注音 jiào xué dà gāng（旧 kè chéng tǐ xì）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "signin-rate-limit-says-email-limit-one-hour",
+   "title": "登录限流 over_request_rate_limit 被显示为「发信次数达到上限，请等一小时」",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "c6584fa",
+   "reason": "单独分支「这个网络的尝试次数太多，请等几分钟再试」三语；伪造 429 印尼语界面显示新文案；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "readings-public-domain-claim-includes-originals",
+   "title": "「160 篇公共领域经典」把 2 篇 2026 年本站原创练习短文（pagi-di-kantor、kunjungan-ke-toko）算进公共领域：README 三语、生成页 read_desc、SOURCES.md「仅收录公共领域文本」",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "ba28ee3",
+   "reason": "生成页从数据算公共领域篇数（158）+ 总数；README/SOURCES 点名两篇练习短文；dist 三语阅读页均含 158；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "dup-drained-rows-silent-on-green-run",
+   "title": "promote 把 dup-* 跳过当成功：手写行因次要义与在线义重合被静默从队列删除，日志只剩 promoted: 0",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "338b775",
+   "reason": "append-batch 在原因里点名行（dup-existing: en / id / zh），promote 逐行打 ::warning:: 注解；抓包测试 exit 0 + 警告行 + 有效行入库；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "non-array-data-file-white-screen",
+   "title": "manifest.json / words.json 返回 200 但是对象 → dicts.filter / words.filter 抛错白屏；words [] 或 readings {} → 永久加载中",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "f170114",
+   "reason": "manifest 非数组走词库失败横幅；words/readings 非非空数组走 dataError；manifest {\"error\":..} → 横幅、root 非空（旧 pageerror + 空 root）；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "landing-title-overwritten-by-app-title",
+   "title": "昨日 3801476 的标题效果在挂载时覆盖 /en/ /id/ 落地页自带的 SEO <title>（标签页/历史/渲染型爬虫）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "150ab68",
+   "reason": "读取页面自带标题与 lang；界面语言与页面语言相同时保留；/en/ 英文界面保留 SEO 标题，/en/ 印尼语界面用应用印尼标题；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "id-nav-label-11px-regression",
+   "title": "1ea70f7 把平板侧栏标签缩到 11px，低于 12px 下限（渲染矩阵 6 格失败）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "a061b6b",
+   "reason": "保留 12px，line-height 1.05 两行仍装进 58/50px；矩阵 768/1024 9 格 smallText 0 失败，Pengulangan Berjarak 95×25 两行无溢出；已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "library-fav-source-grid-mismatch",
+   "title": "source=fav 时词库页 ★ 我的收藏 亮但网格/计数显示分类主题词（300 / 614）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "source===\"fav\" 时网格渲染 favItems() 并计数，或词库页不高亮收藏按钮",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "settings-test-sound-detail-wrong-language",
+   "title": "设置页「发音 · 中文 · 0.8×」但 测试发音 用当前词的语音（英语 en-US, rate .82）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "标签取自 practiceLang / item.voice，或用固定样例词；0.82 改 0.8",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "seo-lib-meta-descriptions-too-short",
+   "title": "30 个词库生成页 description 12–46 字符（build-seo-pages.py:325 f\"{name}: {desc}\"），落地页 title 90/93 字符",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "description = name — count. desc. coverage；title ≤ 60",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "copy-consistency-id-en",
+   "title": "「Akun & sinkron」/「MASUK & SINKRON CLOUD」全大写、「Belum ada arti Indonesia」、UK/US 拼写混用（licence vs favorites）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "sinkronisasi；Title Case；arti bahasa Indonesia；统一英式或美式",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "history-snapshot-only-on-promotion",
+   "title": "snapshot-history.py 只在 promote 有变化时跑，手改 words.json 从不快照；history.json 停在 2026-09-15（计数未变所以暂无偏差）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "promote job 无条件跑 snapshot，history 有变即提交",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "public-sitemap-stub-tracked",
+   "title": "public/sitemap.xml 一条 URL 的桩文件被跟踪，build-seo-pages 会覆盖；跳过该步的构建会发一条 URL 的 sitemap",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "git rm public/sitemap.xml",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "manifest-rewrite-drops-trailing-newline",
+   "title": "build-en-dicts.py / build-zh-dicts.py 写 manifest.json 无尾换行，与 manifest-coverage.py 来回翻转",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "dump 后 f.write(\"\\n\")",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "soft-mode-correct-key-after-wrong-counts-as-miss",
+   "title": "退格改错模式：错字后每个后续键（哪怕位置正确）都蜂鸣并计入跳过阈值（App.tsx handleType 条件是「缓冲区变长」）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "只在新键本身与 expected[i] 不符时计数",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "finish-window-refocus-undoes-escape-shift-tab",
+   "title": "打完词 340ms 内按 Escape / Shift+TAB 被前进/循环定时器重新聚焦输入框撤销",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "Escape / Shift+Tab 时置 pausedByButton（或新 ref），三处定时器检查",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "ime-rung-latin-typing-silent",
+   "title": "输入法档没开中文输入法直接打拉丁字母：留在框里，无判定、无蜂鸣、无提示",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "同步框并显示「请切换到中文输入法」提示",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "ladder-rungs-no-key-or-error-sound",
+   "title": "打拼音 / 选汉字 无按键声与错误声，只有成功音",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "ZhSteps 引入 keyClick / errorBeep",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "speech-voice-prefix-match-ignores-region",
+   "title": "语音按 2 字母前缀取第一个：iOS 上 American English 可能用 en-GB 声，普通话可能用 zh-TW",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "先精确匹配 lang 再回落前缀",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "pinyin-rung-enter-is-silent-skip",
+   "title": "打拼音档 ENTER 随时跳词并记遗忘 + 错词本，提示只说 TAB 看答案；认读档 ENTER 却是下一词",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "提示加「ENTER · 跳过」或仅在 wrong>=3 || typed===\"\" 时响应",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "merge-with-unreadable-profile-blanks-account-name",
+   "title": "loadProfile 失败与「无行」同为 null：合并到他人账号时把 ketiklab-name \"\" 写上云端、顶栏变 Pelajar 且报成功",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "loadProfile 区分失败；profileName 未知时保留云端 blob 的名字",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "link-tokens-one-back-press-away",
+   "title": "auth-js 的 location.hash=\"\" 推了一条历史：Back 显示带 access_token 的 URL，刷新再消费一次；共享设备上 token 在返回栈里 1 小时",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "detectSessionInUrl:false + 自行解析/replaceState/setSession（改动较大）",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "signup-existing-email-overwrites-typed-uid",
+   "title": "用已注册邮箱再注册返回 identities:[] 的占位用户，markTyped 仍写入其随机 id → 自己的确认链接被当不可信链接",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "signUp 仅在 identities 非空或有 session 时 markTyped",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "postgrest-errors-raw-and-rename-reverts-silently",
+   "title": "humanError 回落原文：网关 503 文本、RLS 403、weak_password、signup_disabled；写入段的 JWT expired 匹配成「链接过期」；改名失败后重开面板静默回退",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "按 error.code/status 映射并以通用三语句收尾；回退时提示",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "id-nav-label-overflow-wide-short",
+   "title": "≥1280 宽且 ≤800 高：印尼语侧栏「Pengulangan Berjarak」14px 折两行 42px 溢出 40px 的 .nav（1280×700 复现，主线亦然）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "该媒体块 .nav min-height:auto 或标签 nowrap+ellipsis 改短串",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "zh-pinyin-orphan-hanzi-keys",
+   "title": "zh-pinyin.json 21 个汉字键（业绩、习得、并购、进口资质、零售建议价…）+ 今日 良治、印尼传统女装、返乡潮 已无任何首义引用（重新释义留下）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "无用户影响；重建脚本或手动清理",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "dictation-mode-not-persisted",
+   "title": "默写模式每次刷新回到 关，而隐藏发音/纠错/重复次数都持久化（可能是设计）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "若要持久化：ketiklab-dictation + BACKUP/SYNCED_KEYS；是否持久化由主人定",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "en-zh-dict-generator-first-synset",
+   "title": "en-*.json / zh-*.json 生成器取词元第一个 WordNet 义（en-core 约 10% 行如 years 年老、made 成功、check 支票…，另 ~190 行见 gloss-candidates-2026-09-25.md）且 idtrans 含马来西亚拼写（ubat、polis、wang…；各库 1–3%）",
+   "priority": "P2",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "今日 61 行已用 scripts/en-gloss-fixes.json 钉住；彻底修需改 build-en-dicts.py / build-zh-dicts.py 的义项选择（按词元频率）与 MY→ID 替换表，属生成器改造，请主人定",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "twelve-fix-cap-backlog",
+   "title": "每次 12 项上限：今日分支上已验证未合入的修复 41 个（5 个昨日 + 36 个今日），按当前节奏要 3–4 天才能全部上线",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "是否临时提高上限或允许 P1/P2 优先于遗留 P3 合入",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "gloss-candidates-unsure-0925",
+   "title": "校验者不同意/不确定：words.json regulatory capture（penangkapan regulator）；indonesian.json mui（保留 印尼伊斯兰教士理事会）、wan（建议删除）、sejauh 到目前为止；37 行「印尼人名」体例、~120 行 di- 被动体例、~45 个形容词词头两侧用名词（dental/gigi/牙齿 等）、30 个大写缩写 id、licence/license 拼写、rupiah 印尼卢比 vs 印尼盾",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "见 reports/gloss-candidates-2026-09-25.md",
+   "date": "2026-09-25"
+  },
+  {
+   "fingerprint": "readings-app-group-label-for-practice-texts",
+   "title": "应用内两篇本站练习短文归在「印尼语经典 / Klasik Indonesia / Indonesian classics」分组下",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "是否给本站练习短文单独分组名（内容元数据展示，属主人定）",
+   "date": "2026-09-25"
   }
  ]
 }
