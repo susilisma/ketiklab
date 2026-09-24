@@ -89,10 +89,12 @@ def glosses(body):
     out = []
     for g in re.split(r"[;；]", text):
         g = re.sub(r"^[英美]\s*", "", INLINE.sub("", g).strip())
-        g = cut_at_english(ETYM.split(g)[0]).strip(" ,，、=→()（）")
-        # what is left after the cut must still be Chinese: a two-letter English word ("in",
-        # "et"), a lone "(" or the PDF's root mnemonic ("ex出+ag强+") is not a meaning
-        if g and HAN.search(g) and "+" not in g:
+        g = cut_at_english(ETYM.split(g)[0]).strip(" ,，、=→")
+        # the cut can leave the bracket that opened the English note ("v. (", "热带 (")
+        g = re.sub(r"\s*[(（]$", "", g)
+        # what is left must still be Chinese: a two-letter English word ("in", "et") or the
+        # PDF's root mnemonic ("ex出+ag强+", Latin letters glued to +) is not a meaning
+        if g and HAN.search(g) and not re.search(r"[A-Za-z]\S*\+", g):
             out.append(g)
     return out
 
