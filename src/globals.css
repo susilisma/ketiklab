@@ -439,7 +439,7 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 /* --strip-h counts on exactly two 40px rows: each group is one row that scrolls sideways, whatever the language or the hint state */
 .mode-group{display:flex;flex:0 0 100%;min-width:0;align-items:center;gap:7px;overflow-x:auto;scrollbar-width:thin}.mode-sep{display:none}
 /* chapter-nav and the ladder pills already say where the learner is; the tips are keyboard instructions — kept only while they carry the skip button */
-.prevnext,.zh-tip{display:none}.zh-tip:has(.zh-skip){display:flex}
+.prevnext,.zh-tip{display:none}.zh-tip.has-skip{display:flex}
 .word-card h1{letter-spacing:.04em}.word-card h1.target-word.id{letter-spacing:.03em}.word-card h1.target-word.zh{letter-spacing:.12em}
 .metrics .metric{flex-direction:column;justify-content:center;gap:2px;padding:8px 4px;text-align:center}.metrics .metric>i{width:24px;height:3px;order:2}.metrics .metric div{align-items:center}.metrics .metric strong{font-size:15px}.metrics .metric span{line-height:1.2;min-height:2.4em}
 /* 8px more for the header title: "Business & Work · 614" was 3px short of its count */

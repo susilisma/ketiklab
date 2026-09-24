@@ -223,7 +223,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       onBlur={() => setPeek(false)}
       autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false}
     />
-    <p className="zh-tip">
+    <p className={wrong >= 3 ? "zh-tip has-skip" : "zh-tip"}>
       {zhStepHint("pinyin", uiLang)}
       {wrong >= 3 && <button className="zh-skip" onClick={onSkip}>{T(uiLang, "跳过", "Lewati", "Skip")} →</button>}
     </p>
