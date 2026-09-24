@@ -334,7 +334,7 @@ button.profile:hover>i{color:var(--purple)}
 .dark .acct-err{color:#f07b7b}
 .dark .acct-ok{color:#6ddba5}
 .dark .typing-help{color:#f07b7b}
-.dark .reading-complete>small,.dark .passage-preview p.complete>span{color:#5fd39c}
+.dark .reading-complete>small,.dark .passage-preview p.complete>span{color:#5fd39c}.dark .zh-options button.ok{border-color:#2c8a63;background:#173a2c;color:#7fe0b3}.dark .zh-options button.no{border-color:#a34455;background:#492a32;color:#ff9aa5}.dark .reading-complete>span,.dark .week .done b{background:#173a2c;color:#5fd39c}
 .acct-who{display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap}
 .acct-who>span{width:44px;height:44px;border-radius:50%;background:#c9f4df;color:#14583b;
   display:grid;place-items:center;font-weight:800;font-size:17px}
