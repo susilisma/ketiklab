@@ -69,6 +69,9 @@ function humanError(e: unknown, l: Lang): string {
     return T("这个链接已失效或过期，请重新申请一封。",
              "Tautan ini sudah kedaluwarsa. Minta yang baru.",
              "That link has expired. Request a new one.", l);
+  // the hash of a dead link carries a code (access_denied, otp_expired above) — never its text
+  if (m === "access_denied" || m === "link_error" || m.startsWith("invalid_"))
+    return T("这个链接无效，请重新申请一封。", "Tautan ini tidak valid. Minta yang baru.", "That link is not valid. Request a new one.", l);
   return raw;
 }
 
