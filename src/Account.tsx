@@ -301,12 +301,16 @@ export function Account({ uiLang, name, onName }: {
   if (!ready) return <p className="acct-note">{T("加载中…", "Memuat…", "Loading…", uiLang)}</p>;
 
   if (session) {
+    // a device linked to another account: the card is about the signed-in account, so it
+    // shows that account's name, and the field cannot rename the device's owner (the edit
+    // used to change the header and storage and was then dropped by the merge)
+    const shownName = foreign ? profName : name;
     return <div className="acct">
       <div className="acct-card">
         <div className="acct-who">
-          <span>{(name.trim()[0] || session.user.email?.[0] || "?").toUpperCase()}</span>
+          <span>{(shownName.trim()[0] || session.user.email?.[0] || "?").toUpperCase()}</span>
           <div>
-            <b>{name.trim() || T("学习者", "Pelajar", "Learner", uiLang)}</b>
+            <b>{shownName.trim() || T("学习者", "Pelajar", "Learner", uiLang)}</b>
             <small>{session.user.email}</small>
           </div>
         </div>
@@ -328,8 +332,8 @@ export function Account({ uiLang, name, onName }: {
 
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
-          <input value={name} maxLength={24} onChange={e => onName(e.target.value)}
-            onBlur={() => { if (session && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
+          <input value={shownName} maxLength={24} readOnly={foreign} onChange={e => { if (!foreign) onName(e.target.value); }}
+            onBlur={() => { if (session && !foreign && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
