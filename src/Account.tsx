@@ -193,7 +193,9 @@ export function Account({ uiLang, name, onName }: {
           setMode("in");
           return;
         }
-        if (formName.trim()) onName(formName.trim());
+        // the header name belongs to whoever this device is linked to: a sign-up on a device
+        // linked to another account keeps that name until the new account is linked here
+        if (formName.trim() && !linkedUid()) onName(formName.trim());
         if (!res.session) {
           setSentTo(addr);
           setMsg(T(`确认邮件已发到 ${addr}。点开里面的链接，然后回来登录。地址不对的话现在就改，否则永远收不到。`,
