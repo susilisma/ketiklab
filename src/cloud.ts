@@ -275,7 +275,11 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     return "reloading";
   }
   if (!r.data) { await saveProgress(userId, local); linkDevice(userId); return "uploaded"; }
+  // progress merges with this device on top, as every later push does: with the cloud on
+  // top its 30 mistakes came first and the words just missed here were cut by the cap.
+  // The settings keys stay the account's choice, as before.
   const merged = mergeProgress(local, cloud);
+  for (const k of PROGRESS_KEYS) { const m = mergeProgress(cloud, local)[k]; if (typeof m === "string") merged[k] = m; }
   if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
   await saveProgress(userId, merged);
   linkDevice(userId);
