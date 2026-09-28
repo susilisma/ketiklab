@@ -94,7 +94,9 @@ self.addEventListener("fetch", (e) => {
       return res;
     // a landing page never visited before this worker installed: send the browser to the
     // root shell in that language rather than serving it under /zh/, where it cannot mount
-    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit || (landing ? Response.redirect(new URL(`./?ui=${landing[1]}`, self.location).href, 302) : undefined)))));
+    // a generated page never opened is sent the same way, in its language, instead of
+    // resolving to nothing and leaving the browser's own error page
+    }).catch(() => (isShell ? caches.match("./index.html") : caches.match(pageKey || req).then((hit) => hit || ((landing || generated) ? Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}`, self.location).href, 302) : undefined)))));
     return;
   }
   // Hashed build assets are immutable: cache-first
