@@ -91,7 +91,9 @@ export async function getStats(now = Date.now()): Promise<SrsStats> {
 }
 
 // "<lang>:<key>" ids of words due for review now, soonest first.
-export async function getDueKeys(now = Date.now(), limit = 60): Promise<string[]> {
+// a session takes this many due words at most; the badge and the button say so
+export const REVIEW_CAP = 60;
+export async function getDueKeys(now = Date.now(), limit = REVIEW_CAP): Promise<string[]> {
   const all = (await db.reviews.where("dueAt").belowOrEqual(now).toArray()).filter((r) => keyed(r.en));
   all.sort((a, b) => a.dueAt - b.dueAt);
   return all.slice(0, limit).map((r) => r.en);

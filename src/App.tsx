@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
-import { recordReview, getStats, getDueKeys, deleteRecords, resetAll, getAllRecords, restoreRecords, type SrsStats } from "./srs";
+import { recordReview, getStats, getDueKeys, deleteRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, SYNCED_KEYS } from "./cloud";
@@ -295,6 +295,8 @@ export default function Home() {
   const [speakingWord, setSpeakingWord] = useState<string | null>(null);
   const [srs, setSrs] = useState<SrsStats>(EMPTY_STATS);
   const [reviewKeys, setReviewKeys] = useState<string[] | null>(null);
+  // how many were due when the session started: the session takes REVIEW_CAP of them
+  const [reviewDueTotal, setReviewDueTotal] = useState(0);
   const [reviewRefs, setReviewRefs] = useState<ReviewRef[]>([]);
   const input = useRef<HTMLInputElement>(null);
   const readingInput = useRef<HTMLTextAreaElement>(null);
@@ -1454,6 +1456,7 @@ export default function Home() {
     const due = await getDueKeys().catch(() => [] as string[]);
     let keys = due.length ? due : mistakes.slice();
     if (!keys.length) return;
+    setReviewDueTotal(due.length ? srs.due : 0);
     const report = { unresolved: [] as string[], complete: true };
     let refs = await resolveReviewRefs(keys, report);
     // a word renamed or removed by a content update has no list to be practised in:
@@ -1570,7 +1573,7 @@ export default function Home() {
       </header>
 
       {view === "learn" && <section className="learn-view">
-        {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${reviewKeys.length > reviewItems.length ? ` / ${reviewKeys.length}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata yang perlu diulang di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
+        {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${Math.max(reviewKeys.length, reviewDueTotal) > reviewItems.length ? ` / ${Math.max(reviewKeys.length, reviewDueTotal)}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata yang perlu diulang di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
         <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row">{!zhLadder && <span className="mode-group"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</span>}{!zhLadder && <span className="mode-sep" />}<span className="mode-group"><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", TX("自动回退", "Mundur otomatis", "Auto rollback", uiLang)], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); cancelFlash(); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</span></div>
         {!chapterFinished && <>
@@ -1690,7 +1693,7 @@ export default function Home() {
 
       {view === "mistakes" && <Panel title={t.mistakes} eyebrow={EYEBROW.mistakes[uiLang]}>
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
-        <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : `${enOne(srs.total, "word", "words")} in schedule`}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${srs.due}` : ""}</button></div>
+        <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : `${enOne(srs.total, "word", "words")} in schedule`}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${Math.min(srs.due, REVIEW_CAP)}${srs.due > REVIEW_CAP ? ` / ${srs.due}` : ""}` : ""}</button></div>
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
         {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
             clean run with no missed word, have no entry here but are still due above */}
