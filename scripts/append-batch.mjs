@@ -51,6 +51,9 @@ const idSet = new Set(words.map((w) => String(w.id).toLowerCase()));
 // "污染；弄脏" next to a live "污染" gives two cards the same word to type
 const zhSenses = (w) => String(w.zh).split("；").map((x) => x.trim()).filter(Boolean);
 const zhSet = new Set(words.flatMap(zhSenses));
+// the first sense is the practice word: "；测词" made a card with nothing to type, and a
+// sense written twice ("测词；测词") printed twice on the meaning line
+const badZh = (zh) => { const s = String(zh).split("；").map((x) => x.trim()); return !s[0] || s.some((x, i) => !x || s.indexOf(x) !== i); };
 const readIdSet = new Set(readings.map((r) => r.id));
 const readTA = new Set(readings.map((r) => (r.title + "|" + r.author).toLowerCase()));
 
@@ -61,6 +64,7 @@ function materializeWord(w) {
     if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
     if (!CATEGORIES.has(category)) return { err: "bad-category" };
     if (!LEVELS.has(level)) return { err: "bad-level" };
+    if (badZh(zh)) return { err: "bad-zh-senses" };
     // the tuple form carries no example text; inventing one filled the library with one sentence
     return { obj: { en, id, zh, category, level, source: DEFAULT_SOURCE, examples: {} } };
   }
@@ -70,6 +74,7 @@ function materializeWord(w) {
   if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
   if (!CATEGORIES.has(category)) return { err: "bad-category" };
   if (!LEVELS.has(level)) return { err: "bad-level" };
+  if (badZh(zh)) return { err: "bad-zh-senses" };
   // keep whichever languages the batch supplied; the card skips a missing row
   const ex = {};
   if (examples) for (const k of ["en", "id", "zh"]) {
