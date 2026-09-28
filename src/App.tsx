@@ -104,6 +104,9 @@ function browserTag(): string {
   try { const tag = (navigator.language || "").slice(0, 2).toLowerCase(); return tag === "in" ? "id" : tag; } catch { return ""; }
 }
 const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
+// a 错词本 key is "<key>" or "<lang>:<key>": one with another prefix (a hand-edited backup)
+// opened the word as wordValue(w, "fr"), blanked the page and saved learn "fr"
+const validMistakeKey = (k: unknown): k is string => typeof k === "string" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 // The generated landing pages link into the app with ?ui=<lang>, ?lib=<id> and
 // ?view=articles. They are read once here and dropped from the address bar, so a
 // bookmark or a reload does not replay them; the values apply on the first render.
@@ -503,7 +506,7 @@ export default function Home() {
       try {
         if (e.key === "ketiklab-days") setDayCounts(cleanDayCounts(JSON.parse(e.newValue)));
         else if (e.key === "ketiklab-fav") setFavorites(cleanFavorites(JSON.parse(e.newValue)));
-        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter((k: unknown) => typeof k === "string") : []); }
+        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
       } catch { /* a value this tab cannot read is left to the next write */ }
     };
     window.addEventListener("storage", onStorage);
@@ -565,7 +568,7 @@ export default function Home() {
   useEffect(() => {
     try {
       const saved = localStorage.getItem("ketiklab-state");
-      if (saved) { const v = JSON.parse(saved); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter((k: unknown) => typeof k === "string") : []); }
+      if (saved) { const v = JSON.parse(saved); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
     } catch { /* ignore */ }
   }, []);
   useEffect(() => { try { localStorage.setItem("ketiklab-state", JSON.stringify({ correct, attempts, mistakes })); } catch { /* ignore */ } }, [correct, attempts, mistakes]);
