@@ -299,6 +299,8 @@ export default function Home() {
   const [reviewDueTotal, setReviewDueTotal] = useState(0);
   const [reviewRefs, setReviewRefs] = useState<ReviewRef[]>([]);
   const input = useRef<HTMLInputElement>(null);
+  // the window key handler is bound once per view; it reaches the current skipWord through this
+  const skipRef = useRef<() => void>(() => {});
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
   const speechRequest = useRef(0);
@@ -398,6 +400,13 @@ export default function Home() {
       // SPACE on a keyboard-focused button is that button's activation (下一章, 暂停, ★, a
       // ladder pill): swallowed here it did nothing, and ENTER was the only way to press it
       if (e.key === " " && el && el !== document.body && el.closest("button, a, [role=button]") && !byPointer) return;
+      // ENTER skips, as the card says, also after Escape or a control click took the focus
+      // out of the box; a focused button or link keeps its own ENTER, and the zh rungs
+      // without the App box handle theirs
+      if (e.key === "Enter") {
+        if (!input.current || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
+        e.preventDefault(); if (!e.repeat) skipRef.current(); return;
+      }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
       isComposing.current = false;
       // 打拼音 has its own box in place of the App input: after Escape or a tap on the
@@ -1110,6 +1119,7 @@ export default function Home() {
     };
     reader.readAsText(file);
   }
+  skipRef.current = skipWord;
   function skipWord() {
     if (finishing.current) return;
     if (!lapseRecorded.current) recordReview(wordId, false).then(refreshSrs).catch(() => {});
