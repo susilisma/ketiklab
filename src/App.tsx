@@ -1605,7 +1605,7 @@ export default function Home() {
       <div className="sidebar-bottom">
         <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, DAILY_GOAL)}/{DAILY_GOAL}</b></span><div><i style={{width:`${Math.min(todayCount / DAILY_GOAL * 100, 100)}%`}} /></div></div>
         <button className="profile" onClick={() => setView("account")} title={TX("账号", "Akun", "Account", uiLang)}>
-          <span>{(profileName.trim()[0] || "?").toUpperCase()}</span>
+          <span>{(Array.from(profileName.trim())[0] || "?").toUpperCase()}</span>
           <div><b>{profileName.trim() || TX("学习者", "Pelajar", "Learner", uiLang)}</b><small>{TX("账号与同步", "Akun & sinkron", "Account & sync", uiLang)}</small></div>
           <i>›</i>
         </button>
