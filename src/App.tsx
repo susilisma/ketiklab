@@ -1750,7 +1750,7 @@ export default function Home() {
                 {readingTyped && !readingLineDone && <p className="typing-help">{t.typingHelp}</p>}
               </div>
             </> : <div className="reading-complete">
-              <span>✓</span><small>{t.completed}</small><h2>{reading.title}</h2><p>{t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
+              <span>✓</span><small>{t.completed}</small><h2>{reading.title}</h2><p>{reading.author === "KetikLab" ? TX("你刚刚完整地输入了一篇练习短文。", "Kamu baru saja mengetik satu teks latihan secara lengkap.", "You have typed an entire practice text.", uiLang) : t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
             </div>}
 
             {/* the notes are written in Chinese for pieces in every language */}

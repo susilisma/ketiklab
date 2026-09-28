@@ -36,7 +36,7 @@ OG_LOCALE = {"zh": "zh_CN", "id": "id_ID", "en": "en_US"}
 ENTRIES_PER_PAGE = 150
 esc = html.escape
 
-# {trio} {nlibs} {exam} {total} {readings} are filled from public/data at build time (see counts()).
+# {trio} {nlibs} {exam} {total} {readings} {classics} are filled from public/data at build time (see counts()).
 T = {
     "title": {
         "zh": "打字背单词：学中文、印尼语或英语 — 免费开源 | KetikLab",
@@ -44,9 +44,9 @@ T = {
         "en": "Typing practice for Chinese (pinyin), English or Indonesian — free, open source | KetikLab",
     },
     "desc": {
-        "zh": "KetikLab：免费开源的打字背单词网站。学中文、印尼语或英语，释义用你最熟悉的语言。中文按认读→打拼音→选汉字→输入法四步练习；{trio} 个主题词汇、{nlibs} 个考试词库、{readings} 篇经典朗读，艾宾浩斯间隔复习。",
-        "id": "KetikLab: latihan mengetik dan kosakata gratis dan open source. Belajar Mandarin, Inggris, atau Indonesia — artinya dalam bahasa yang paling kamu pahami. Tangga pinyin empat langkah, {trio} kosakata tematik, {nlibs} kamus ujian, {readings} bacaan klasik, pengulangan berjarak.",
-        "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. A four-step pinyin ladder, {trio} words by topic, {nlibs} exam libraries, {readings} classic readings, spaced repetition.",
+        "zh": "KetikLab：免费开源的打字背单词网站。学中文、印尼语或英语，释义用你最熟悉的语言。中文按认读→打拼音→选汉字→输入法四步练习；{trio} 个主题词汇、{nlibs} 个考试词库、{classics} 篇经典朗读，艾宾浩斯间隔复习。",
+        "id": "KetikLab: latihan mengetik dan kosakata gratis dan open source. Belajar Mandarin, Inggris, atau Indonesia — artinya dalam bahasa yang paling kamu pahami. Tangga pinyin empat langkah, {trio} kosakata tematik, {nlibs} kamus ujian, {classics} bacaan klasik, pengulangan berjarak.",
+        "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. A four-step pinyin ladder, {trio} words by topic, {nlibs} exam libraries, {classics} classic readings, spaced repetition.",
     },
     "h1": {
         "zh": "打字背单词：学中文、印尼语或英语",
@@ -54,9 +54,9 @@ T = {
         "en": "Typing and vocabulary practice: Chinese, English or Indonesian",
     },
     "para": {
-        "zh": "KetikLab：免费开源的打字背单词网站。学中文、印尼语或英语，释义用你最熟悉的语言。{trio} 个主题词汇（日常、学习与政策、商务、印尼生活四类），{nlibs} 个考试词库共 {exam} 词（全站 {total} 词），{readings} 篇经典朗读。中文按「认读 → 打拼音 → 选汉字 → 输入法」四步阶梯练习，拼音印在汉字上方；艾宾浩斯间隔复习、错词本、收藏、学习日历与云端同步。浏览器打开即用，可安装到手机。",
-        "id": "KetikLab: latihan mengetik dan kosakata gratis dan open source. Belajar Mandarin, Inggris, atau Indonesia — artinya dalam bahasa yang paling kamu pahami. Ada {trio} kosakata tematik (harian, belajar & kebijakan, bisnis, hidup di Indonesia), {nlibs} kamus ujian dengan {exam} kata ({total} kata di seluruh situs), dan {readings} bacaan klasik. Bahasa Mandarin dilatih lewat tangga empat langkah — baca, ketik pinyin, pilih hanzi, ketik dengan IME — dengan pinyin di atas hanzi; ada pengulangan berjarak, buku kesalahan, favorit, kalender belajar, dan sinkronisasi cloud. Langsung di browser, bisa dipasang di HP.",
-        "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. There are {trio} words by topic (daily, study & policy, business, life in Indonesia), {nlibs} exam libraries with {exam} words ({total} across the site), and {readings} classic readings. Chinese is practised on a four-step ladder — read, type the pinyin, pick the character, type it with your IME — with the pinyin printed above the character; spaced repetition, a mistakes book, favourites, a learning calendar and cloud sync. Runs in the browser and installs on your phone.",
+        "zh": "KetikLab：免费开源的打字背单词网站。学中文、印尼语或英语，释义用你最熟悉的语言。{trio} 个主题词汇（日常、学习与政策、商务、印尼生活四类），{nlibs} 个考试词库共 {exam} 词（全站 {total} 词），{classics} 篇经典朗读。中文按「认读 → 打拼音 → 选汉字 → 输入法」四步阶梯练习，拼音印在汉字上方；艾宾浩斯间隔复习、错词本、收藏、学习日历与云端同步。浏览器打开即用，可安装到手机。",
+        "id": "KetikLab: latihan mengetik dan kosakata gratis dan open source. Belajar Mandarin, Inggris, atau Indonesia — artinya dalam bahasa yang paling kamu pahami. Ada {trio} kosakata tematik (harian, belajar & kebijakan, bisnis, hidup di Indonesia), {nlibs} kamus ujian dengan {exam} kata ({total} kata di seluruh situs), dan {classics} bacaan klasik. Bahasa Mandarin dilatih lewat tangga empat langkah — baca, ketik pinyin, pilih hanzi, ketik dengan IME — dengan pinyin di atas hanzi; ada pengulangan berjarak, buku kesalahan, favorit, kalender belajar, dan sinkronisasi cloud. Langsung di browser, bisa dipasang di HP.",
+        "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. There are {trio} words by topic (daily, study & policy, business, life in Indonesia), {nlibs} exam libraries with {exam} words ({total} across the site), and {classics} classic readings. Chinese is practised on a four-step ladder — read, type the pinyin, pick the character, type it with your IME — with the pinyin printed above the character; spaced repetition, a mistakes book, favourites, a learning calendar and cloud sync. Runs in the browser and installs on your phone.",
     },
     "open": {"zh": "打开练习", "id": "Buka latihan", "en": "Open the trainer"},
     "libs": {"zh": "词库", "id": "Kamus", "en": "Libraries"},
@@ -139,7 +139,9 @@ def floor_num(n, lang):
 def counts(lang, manifest, dict_entries, words, readings):
     exam = sum(len(dict_entries[r["id"]]) for r in manifest)
     return {"trio": floor_num(len(words), lang), "nlibs": len(manifest), "exam": floor_num(exam, lang),
-            "total": floor_num(exam + len(words), lang), "readings": len(readings)}
+            "total": floor_num(exam + len(words), lang), "readings": len(readings),
+            # two of the readings are KetikLab's own practice texts, not classics
+            "classics": len([r for r in readings if r.get("author") != "KetikLab"])}
 
 
 def strip_hreflang(h):
