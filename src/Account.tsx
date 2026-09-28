@@ -308,7 +308,7 @@ export function Account({ uiLang, name, onName }: {
     return <div className="acct">
       <div className="acct-card">
         <div className="acct-who">
-          <span>{(name.trim()[0] || session.user.email?.[0] || "?").toUpperCase()}</span>
+          <span>{(Array.from(name.trim())[0] || session.user.email?.[0] || "?").toUpperCase()}</span>
           <div>
             <b>{name.trim() || T("学习者", "Pelajar", "Learner", uiLang)}</b>
             <small>{session.user.email}</small>
