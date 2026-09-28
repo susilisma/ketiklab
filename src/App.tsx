@@ -1580,11 +1580,11 @@ export default function Home() {
         <div className={practiceLang === "zh" ? "word-card zh-compact" : "word-card"} onClick={() => input.current?.focus()}>
           {!typingFocus && !zhLadder && <div className="type-veil" onClick={() => input.current?.focus()}><b>{uiLang === "zh" ? (running ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (running ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (running ? "Press any key to continue" : "Press any key to start")}</b></div>}
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
-          <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onClick={e => { e.stopPropagation(); speak(); }} aria-label={TX("播放发音", "Putar pelafalan", "Play pronunciation", uiLang)}>▶</button>
+          <button className={speakingWord === targetWord ? "sound speaking" : "sound"} onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); speak(); }} aria-label={TX("播放发音", "Putar pelafalan", "Play pronunciation", uiLang)}>▶</button>
           {speechBlocked && <button className="speech-unlock" onClick={e => { e.stopPropagation(); speechPrimed.current = false; setSpeechBlocked(false); speak(); }}>
             {uiLang === "zh" ? "点此启用发音" : uiLang === "id" ? "Ketuk untuk mengaktifkan suara" : "Tap to enable sound"}
           </button>}
-          <button className={isFav ? "fav-btn on" : "fav-btn"} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label={isFav ? TX("取消收藏", "Hapus dari favorit", "Remove from favorites", uiLang) : TX("收藏", "Tambah ke favorit", "Add to favorites", uiLang)}>{isFav ? "★" : "☆"}</button>
+          <button className={isFav ? "fav-btn on" : "fav-btn"} onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label={isFav ? TX("取消收藏", "Hapus dari favorit", "Remove from favorites", uiLang) : TX("收藏", "Tambah ke favorit", "Add to favorites", uiLang)}>{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
           {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
             <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
