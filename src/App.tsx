@@ -118,11 +118,17 @@ const ENTRY: { ui: Lang | null; lib: string | null; articles: boolean } = (() =>
     // the landing pages /zh/ /id/ /en/ embed the app: opening one is opening the app in that
     // language, whatever the browser's locale says (a saved choice still wins, see the restore effect)
     const path = location.pathname.match(/^\/(zh|id|en)\/(index\.html)?$/)?.[1];
-    return { ui: isLang(ui) ? ui : isLang(path) ? path : null, lib, articles: view === "articles" };
+    const entryUi = isLang(ui) ? ui : isLang(path) ? path : null;
+    // remembered on this device: the address no longer carries it, so a reload, the forward
+    // button or the installed app's start page kept the link's language only once the dialog
+    // was saved — closed instead, they came back in the browser's language
+    if (entryUi) try { localStorage.setItem("ketiklab-ui", entryUi); } catch { /* ignore */ }
+    return { ui: entryUi, lib, articles: view === "articles" };
   } catch { return { ui: null, lib: null, articles: false }; }
 })();
-// the interface language before any choice: the link's, else the browser's when it is one of ours
-const initialUi = (): Lang => ENTRY.ui ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
+// the interface language before any choice: the link's, else the one a link opened earlier, else the browser's when it is one of ours
+const rememberedUi = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-ui"); return isLang(u) ? u : null; } catch { return null; } };
+const initialUi = (): Lang => ENTRY.ui ?? rememberedUi() ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
 // the document's own title and language as served (index.html is Chinese; /en/ and /id/ carry
 // their SEO titles), read before any effect rewrites them
 const PAGE_TITLE = document.title;
