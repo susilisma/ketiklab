@@ -528,7 +528,7 @@ export default function Home() {
   useEffect(() => { refreshSrs(); }, [view]);
   // the box is unmounted with the learn view and no blur fires for that: the flag that
   // says it holds the focus stayed true, so the view came back without its veil
-  useEffect(() => { if (view !== "learn") setTypingFocus(false); }, [view]);
+  useEffect(() => { if (view !== "learn" || chapterFinished) setTypingFocus(false); }, [view, chapterFinished]);
   useEffect(() => {
     const onVisible = () => { if (document.visibilityState === "visible") refreshSrs(); };
     document.addEventListener("visibilitychange", onVisible);
