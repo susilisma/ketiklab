@@ -69,8 +69,9 @@ function humanError(e: unknown, l: Lang): string {
              "That email is already registered — just sign in.", l);
   if (m.includes("different from the old"))
     return T("新密码不能和原密码相同。", "Kata sandi baru harus berbeda dari yang lama.", "The new password must differ from the old one.", l);
-  if (m.includes("password") && m.includes("6"))
-    return T("密码至少 6 位。", "Kata sandi minimal 6 karakter.", "Password needs at least 6 characters.", l);
+  const minLen = /password should be at least (\d+) characters/.exec(m)?.[1];
+  if (minLen)
+    return T(`密码至少 ${minLen} 位。`, `Kata sandi minimal ${minLen} karakter.`, `Password needs at least ${minLen} characters.`, l);
   if (m.includes("expired") || m.includes("invalid or has"))
     return T("这个链接已失效或过期，请重新申请一封。",
              "Tautan ini sudah kedaluwarsa. Minta yang baru.",
