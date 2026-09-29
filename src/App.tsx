@@ -258,6 +258,8 @@ export default function Home() {
   const [globalFailed, setGlobalFailed] = useState<string[]>([]);
   // a library card whose file could not be fetched (offline, 5xx): named in a banner with a retry
   const [dictLoadError, setDictLoadError] = useState<DictInfo | null>(null);
+  // a ?lib= id the manifest does not list (a retired list, a mistyped link): named instead of ignored
+  const [linkedMissing, setLinkedMissing] = useState<string | null>(null);
   const [chapter, setChapter] = useState(0);
   const [chapterFinished, setChapterFinished] = useState(false);
   const [chDone, setChDone] = useState(0);
@@ -483,6 +485,7 @@ export default function Home() {
       // page's "practise this list" link names the list instead.
       try {
         const linked = ENTRY.lib && m.find(x => x.id === ENTRY.lib);
+        if (ENTRY.lib && !linked && !sourceReq.current) setLinkedMissing(ENTRY.lib.slice(0, 40));
         const savedSource = localStorage.getItem("ketiklab-source");
         const d = linked || (savedSource && m.find(x => x.id === savedSource));
         if (d && !sourceReq.current) {
@@ -1620,6 +1623,7 @@ export default function Home() {
       </header>
 
       {view === "learn" && <section className="learn-view">
+        {linkedMissing && <div className="review-banner"><span>⚠ {TX(`链接的词库不存在：${linkedMissing}`, `Daftar kata di tautan tidak ada: ${linkedMissing}`, `The linked word list does not exist: ${linkedMissing}`, uiLang)}</span><button onClick={() => { setLinkedMissing(null); setView("library"); }}>{t.library}</button></div>}
         {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${Math.max(reviewKeys.length, reviewDueTotal) > reviewItems.length ? ` / ${Math.max(reviewKeys.length, reviewDueTotal)}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata yang perlu diulang di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
         <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `${narrowRow ? "Ch." : "Chapter"} ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row">{!zhLadder && <span className="mode-group"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</span>}{!zhLadder && <span className="mode-sep" />}<span className="mode-group"><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", TX("自动回退", "Mundur otomatis", "Auto rollback", uiLang)], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); cancelFlash(); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</span></div>
