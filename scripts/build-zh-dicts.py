@@ -70,11 +70,26 @@ def plain(word):
     fixed = FIXES.get(word)
     return strip_tones(fixed) if fixed else " ".join(p[0] for p in pinyin(word, style=Style.NORMAL))
 
+# WordNet lists numerals, roman numerals, single letters and unit symbols as lemmas of the
+# number and unit synsets ("hundred; 100; c", "meter; m"); they are not English glosses.
+def _roman(n):
+    out = ""
+    for v, r in ((1000, "m"), (900, "cm"), (500, "d"), (400, "cd"), (100, "c"), (90, "xc"), (50, "l"),
+                 (40, "xl"), (10, "x"), (9, "ix"), (5, "v"), (4, "iv"), (1, "i")):
+        while n >= v:
+            out += r
+            n -= v
+    return out
+ROMANS = {_roman(n) for n in range(1, 101)}
+UNIT_SYMBOLS = {"mm", "cm", "km", "dm", "mi", "ml", "kg", "mg", "hg", "nmi", "ft", "yd", "oz", "lb", "meg"}
+
 def clean_lemmas(raw):
     out = []
     for g in raw:
         g = g.split("+")[0].strip()
         if not g or " " in g or "_" in g or g[:1].isupper():
+            continue
+        if g.isdigit() or len(g) == 1 or g in ROMANS or g in UNIT_SYMBOLS:
             continue
         out.append(g)
     return list(dict.fromkeys(out))
