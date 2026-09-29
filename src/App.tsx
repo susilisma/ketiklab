@@ -833,7 +833,10 @@ export default function Home() {
   // a favourite keeps the sense it was saved with; the row may have been re-glossed since, so
   // its pinyin is trusted only while it still names this word, else the saved line is read
   const trioRow = trioW && (practiceLang !== "zh" || wordValue(trioW, "zh") === targetWord) ? trioW : undefined;
-  const savedPy = /普通话 · (.+)$/.exec(item.sub || "")?.[1] || "";
+  // a favourite saved before its row had pinyin carries the "tap to hear" prompt here;
+  // only Latin syllables (a pinyin syllable is at most six letters) are a reading
+  const savedRaw = /普通话 · (.+)$/.exec(item.sub || "")?.[1] || "";
+  const savedPy = /^[A-Za-zÀ-ɏḀ-ỿ ]+$/.test(savedRaw) && savedRaw.split(" ").every(sy => sy.length <= 6) ? savedRaw : "";
   const zhToneText = zhToned(zhMap, targetWord) || trioRow?.pinyin || savedPy;
   const plainPy = zhPlain(zhMap, targetWord) || trioRow?.pinyin || savedPy;
   // a word with no pinyin at all cannot be passed at 打拼音, so that rung types it through the IME
