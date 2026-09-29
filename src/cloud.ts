@@ -308,5 +308,8 @@ setInterval(autoPush, 60000);
 const bootLinked = linkedUid();
 try {
   window.addEventListener("storage", (e) => { if (e.key === SYNC_UID_KEY && linkedUid() !== bootLinked) location.reload(); });
+  // auth-js reads the hash once, at start-up: a sign-in or reset link pasted into a tab that
+  // is already on the site is a same-document navigation and would sit unread in the address bar
+  window.addEventListener("hashchange", () => { if (/^#(access_token=|error)/.test(location.hash)) location.reload(); });
 } catch { /* no window: nothing to guard */ }
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") void autoPush(); });
