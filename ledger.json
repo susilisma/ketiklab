@@ -797,8 +797,8 @@
    "title": "挂载时先把 state/days/fav/dark/name 的默认值写入 localStorage，23 ms 后才写回真值",
    "priority": "P3",
    "status": "deferred",
-   "reason": "约 10 行 lazy useState；未观察到实际丢失",
-   "date": "2026-09-15",
+   "reason": "约 10 行 lazy useState；未观察到实际丢失 ｜ 09-30 F2/V3 新证据：第二个标签页挂载时第一个标签页 打拼音 框被清空、卡片与计数闪烁（默认值先写入再恢复）；V3 已在旁路构建验证约 12 行修法（favorites/profileName/dayCounts/correct-attempts-mistakes 改惰性初始化，删挂载读取；首访/坏值/导入字节一致），diff 见 reports/2026-09-30.md 未修复节；明日做",
+   "date": "2026-09-30",
    "commit": ""
   },
   {
@@ -2886,71 +2886,71 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "c61737d",
-   "reason": "分支 claude/daily-2026-09-29；1 行，走 enOne；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "reason": "分支 claude/daily-2026-09-29 c61737d；V1 HOLDS；受 12 项上限未合入，明日合入",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "completion-card-classic-for-practice-text",
    "title": "完成卡对本站 2026 练习短文说「一篇经典作品」；三语落地页 description/段落把 160 篇都算「经典朗读」而阅读页说 158",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "e756c9b",
-   "reason": "分支；作者 KetikLab 时三语改说练习短文；build-seo-pages 用 classics=158 计数；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "851d0d5",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "review-cap-count-mismatch",
    "title": "到期 75 时徽标/开始复习说 75、会话只装 60，无人告知还有 15",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "448ca0c",
-   "reason": "分支；REVIEW_CAP 常量，按钮「60 / 75」、横幅同；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "36d2c19",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "sw-offline-generated-page-undefined",
    "title": "离线打开从未读过的生成页（/zh/lib/en-core/）respondWith(undefined) → 浏览器错误页，而落地页会 302 到 /?ui=",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "efc8d3a",
-   "reason": "分支；generated 也走重定向，语言取路径前两位；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "d384b73",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "veil-pill-contrast-breathe",
    "title": "「按任意键开始」胶囊 --muted 文字且透明度 .5↔1 呼吸，谷值 2.05:1（浅）/2.47:1（深），reduced-motion 停在 3.52:1",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "76971f0",
-   "reason": "分支；color:var(--text) + 谷值 .7；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "c674368",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "en-320-session-timer-clipped",
    "title": "320–330px 英文界面：Chapter 1 / 31 下拉 169px 把计时器挤出 .app 的 overflow clip，显示「00:0」",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "1fbdc03 + 1b76844",
-   "reason": "分支；≤640 块里让下拉可缩、计时器不缩；V1 PARTIAL：下拉标签被截成 Chapter 1 / 3 → 补丁 1b76844：<344px 英文选项改印 Ch. 1 / 31（量得 320px 下拉 130px 完整、计时器右缘 304）",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "4abfda4 + 116a0ca",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "append-batch-empty-first-sense-accepted",
    "title": "append-batch 接受「；测词」（首义空 → 卡片无字可打）和「测词；测词」（释义行重复）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "6abdeb3",
-   "reason": "分支；bad-zh-senses 校验，promote 按非 dup 原因失败；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "06c733e",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "cloud-first-link-mistakes-order",
    "title": "首次绑定 mergeProgress(local, cloud) 以云端为上，30 条错词上限先取云端，本机刚错的词被截掉（本地与云端都丢）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "e506049",
-   "reason": "分支；进度键改以本机为上，设置键仍取账户；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "c00df50",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "avatar-initial-utf16-surrogate",
@@ -2958,35 +2958,35 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "1fd7ad3 + a1a25bf",
-   "reason": "分支；Array.from 取首码点；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "reason": "分支 claude/daily-2026-09-29（1fd7ad3 + a1a25bf）；09-30 R1 复验 HOLDS，因 12 项上限让位给今日 P2（跳过按钮），明日合入",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "sound-fav-buttons-take-focus",
    "title": "点 ▶/★ 把焦点移到按钮：遮罩罩住词，ENTER 变成重播/取消收藏而非跳过",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "fee3bb7",
-   "reason": "分支；onMouseDown preventDefault，同 peek 按钮；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "33d45cc",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "enter-while-blurred-no-skip",
    "title": "Escape 或点控件后输入框失焦，卡片仍说 ENTER 跳过但 window 处理器只转发可打印键",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "a93b677",
-   "reason": "分支；无按钮/链接/字段持焦且 App 输入框在时 ENTER 走 skipWord（skipRef）；V1 独立复验 HOLDS",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "dd1def6",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "mistake-key-unknown-prefix-white-screen",
    "title": "错词本键 fr:apple（手改备份）点击白屏并把 learn 写成 fr，刷新后静默切到学中文（78c74b6/c1d5c18 只修了 SRS 侧）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "3e37f6d",
-   "reason": "分支；两处恢复只保留前缀为语言的键；用 F2 的脚本复测 rootEmpty=false、learn 不变（V1 未审，作者脚本验证）",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "2fafe66",
+   "reason": "已合入 main（09-30，R1 独立复验 HOLDS；Build check #37 0 注解，Build and deploy #696）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "mistake-book-entry-never-clears",
@@ -3001,28 +3001,28 @@
    "fingerprint": "second-tab-writelangs-reverts-choice",
    "title": "第二个标签页的 writeLangs 把第一个标签页刚改的释义语言/ui/learn 写回（storage 监听不接管 ketiklab-langs，App.tsx:135-137,489-500）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2 发现；约 6 行：storage 事件里接管 ketiklab-langs",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "e42c778",
+   "reason": "已合入 main（09-30，F2 查找者 + V3 校验者（补 reviewRef 守卫）+ V4 before/after HOLDS；Build check #37 0 注解）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "entry-ui-param-not-remembered",
    "title": "落地页链接的 ?ui= 被去掉且对话框保存前不记住：关掉对话框后刷新/前进/PWA 启动界面切回浏览器语言，?lib= 却保留",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2 发现；约 3 行：sessionStorage 记 entry ui",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "1d09bfa",
+   "reason": "已合入 main（09-30，F2 查找者 + V3 校验者（补 reviewRef 守卫）+ V4 before/after HOLDS；Build check #37 0 注解）；新增设备本地键 ketiklab-ui，不导出不同步",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "lib-param-unknown-id-silent",
    "title": "?lib=<未知 id> 被静默忽略（App.tsx:437-439）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2 发现；约 3 行：横幅提示",
-   "date": "2026-09-29"
+   "status": "fixed",
+   "commit": "20efa8a",
+   "reason": "已合入 main（09-30，F2 查找者 + V3 校验者（补 reviewRef 守卫）+ V4 before/after HOLDS；Build check #37 0 注解）",
+   "date": "2026-09-30"
   },
   {
    "fingerprint": "en-gloss-fixes-keyed-by-library",
@@ -3032,6 +3032,186 @@
    "commit": "",
    "reason": "改为按词头全局钉住需改 build-en-dicts.py 套用逻辑，约 5 行",
    "date": "2026-09-29"
+  },
+  {
+   "fingerprint": "skip-button-dead-to-pointer",
+   "title": "三次错后的「跳过这个词」按钮鼠标/触摸点击无效：mousedown 失焦升起遮罩，点击落在遮罩上（en 卡片与输入法档）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "fbaef8c",
+   "reason": "已合入 main（09-30）；onMouseDown preventDefault，同 ▶/★/偷看按钮；F1 发现、V3 复现并选定修法、V4 before/after HOLDS（鼠标、触摸、输入法档）",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "exit-review-finish-card-no-veil",
+   "title": "复习完成卡点「退出复习」后词卡无遮罩、无焦点（完成卡卸载输入框不触发 blur）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "59e7132",
+   "reason": "已合入 main（09-30）；chapterFinished 时清 typingFocus；V3/V4 HOLDS，重试/下一章不变",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "theme-button-aria-label-static",
+   "title": "顶栏 ☀/☾ 按钮 aria-label 恒为「深色模式」，深色已开时读屏仍念 Dark mode",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "8d00912",
+   "reason": "已合入 main（09-30）；随状态切换；F3/V1/V4",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "library-global-empty-1-exam-libraries",
+   "title": "英文界面 🌐 空态硬编码「1 exam libraries」",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "18a9855",
+   "reason": "已合入 main（09-30）；走 enOne；V4 用 19 个 500 复现",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "muted-on-line-contrast-light",
+   "title": "浅色主题 --muted 在 --line 上 4.39:1（阶梯档位数字 12px 粗体）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "8ffdcaa",
+   "reason": "已合入 main（09-30）；--muted #676a78 → #62657a（4.69 / 5.73 / 5.36），深色不变，--muted 无背景用法；F6/V1/V4",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "fav-hear-prompt-graded-as-pinyin",
+   "title": "旧收藏的发音行是「tap to hear」提示时 打拼音 档把提示当拼音判分（行已重释义/删除的收藏）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "1342271",
+   "reason": "已合入 main（09-30）；只接受 ≤6 字母的拉丁音节；V4：提示行落到输入法框，真拼音行仍判分",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "auth-hash-only-navigation-ignored",
+   "title": "登录/重置链接贴进已打开的标签页（只变 hash）被忽略：无请求、token 留在地址栏",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "597f149",
+   "reason": "已合入 main（09-30）；hashchange 到 auth hash 时 reload；V4 无循环（3 s 内 4 次导航后静止）",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "password-policy-mapped-to-min6",
+   "title": "humanError 把含「6」的密码策略错误（required characters）译成「密码至少 6 位」",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "14145f5",
+   "reason": "已合入 main（09-30）；解析「at least N characters」的 N，其余原文回落；V4 单元测试 + 422 桩",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "zh-dicts-numeral-unit-glosses",
+   "title": "zh-* 词库 18 行英文释义含数字/罗马数字/单字母/单位符号（two; 2; ii，meter; m）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "bf5fca7",
+   "reason": "已合入 main（09-30）；build-zh-dicts.py clean_lemmas 过滤 + 18 行手改；V4 diff 逐项核对，coverage 不变。注：海里 → mile 是生成器义项问题（needs-owner 既有项）",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "topic-rows-missing-idsyllables",
+   "title": "285 个生成器时代主题词行（index ≥ 2200 且带 phonetic）无 idSyllables，印尼语学习者看到「tap to hear」",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "ed9a08c",
+   "reason": "已合入 main（09-30）；用生成器自身 syllables() 回填 263 行（对既有 1442 行 0 差异）；跳过 18 个单音节（jam, film, golf…）与 4 个存疑外来词（jangkauan, sains, steik, migrain）— 见 needs-owner idsyllables-monosyllables-and-loanwords",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "pinyin-kazhu-wrong-heteronym",
+   "title": "zh-upper 卡住（stick）按 kǎ zhù 判分，正确 qiazhu 首键即回滚并记错词；应读 qiǎ zhù",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "ecf3a4d",
+   "reason": "已合入 main 并部署（09-30）；钉住 + 手改 zh-upper.json / zh-pinyin.json；F4 发现、V1 依现代汉语词典确认、V4 before/after",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "pinyin-tone-only-wrong-0930",
+   "title": "7 个读音声调错（判分不受影响，认读行/词库卡/生成页/Anki 显示错）：切碎 qiē、一场 chǎng、供养 gōng、倾倒 dào、比得上/负担得起/做得过分 de",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "0048636",
+   "reason": "已合入 main（09-30）；钉住 + 手改三个 zh 词库、映射与两行 words.json",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "topic-pinyin-correct-but-unpinned",
+   "title": "证明正当/无薪假/饱和点/工作坊 行内 pinyin 正确但未钉住，pypinyin 给错读",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "4958532",
+   "reason": "已合入 main（09-30）；只加钉；check.py 的 pypinyin 比对转 PASS",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "gloss-fixes-0930",
+   "title": "words.json 25 行释义错（首义为罕见/文言变体、上位词/术语、他义、定义短语；hay jerami → rumput kering）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "eb936fc",
+   "reason": "已合入 main 并部署（09-30）；F9 查找、V2 独立逐行 25/25 AGREE；拼音重生成、8 个新首义补进 zh-pinyin.json 第 4 级、耙 钉住；唯一性通过",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "link-only-card-shows-device-name",
+   "title": "未绑定设备打开他人账号的链接会话：账户卡显示并可改设备名，「立即同步」把改动丢掉（55f5413 只挡了 foreign）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F5 发现、V1 确认；修法：在 55f5413 之上 untrustedView = foreign || linkOnly（shownName/readOnly/onChange/onBlur）。55f5413 仍在分支 daily-25，合入时一并补",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "email-typo-button-flashes",
+   "title": "登录表单「你是不是要 …@gmail.com？」按钮在每个 Gmail/Yahoo 地址输入到 .co 时闪现一击",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F5 发现、V1 确认（布局抖动）；修法：blur 时算建议、change 时清空，或 fixed.startsWith(domain) 时不提示；受 12 项上限未做",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "lib-dialog-return-visit-learn-mismatch",
+   "title": "?lib=en-core 首访关掉对话框后再访：头部/卡片是英语词库而对话框学习语言默认 中文",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 发现、V3 确认并在旁路构建验证 1 行修法：manifest 恢复处 `if (linked) persistSource(d.id); if (!localStorage.getItem(\"ketiklab-langs\")) setLang(d.lang);`（去掉 linked && 的范围）；受 12 项上限未做",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "readings-page-language-column-autonyms",
+   "title": "生成的 readings 页「语言」列用各语言自称（英文页印 中文）",
+   "priority": "P3",
+   "status": "refuted",
+   "commit": "",
+   "reason": "F3 提出；V1：应用内阅读筛选与 lang_names 也用自称，是项目约定而非错语言；真正的无障碍问题是既有项 seo-cells-no-lang-attr",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "link-session-sync-now-precedence",
+   "title": "链接会话的「立即同步」与输入密码登录的首次绑定优先级相反：设备默认设置（含挂载写入的 business）覆盖云端设置键，且不把账户进度拉到本机",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F5 发现、V1 用自建云端状态确认（覆盖 ketiklab-langs / category，补写 input/extra-meanings/meaning-visibility/hide-pron/fav 默认值；进度键 max/union 不丢）。方向属同步语义（既有 first-link-cloud-langs-override-fresh-choice 提的是反方向）；若保持「首次绑定云端优先」，修法是 pushNow 在 !linked 时走 linkThisDevice(uid,\"merge\",profName)",
+   "date": "2026-09-30"
+  },
+  {
+   "fingerprint": "idsyllables-monosyllables-and-loanwords",
+   "title": "18 个单音节印尼词（jam, film, golf, flu…）与 4 个存疑外来词（jangkauan, sains, steik, migrain）仍无 idSyllables",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "单音节无可分：是否写 idSyllables = id 本身；jangkauan KBBI 为 jang·kau·an 而生成器给 jang·ka·u·an（既有行 per·ce·ra·i·an 同款偏差），sains/steik/migrain 是否按单音节处理",
+   "date": "2026-09-30"
   }
  ]
 }
