@@ -144,6 +144,22 @@ function defaultDef(ui: Lang, learn: Lang, browserLang: string): Lang | null {
 function writeLangs(ui: Lang, learn: Lang, defByLearn: MeaningPrefs) {
   try { localStorage.setItem("ketiklab-langs", JSON.stringify({ ui, learn, def: defByLearn[learn], defByLearn, v: 2 })); } catch { /* ignore */ }
 }
+// what a stored ketiklab-langs value says (throws on a value that is not JSON); v2 marks the current shape
+function readLangs(saved: string): { ui: Lang; learn: Lang; byLearn: MeaningPrefs; v2: boolean } {
+  const v = JSON.parse(saved);
+  const ui: Lang = isLang(v?.ui) ? v.ui : "zh";
+  const learn: Lang = isLang(v?.learn) ? v.learn : "zh";
+  const byLearn: MeaningPrefs = {};
+  if (v?.v === 2) {
+    const raw: unknown = v.defByLearn;
+    if (raw && typeof raw === "object") for (const l of LANGS) { const m: unknown = (raw as Record<string, unknown>)[l]; if (m === "none") byLearn[l] = "none"; else if (isLang(m) && m !== l) byLearn[l] = m; }
+  } else if (isLang(v?.def) && v.def !== learn && v.def !== (learn === "en" ? "zh" : "en")) {
+    // before v2 an untouched def was saved as learn en → zh, otherwise en (the dialog started
+    // on English); only a def other than that was the learner's choice, the rest now follows defaultDef
+    byLearn[learn] = v.def;
+  }
+  return { ui, learn, byLearn, v2: v?.v === 2 };
+}
 function cleanGlosses(g: Partial<Record<Lang, string>>, learn: Lang): Partial<Record<Lang, string>> {
   const out: Partial<Record<Lang, string>> = {};
   for (const l of LANGS) { const s = g[l]?.trim(); if (l !== learn && s) out[l] = s; }
@@ -261,6 +277,9 @@ export default function Home() {
 
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
   const [lang, setLang] = useState<Lang>("zh");
+  // for the storage listener, which is registered once
+  const langRef = useRef(lang); langRef.current = lang;
+  const reviewRef = useRef<string[] | null>(null); // the listener keeps a review session in place, as changeLanguage does
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
   // the tab, the history entries and the installed app's window carry the title too. A
   // landing page (/en/, /id/) ships its own title in its language: kept while the interface
@@ -304,6 +323,7 @@ export default function Home() {
   const [speakingWord, setSpeakingWord] = useState<string | null>(null);
   const [srs, setSrs] = useState<SrsStats>(EMPTY_STATS);
   const [reviewKeys, setReviewKeys] = useState<string[] | null>(null);
+  reviewRef.current = reviewKeys;
   // 320–330 px: the English "Chapter 1 / 31" cannot share the session row with the timer
   // and two 40 px buttons, so the option says "Ch." there (the select shrinks instead of the timer)
   const [narrowRow, setNarrowRow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 343px)").matches);
@@ -521,6 +541,14 @@ export default function Home() {
         if (e.key === "ketiklab-days") setDayCounts(cleanDayCounts(JSON.parse(e.newValue)));
         else if (e.key === "ketiklab-fav") setFavorites(cleanFavorites(JSON.parse(e.newValue)));
         else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
+        // the languages too: this tab's next writeLangs (a meaning pick, a learning-language change)
+        // carried its own copy of all three fields, and wrote the other tab's fresh choice back
+        else if (e.key === "ketiklab-langs") {
+          const { ui, learn, byLearn } = readLangs(e.newValue);
+          setUiLang(ui); setDefByLearn(byLearn);
+          setShowLangSetup(open => open && !byLearn[learn] && !defaultDef(ui, learn, browserTag()));
+          if (learn !== langRef.current) { setLang(learn); if (!reviewRef.current) { setIndex(0); resetChapterRun(); } setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null); }
+        }
       } catch { /* a value this tab cannot read is left to the next write */ }
     };
     window.addEventListener("storage", onStorage);
@@ -561,19 +589,8 @@ export default function Home() {
     try {
       const saved = localStorage.getItem("ketiklab-langs");
       if (!saved) { setShowLangSetup(true); return; }
-      const v = JSON.parse(saved);
-      const ui: Lang = isLang(v?.ui) ? v.ui : "zh";
-      const learn: Lang = isLang(v?.learn) ? v.learn : "zh";
-      const byLearn: MeaningPrefs = {};
-      if (v?.v === 2) {
-        const raw: unknown = v.defByLearn;
-        if (raw && typeof raw === "object") for (const l of LANGS) { const m: unknown = (raw as Record<string, unknown>)[l]; if (m === "none") byLearn[l] = "none"; else if (isLang(m) && m !== l) byLearn[l] = m; }
-      } else {
-        // before v2 an untouched def was saved as learn en → zh, otherwise en (the dialog started
-        // on English); only a def other than that was the learner's choice, the rest now follows defaultDef
-        if (isLang(v?.def) && v.def !== learn && v.def !== (learn === "en" ? "zh" : "en")) byLearn[learn] = v.def;
-        writeLangs(ui, learn, byLearn);
-      }
+      const { ui, learn, byLearn, v2 } = readLangs(saved);
+      if (!v2) writeLangs(ui, learn, byLearn);
       setUiLang(ui); setLang(learn); setDefByLearn(byLearn);
       if (!byLearn[learn] && !defaultDef(ui, learn, browserTag())) setShowLangSetup(true);
     } catch { setShowLangSetup(true); }
