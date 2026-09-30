@@ -464,7 +464,7 @@ export default function Home() {
 
   useEffect(() => {
     const el = input.current;
-    if (!el || !el.classList.contains("ime-input") || isComposing.current) return;
+    if (!el || isComposing.current) return;
     // between compositions the box is made to match `typed`, so nothing stale is left in it
     if (el.value !== typed) el.value = typed;
     staleLen.current = 0;
@@ -1203,7 +1203,7 @@ export default function Home() {
     if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
     // the box still shows the previous word (or the rolled-back text) in front of
     // this commit: grade only what was committed since, after the kept prefix
-    if (practiceLang === "zh" && staleLen.current > 0) raw = typed + raw.slice(staleLen.current);
+    if (staleLen.current > 0) raw = typed + raw.slice(staleLen.current);
     // iOS and macOS smart punctuation type ’ for the apostrophe in driver's license
     raw = raw.replace(/[\u2018\u2019\u02BC]/g, "'");
     // Never let the buffer grow past the target: extra keystrokes are simply
@@ -1215,6 +1215,10 @@ export default function Home() {
       autoSpokenWord.current = targetKey;
       speak(targetWord, targetVoice);
     }
+    // the box is uncontrolled (a controlled value is written back during an IME composition,
+    // which cancels it without a compositionend): it is made to hold exactly the graded text here,
+    // since a state update to the same value renders nothing and the effect above would not run
+    if (input.current && !isComposing.current && input.current.value !== clean) input.current.value = clean;
     const norm = (x: string) => practiceLang === "zh" ? x : x.toLowerCase();
     const expected = norm(targetWord);
     const current = norm(clean);
@@ -1681,7 +1685,7 @@ export default function Home() {
             onMiss={() => { if (finishing.current || hadWrong.current) return; hadWrong.current = true; setWrongCountWord(n => n + 1); setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30)); }}
             onSpeak={() => speak()}
           /> : <>
-          <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} value={practiceLang === "zh" ? undefined : typed} defaultValue="" onChange={e=>handleType(e.target.value)} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; pausedByButton.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>{ setTypingFocus(false); setReveal(false); }} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
+          <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} defaultValue="" onChange={e=>{ if (!(e.nativeEvent as InputEvent).isComposing) isComposing.current = false; handleType(e.target.value); }} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; pausedByButton.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>{ setTypingFocus(false); setReveal(false); }} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
           <p className="hint">{TX("直接敲键盘", "Langsung ketik", "Just type", uiLang)} <span>·</span> {inputMode === "soft" ? TX("打错按退格改", "salah? tekan Backspace", "Backspace fixes a mistake", uiLang) : TX("打错自动回退", "salah = mundur otomatis", "a mistake rolls back", uiLang)} &nbsp;&nbsp; ENTER <span>·</span> {TX("跳过", "lewati", "skip", uiLang)} &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> {TX("重播发音", "ulang suara", "replay", uiLang)}</p>
           </>}
           {wrongCountWord >= 3 && <button className="skip-btn" onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
