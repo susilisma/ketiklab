@@ -1288,9 +1288,11 @@ export default function Home() {
     writeLangs(uiLang, nextLanguage, defByLearn);
     setTimeout(() => input.current?.focus(), 30);
   }
-  function saveLangSetup(ui: Lang, learn: Lang, def: MeaningLang) {
+  // def is null when the meaning row was left on its pre-selection: nothing is stored for
+  // it, so the meaning keeps following the interface language instead of freezing today's
+  function saveLangSetup(ui: Lang, learn: Lang, def: MeaningLang | null) {
     const byLearn: MeaningPrefs = { ...defByLearn };
-    byLearn[learn] = def;
+    if (def) byLearn[learn] = def;
     setUiLang(ui);
     setDefByLearn(byLearn);
     if (learn !== lang) {
@@ -1845,7 +1847,7 @@ export default function Home() {
   </div>;
 }
 
-function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang) => void; onClose: () => void }) {
+function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang | null) => void; onClose: () => void }) {
   const [ui, setUi] = useState<Lang>(initialUi);
   const [learn, setLearn] = useState<Lang>(initialLearn);
   // null until the learner touches the meaning row; until then the pre-selection follows
@@ -1893,7 +1895,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
       </div>
       <div className="lang-modal-actions">
         <button className="lang-modal-cancel" onClick={onClose}>{mt.cancel}</button>
-        <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, def); }}>{mt.save}</button>
+        <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, picked && picked !== learn ? picked : null); }}>{mt.save}</button>
       </div>
     </div>
   </div>;
