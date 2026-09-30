@@ -619,6 +619,359 @@
     "睡觉",
     "可供住宿"
    ]
+  },
+  "accounting": {
+   "trans": [
+    "会计",
+    "会计学"
+   ],
+   "idtrans": [
+    "akuntansi"
+   ],
+   "def": "the work of keeping and checking financial records"
+  },
+  "candy": {
+   "trans": [
+    "糖果"
+   ],
+   "idtrans": [
+    "permen"
+   ],
+   "def": "a sweet food made from sugar or chocolate"
+  },
+  "framework": {
+   "trans": [
+    "框架",
+    "体系"
+   ],
+   "idtrans": [
+    "kerangka",
+    "kerangka kerja"
+   ],
+   "def": "a basic structure or set of ideas that supports something"
+  },
+  "integrated": {
+   "trans": [
+    "一体化",
+    "综合"
+   ],
+   "idtrans": [
+    "terpadu",
+    "terintegrasi"
+   ],
+   "def": "combined into a single whole"
+  },
+  "intelligent": {
+   "trans": [
+    "聪明",
+    "智能"
+   ],
+   "idtrans": [
+    "cerdas",
+    "pintar"
+   ],
+   "def": "able to learn and understand things quickly"
+  },
+  "lighting": {
+   "trans": [
+    "照明",
+    "灯光"
+   ],
+   "idtrans": [
+    "pencahayaan"
+   ],
+   "def": "the lights in a place, or the light they give"
+  },
+  "polish": {
+   "trans": [
+    "擦亮",
+    "抛光",
+    "光泽"
+   ],
+   "idtrans": [
+    "memoles",
+    "mengilapkan"
+   ],
+   "def": "to rub a surface until it shines; a substance used for this"
+  },
+  "sacrifice": {
+   "trans": [
+    "牺牲"
+   ],
+   "idtrans": [
+    "pengorbanan",
+    "mengorbankan"
+   ],
+   "def": "to give up something valued for the sake of something more important"
+  },
+  "sole": {
+   "trans": [
+    "唯一",
+    "鞋底"
+   ],
+   "idtrans": [
+    "satu-satunya",
+    "sol"
+   ],
+   "def": "only; the bottom part of a shoe or foot"
+  },
+  "alarm": {
+   "trans": [
+    "警报",
+    "闹钟"
+   ],
+   "idtrans": [
+    "alarm",
+    "tanda bahaya"
+   ],
+   "def": "a device that warns of danger or wakes you; sudden fear"
+  },
+  "butt": {
+   "trans": [
+    "屁股",
+    "烟蒂"
+   ],
+   "idtrans": [
+    "bokong",
+    "puntung"
+   ],
+   "def": "the buttocks; the end of a cigarette"
+  },
+  "satisfied": {
+   "trans": [
+    "满意"
+   ],
+   "idtrans": [
+    "puas"
+   ],
+   "def": "pleased because you got what you wanted"
+  },
+  "slip": {
+   "trans": [
+    "滑倒",
+    "滑动",
+    "纸条"
+   ],
+   "idtrans": [
+    "tergelincir",
+    "terpeleset"
+   ],
+   "def": "to slide and lose your balance; a small piece of paper"
+  },
+  "spare": {
+   "trans": [
+    "备用",
+    "多余"
+   ],
+   "idtrans": [
+    "cadangan"
+   ],
+   "def": "kept as an extra in case it is needed"
+  },
+  "auction": {
+   "trans": [
+    "拍卖"
+   ],
+   "idtrans": [
+    "lelang"
+   ],
+   "def": "a public sale where goods go to the highest bidder"
+  },
+  "copper": {
+   "trans": [
+    "铜"
+   ],
+   "idtrans": [
+    "tembaga"
+   ],
+   "def": "a reddish-brown metal that conducts electricity well"
+  },
+  "mechanism": {
+   "trans": [
+    "机制",
+    "机械装置"
+   ],
+   "idtrans": [
+    "mekanisme"
+   ],
+   "def": "a system of parts working together; the way something works"
+  },
+  "anime": {
+   "trans": [
+    "日本动画"
+   ],
+   "idtrans": [
+    "anime"
+   ],
+   "def": "Japanese animated film or television"
+  },
+  "homeless": {
+   "trans": [
+    "无家可归"
+   ],
+   "idtrans": [
+    "tunawisma"
+   ],
+   "def": "having no home to live in"
+  },
+  "realise": {
+   "trans": [
+    "意识到",
+    "实现"
+   ],
+   "idtrans": [
+    "menyadari",
+    "mewujudkan"
+   ],
+   "def": "to become aware of something; to make something happen"
+  },
+  "emperor": {
+   "trans": [
+    "皇帝"
+   ],
+   "idtrans": [
+    "kaisar"
+   ],
+   "def": "the ruler of an empire"
+  },
+  "forgive": {
+   "trans": [
+    "原谅",
+    "宽恕"
+   ],
+   "idtrans": [
+    "memaafkan",
+    "mengampuni"
+   ],
+   "def": "to stop being angry with someone who did something wrong"
+  },
+  "handled": {
+   "trans": [
+    "处理",
+    "应付"
+   ],
+   "idtrans": [
+    "menangani"
+   ],
+   "def": "dealt with; managed"
+  },
+  "shelter": {
+   "trans": [
+    "避难所",
+    "掩蔽处",
+    "庇护"
+   ],
+   "idtrans": [
+    "tempat berlindung",
+    "perlindungan"
+   ],
+   "def": "a place giving protection from bad weather or danger"
+  },
+  "deposit": {
+   "trans": [
+    "存款",
+    "押金",
+    "沉积物"
+   ],
+   "idtrans": [
+    "setoran",
+    "uang jaminan",
+    "deposit"
+   ],
+   "def": "money put into a bank account or paid as a first payment or guarantee; matter left by a natural process"
+  },
+  "gather": {
+   "trans": [
+    "聚集",
+    "收集"
+   ],
+   "idtrans": [
+    "mengumpulkan",
+    "berkumpul"
+   ],
+   "def": "to come together or bring things together"
+  },
+  "neutral": {
+   "trans": [
+    "中立",
+    "中性"
+   ],
+   "idtrans": [
+    "netral"
+   ],
+   "def": "not supporting either side; neither one thing nor the other"
+  },
+  "suspension": {
+   "trans": [
+    "暂停",
+    "停职",
+    "悬架"
+   ],
+   "idtrans": [
+    "penangguhan",
+    "skorsing"
+   ],
+   "def": "the act of stopping something for a time or barring someone from work or school; the springs of a vehicle"
+  },
+  "treasury": {
+   "trans": [
+    "财政部",
+    "国库"
+   ],
+   "idtrans": [
+    "perbendaharaan",
+    "kas negara"
+   ],
+   "def": "the government department in charge of public money; a place where money is kept"
+  },
+  "upgrade": {
+   "trans": [
+    "升级"
+   ],
+   "idtrans": [
+    "peningkatan",
+    "memutakhirkan"
+   ],
+   "def": "to replace something with a better or newer version"
+  },
+  "coalition": {
+   "trans": [
+    "联盟",
+    "联合政府"
+   ],
+   "idtrans": [
+    "koalisi"
+   ],
+   "def": "a union of groups or parties that work together, especially in government"
+  },
+  "biology": {
+   "trans": [
+    "生物学"
+   ],
+   "idtrans": [
+    "biologi"
+   ],
+   "def": "the science of living things"
+  },
+  "pension": {
+   "trans": [
+    "养老金",
+    "退休金"
+   ],
+   "idtrans": [
+    "pensiun"
+   ],
+   "def": "money paid regularly to a person who has retired"
+  },
+  "developer": {
+   "trans": [
+    "开发者",
+    "开发商"
+   ],
+   "idtrans": [
+    "pengembang"
+   ],
+   "def": "a person or company that builds software or property"
   }
  },
  "en-academic": {
@@ -628,6 +981,63 @@
     "无政府的",
     "无秩序的"
    ]
+  },
+  "cheque": {
+   "trans": [
+    "支票"
+   ],
+   "idtrans": [
+    "cek"
+   ],
+   "def": "a printed form ordering a bank to pay money from your account"
+  }
+ },
+ "en-upper": {
+  "analyze": {
+   "trans": [
+    "分析"
+   ],
+   "idtrans": [
+    "menganalisis"
+   ],
+   "def": "to examine something in detail to understand it"
+  },
+  "humour": {
+   "trans": [
+    "幽默"
+   ],
+   "idtrans": [
+    "humor"
+   ],
+   "def": "the quality of being funny"
+  },
+  "swamp": {
+   "trans": [
+    "沼泽"
+   ],
+   "idtrans": [
+    "rawa"
+   ],
+   "def": "an area of very wet, soft land"
+  },
+  "swan": {
+   "trans": [
+    "天鹅"
+   ],
+   "idtrans": [
+    "angsa"
+   ],
+   "def": "a large white water bird with a long neck"
+  },
+  "tornado": {
+   "trans": [
+    "龙卷风"
+   ],
+   "idtrans": [
+    "tornado",
+    "puting beliung"
+   ],
+   "def": "a violent rotating column of wind"
   }
  }
 }
