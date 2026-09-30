@@ -28,6 +28,14 @@ def annotate_coverage(manifest):
     spec.loader.exec_module(mod)
     return mod.annotate(manifest, OUT)
 
+def refresh_toefl():
+    spec = importlib.util.spec_from_file_location(
+        "build_toefl_dict", os.path.join(os.path.dirname(os.path.abspath(__file__)), "build-toefl-dict.py"))
+    mod = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(mod)
+    if os.path.exists(mod.OUT):
+        print("en-toefl.json refreshed from the pool:", mod.refresh(), "rows")
+
 ARPA2IPA = {
     "AA":"ɑ","AE":"æ","AH":"ə","AO":"ɔ","AW":"aʊ","AY":"aɪ","B":"b","CH":"tʃ","D":"d",
     "DH":"ð","EH":"ɛ","ER":"ɝ","EY":"eɪ","F":"f","G":"ɡ","HH":"h","IH":"ɪ","IY":"i",
@@ -214,6 +222,10 @@ def build():
     listed = {m["id"] for m in man}
     man += [r for r in sorted(manifest_rows, key=lambda r: order[r["id"]])
             if r["id"] not in listed]
+    # en-toefl copies its Indonesian glosses and pronunciations from the libraries just
+    # written: refresh it now, or a correction pinned above stays wrong there (its PDF
+    # source is not in the repository, so this is the only way it follows the pool)
+    refresh_toefl()
     annotate_coverage(man)
     with open(man_path, "w", encoding="utf-8") as f:
         json.dump(man, f, ensure_ascii=False, indent=1)

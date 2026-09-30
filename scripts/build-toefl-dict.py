@@ -2,6 +2,7 @@
 """Build public/data/en-toefl.json from a TOEFL vocabulary PDF.
 
 Usage: python3 scripts/build-toefl-dict.py <wordlist.pdf>   (needs `pip install pypdf`)
+       python3 scripts/build-toefl-dict.py --refresh        (re-copy idtrans / usphone from the en-* pool)
 
 What is taken from the PDF: the headwords and their Chinese glosses.
 
@@ -139,15 +140,54 @@ def parse(pdf_path):
     return entries
 
 
-def main():
-    if len(sys.argv) < 2:
-        sys.exit("usage: build-toefl-dict.py <wordlist.pdf>")
-
+def load_pool():
     pool = {}
     for name in ENRICH_FROM:
         with io.open(os.path.join(DATA, name + ".json"), encoding="utf-8") as f:
             for e in json.load(f):
                 pool.setdefault(e["name"].lower(), e)
+    return pool
+
+
+def enrich(entry, pool):
+    """Copy the Indonesian glosses and the US pronunciation of the pool's row for this headword."""
+    src = pool.get(entry["name"].lower())
+    if not src:
+        return entry
+    for field in ("idtrans", "usphone"):
+        if src.get(field):
+            entry[field] = src[field]
+        else:
+            entry.pop(field, None)
+    return entry
+
+
+def refresh():
+    """Re-copy idtrans / usphone into the existing en-toefl.json from the pool.
+
+    The PDF is not in the repository, so a rebuild of the English libraries cannot rerun
+    main(); without this step a gloss corrected in en-core (thus: kemenyan → oleh karena
+    itu) stayed wrong in en-toefl, which had copied the old value at build time.
+    Returns the number of rows changed."""
+    with io.open(OUT, encoding="utf-8") as f:
+        rows = json.load(f)
+    pool = load_pool()
+    changed = 0
+    for row in rows:
+        before = (row.get("idtrans"), row.get("usphone"))
+        enrich(row, pool)
+        changed += (row.get("idtrans"), row.get("usphone")) != before
+    if changed:
+        with io.open(OUT, "w", encoding="utf-8") as f:
+            json.dump(rows, f, ensure_ascii=False, separators=(",", ":"))
+    return changed
+
+
+def main():
+    if len(sys.argv) < 2:
+        sys.exit("usage: build-toefl-dict.py <wordlist.pdf>")
+
+    pool = load_pool()
 
     seen, out, dropped = set(), [], []
     for e in parse(sys.argv[1]):
@@ -160,12 +200,7 @@ def main():
             continue
         seen.add(word.lower())
         entry = {"name": word, "trans": trans}
-        src = pool.get(word.lower())
-        if src:
-            if src.get("idtrans"):
-                entry["idtrans"] = src["idtrans"]
-            if src.get("usphone"):
-                entry["usphone"] = src["usphone"]
+        enrich(entry, pool)
         out.append(entry)
 
     with io.open(OUT, "w", encoding="utf-8") as f:
@@ -182,4 +217,7 @@ def main():
 
 
 if __name__ == "__main__":
-    main()
+    if len(sys.argv) > 1 and sys.argv[1] == "--refresh":
+        print(json.dumps({"refreshed": refresh(), "wrote": os.path.relpath(OUT, ROOT)}))
+    else:
+        main()
