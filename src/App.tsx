@@ -251,7 +251,11 @@ export default function Home() {
   const [wrongFlash, setWrongFlash] = useState(false);
   const [loopTimes, setLoopTimes] = useState(1);
   const [loopIx, setLoopIx] = useState(0);
-  const [favorites, setFavorites] = useState<PracticeItem[]>([]);
+  // read at mount, not after it: the persist effect's first run used to write "[]" over the
+  // saved list for the ~20 ms before the restore, and another tab took that for an emptied list
+  const [favorites, setFavorites] = useState<PracticeItem[]>(() => {
+    try { return cleanFavorites(JSON.parse(localStorage.getItem("ketiklab-fav") || "[]")); } catch { return []; }
+  });
   const [globalSearch, setGlobalSearch] = useState(false);
   const [allDicts, setAllDicts] = useState<Record<string, DictEntry[]>>({});
   const [globalLoading, setGlobalLoading] = useState(false);
