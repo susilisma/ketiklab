@@ -229,6 +229,7 @@ def build():
     annotate_coverage(man)
     with open(man_path, "w", encoding="utf-8") as f:
         json.dump(man, f, ensure_ascii=False, indent=1)
+        f.write("\n")  # the committed file ends with a newline; without this every rebuild stripped it
     print("manifest.json rewritten:", ", ".join(m["id"] for m in man))
     return manifest_rows
 

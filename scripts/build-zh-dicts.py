@@ -191,6 +191,7 @@ def main():
     annotate_coverage(manifest)
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(manifest, f, ensure_ascii=False, indent=1)
+        f.write("\n")  # the committed file ends with a newline; without this every rebuild stripped it
     print(f"pinyin map: {len(pinmap)} entries")
 
 if __name__ == "__main__":
