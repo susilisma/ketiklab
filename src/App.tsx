@@ -284,6 +284,7 @@ export default function Home() {
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
   const sourceRef = useRef(source); sourceRef.current = source;
+  const viewRef = useRef(view); viewRef.current = view;
   const reviewRef = useRef<string[] | null>(null); // the listener keeps a review session in place, as changeLanguage does
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
   // the tab, the history entries and the installed app's window carry the title too. A
@@ -1103,7 +1104,9 @@ export default function Home() {
       setIndex(ni);
       if (nx && !holdSpeech) {
         autoSpokenWord.current = `${source}:${nx.key}`;
-        window.setTimeout(() => speak(nx.text, nx.voice), 160);
+        // a sidebar click in the moment after the last letter moves to another view: the
+        // next word is still served there, but it is not read aloud over the library page
+        window.setTimeout(() => { if (viewRef.current === "learn") speak(nx.text, nx.voice); }, 160);
       }
       setTimeout(() => { if (!pausedByButton.current && !leftByKey.current) input.current?.focus(); }, 20);
     }
