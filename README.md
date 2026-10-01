@@ -18,7 +18,7 @@ Counts as of 2026-09-15. New words are generated in batches, reviewed by hand, a
 | Words by Topic | **3,700+** words in four topics: daily, study & policy, business, life in Indonesia |
 | Meanings | One meaning line per word, in the language you pick: Chinese, Indonesian or English, or none for typing only. An English definition or the other languages are opt-in extras, and meanings can be hidden until you peek |
 | Exam libraries | **10 lists, nearly 18,000 words** (21,700+ across the site together with Words by Topic) — English core / intermediate / advanced / academic (by Zipf frequency band), Business English and a TOEFL list; Chinese core / intermediate / advanced; an Indonesian frequency list |
-| Classic readings | **160** texts in Chinese, Indonesian or English, typed line by line: public-domain classics plus two KetikLab practice pieces |
+| Readings | **160** texts in Chinese, Indonesian or English, typed line by line: public-domain classics plus two KetikLab practice pieces |
 | Chinese ladder | 认读 (read, pinyin printed **above** the character) → 打拼音 (type the pinyin) → 选汉字 (pick the character) → 输入法 (type it with your IME) |
 | Memory | Spaced repetition on a 1 / 2 / 4 / 7 / 15 / 30 / 60 / 120-day ladder, a mistakes book, favourites, a learning calendar |
 | Account | Optional; progress lives in the browser. Stats, calendar, favourites, chapters and settings can be synced through an account; the review schedule travels by export / import |
