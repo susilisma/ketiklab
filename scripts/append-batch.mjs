@@ -59,9 +59,12 @@ const readTA = new Set(readings.map((r) => (r.title + "|" + r.author).toLowerCas
 
 function materializeWord(w) {
   // tuple form -> full object
+  // a hand-edited row may carry stray whitespace (" achieve"); untrimmed it slipped past the
+  // duplicate check and was stored as typed, so every string field is trimmed first
+  const t = (x) => (typeof x === "string" ? x.trim() : x);
   if (Array.isArray(w)) {
-    const [en, id, zh, category, level = "A1"] = w;
-    if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
+    const [en, id, zh, category, level = "A1"] = w.map(t);
+    if (![en, id, zh, category].every((x) => typeof x === "string" && x)) return { err: "empty-field" };
     if (!CATEGORIES.has(category)) return { err: "bad-category" };
     if (!LEVELS.has(level)) return { err: "bad-level" };
     if (badZh(zh)) return { err: "bad-zh-senses" };
@@ -70,15 +73,17 @@ function materializeWord(w) {
   }
   // object form
   if (!w || typeof w !== "object") return { err: "not-object" };
-  const { en, id, zh, category, level = "A1", examples, phonetic, idSyllables, pinyin, source } = w;
-  if (![en, id, zh, category].every((x) => typeof x === "string" && x.trim())) return { err: "empty-field" };
+  const { examples, source } = w;
+  const [en, id, zh, category, level = "A1", phonetic, idSyllables, pinyin] =
+    [w.en, w.id, w.zh, w.category, w.level, w.phonetic, w.idSyllables, w.pinyin].map(t);
+  if (![en, id, zh, category].every((x) => typeof x === "string" && x)) return { err: "empty-field" };
   if (!CATEGORIES.has(category)) return { err: "bad-category" };
   if (!LEVELS.has(level)) return { err: "bad-level" };
   if (badZh(zh)) return { err: "bad-zh-senses" };
   // keep whichever languages the batch supplied; the card skips a missing row
   const ex = {};
   if (examples) for (const k of ["en", "id", "zh"]) {
-    if (typeof examples[k] === "string" && examples[k].trim()) ex[k] = examples[k];
+    if (typeof examples[k] === "string" && examples[k].trim()) ex[k] = examples[k].trim();
   }
   const obj = { en, id, zh, category, level, source: source || DEFAULT_SOURCE, examples: ex };
   if (phonetic) obj.phonetic = phonetic;
