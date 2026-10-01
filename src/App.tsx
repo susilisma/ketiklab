@@ -284,6 +284,9 @@ export default function Home() {
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
   const sourceRef = useRef(source); sourceRef.current = source;
+  // the topic words and the favourites change list with the learning language under one
+  // chapter key; a dictionary is the same list in every language, so its chapter is kept
+  const sharesChapterKey = (src: string) => src === "trio" || src === "fav";
   const viewRef = useRef(view); viewRef.current = view;
   const reviewRef = useRef<string[] | null>(null); // the listener keeps a review session in place, as changeLanguage does
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
@@ -581,7 +584,7 @@ export default function Home() {
           const { ui, learn, byLearn } = readLangs(e.newValue);
           setUiLang(ui); setDefByLearn(byLearn);
           setShowLangSetup(open => open && !byLearn[learn] && !defaultDef(ui, learn, browserTag()));
-          if (learn !== langRef.current) { setLang(learn); if (!reviewRef.current) { setIndex(0); resetChapterRun(); } setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null); }
+          if (learn !== langRef.current) { setLang(learn); if (!reviewRef.current && sharesChapterKey(sourceRef.current)) { setIndex(0); resetChapterRun(); } setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null); }
         }
       } catch { /* a value this tab cannot read is left to the next write */ }
     };
@@ -1331,8 +1334,9 @@ export default function Home() {
     setLang(nextLanguage);
     // en and id share a chapter key, so the [sourceKey] effect does not start the new list's
     // run: the finish card of the English chapter stayed up over the Indonesian list
-    // (a review session is its own list and keeps its place, as with a rung change)
-    if (!reviewKeys) { setIndex(0); resetChapterRun(); }
+    // (a review session is its own list and keeps its place, as with a rung change;
+    // an open dictionary is one list whatever the language, so its chapter is kept)
+    if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
     setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setSpeakingWord(null);
@@ -1348,7 +1352,7 @@ export default function Home() {
     setDefByLearn(byLearn);
     if (learn !== lang) {
       setLang(learn);
-      if (!reviewKeys) { setIndex(0); resetChapterRun(); }
+      if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
       setTyped(""); resetWordRun();
       autoSpokenWord.current = null;
       setSpeakingWord(null);
