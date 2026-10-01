@@ -157,6 +157,14 @@ def hreflang_links(path_for):
     return "\n".join(out)
 
 
+def lib_list(lang, lib_rows):
+    """The library links of a page: the manifest rows, then Words by Topic — its three pages are in the
+    sitemap and were otherwise linked from nowhere, so a crawler never reached them."""
+    links = [f'<a href="/{lang}/lib/{r["id"]}/">{esc(lib_name(r, lang))}</a>' for r in lib_rows]
+    links.append(f'<a href="/{lang}/lib/trio/">{esc(T["trio"][lang])}</a>')
+    return " · ".join(links)
+
+
 def language_page(index_html, lang, lib_rows, n_readings, c):
     url = f"{SITE}/{lang}/"
     desc = fmt("desc", lang, **c)
@@ -176,7 +184,7 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
     h = re.sub(r'\s*<meta property="og:locale:alternate" content="[^"]*" />', "", h)
     h = sub1(r'(<meta property="og:locale" content="[^"]*" />)', lambda m: m.group(1) + "".join(f'\n    <meta property="og:locale:alternate" content="{OG_LOCALE[o]}" />' for o in others), h, "og:locale (alternates)")
     h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head>")
-    lib_links = " · ".join(f'<a href="/{lang}/lib/{r["id"]}/">{esc(lib_name(r, lang))}</a>' for r in lib_rows)
+    lib_links = lib_list(lang, lib_rows)
     block = (
         f'<main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Inter,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;line-height:1.7">\n'
         f'        <h1 style="font-size:28px;margin:0 0 8px">{esc(T["h1"][lang])} — KetikLab</h1>\n'
@@ -298,7 +306,7 @@ def static_page(lang, title, desc, path, body, alt_path_for, lib_rows, n_reading
         f'<meta name="twitter:card" content="summary_large_image" />\n'
         + hreflang_links(alt_path_for).replace("    <", "<") + f"\n<style>{CSS}</style>\n</head>\n"
     )
-    libs_nav = " · ".join(f'<a href="/{lang}/lib/{r["id"]}/">{esc(lib_name(r, lang))}</a>' for r in lib_rows)
+    libs_nav = lib_list(lang, lib_rows)
     langs_nav = " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS)
     tail = (
         f'<nav class="more"><b>{esc(T["libs"][lang])}:</b> {libs_nav} · <a href="/{lang}/readings/">{esc(T["readings"][lang])} ({n_readings})</a><br>{langs_nav}</nav>\n</main>\n'
