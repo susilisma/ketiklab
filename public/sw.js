@@ -29,9 +29,12 @@ const store = (key, res) => {
 
 self.addEventListener("install", (e) => {
   // "reload": the shell must come from the network, not from an HTTP cache that
-  // may still hold the previous deploy's index.html (and its asset names)
+  // may still hold the previous deploy's index.html (and its asset names).
+  // The hashed bundle files are immutable, so the copy the page just downloaded is
+  // the right one: fetched with "reload" too, every first visit and every deploy
+  // downloaded the JS and CSS a second time.
   const fresh = (u) => new Request(u, { cache: "reload" });
-  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE.concat(ASSETS).map(fresh))).then(() => self.skipWaiting()));
+  e.waitUntil(caches.open(VERSION).then((c) => c.addAll(CORE.map(fresh).concat(ASSETS))).then(() => self.skipWaiting()));
 });
 
 self.addEventListener("activate", (e) => {
