@@ -438,7 +438,7 @@ export function Account({ uiLang, name, onName }: {
         {mode === "up" && <label className="acct-field">
           <span>{T("名字", "Nama", "Name", uiLang)}</span>
           <input value={formName} maxLength={24} onChange={e => setFormName(e.target.value)}
-            placeholder={T("别人看到的名字", "Nama yang dilihat orang", "How you appear", uiLang)} />
+            placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>}
         <label className="acct-field">
           <span>{T("邮箱", "Email", "Email", uiLang)}</span>
