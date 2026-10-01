@@ -584,7 +584,7 @@ export default function Home() {
           const { ui, learn, byLearn } = readLangs(e.newValue);
           setUiLang(ui); setDefByLearn(byLearn);
           setShowLangSetup(open => open && !byLearn[learn] && !defaultDef(ui, learn, browserTag()));
-          if (learn !== langRef.current) { setLang(learn); if (!reviewRef.current && sharesChapterKey(sourceRef.current)) { setIndex(0); resetChapterRun(); } setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null); }
+          if (learn !== langRef.current) { setLang(learn); if (!reviewRef.current && sharesChapterKey(sourceRef.current)) { setIndex(0); resetChapterRun(); } setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null); setTypingFocus(false); }
         }
       } catch { /* a value this tab cannot read is left to the next write */ }
     };
