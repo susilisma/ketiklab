@@ -1267,7 +1267,9 @@ export default function Home() {
       // undo them. The word is one mistake for the stats and the 错词本 however many
       // keys go wrong, but every wrong key counts towards the skip button, and a
       // BACKSPACE that leaves a red letter standing is not a new slip and makes no sound.
-      if (clean.length > typed.length) { errorBeep(); setWrongCountWord(n => n + 1); }
+      // a key is a slip when it is itself wrong: the right letters typed after a red one used
+      // to beep and count towards the skip button because the buffer had grown
+      if (clean.length > typed.length && current.slice(typed.length) !== expected.slice(typed.length, current.length)) { errorBeep(); setWrongCountWord(n => n + 1); }
       if (!hadWrong.current) {
         hadWrong.current = true;
         setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
