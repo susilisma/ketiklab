@@ -420,7 +420,7 @@ export function Account({ uiLang, name, onName }: {
       </div>
       <p className="acct-note">
         {T("登录后，学习记录、错词本、收藏和连续天数会跟着账号走，换手机也在。",
-           "Setelah masuk, progres, daftar kata salah, favorit, dan streak ikut akunmu — ganti HP pun tetap ada.",
+           "Setelah masuk, progres, daftar kata salah, favorit, dan hari berturut-turut ikut akunmu — ganti HP pun tetap ada.",
            "Once signed in, your progress, mistakes, favourites and streak follow the account across devices.", uiLang)}
       </p>
     </div>;
