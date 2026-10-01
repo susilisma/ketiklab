@@ -1558,7 +1558,6 @@ export default function Home() {
     const due = await getDueKeys().catch(() => [] as string[]);
     let keys = due.length ? due : mistakes.slice();
     if (!keys.length) return;
-    setReviewDueTotal(due.length ? srs.due : 0);
     const report = { unresolved: [] as string[], complete: true };
     let refs = await resolveReviewRefs(keys, report);
     // a word renamed or removed by a content update has no list to be practised in:
@@ -1572,6 +1571,9 @@ export default function Home() {
       setMistakes(m => m.filter(k => !gone.has(k)));
       if (!refs.length && due.length && mistakes.length) { keys = mistakes.filter(k => !gone.has(k)); refs = await resolveReviewRefs(keys); }
     }
+    // the total is set after the retirement, or the banner kept printing "4 / 5" for a
+    // session of four with the fifth key already retired
+    setReviewDueTotal(due.length ? Math.max(0, srs.due - (report.complete ? report.unresolved.length : 0)) : 0);
     if (!refs.length) return;
     sourceReq.current++;
     // 认读 only shows the word and schedules nothing, so a review held on that rung
