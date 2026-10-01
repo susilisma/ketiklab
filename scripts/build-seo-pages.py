@@ -60,7 +60,8 @@ T = {
     },
     "open": {"zh": "打开练习", "id": "Buka latihan", "en": "Open the trainer"},
     "libs": {"zh": "词库", "id": "Kamus", "en": "Libraries"},
-    "readings": {"zh": "经典朗读", "id": "Bacaan klasik", "en": "Classic readings"},
+    # the label counts all readings, two of which are KetikLab practice texts, so it does not say "classic"
+    "readings": {"zh": "朗读", "id": "Bacaan", "en": "Readings"},
     "trio": {"zh": "主题词汇", "id": "Kosakata Tematik", "en": "Words by Topic"},
     "trio_desc": {
         "zh": "KetikLab 按主题分类的词汇：日常、学习与政策、商务、印尼生活四类。练习时默认只显示你选的那一种语言的释义；下表列出印尼语词和中文释义。",
@@ -177,7 +178,7 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
     h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head>")
     lib_links = " · ".join(f'<a href="/{lang}/lib/{r["id"]}/">{esc(lib_name(r, lang))}</a>' for r in lib_rows)
     block = (
-        f'<main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Inter,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;color:#1c1d26;line-height:1.7">\n'
+        f'<main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Inter,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;line-height:1.7">\n'
         f'        <h1 style="font-size:28px;margin:0 0 8px">{esc(T["h1"][lang])} — KetikLab</h1>\n'
         f'        <p lang="{HTML_LANG[lang]}">{esc(fmt("para", lang, **c))}</p>\n'
         f'        <p><a href="/?ui={lang}" style="color:#7165eb;font-weight:700">{esc(T["open"][lang])} →</a></p>\n'
