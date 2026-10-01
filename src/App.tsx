@@ -599,6 +599,13 @@ export default function Home() {
   // the box is unmounted with the learn view and no blur fires for that: the flag that
   // says it holds the focus stayed true, so the view came back without its veil
   useEffect(() => { if (view !== "learn" || chapterFinished) setTypingFocus(false); }, [view, chapterFinished]);
+  // the input is keyed by the practice language, so a learning-language change on the topic words
+  // remounts it without a blur event: typingFocus stayed true and the card showed neither focus nor
+  // the veil (another tab's change; this tab's own change refocuses 30 ms later and onFocus sets the
+  // flag again). Checked after the commit, so a review or dictionary list, whose input is not
+  // remounted, keeps its focused box and the flag. Declared here, above the loading return: a hook
+  // below it changed the hook order between renders and blanked the page
+  useEffect(() => { if (document.activeElement !== input.current) setTypingFocus(false); }, [lang]);
   useEffect(() => {
     const onVisible = () => { if (document.visibilityState === "visible") refreshSrs(); };
     document.addEventListener("visibilitychange", onVisible);
@@ -873,11 +880,6 @@ export default function Home() {
   const learnItems = (reviewItems && reviewItems.length) ? reviewItems : (chapterItems.length ? chapterItems : activeItems);
   const item = learnItems[index % Math.max(learnItems.length, 1)] || learnItems[0];
   const practiceLang: Lang = (item && item.lang) || lang;
-  // the input is keyed by practiceLang, so a language change remounts it without a blur event:
-  // typingFocus stayed true and the card showed neither focus nor the veil (another tab's change;
-  // this tab's own change refocuses 30 ms later and onFocus sets the flag again). A list whose
-  // language did not change keeps its focused input, and the flag with it
-  useEffect(() => { if (document.activeElement !== input.current) setTypingFocus(false); }, [practiceLang]);
   // one identity for favourites, the 错词本 and the SRS row: the Indonesian "air"
   // and the English "air" are different words and must not share progress
   const wordId = item ? `${item.lang}:${item.key}` : "";
