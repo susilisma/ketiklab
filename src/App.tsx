@@ -283,6 +283,7 @@ export default function Home() {
   const [lang, setLang] = useState<Lang>("zh");
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
+  const sourceRef = useRef(source); sourceRef.current = source;
   const reviewRef = useRef<string[] | null>(null); // the listener keeps a review session in place, as changeLanguage does
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
   // the tab, the history entries and the installed app's window carry the title too. A
@@ -556,7 +557,17 @@ export default function Home() {
       if (e.newValue === null) return;
       try {
         if (e.key === "ketiklab-days") setDayCounts(cleanDayCounts(JSON.parse(e.newValue)));
-        else if (e.key === "ketiklab-fav") setFavorites(cleanFavorites(JSON.parse(e.newValue)));
+        else if (e.key === "ketiklab-fav") {
+          const favs = cleanFavorites(JSON.parse(e.newValue));
+          setFavorites(favs);
+          // the other tab changed the list under the word being typed: as in toggleFav, the word that
+          // slides into this slot starts clean (a review session keeps its own list), and an emptied
+          // list stops being labelled 我的收藏 over the topic words
+          if (sourceRef.current === "fav") {
+            if (!reviewRef.current) { setTyped(""); resetWordRun(); autoSpokenWord.current = null; }
+            if (!favs.length) { sourceReq.current++; setSource("trio"); persistSource("trio"); }
+          }
+        }
         else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
         // the languages too: this tab's next writeLangs (a meaning pick, a learning-language change)
         // carried its own copy of all three fields, and wrote the other tab's fresh choice back
