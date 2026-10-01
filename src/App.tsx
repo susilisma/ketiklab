@@ -144,9 +144,11 @@ function defaultDef(ui: Lang, learn: Lang, browserLang: string): Lang | null {
 function writeLangs(ui: Lang, learn: Lang, defByLearn: MeaningPrefs) {
   try { localStorage.setItem("ketiklab-langs", JSON.stringify({ ui, learn, def: defByLearn[learn], defByLearn, v: 2 })); } catch { /* ignore */ }
 }
-// what a stored ketiklab-langs value says (throws on a value that is not JSON); v2 marks the current shape
+// what a stored ketiklab-langs value says (throws on a value that is not JSON, or is JSON but not an
+// object: "null" or "[]" used to be read as zh/zh in silence); v2 marks the current shape
 function readLangs(saved: string): { ui: Lang; learn: Lang; byLearn: MeaningPrefs; v2: boolean } {
   const v = JSON.parse(saved);
+  if (!v || typeof v !== "object" || Array.isArray(v)) throw new Error("ketiklab-langs is not an object");
   const ui: Lang = isLang(v?.ui) ? v.ui : "zh";
   const learn: Lang = isLang(v?.learn) ? v.learn : "zh";
   const byLearn: MeaningPrefs = {};
@@ -493,6 +495,9 @@ export default function Home() {
         if (ENTRY.lib && !linked && !sourceReq.current) setLinkedMissing(ENTRY.lib.slice(0, 40));
         const savedSource = localStorage.getItem("ketiklab-source");
         const d = linked || (savedSource && m.find(x => x.id === savedSource));
+        // a saved list the manifest no longer carries is named like an unknown ?lib= id, instead of
+        // opening the topic words in silence with the stale id kept for the next visit
+        if (!d && savedSource && savedSource !== "trio" && savedSource !== "fav" && !sourceReq.current) { if (!ENTRY.lib) setLinkedMissing(savedSource.slice(0, 40)); persistSource("trio"); }
         if (d && !sourceReq.current) {
           // a first visit from that page is a visit to learn that list's language
           if (linked && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
