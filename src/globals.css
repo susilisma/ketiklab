@@ -151,8 +151,9 @@
 
 /* ---- favorites, loop dots, sound (round 4) ---- */
 .fav-btn{position:absolute;border:1px solid var(--line);background:var(--bg);color:var(--muted);border-radius:50%;font-size:16px;line-height:1}
-.fav-btn:hover{color:#e9ae4e;border-color:#e9ae4e}
-.fav-btn.on{color:#e9ae4e;border-color:#e9ae4e;background:color-mix(in srgb,#e9ae4e 12%,var(--surface))}
+.fav-btn:hover{color:#7a5410;border-color:#e9ae4e}
+.fav-btn.on{color:#7a5410;border-color:#e9ae4e;background:color-mix(in srgb,#e9ae4e 12%,var(--surface))}
+.dark .fav-btn:hover,.dark .fav-btn.on{color:#e9ae4e}
 .loop-dots{position:absolute;display:flex;gap:5px}
 .loop-dots i{width:7px;height:7px;border-radius:50%;background:var(--line)}
 .loop-dots i.on{background:var(--purple)}
