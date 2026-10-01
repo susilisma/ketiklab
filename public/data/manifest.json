@@ -48,7 +48,7 @@
   "file": "en-core.json",
   "coverage": {
    "zh": 2590,
-   "id": 2339,
+   "id": 2366,
    "en": 0,
    "def": 2590
   }
@@ -66,7 +66,7 @@
   "file": "en-plus.json",
   "coverage": {
    "zh": 2129,
-   "id": 1721,
+   "id": 1819,
    "en": 0,
    "def": 2129
   }
@@ -84,7 +84,7 @@
   "file": "en-upper.json",
   "coverage": {
    "zh": 2131,
-   "id": 1601,
+   "id": 1678,
    "en": 0,
    "def": 2131
   }
@@ -102,7 +102,7 @@
   "file": "en-academic.json",
   "coverage": {
    "zh": 2439,
-   "id": 1648,
+   "id": 1729,
    "en": 0,
    "def": 2439
   }
@@ -120,7 +120,7 @@
   "file": "en-toefl.json",
   "coverage": {
    "zh": 2100,
-   "id": 1300,
+   "id": 1334,
    "en": 0,
    "def": 0
   }
