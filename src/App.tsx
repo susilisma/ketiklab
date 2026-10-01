@@ -1010,7 +1010,9 @@ export default function Home() {
         const hay = `${e.name} ${e.trans.join(" ")} ${(e.idtrans || []).join(" ")}`;
         if (!hay.toLowerCase().includes(gq)) continue;
         const m = listMeaning({ lang: d.lang, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id });
-        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: e.usphone ? `/${e.usphone}/` : "", meaning: m.text, note: m.note, label: m.label, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
+        // the pronunciation line as the practice card prints it: usphone is pinyin in a zh list,
+        // and an Indonesian list has none, so "/xiàn zài/" and an empty line were both wrong
+        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: dictItem(d, e).sub, meaning: m.text, note: m.note, label: m.label, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
       }
     }
     globalResults.sort((a, b) => a.rank - b.rank || a.text.length - b.text.length);
