@@ -81,7 +81,8 @@ jobs:
       - name: Snapshot the library size when nothing was promoted
         if: github.event_name != 'push' && steps.promote.outputs.changed != 'true'
         run: |
-          python3 scripts/snapshot-history.py
+          # best effort: a snapshot that cannot be taken must not keep the gate from running
+          python3 scripts/snapshot-history.py || { echo "::warning::snapshot-history failed, skipped"; exit 0; }
           git diff --quiet -- public/data/history.json && exit 0
           git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
