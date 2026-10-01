@@ -1149,7 +1149,7 @@ export default function Home() {
         if (autoAdvance.current !== token) return;
         finishing.current = false;
         markStale();
-        setTyped(""); setLoopIx(n => n + 1);
+        setTyped(""); setLoopIx(n => n + 1); setWrongCountWord(0);
         // a pause pressed meanwhile stays a pause: the refocus would run onFocus and restart
         setTimeout(() => { if (!pausedByButton.current && !leftByKey.current) input.current?.focus(); }, 20);
       }, 320);
