@@ -1266,9 +1266,11 @@ export default function Home() {
     raw = foldTypography(raw);
     // Never let the buffer grow past the target: extra keystrokes are simply
     // ignored, the way every other typing trainer behaves.
-    const clean = (practiceLang === "zh"
-      ? raw.replace(/[^㐀-鿿]/g, "")
-      : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "")).slice(0, targetWord.length);
+    const kept = practiceLang === "zh" ? raw.replace(/[^㐀-鿿]/g, "") : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "");
+    // an IME commits a whole candidate at once: 实现了 picked for 实现 is a different word, not
+    // extra keystrokes, and cutting it to the target's length graded it correct
+    const overlong = practiceLang === "zh" && kept.length > targetWord.length;
+    const clean = kept.slice(0, targetWord.length);
     if (typed.length === 0 && clean.length > 0 && autoSpokenWord.current !== targetKey && !holdSpeech) {
       autoSpokenWord.current = targetKey;
       speak(targetWord, targetVoice);
@@ -1280,11 +1282,11 @@ export default function Home() {
     const norm = (x: string) => practiceLang === "zh" ? x : x.toLowerCase();
     const expected = norm(targetWord);
     const current = norm(clean);
-    if (expected.startsWith(current)) {
+    if (!overlong && expected.startsWith(current)) {
       if (clean.length > typed.length) keyClick();
       setTyped(clean);
       if (current.length === expected.length && current.length > 0) finishWord();
-    } else if (inputMode === "soft") {
+    } else if (inputMode === "soft" && !overlong) {
       // Soft mode: keep what was typed, mark the bad letters red, let BACKSPACE
       // undo them. The word is one mistake for the stats and the 错词本 however many
       // keys go wrong, but every wrong key counts towards the skip button, and a
@@ -1310,6 +1312,8 @@ export default function Home() {
       // don't force retyping everything from scratch.
       let k = 0;
       while (k < expected.length && k < current.length && expected[k] === current[k]) k++;
+      // an over-long commit matched the whole word: keep it one character short, so it is not left finished but unpassed
+      if (overlong) k = Math.min(k, expected.length - 1);
       const fullReset = firstError && targetWord.length <= 8;
       // the timer belongs to this word: a skip or a jump in the meantime
       // invalidates it, or the old prefix would be written over the new word
