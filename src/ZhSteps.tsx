@@ -37,6 +37,13 @@ const HINTS: Record<ZhStep, [string, string, string]> = {
 // per word and remounts on each pass, and a ref inside it forgot the click that focused the
 // 认读 pill, so only the first SPACE after a pill click advanced
 const pointerFocus = { current: false };
+// tracked from the module's load, not from a ZhSteps effect: at the 输入法 rung (and on a word
+// with no pinyin) no ZhSteps is mounted, so the click on the 认读 pill went unseen and the pill
+// kept SPACE and ENTER until the next click elsewhere
+if (typeof window !== "undefined") {
+  window.addEventListener("pointerdown", () => { pointerFocus.current = true; }, true);
+  window.addEventListener("keydown", (e: KeyboardEvent) => { if (e.key === "Tab") pointerFocus.current = false; }, true);
+}
 
 export function zhStepHint(step: ZhStep, ui: UiLang) {
   const h = HINTS[step];
@@ -109,16 +116,6 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const target = norm(plain);
 
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
-  // how the focused control got its focus: tracked for the component's whole life, since the
-  // click that switches to 认读 lands before that rung's effect exists — subscribed there
-  // alone, a pill clicked from 打拼音 kept SPACE and ENTER dead until the next click elsewhere
-  useEffect(() => {
-    const down = () => { pointerFocus.current = true; };
-    const key = (e: KeyboardEvent) => { if (e.key === "Tab") pointerFocus.current = false; };
-    window.addEventListener("pointerdown", down, true);
-    window.addEventListener("keydown", key, true);
-    return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", key, true); };
-  }, []);
   // not while a dialog is open: the box would pull the focus out from under it
   useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
 
