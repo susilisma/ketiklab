@@ -44,7 +44,12 @@ POS_TOKEN = re.compile(r"\b" + POS)
 POS_PHONETIC = re.compile(r"^(?:" + POS + r"\s*\[[^\]一-鿿]*\]\s*)+")
 NOTE = re.compile(r"【")
 INLINE = re.compile(r"\[[^\]]*\]")
-ETYM = re.compile(r"(来自|缩写自|形变|得名于|拉丁语|拉丁文|希腊语|古英语|法语|同\s)")
+ETYM = re.compile(r"(来自|缩写自|形变|得名于|拉丁语|拉丁文|希腊语|古英语|古德语|荷兰语|法语|同\s)")
+# what the etymology cut can leave behind: a lone 古 / 自 / 语 ("古英语" split mid-word by the
+# PDF's line break) is not a meaning
+ETYM_STUB = re.compile(r"^(?:" + r"(?:n|v|vt|vi|adj|adv)\." + r"\s*)?[古自语]$")
+# the PDF's own phonetic, when its bracket was never closed ("[bɜrθ n. 出生分娩")
+OPEN_PHONETIC = re.compile(r"^\[[^\]\s一-鿿]*\s*")
 LATIN3 = re.compile(r"[A-Za-zÀ-ÖØ-öø-ÿ]{3,}")
 HAN = re.compile(r"[一-鿿]")
 
@@ -89,13 +94,13 @@ def glosses(body):
     text = POS_PHONETIC.sub("", text)
     out = []
     for g in re.split(r"[;；]", text):
-        g = re.sub(r"^[英美]\s*", "", INLINE.sub("", g).strip())
+        g = OPEN_PHONETIC.sub("", re.sub(r"^[英美]\s*", "", INLINE.sub("", g).strip()))
         g = cut_at_english(ETYM.split(g)[0]).strip(" ,，、=→")
         # the cut can leave the bracket that opened the English note ("v. (", "热带 (")
         g = re.sub(r"\s*[(（]$", "", g)
         # what is left must still be Chinese: a two-letter English word ("in", "et") or the
         # PDF's root mnemonic ("ex出+ag强+", Latin letters glued to +) is not a meaning
-        if g and HAN.search(g) and not re.search(r"[A-Za-z]\S*\+", g):
+        if g and HAN.search(g) and not ETYM_STUB.match(g) and not re.search(r"[A-Za-z]\S*\+", g):
             out.append(g)
     return out
 
@@ -125,6 +130,20 @@ def parse(pdf_path):
 
     # page 2 carries a revision timetable whose rows also read as "<number> List n"
     entries = [e for e in entries if e["word"] != "List"]
+
+    # a headword cut at the PDF's line break leaves its last letters in front of the part
+    # of speech, either on the next line ("desertificatio" / "n  n. 沙漠化") or as a second
+    # "word" ("desertificatio n"): put them back on the word
+    for e in entries:
+        parts = e["word"].split(" ")
+        if len(parts) == 2 and len(parts[0]) >= 6 and re.fullmatch(r"[a-z]{1,2}", parts[1]):
+            e["word"] = "".join(parts)
+            continue
+        text = " ".join(seg.strip() for seg in e["body"] if seg.strip())
+        spill = re.match(r"([a-z]{1,3})\s+(?=" + POS + r")", text)
+        if spill and " " not in e["word"]:
+            e["word"] += spill.group(1)
+            e["body"] = [text[spill.end():]]
 
     # the extractor breaks hyphenated headwords across lines: "hunter-" / "gatherer"
     for e in entries:
