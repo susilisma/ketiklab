@@ -91,6 +91,9 @@ const UMLAUT_U = "u" + String.fromCharCode(0x308);
 // lüe/nüe are the one ü case every IME also takes as lue/nue (no other syllable
 // spells that way), so both spellings meet at "ue" — for the target and the typing alike
 const norm = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "").replace(/([ln])ve/g, "$1ue");
+// the fold stays inside a syllable: run over the joined word it turned 女儿 "nv"+"er" into
+// "nuer", so "nu er" (努儿) passed for nǚ ér
+const normWord = (plain: string) => plain.split(" ").map(norm).join("");
 
 type Props = {
   step: ZhStep;
@@ -113,7 +116,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const box = useRef<HTMLInputElement>(null);
   // how the focused control got its focus (a ref: the effect below re-runs on every render)
   const byPointer = pointerFocus;
-  const target = norm(plain);
+  const target = normWord(plain);
 
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
   // not while a dialog is open: the box would pull the focus out from under it
@@ -186,7 +189,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   return <div className="zh-step">
     <div className="zh-pinbox">
       {syllables.map((s, i) => {
-        const before = norm(syllables.slice(0, i).join(""));
+        const before = normWord(syllables.slice(0, i).join(" "));
         const done = typed.length >= before.length + norm(s).length;
         const current = !done && typed.length >= before.length;
         return <span key={i} className={done ? "syl done" : current ? "syl now" : "syl"}>
@@ -202,7 +205,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
       onChange={e => {
         if (target.length > 0 && typed.length >= target.length) return;
-        const v = norm(e.target.value);
+        // the typing gets the "ve" → "ue" fold only where the target itself has "ue"
+        const v = e.target.value.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "")
+          .replace(/([ln])ve/g, (m, c: string, at: number) => target.startsWith("ue", at + 1) ? c + "ue" : m);
         // norm reads a finished "lve"/"nve" as "lue"/"nue", but the learner gets there
         // one key at a time: "celv" is on its way to "celve" for 策略, so a trailing
         // l/n + v is accepted when the target goes on with "ue" at that point
