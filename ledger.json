@@ -751,10 +751,10 @@
    "fingerprint": "lib-link-fetch-failure-silent",
    "title": "?lib= 指向的词典文件取不到时静默落到主题词，且失败 id 已写入 ketiklab-source",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；受 12 项上限今日（10-01 第二次运行）仍未合入，仍在 09-25 分支，下次先合（9c6efc6 与 d6bb785 都碰保存词典的回落路径，合入时一起重测）",
-   "date": "2026-10-01",
-   "commit": "9c6efc6"
+   "status": "fixed",
+   "reason": "10-02 合入 main（c364368），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02",
+   "commit": "c364368"
   },
   {
    "fingerprint": "topic-page-cta-lands-on-saved-dictionary",
@@ -985,10 +985,10 @@
    "fingerprint": "import-silently-skips-srs-restore",
    "title": "导入备份时 restoreRecords 失败被吞掉，仍刷新页面，复习阶梯为空无提示（App.tsx importProgress）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "5dd4fa0",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；受 12 项上限今日（10-01 第二次运行）仍未合入，仍在 09-25 分支，下次先合（9c6efc6 与 d6bb785 都碰保存词典的回落路径，合入时一起重测）",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "dda9c26",
+   "reason": "10-02 合入 main（dda9c26），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "same-day-counts-max-not-sum",
@@ -2254,10 +2254,10 @@
    "fingerprint": "backup-note-drops-contents-id-en",
    "title": "统计页备份说明的印尼/英文臂只说「跨设备导出/导入」，不像中文臂列出错词、复习、收藏、设置",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "1b4e43d",
-   "reason": "昨日已修好并验证，今日重跑测试通过（reverify t08/t10/t15/t16/t17），受 12 项上限仍在分支 claude/daily-2026-09-25，明日合入；受 12 项上限今日（10-01 第二次运行）仍未合入，仍在 09-25 分支，下次先合（9c6efc6 与 d6bb785 都碰保存词典的回落路径，合入时一起重测）",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "db08b66",
+   "reason": "10-02 合入 main（db08b66），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "zh-rung-switch-in-finish-window-double-counts",
@@ -2290,10 +2290,10 @@
    "fingerprint": "saved-dictionary-manifest-failure-silent",
    "title": "老用户 ketiklab-source=en-core 而 manifest 500 时静默落到主题词、学习页无横幅无重试",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "9c6efc6",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入；受 12 项上限今日（10-01 第二次运行）仍未合入，仍在 09-25 分支，下次先合（9c6efc6 与 d6bb785 都碰保存词典的回落路径，合入时一起重测）",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "c364368",
+   "reason": "10-02 合入 main（c364368），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "pull-in-other-tab-overwritten-by-stale-tab",
@@ -2677,19 +2677,19 @@
    "fingerprint": "soft-mode-correct-key-after-wrong-counts-as-miss",
    "title": "退格改错模式：错字后每个后续键（哪怕位置正确）都蜂鸣并计入跳过阈值（App.tsx handleType 条件是「缓冲区变长」）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "1c53f00",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：x+ch 旧出跳过钮新不出；恰 3 错两树都出；粘贴切片按位比对；严格模式不变；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "138a929",
+   "reason": "10-02 合入 main（138a929），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "finish-window-refocus-undoes-escape-shift-tab",
    "title": "打完词 340ms 内按 Escape / Shift+TAB 被前进/循环定时器重新聚焦输入框撤销",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "7829cef",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：320/350 ms 窗口内 Escape/Shift+TAB focused true → false；正常通过/暂停/打拼音框不变；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "affd18c",
+   "reason": "10-02 合入 main（affd18c），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "ime-rung-latin-typing-silent",
@@ -3235,28 +3235,28 @@
    "fingerprint": "fav-storage-event-word-under-fingers",
    "title": "第二标签页改收藏时正在打的词被换掉：错误记到没显示过的词，清空收藏后头部「我的收藏 · 614」套着主题词（App.tsx:545 storage ketiklab-fav 分支不重置 typed/index/source）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "323d180 + df23f32",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：另一标签页删/加/清空收藏 → 已打字母清空、清空回主题词；首版引入 P1 回归（第二标签页挂载写 [] 把所有标签页踢回主题词），df23f32 把 favorites 改为惰性初始化后 HOLDS、无 ketiklab-fav 事件；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "d8b2327 + 62e3015",
+   "reason": "10-02 合入 main（d8b2327 + 62e3015），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "wrongflash-timer-refocus-undoes-escape",
    "title": "350 ms 判错回退定时器也把焦点拉回输入框，撤销 Escape（App.tsx:1257）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "7829cef",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：与 finish-window-refocus-undoes-escape-shift-tab 同一提交（leftByKey ref）；VX2 HOLDS；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "affd18c",
+   "reason": "10-02 合入 main（affd18c），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "typographic-dash-wrong-key-practice",
    "title": "连字符词头打成 en/em dash 算错键并记错，阅读器却折叠（App.tsx:1208 只折叠弯引号）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "24e2e17",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：cost–benefit 旧 oooo…+错词本，新全绿、错词本空；非连字符处的 – 仍算错键；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "6409507",
+   "reason": "10-02 合入 main（6409507），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "retry-missed-banner-keeps-old-due-total",
@@ -3307,10 +3307,10 @@
    "fingerprint": "saved-source-gone-silent-fallback",
    "title": "保存的词典 id 已不在 manifest 时静默回落主题词、坏 id 留在 ketiklab-source；ketiklab-langs 为 JSON 非对象时静默改写 zh/zh（App.tsx:489-492, 149-151）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "d6bb785",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：en-gone → 横幅 + trio；?lib=unknown 仍点名；manifest 取不到时保存源不丢；ketiklab-langs null/[]/5/\"en\" → 对话框、原值不动；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "47be6cd",
+   "reason": "10-02 合入 main（47be6cd），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "trio-page-lists-id-words-cta-learns-zh",
@@ -3406,37 +3406,37 @@
    "fingerprint": "review-due-total-counts-retired-keys",
    "title": "复习横幅把已退休的键算进总数：5 条到期含 1 条已删词 → 整场「复习模式 · 4 / 5」，结束后无到期（App.tsx startReview 先存 srs.due 再退休）",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "40f809e",
-   "reason": "已修好并验证（V 与 VX2 独立 before/after：4 / 5 → 4；60 / 65 仍印；全退休回落错词本 1 / 2 → 1）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "80f94bf",
+   "reason": "10-02 合入 main（80f94bf），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "finish-window-advance-speaks-in-other-view",
    "title": "打完最后一个字母 320 ms 内点侧栏/头部列表钮，下一词在词库页被朗读（advanceOrFinishChapter 的 speak 定时器不查视图）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "68b7526",
-   "reason": "已修好并验证（V 与 VX2：库页朗读 旧有新无；正常前进仍朗读、卡片仍前进）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "40a1d59",
+   "reason": "10-02 合入 main（40a1d59），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "learn-select-restarts-open-dictionary-chapter",
    "title": "改学习语言把打开的词典章节重置到 01/20（changeLanguage / saveLangSetup / storage 分支对一切 source 都 setIndex(0)），标题与章节选择器却不变",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "36e29b8",
-   "reason": "已修好并验证（V 与 VX2：en-core 05/20 each 保持、trio/收藏仍回 01、对话框与跨标签路径同样、zh 词典 + en 无异常）；sharesChapterKey = trio || fav；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "608cf19",
+   "reason": "10-02 合入 main（608cf19），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "storage-langs-remount-no-veil-no-focus",
    "title": "另一标签页改学习语言后本页既无焦点也无遮罩（input 按 practiceLang 重挂载、无 blur、typingFocus 留 true）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "d92b4a8 + 76fb79f + 46296bb + 956e34f",
-   "reason": "首版 d92b4a8 对复习/收藏/词典列表把遮罩画在仍有焦点的框上（VX2 P2 回归）；76fb79f 在 handler 里查 activeElement 太早；46296bb 把 effect 放在 loading 早返回之后 → React #310 白屏（VX2 P0，仅分支，未上线）；956e34f 把 effect 移到早返回之上并按 [lang] 触发，3 组种子烟测挂载正常；VX2 对 956e34f 最终复验 HOLDS（跨标签主题词：遮罩出现、下一键聚焦；复习/收藏/词典：保持焦点无遮罩；单标签 select、对话框保存、视图切换、中文档位切换与 BEFORE 逐步相同）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "dfb14b0 + a2578ed + d77acf7 + 5ec6954",
+   "reason": "10-02 合入 main（dfb14b0 + a2578ed + d77acf7 + 5ec6954），独立校验者 VX1/VX2 重新 before/after 复验 HOLDS，Build check #49/#50 成功，Build and deploy #710",
+   "date": "2026-10-02"
   },
   {
    "fingerprint": "loop-skip-count-carried-into-next-rep",
@@ -3563,6 +3563,132 @@
    "commit": "",
    "reason": "G 10-01 run2 扫描（清单 scratchpad/g/proposals.json 已失效，报告有计数与子模式）；811 行 SURE 已钉入 main e1a1abd；系统性根因（Wordnet Bahasa 马来西亚词元、屈折词头落到无关 synset、小写专名）仍属生成器选义逻辑，见 needs-owner 条目",
    "date": "2026-10-01"
+  },
+  {
+   "fingerprint": "en-toefl-pdf-extraction-residue",
+   "title": "en-toefl.json 11 行 PDF 残留：desertificatio 缺 n、birth 带音标、trigger「荷兰语=to」、hull「古德语」、7 行孤字 古/自/语",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "24fd185",
+   "reason": "数据直接修正 + 构建脚本加固；属释义修正，VX3 复验 HOLDS（只改 11 行、无误粘）后合入 main 24fd185，Build and deploy #711",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "read-rung-space-dead-after-pill-click-from-ime",
+   "title": "输入法步骤点「认读」小药丸后 SPACE/ENTER 不前进（ZhSteps 未挂载，点击未被记录）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "e12769b",
+   "reason": "已修好（监听移到模块加载时），作者 before/after 复现通过；VX3 复验；受 12 项上限留在分支 claude/daily-2026-10-02；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "pinyin-nv-er-accepts-nu",
+   "title": "打拼音：女儿 打 nuer（努儿）判对——lve→lue 折叠跨音节生效",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "ccb9c85",
+   "reason": "已修好（按音节折叠，输入只在目标有 ue 处折叠；4995 条读音自测全过）；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "ime-longer-commit-graded-correct",
+   "title": "输入法步骤：选了更长候选（实现了→实现）被截断判对",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "fc187c7",
+   "reason": "已修好（中文提交超长走错键路径，回退不超过词长-1）；作者 before/after 通过；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "dictation-prevnext-shows-next-answer",
+   "title": "默写开启时卡片下方‹上一个·下一个›条完整显示下一个答案",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "948b89b",
+   "reason": "已修好（默写遮挡时不渲染该条，同选汉字）；作者 before/after 通过；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "words-learned-counts-repeats",
+   "title": "「已学词语」实为答对次数，重练同章翻倍（违反计数为下限）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "b567867",
+   "reason": "已修好（标签改为 答对次数 / Jawaban benar / Correct answers，计数不变）；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "sw-offline-generated-page-redirect-drops-target",
+   "title": "离线时未缓存的生成页（/xx/readings/、/xx/lib/<id>/）被送到 /?ui=xx，丢了目标",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "e5fd659",
+   "reason": "已修好（重定向带 view=articles / lib=<id>，与页面按钮一致）；真服务器断网测试通过；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "topic-rows-idsyllables-missed-by-backfill",
+   "title": "words.json 9 个多音节行缺 idSyllables（red tape、satiate…）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "9e3fb91",
+   "reason": "已修好（用构建脚本 syllables() 补齐）；在分支，下次合入。另：前 2200 行手写词 2143 行无 idSyllables，是否回填属主人定；VX3 独立 before/after 复验 HOLDS",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "held-pronunciation-spoken-across-language-switch",
+   "title": "混合语言列表：下一个词是否自动朗读沿用当前词的 holdSpeech（默写隐藏发音时仍朗读 curious）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F1 复现；修法：按下一个词自身的语言与步骤计算；下次做",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "clock-runs-while-veiled",
+   "title": "Escape/失焦后遮罩显示「按任意键继续」但计时继续，WPM 下降、用时虚高",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F1 复现；修法：失焦（非切词）与 visibilitychange 时停表；需小心切词时的失焦，下次做",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "pinyin-tone-sandhi-inconsistent",
+   "title": "一/不 变调标注在 words.json 与 zh-pinyin.json 中不一致（一致 yí zhì vs 不一致 bù yī zhì；一些 yī xiē vs 一定 yí dìng）；电子烟复合词未用 电子 钉住读音",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "只影响显示不影响判分；统一用本调（现代汉语词典）还是标变调，属主人定；之后在生成器 toned() 里统一并让钉住对复合词生效",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "en-toefl-idtrans-from-pool-wrong",
+   "title": "en-toefl/en-core 的 idtrans 来自 Wordnet 池仍有错义：luxury → keluasan/kemantapan、entity → kewujudan（马来西亚）；zh-upper 第一百 idtrans ratusan（=数百）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "本次顺带发现，未经独立校验；并入 en-dicts-rare-sense-likely-rows 的下一轮释义扫描",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "gloss-candidates-owner-2026-10-02",
+   "title": "释义待主人定：stranger→orang asing 与 foreigner 冲突；power bank 是否换 bank daya；mixed vegetable salad / post-Ramadan gathering / national principles 词头；kindly kiranya；situate；central tengah→pusat、perpetuate melanggengkan、attempt 试图（校验者 NOT SURE）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "G/VG 10-02；校验者对 handkerchief（KBBI 为 saputangan 一词）、hilarious（令人捧腹是成语）判 KEEP",
+   "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "toefl-rename-orphans-old-key",
+   "title": "en-toefl desertificatio → desertification 改名后旧键的 SRS/收藏行成孤行",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "迁移属主人定（VX3 备注）",
+   "date": "2026-10-02"
   }
  ]
 }
