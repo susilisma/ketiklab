@@ -100,7 +100,11 @@ self.addEventListener("fetch", (e) => {
     // root shell in that language rather than serving it under /zh/, where it cannot mount
     // a generated page never opened is sent the same way, in its language, instead of
     // resolving to nothing and leaving the browser's own error page
-    const toShell = () => (landing || generated) ? Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}`, self.location).href, 302) : undefined;
+    // …and to what it was about: /xx/readings/ opens Reading and /xx/lib/<id>/ that list, the
+    // entry URLs the pages' own buttons use, instead of the last list practised with no word why
+    const target = /^\/(?:zh|id|en)\/(?:(readings)|lib\/([^/]+))\/?$/.exec(url.pathname);
+    const extra = !target ? "" : target[1] ? "&view=articles" : target[2] !== "trio" ? `&lib=${encodeURIComponent(target[2])}` : "";
+    const toShell = () => (landing || generated) ? Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}${extra}`, self.location).href, 302) : undefined;
     e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) e.waitUntil(store("./index.html", res));
       else if (pageKey) e.waitUntil(store(pageKey, res));
