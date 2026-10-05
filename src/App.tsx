@@ -2099,7 +2099,7 @@ export default function Home() {
       {view === "plan" && <Panel title={t.plan} eyebrow={EYEBROW.plan[uiLang]}>
         <div className="plan-layout">
           <div className="goal-card"><span>{t.finish}</span><strong>{goalPct}%</strong><div className="goal-ring" style={{"--p":`${goalPct*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount, DAILY_GOAL)}</b><small>/{DAILY_GOAL} {TX("词", "kata", "words", uiLang)}</small></div></div>
-          <div className="week">{last7.map((d, i) => <div className={i === 6 ? "today" : d.count >= DAILY_GOAL ? "done" : ""} key={i}><span>{d.label}</span><b>{i === 6 ? d.count : d.count >= DAILY_GOAL ? "✓" : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", enOne(d.count, "word", "words"), uiLang)}` : TX("未练", "Kosong", "None", uiLang)}</small></div>)}</div>
+          <div className="week">{last7.map((d, i) => <div className={i === 6 ? "today" : d.count >= DAILY_GOAL ? "done" : ""} key={i}><span>{d.label}</span><b>{i === 6 ? d.count : d.count >= DAILY_GOAL ? "✓" : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", enOne(d.count, "word", "words"), uiLang)}` : TX("未练", "Absen", "None", uiLang)}</small></div>)}</div>
         </div>
       </Panel>}
 
