@@ -379,6 +379,7 @@ export default function Home() {
   const skipRef = useRef<() => void>(() => {});
   // the window key handler is bound once per view, so it reads these through refs
   const runningRef = useRef(false);
+  const veiledRef = useRef(false);
   const targetRef = useRef("");
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
@@ -690,7 +691,9 @@ export default function Home() {
   }, []);
   useEffect(() => { try { localStorage.setItem("ketiklab-state", JSON.stringify({ correct, attempts, mistakes })); } catch { /* ignore */ } }, [correct, attempts, mistakes]);
   // the clock belongs to the practice card: it pauses while another view is open
-  useEffect(() => { if (!running || view !== "learn") return; const timer = setInterval(() => setSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [running, view]);
+  // and while the veil covers the card (Escape, a blur, a view switch): the learner is not typing,
+  // and counting those seconds made the time and the WPM of the completion card wrong
+  useEffect(() => { if (!running || view !== "learn") return; const timer = setInterval(() => setSeconds(s => veiledRef.current ? s : s + 1), 1000); return () => clearInterval(timer); }, [running, view]);
   useEffect(() => { secondsRef.current = seconds; }, [seconds]);
   useEffect(() => { typedRef.current = typed; }, [typed]);
   // the reading state outlives the reading panel, so the clock must stop when the learner leaves it
@@ -1050,6 +1053,7 @@ export default function Home() {
   const plainPy = plainPyOf(item);
   // a word with no pinyin at all cannot be passed at 打拼音, so that rung types it through the IME
   const zhLadder = practiceLang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPy);
+  veiledRef.current = !typingFocus && !zhLadder;
   // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
   // screen. The peek is TAB held in the App input, or a tap — 打拼音 owns TAB for its pinyin.
   const meaningHidden = meaningVisibility === "hidden" && dictation === "off" && !(zhLadder && zhStep === "read") && !reveal && !meaningPeek;
