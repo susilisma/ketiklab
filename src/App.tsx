@@ -377,6 +377,8 @@ export default function Home() {
   const input = useRef<HTMLInputElement>(null);
   // the window key handler is bound once per view; it reaches the current skipWord through this
   const skipRef = useRef<() => void>(() => {});
+  // the window key handler is bound once per view, so it reads these through refs
+  const runningRef = useRef(false);
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
   const speechRequest = useRef(0);
@@ -489,7 +491,11 @@ export default function Home() {
       // without the App box handle theirs
       if (e.key === "Enter") {
         if (!input.current || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
-        e.preventDefault(); if (!e.repeat) skipRef.current(); return;
+        e.preventDefault();
+        // on a fresh card the veil says "press any key to start": ENTER is that key, not a
+        // skip that files a word the learner never tried as a miss and an SRS lapse
+        if (!runningRef.current && !typedRef.current && secondsRef.current === 0) { input.current.focus(); return; }
+        if (!e.repeat) skipRef.current(); return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
       isComposing.current = false;
@@ -1354,6 +1360,7 @@ export default function Home() {
     reader.readAsText(file);
   }
   skipRef.current = skipWord;
+  runningRef.current = running;
   function skipWord() {
     if (finishing.current) return;
     if (!lapseRecorded.current) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
