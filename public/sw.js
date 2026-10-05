@@ -103,7 +103,9 @@ self.addEventListener("fetch", (e) => {
     // …and to what it was about: /xx/readings/ opens Reading and /xx/lib/<id>/ that list, the
     // entry URLs the pages' own buttons use, instead of the last list practised with no word why
     const target = /^\/(?:zh|id|en)\/(?:(readings)|lib\/([^/]+))\/?$/.exec(url.pathname);
-    const extra = !target ? "" : target[1] ? "&view=articles" : target[2] !== "trio" ? `&lib=${encodeURIComponent(target[2])}` : "";
+    // the topic pages list one learning language each (/zh/ Indonesian words, /id/ and /en/
+    // Chinese), so their redirect names it, as the pages' own button does
+    const extra = !target ? "" : target[1] ? "&view=articles" : target[2] !== "trio" ? `&lib=${encodeURIComponent(target[2])}` : `&learn=${url.pathname.startsWith("/zh/") ? "id" : "zh"}`;
     // a list is named only when its data is in the cache: ?lib= wins over the saved list, so an
     // uncached one left an offline learner on a load-error banner instead of the list they had
     const toShell = async () => {
