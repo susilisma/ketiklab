@@ -859,15 +859,18 @@ export default function Home() {
         // the stored values, not the state: this runs beside a session that may be writing
         const stored = mistakesOf(read("ketiklab-state", {}));
         const favs = cleanFavorites(read<unknown[]>("ketiklab-fav", []));
-        // a refused database read must not pass for "nothing to move"
-        const records = await getAllRecords();
+        // a refused database read must not pass for "nothing to move": the SRS rows then wait
+        // (the flag stays unset), but the favourites and the 错词本 live in localStorage and
+        // still move — with IndexedDB blocked they used to keep their old keys on every load,
+        // so the card showed ☆ for a starred word and ★ added it a second time
+        const records = await getAllRecords().catch((): null => null);
         if (!alive) return;
-        const held = new Set<string>([...records.map(r => r.en), ...stored, ...favs.filter(f => !f.dict).map(f => `${f.lang}:${f.key}`)]);
+        const held = new Set<string>([...(records || []).map(r => r.en), ...stored, ...favs.filter(f => !f.dict).map(f => `${f.lang}:${f.key}`)]);
         const { moves, keyed, unsafe } = await planKeyMoves(held);
         // nothing of the old shape here: leave the flag unset so a later import still migrates
         if (!moves.size) return;
         if (!alive || !mounted.current) return;
-        if (keyed.size) await renameRecords(Array.from(keyed));
+        if (records && keyed.size) await renameRecords(Array.from(keyed));
         if (!alive || !mounted.current) return;
         // read again at the moment of the write: the session may have added a mistake or a
         // star while the dictionaries were being fetched, and a snapshot would drop it
@@ -878,7 +881,7 @@ export default function Home() {
         // outlive the lists it describes, so both land before it and a refusal throws
         localStorage.setItem("ketiklab-state", JSON.stringify({ ...state, mistakes: nextMistakes }));
         localStorage.setItem("ketiklab-fav", JSON.stringify(nextFavs));
-        if (!unsafe.size) localStorage.setItem("ketiklab-keys", "v2");
+        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", "v2");
         setMistakes(nextMistakes);
         setFavorites(nextFavs);
         refreshSrs();
