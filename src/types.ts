@@ -10,7 +10,7 @@ export type Word = {
   phonetic?: string;
   idSyllables?: string;
   pinyin?: string;
-  examples: Record<Lang, string>;
+  examples: Partial<Record<Lang, string>>;
   category: WordCategory;
   level: "A1" | "A2" | "B1" | "B2";
   source: string;
