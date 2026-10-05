@@ -303,8 +303,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "今日渲染检查复测：语言 select 90×38、默写「关」36×40 仍在（唯一未过的两项）；紫字紫底未复测；F8/F6 10-01 复核：语言 select 90×38、默写 关 36×40 仍在；分类条当前项滚出视口（library 375 三语）仍在，修法 scrollIntoView；新数据点 768 触屏 .reading-filters 按钮 36 px 高；紫字紫底 3.80:1 仍在",
-   "date": "2026-10-01"
+   "reason": "今日渲染检查复测：语言 select 90×38、默写「关」36×40 仍在（唯一未过的两项）；紫字紫底未复测；F8/F6 10-01 复核：语言 select 90×38、默写 关 36×40 仍在；分类条当前项滚出视口（library 375 三语）仍在，修法 scrollIntoView；新数据点 768 触屏 .reading-filters 按钮 36 px 高；紫字紫底 3.80:1 仍在；10-06 L 复测：默写「关」已为 41×40（消失）；语言 select 90×38、分类条滚出视口、紫字紫底 3.80 仍在",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "timer-runs-in-other-views",
@@ -3640,19 +3640,19 @@
    "fingerprint": "held-pronunciation-spoken-across-language-switch",
    "title": "混合语言列表：下一个词是否自动朗读沿用当前词的 holdSpeech（默写隐藏发音时仍朗读 curious）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "394c718",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-02"
+   "status": "fixed",
+   "commit": "394c718 → 99e3aa5",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（99e3aa5），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "clock-runs-while-veiled",
    "title": "Escape/失焦后遮罩显示「按任意键继续」但计时继续，WPM 下降、用时虚高",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "1e2a631",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-02"
+   "status": "fixed",
+   "commit": "1e2a631 → 7a9ac0e",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（7a9ac0e），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "pinyin-tone-sandhi-inconsistent",
@@ -3694,46 +3694,46 @@
    "fingerprint": "veil-enter-skips-fresh-word",
    "title": "首访「按任意键开始」遮罩上按 ENTER 跳过第 1 词并记入错词本 + SRS 遗忘（App.tsx 窗口按键处理）",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "e8d5a3e",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-05"
+   "status": "fixed",
+   "commit": "e8d5a3e → 9bb876d",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（9bb876d），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "veil-space-mid-word-graded-wrong",
    "title": "词中途 Escape 后在「按任意键继续」遮罩上按 SPACE 被判为错字母，严格模式整词清空",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "8aee5e6",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-05"
+   "status": "fixed",
+   "commit": "8aee5e6 → d1134f7",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（d1134f7），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "dialog-learn-cards-in-target-language",
    "title": "首访对话框的学习语言卡片描述用该语言本身书写（印尼语/英语用户看到「练习中文打字与词汇」），且三臂含义不一",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "428e246",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-05"
+   "status": "fixed",
+   "commit": "428e246 → f71cc7c",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（f71cc7c），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "reading-header-classic-collection-160",
    "title": "阅读页列表标题「经典选集 / Koleksi klasik / Classic collection · 160」把 2 篇本站练习短文算作经典",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "b089fba",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-05"
+   "status": "fixed",
+   "commit": "b089fba → 954f36e",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（954f36e），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "word-examples-type-required",
    "title": "types.ts 把 Word.examples 声明为三语必填，而 3867 行是 {}",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "0aa5c0c",
-   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
-   "date": "2026-10-05"
+   "status": "fixed",
+   "commit": "0aa5c0c → 5128bf7",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入；10-06 按新 main 重新 cherry-pick（5128bf7），VN 复验 HOLDS，合入 main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
   },
   {
    "fingerprint": "sw-offline-lib-redirect-uncached",
@@ -3815,6 +3815,213 @@
    "commit": "1409fb2",
    "reason": "非本维护任务所建；未合入、未改动，由主人决定",
    "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "cloud-copy-never-migrated",
+   "title": "云端副本从未迁到新进度键：合并到本机 横幅永久循环，30 条上限截掉只在云端的词（cloud.ts mergeProgress 按字符串比较）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "162268c",
+   "reason": "App 注册 normaliser（planKeyMoves 同一决定）给 cloud.ts，云端与本机副本在比较/合并前归一，推送前等待注册 ≤8 s；VX A–H + early 在最终构建全 PASS；main bc9b439，Build and deploy #733",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "pinyin-box-frozen-full-prefix",
+   "title": "打拼音框：一次多字母插入的正确前缀恰为整个答案（shixianq）时锁死，错数停 1 无跳过按钮",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "2706e5e",
+   "reason": "回滚退到答案长度减一；VX2 HOLDS，最终构建复跑 t1 通过；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "rung-change-wipes-wrong",
+   "title": "换档/换语言/离开抹掉已记下的答错；遗忘只在 finishWord 写",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "ae2b645",
+   "reason": "noteSlip 当场写遗忘 + slipOn 记住答错过的词，换档后答对不计正确、不二次记遗忘；VX 1a/1b PASS（1a-bis 是脚本换词假设）；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "en-dicts-defs-truncated-120",
+   "title": "en-core/en-plus/en-upper/en-academic 344 条 def 在第 120 字符截断在词中无省略号（clip() 改后未重建）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "150adbc",
+   "reason": "就地按现行 clip() 规则改为词边界 + …；VX 逐字段核对只有 def 变化；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "dict-idtrans-malay-8-libs",
+   "title": "8 个词库 68 行 idtrans 含马来西亚专用词（7cda94d 只清了 en-core/en-toefl），6 行为唯一释义",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "9e950f4",
+   "reason": "D 标出 + VD 给替换 + D 对替换逐行表态（67 同意，2 行只保留双方都接受的项）；en-* 钉入 en-gloss-fixes.json，zh-* 就地改（无钉值机制，见 needs-owner zh-gloss-fixes）；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "en-toefl-trans-pdf-artefacts",
+   "title": "en-toefl 10 条中文释义带 PDF 残留（百科句、拟声词注释、美 标签、悬空冒号、两义合一）；bronze idtrans 含 gangsa",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "9e950f4",
+   "reason": "VD + D 一致，已改；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "trio-seo-page-cta-wrong-language",
+   "title": "/zh/lib/trio/ 列印尼语词但按钮 /?ui=zh 首访打开中文卡；sw.js 离线重定向同样",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "bc9b439",
+   "reason": "按钮带 &learn=id（zh 页）/ &learn=zh（id、en 页），sw.js toShell 同步；f2check 首访对话框预选 Bahasa Indonesia；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "from-tag-consumed",
+   "title": "?from= 渠道标签被 ENTRY 的 consumed 列表删掉，与 efae020 的意图相反",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "1517fdd",
+   "reason": "去掉 \"from\"；VX HOLDS；main bc9b439",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "migration-skipped-idb-blocked",
+   "title": "IndexedDB 被禁时进度键迁移整体进 catch，收藏/错词本保留旧键，★ 加第二条",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "21f3299",
+   "reason": "getAllRecords().catch(null)，SRS 与 flag 等待、收藏与错词本照常改名；VX2 HOLDS；在 claude/daily-2026-10-06，受 12 项上限下次合入",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "seo-static-muted-contrast",
+   "title": "静态页次要文字 #7b7d8c 3.81:1（10-01 453b2dc 冲突未合入）",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "fc0bd22",
+   "reason": "改 #62657a；VX HOLDS 5.36/5.50/5.73；在 claude/daily-2026-10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "lib-trio-param-banner",
+   "title": "?lib=trio（SEO 路径与 sitemap 用的 id）被报「链接的词库不存在」",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "f85c36b",
+   "reason": "识别 trio 为来源；f2check 无横幅；在 claude/daily-2026-10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "reading-groups-called-classics",
+   "title": "阅读分组 中文经典/印尼语经典/英文经典 含本站练习短文（954f36e 残留）",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "019acf0",
+   "reason": "改 篇目 / Bacaan / readings；在 claude/daily-2026-10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "peek-button-missing-meaning-copy",
+   "title": "缺释义的偷看按钮只写 Belum ada arti Indonesia · 中文，没说点了会显示",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "84b725f",
+   "reason": "VX HOLDS 三语；在 claude/daily-2026-10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "plan-kosong-wording",
+   "title": "计划页未练日 Kosong 措辞生硬",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "ac68367",
+   "reason": "改 Absen；在 claude/daily-2026-10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "stats-total-kata-reads-as-word-count",
+   "title": "统计 累计打词 印尼语臂 Total kata 读起来像词数",
+   "priority": "P3",
+   "status": "fixed-on-branch",
+   "commit": "e6ec0ca",
+   "reason": "改 Total diketik；在 claude/daily-2026-10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "purple-white-dark-contrast",
+   "title": "深色主题 #fff on --purple #8a7dff 3.25:1（保存设置、认识了下一个、nav 徽标、复习横幅按钮、账号主按钮）；浅色 4.41",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F4 10-06；需加深深色紫或给按钮文字深色，调色板由主人定",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "light-purple-small-text-contrast",
+   "title": "浅色 --purple #7165eb 小字 4.12:1（01/20 计数、panel-head、dict-card small、.pill、打对字母）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "L 10-06 建议 --purple:#6054e4（一行，顺带把紫字紫底 3.80 提到 4.65）；调色板由主人定",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "zh-pinyin-missing-levels-trio",
+   "title": "zh-pinyin.json 无 1233 个主题词首义的等级，这些词在认读/打拼音/选汉字三档永不出现；45 孤键、2 个含大写 plain",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "D 10-06；需 append-batch / build-trio-queue 写 toned|plain|level 并一次回填",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "veil-letter-graded-as-miss",
+   "title": "遮罩「按任意键开始」时按不匹配字母被判错（SPACE/ENTER 已特判）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F1 10-06；改为只当手势还是保留首字母算输入，由主人定",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "entry-ui-overwrites-saved-choice",
+   "title": "?ui= 进入时即使已有保存的选择也写 ketiklab-ui，下次打开第一帧界面语言闪一下",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 10-06 polish",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "berth-def-inconsistent",
+   "title": "en-academic berth：def「a bed on a ship or train」与 zh/id 停泊地 两个义项",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "VD 10-06 顺带发现",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "gloss-2026-10-06-unsure",
+   "title": "释义未改：bathtub 浴盆（校验者 KEEP）、amenable（校验者建议 甘愿的，替换词不一致）、毒品 第三项 obat terlarang、处方药 第二项 obat keras、en-toefl share 第二项 pangsa、headphone 外来词",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "G/VG、D/VD 10-06",
+   "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "old-1001-fixes-still-applicable",
+   "title": "10-01 分支 26f4b1d bd30fae 6e6a5a9 95e5e53 fba3c6e 9ce3938 d52c0e8 0507488 d07c25b 都能干净 cherry-pick，问题仍在",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-06 复核；受 12 项上限未合，下次按价值补",
+   "date": "2026-10-06"
   }
  ]
 }
