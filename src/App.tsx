@@ -353,6 +353,7 @@ export default function Home() {
   const skipRef = useRef<() => void>(() => {});
   // the window key handler is bound once per view, so it reads these through refs
   const runningRef = useRef(false);
+  const targetRef = useRef("");
   const readingInput = useRef<HTMLTextAreaElement>(null);
   const autoSpokenWord = useRef<string | null>(null);
   const speechRequest = useRef(0);
@@ -471,11 +472,11 @@ export default function Home() {
       // 打拼音 has its own box in place of the App input: after Escape or a tap on the
       // hanzi it is what the next key must land in, or typing does nothing at all
       (input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox"))?.focus();
-      // the veil says "press any key": a SPACE is the gesture, not the first letter —
-      // left alone it lands in the freshly focused box and is graded as a wrong key.
-      // Half-way through a phrase (the box lost its focus to ▶ or Escape) the SPACE is
-      // the next letter, and swallowing it meant pressing it twice
-      if (e.key === " " && !typedRef.current) e.preventDefault();
+      // the veil says "press any key": a SPACE is the gesture, not a letter — left alone it
+      // lands in the freshly focused box and is graded as a wrong key, at the start or half-way
+      // through a word. Only where the word's next letter is itself a space (a phrase whose box
+      // lost its focus to ▶ or Escape) is the SPACE typed, or it would have to be pressed twice
+      if (e.key === " " && targetRef.current[typedRef.current.length] !== " ") e.preventDefault();
     };
     window.addEventListener("pointerdown", down, true);
     window.addEventListener("keydown", onAnyKey);
@@ -1236,6 +1237,7 @@ export default function Home() {
   }
   skipRef.current = skipWord;
   runningRef.current = running;
+  targetRef.current = targetWord;
   function skipWord() {
     if (finishing.current) return;
     if (!lapseRecorded.current) recordReview(wordId, false).then(refreshSrs).catch(() => {});
