@@ -2011,6 +2011,34 @@
    "idtrans": [
     "laboratorium"
    ]
+  },
+  "share": {
+   "idtrans": [
+    "bagian",
+    "saham",
+    "jatah"
+   ]
+  },
+  "command": {
+   "idtrans": [
+    "perintah",
+    "instruksi",
+    "komando"
+   ]
+  },
+  "ending": {
+   "idtrans": [
+    "akhir",
+    "penutup",
+    "kesudahan"
+   ]
+  },
+  "technique": {
+   "idtrans": [
+    "teknik",
+    "cara",
+    "metode"
+   ]
   }
  },
  "en-plus": {
@@ -5566,6 +5594,50 @@
     "resleting"
    ],
    "def": "a fastener with two rows of teeth; to compress a file"
+  },
+  "wound": {
+   "idtrans": [
+    "luka",
+    "cedera"
+   ]
+  },
+  "marijuana": {
+   "idtrans": [
+    "ganja",
+    "mariyuana"
+   ]
+  },
+  "duration": {
+   "idtrans": [
+    "durasi",
+    "jangka waktu",
+    "lama waktu"
+   ]
+  },
+  "entity": {
+   "idtrans": [
+    "entitas",
+    "wujud"
+   ]
+  },
+  "cannabis": {
+   "idtrans": [
+    "ganja",
+    "mariyuana"
+   ]
+  },
+  "monk": {
+   "idtrans": [
+    "rahib",
+    "biksu",
+    "biarawan"
+   ]
+  },
+  "commodity": {
+   "idtrans": [
+    "komoditas",
+    "barang dagangan"
+   ]
   }
  },
  "en-academic": {
@@ -7332,6 +7404,77 @@
     "kulit jeruk"
    ],
    "def": "enthusiasm; the outer skin of citrus"
+  },
+  "berth": {
+   "idtrans": [
+    "tempat berlabuh",
+    "dermaga"
+   ]
+  },
+  "proficiency": {
+   "idtrans": [
+    "kemahiran",
+    "kecakapan",
+    "keterampilan"
+   ]
+  },
+  "headphone": {
+   "idtrans": [
+    "headphone",
+    "earphone"
+   ]
+  },
+  "tending": {
+   "idtrans": [
+    "perawatan",
+    "kepedulian",
+    "bantuan"
+   ]
+  },
+  "assay": {
+   "idtrans": [
+    "penilaian",
+    "pemeriksaan",
+    "pengujian"
+   ]
+  },
+  "culmination": {
+   "idtrans": [
+    "puncak",
+    "klimaks"
+   ]
+  },
+  "troupe": {
+   "idtrans": [
+    "rombongan sandiwara",
+    "rombongan",
+    "grup teater"
+   ]
+  },
+  "lorry": {
+   "idtrans": [
+    "truk"
+   ]
+  },
+  "vertex": {
+   "idtrans": [
+    "puncak",
+    "titik puncak",
+    "verteks"
+   ]
+  },
+  "omnibus": {
+   "idtrans": [
+    "bus",
+    "bis"
+   ]
+  },
+  "pct": {
+   "idtrans": [
+    "persen",
+    "persentase",
+    "kadar"
+   ]
   }
  },
  "en-upper": {
@@ -9976,6 +10119,46 @@
     "menikahi"
    ],
    "def": "to marry"
+  },
+  "methodology": {
+   "idtrans": [
+    "metodologi",
+    "metode"
+   ]
+  },
+  "bidding": {
+   "idtrans": [
+    "perintah",
+    "instruksi",
+    "suruhan"
+   ]
+  },
+  "traumatic": {
+   "idtrans": [
+    "traumatis",
+    "trauma",
+    "cedera"
+   ]
+  },
+  "supermarket": {
+   "idtrans": [
+    "pasar swalayan",
+    "supermarket",
+    "swalayan"
+   ]
+  },
+  "crest": {
+   "idtrans": [
+    "puncak",
+    "mercu"
+   ]
+  },
+  "restraint": {
+   "idtrans": [
+    "pengendalian diri",
+    "pengekangan",
+    "kesabaran"
+   ]
   }
  }
 }
