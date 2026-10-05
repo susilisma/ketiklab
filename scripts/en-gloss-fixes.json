@@ -1683,6 +1683,334 @@
     "muda"
    ],
    "def": "not old"
+  },
+  "end": {
+   "idtrans": [
+    "akhir",
+    "ujung",
+    "kematian"
+   ]
+  },
+  "big": {
+   "idtrans": [
+    "besar",
+    "banyak",
+    "bidang"
+   ]
+  },
+  "money": {
+   "idtrans": [
+    "uang",
+    "duit"
+   ]
+  },
+  "care": {
+   "idtrans": [
+    "kepedulian",
+    "perawatan",
+    "bantuan"
+   ]
+  },
+  "local": {
+   "idtrans": [
+    "setempat",
+    "lokal"
+   ]
+  },
+  "control": {
+   "idtrans": [
+    "kendali",
+    "pengawasan"
+   ]
+  },
+  "office": {
+   "idtrans": [
+    "biro",
+    "kantor"
+   ]
+  },
+  "large": {
+   "idtrans": [
+    "besar",
+    "banyak",
+    "bidang"
+   ]
+  },
+  "police": {
+   "idtrans": [
+    "polisi",
+    "kepolisian"
+   ]
+  },
+  "phone": {
+   "idtrans": [
+    "telepon"
+   ]
+  },
+  "club": {
+   "idtrans": [
+    "institusi",
+    "klub",
+    "persatuan"
+   ]
+  },
+  "director": {
+   "idtrans": [
+    "direktur",
+    "pengurus",
+    "pengendali"
+   ]
+  },
+  "vote": {
+   "idtrans": [
+    "memilih",
+    "pemungutan suara",
+    "suara"
+   ]
+  },
+  "bed": {
+   "idtrans": [
+    "ranjang",
+    "tempat tidur"
+   ]
+  },
+  "percent": {
+   "idtrans": [
+    "persen",
+    "kadar",
+    "persentase"
+   ]
+  },
+  "officer": {
+   "idtrans": [
+    "mata-mata",
+    "pegawai",
+    "polisi"
+   ]
+  },
+  "hurt": {
+   "idtrans": [
+    "luka",
+    "kecelakaan",
+    "cedera"
+   ]
+  },
+  "biggest": {
+   "idtrans": [
+    "besar",
+    "banyak",
+    "bidang"
+   ]
+  },
+  "secret": {
+   "idtrans": [
+    "rahasia"
+   ]
+  },
+  "crime": {
+   "idtrans": [
+    "kejahatan",
+    "tindak pidana",
+    "keganasan"
+   ]
+  },
+  "drug": {
+   "idtrans": [
+    "narkoba",
+    "obat",
+    "narkotika"
+   ]
+  },
+  "bus": {
+   "idtrans": [
+    "bus",
+    "bis"
+   ]
+  },
+  "lake": {
+   "idtrans": [
+    "danau"
+   ]
+  },
+  "firm": {
+   "idtrans": [
+    "firma",
+    "perusahaan"
+   ]
+  },
+  "bigger": {
+   "idtrans": [
+    "besar",
+    "banyak",
+    "bidang"
+   ]
+  },
+  "injury": {
+   "idtrans": [
+    "luka",
+    "kecelakaan",
+    "cedera"
+   ]
+  },
+  "medicine": {
+   "idtrans": [
+    "obat",
+    "penawar"
+   ]
+  },
+  "accident": {
+   "idtrans": [
+    "kecelakaan",
+    "nahas"
+   ]
+  },
+  "corporate": {
+   "idtrans": [
+    "perusahaan",
+    "korporat"
+   ]
+  },
+  "truck": {
+   "idtrans": [
+    "truk"
+   ]
+  },
+  "orange": {
+   "idtrans": [
+    "jeruk",
+    "limau"
+   ]
+  },
+  "voting": {
+   "idtrans": [
+    "pemungutan suara",
+    "pemilihan",
+    "memilih"
+   ]
+  },
+  "warning": {
+   "idtrans": [
+    "peringatan",
+    "teguran"
+   ]
+  },
+  "constitution": {
+   "idtrans": [
+    "konstitusi",
+    "undang-undang dasar"
+   ]
+  },
+  "tournament": {
+   "idtrans": [
+    "turnamen",
+    "pertandingan",
+    "kejuaraan"
+   ]
+  },
+  "crash": {
+   "idtrans": [
+    "kecelakaan",
+    "tabrakan",
+    "nahas"
+   ]
+  },
+  "roof": {
+   "idtrans": [
+    "atap",
+    "kajang"
+   ]
+  },
+  "tip": {
+   "idtrans": [
+    "pucuk",
+    "ujung",
+    "tip"
+   ]
+  },
+  "championship": {
+   "idtrans": [
+    "kejuaraan"
+   ]
+  },
+  "hidden": {
+   "idtrans": [
+    "rahasia",
+    "sulit",
+    "tersembunyi"
+   ]
+  },
+  "peak": {
+   "idtrans": [
+    "puncak",
+    "mercu"
+   ]
+  },
+  "percentage": {
+   "idtrans": [
+    "kadar",
+    "persen",
+    "persentase"
+   ]
+  },
+  "harm": {
+   "idtrans": [
+    "luka",
+    "kecelakaan",
+    "cedera"
+   ]
+  },
+  "lab": {
+   "idtrans": [
+    "laboratorium"
+   ]
+  },
+  "promotion": {
+   "idtrans": [
+    "promosi",
+    "periklanan"
+   ]
+  },
+  "telephone": {
+   "idtrans": [
+    "telepon"
+   ]
+  },
+  "cop": {
+   "idtrans": [
+    "mata-mata",
+    "polisi"
+   ]
+  },
+  "currency": {
+   "idtrans": [
+    "mata uang"
+   ]
+  },
+  "privacy": {
+   "idtrans": [
+    "privasi",
+    "rahasia",
+    "sulit"
+   ]
+  },
+  "luxury": {
+   "idtrans": [
+    "kemewahan",
+    "mewah",
+    "kementerengan"
+   ]
+  },
+  "cure": {
+   "idtrans": [
+    "penawar",
+    "remedi",
+    "obat"
+   ]
+  },
+  "laboratory": {
+   "idtrans": [
+    "laboratorium"
+   ]
   }
  },
  "en-plus": {
