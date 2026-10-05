@@ -1933,7 +1933,7 @@ export default function Home() {
               : !itemMeaning && (item.glosses || !item.meaning)
                 ? (itemMeaningLang
                   ? (missOther && meaningPeek ? <><span className="meaning-missing">{missNote}</span><span><small>{LANGUAGE_META[missOther].label}</small>{item.glosses?.[missOther]}</span></>
-                    : missOther ? peekButton(`${missNote} · ${LANGUAGE_META[missOther].label}`)
+                    : missOther ? peekButton(`${missNote} · ${TX(`点一下看${LANG_NAME.zh[missOther]}释义`, `ketuk untuk arti ${LANG_NAME.id[missOther]}`, `tap for the ${LANG_NAME.en[missOther]} meaning`, uiLang)}`)
                     : <span className="meaning-missing">{missNote}</span>)
                   // the dialog sets the current learning language; a review word from another one picks in place
                   : item.lang === lang ? <button type="button" className="meaning-pick" onClick={e => { e.stopPropagation(); setShowLangSetup(true); }}>{TX("选择释义语言", "Pilih bahasa arti", "Choose a meaning language", uiLang)}</button>
