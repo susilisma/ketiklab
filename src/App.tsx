@@ -417,6 +417,9 @@ export default function Home() {
   const finishing = useRef(false);
   // a slip on any repetition of a looped word is its one lapse
   const lapseRecorded = useRef(false);
+  // the word a slip was noted on: a rung or language change resets hadWrong and lapseRecorded
+  // (resetWordRun), and the word must still not finish as a clean pass or lapse a second time
+  const slipOn = useRef("");
   // the Pause button was pressed: the word-advance and rollback timers must not hand
   // the focus back to the input, whose onFocus would start the clock again
   const pausedByButton = useRef(false);
@@ -738,7 +741,7 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
 
-  useEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; }, [index]);
+  useEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; slipOn.current = ""; }, [index]);
   useEffect(() => { try { localStorage.setItem("ketiklab-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
   // the class on <html> gives the body the dark background too (the rubber-band area
   // above and below the app on phones), and index.html sets it before the app mounts
@@ -1276,18 +1279,31 @@ export default function Home() {
       setTimeout(() => { if (!pausedByButton.current && !leftByKey.current) input.current?.focus(); }, 20);
     }
   }
+  // the first slip on a word is its lapse, written the moment it happens: it used to wait for
+  // finishWord, so changing the rung or the language, or leaving the word, after a wrong answer
+  // reset hadWrong and the word was then recorded as a clean pass (or not at all)
+  function noteSlip() {
+    hadWrong.current = true;
+    setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
+    if (!lapseRecorded.current && slipOn.current !== wordId) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
+    slipOn.current = wordId;
+  }
   function finishWord() {
     if (finishing.current) return;
     finishing.current = true;
     successChime();
     setRunning(true);
-    const cleanRun = !hadWrong.current;
+    // a slip noted earlier on this word counts even after a rung or language change reset
+    // hadWrong: the word used to finish as a clean pass then, counted correct while it sat in the 错词本
+    const slipped = slipOn.current === wordId;
+    const cleanRun = !hadWrong.current && !slipped;
     const lastRep = loopIx + 1 >= loopTimes;
     // one review per word, not per repetition: a slip on any repetition is the
-    // lapse, logged as soon as it happens; a clean answer counts once the loop is
-    // done. 认读 only shows the word, so it is not a recall and schedules none.
+    // lapse, logged by noteSlip the moment it happens (this is the fallback); a clean
+    // answer counts once the loop is done. 认读 only shows the word, so it is not a
+    // recall and schedules none.
     const recognizeOnly = practiceLang === "zh" && zhStep === "read";
-    if (!cleanRun && !lapseRecorded.current) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
+    if (!cleanRun && !lapseRecorded.current && !slipped) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
     else if (lastRep && cleanRun && !recognizeOnly) recordReview(wordId, true, undefined, legacyId).then(refreshSrs).catch(() => {});
     if (lastRep) { setAttempts(n => n + 1); if (cleanRun) setCorrect(n => n + 1); setSessionWords(n => n + 1); bumpToday(); }
     const token = ++autoAdvance.current;
@@ -1308,8 +1324,8 @@ export default function Home() {
       finishing.current = false;
       markStale();
       setTyped(""); setLoopIx(0);
-      const wasWrong = hadWrong.current;
-      hadWrong.current = false; lapseRecorded.current = false;
+      const wasWrong = hadWrong.current || slipOn.current === wordId;
+      hadWrong.current = false; lapseRecorded.current = false; slipOn.current = "";
       advanceOrFinishChapter(wasWrong);
     }, 320);
   }
@@ -1371,7 +1387,7 @@ export default function Home() {
   targetRef.current = targetWord;
   function skipWord() {
     if (finishing.current) return;
-    if (!lapseRecorded.current) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
+    if (!lapseRecorded.current && slipOn.current !== wordId) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
     resetWordRun();
     setAttempts(n => n + 1);
     setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
@@ -1446,19 +1462,15 @@ export default function Home() {
       // a key is a slip when it is itself wrong: the right letters typed after a red one used
       // to beep and count towards the skip button because the buffer had grown
       if (clean.length > typed.length && current.slice(typed.length) !== expected.slice(typed.length, current.length)) { errorBeep(); setWrongCountWord(n => n + 1); }
-      if (!hadWrong.current) {
-        hadWrong.current = true;
-        setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
-      }
+      if (!hadWrong.current) noteSlip();
       setTyped(clean);
     } else {
       errorBeep();
-      hadWrong.current = true;
+      noteSlip();
       setTyped(clean);
       setWrongFlash(true);
       const firstError = wrongCountWord === 0;
       setWrongCountWord(n => n + 1);
-      setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
       // graded forgiveness: full restart only on a short word's first slip;
       // otherwise keep the correct prefix so long words / phrases / repeat errors
       // don't force retyping everything from scratch.
@@ -1914,7 +1926,7 @@ export default function Home() {
             active={!showLangSetup}
             onPass={finishWord}
             onSkip={skipWord}
-            onMiss={() => { if (finishing.current || hadWrong.current) return; hadWrong.current = true; setWrongCountWord(n => n + 1); setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30)); }}
+            onMiss={() => { if (finishing.current || hadWrong.current) return; noteSlip(); setWrongCountWord(n => n + 1); }}
             onSpeak={() => speak()}
           /> : <>
           <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} defaultValue="" onChange={e=>{ if (!(e.nativeEvent as InputEvent).isComposing) isComposing.current = false; handleType(e.target.value); }} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; pausedByButton.current = false; leftByKey.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>{ setTypingFocus(false); setReveal(false); }} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
