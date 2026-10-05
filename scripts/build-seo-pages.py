@@ -345,7 +345,9 @@ def trio_page(lang, words, lib_rows, n_readings, zh_pinyin):
         for w in shown)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
-        f'<a class="cta" href="/?ui={lang}">{esc(T["practice"][lang])} →</a>\n'
+        # the page lists one learning language (Indonesian words on /zh/, Chinese on /id/ and /en/), so
+        # its button names that language: without ?learn= the Chinese page opened a Chinese card
+        f'<a class="cta" href="/?ui={lang}&amp;learn={"id" if lang == "zh" else "zh"}">{esc(T["practice"][lang])} →</a>\n'
         f"<p>{esc(fmt('showing', lang, n=num(n, lang), k=len(shown)))}</p>\n"
         f'<div class="wrap"><table><thead><tr>' + "".join(f"<th>{esc(c)}</th>" for c in cols) + f"</tr></thead>\n<tbody>\n{rows}\n</tbody></table></div>\n"
     )
