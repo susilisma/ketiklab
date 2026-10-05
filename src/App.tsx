@@ -1022,6 +1022,15 @@ export default function Home() {
   const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && zhStep === "choose" && x.kind === "example"));
   // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
+  // the plain pinyin any item is graded against at 打拼音 (empty when it has none): the next
+  // word's needs it too, to know whether that word's rung holds its speech
+  const plainPyOf = (it: PracticeItem) => {
+    const w = favWord(it);
+    const row = w && (it.lang !== "zh" || wordValue(w, "zh") === it.text) ? w : undefined;
+    const raw = /普通话 · (.+)$/.exec(it.sub || "")?.[1] || "";
+    const saved = /^[A-Za-zÀ-ɏḀ-ỿ ]+$/.test(raw) && raw.split(" ").every(sy => sy.length <= 6) ? raw : "";
+    return zhPlain(zhMap, it.text) || row?.pinyin || saved;
+  };
   const trioW = favWord(item);
   // a favourite keeps the sense it was saved with; the row may have been re-glossed since, so
   // its pinyin is trusted only while it still names this word, else the saved line is read
@@ -1031,7 +1040,7 @@ export default function Home() {
   const savedRaw = /普通话 · (.+)$/.exec(item.sub || "")?.[1] || "";
   const savedPy = /^[A-Za-zÀ-ɏḀ-ỿ ]+$/.test(savedRaw) && savedRaw.split(" ").every(sy => sy.length <= 6) ? savedRaw : "";
   const zhToneText = zhToned(zhMap, targetWord) || trioRow?.pinyin || savedPy;
-  const plainPy = zhPlain(zhMap, targetWord) || trioRow?.pinyin || savedPy;
+  const plainPy = plainPyOf(item);
   // a word with no pinyin at all cannot be passed at 打拼音, so that rung types it through the IME
   const zhLadder = practiceLang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPy);
   // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
@@ -1050,7 +1059,10 @@ export default function Home() {
   const peekLabel = zhLadder ? TX("点一下查看释义", "Ketuk untuk melihat arti", "Tap to see the meaning", uiLang) : TX("按住 TAB 或点一下查看释义", "Tahan TAB atau ketuk untuk melihat arti", "Hold TAB or tap to see the meaning", uiLang);
   // Hide pronunciation in dictation: only under "hide all" on the steps that print a pronunciation
   // line, and the word is not read aloud on its own either until CTRL+SPACE or TAB
-  const holdSpeech = hidePron && dictation === "all" && !zhLadder;
+  // a word on a zh rung is not under dictation, so its speech is never held; the rule is per
+  // item because a mixed list (favourites) moves between languages from one word to the next
+  const holdsSpeech = (it: PracticeItem) => hidePron && dictation === "all" && !(it.lang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPyOf(it)));
+  const holdSpeech = holdsSpeech(item);
   // the Indonesian line "Bahasa Indonesia · men·ca·pai" is the spelling with dots: under any
   // dictation it is masked with the letters, or every id dictation mode showed the answer
   const subSpellsWord = practiceLang === "id" && !item.dict && !!trioW?.idSyllables;
@@ -1242,7 +1254,7 @@ export default function Home() {
       const ni = (index + 1) % Math.max(learnItems.length, 1);
       const nx = learnItems[ni];
       setIndex(ni);
-      if (nx && !holdSpeech) {
+      if (nx && !holdsSpeech(nx)) {
         autoSpokenWord.current = `${source}:${nx.key}`;
         // a sidebar click in the moment after the last letter moves to another view: the
         // next word is still served there, but it is not read aloud over the library page
