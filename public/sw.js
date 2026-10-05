@@ -104,7 +104,14 @@ self.addEventListener("fetch", (e) => {
     // entry URLs the pages' own buttons use, instead of the last list practised with no word why
     const target = /^\/(?:zh|id|en)\/(?:(readings)|lib\/([^/]+))\/?$/.exec(url.pathname);
     const extra = !target ? "" : target[1] ? "&view=articles" : target[2] !== "trio" ? `&lib=${encodeURIComponent(target[2])}` : "";
-    const toShell = () => (landing || generated) ? Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}${extra}`, self.location).href, 302) : undefined;
+    // a list is named only when its data is in the cache: ?lib= wins over the saved list, so an
+    // uncached one left an offline learner on a load-error banner instead of the list they had
+    const toShell = async () => {
+      if (!(landing || generated)) return undefined;
+      const lib = target && target[2] && target[2] !== "trio" ? target[2] : null;
+      const x = lib && !(await caches.match(`./data/${lib}.json`)) ? "" : extra;
+      return Response.redirect(new URL(`./?ui=${url.pathname.slice(1, 3)}${x}`, self.location).href, 302);
+    };
     e.respondWith(fetch(shellReq).then((res) => {
       if (isShell) e.waitUntil(store("./index.html", res));
       else if (pageKey) e.waitUntil(store(pageKey, res));
