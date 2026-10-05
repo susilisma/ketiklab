@@ -545,8 +545,12 @@ export default function Home() {
       // page's "practise this list" link names the list instead.
       try {
         const linked = ENTRY.lib && m.find(x => x.id === ENTRY.lib);
-        if (ENTRY.lib && !linked && !sourceReq.current) setLinkedMissing(ENTRY.lib.slice(0, 40));
-        const savedSource = localStorage.getItem("ketiklab-source");
+        // "trio" is the topic collection's own id (the /xx/lib/trio/ pages and the sitemap use it):
+        // not a manifest row, so it was reported as a list that does not exist
+        const linkedTrio = ENTRY.lib === "trio" && !sourceReq.current;
+        if (linkedTrio) { persistSource("trio"); setSource("trio"); }
+        if (ENTRY.lib && !linked && !linkedTrio && !sourceReq.current) setLinkedMissing(ENTRY.lib.slice(0, 40));
+        const savedSource = linkedTrio ? "trio" : localStorage.getItem("ketiklab-source");
         const d = linked || (savedSource && m.find(x => x.id === savedSource));
         // a saved list the manifest no longer carries is named like an unknown ?lib= id, instead of
         // opening the topic words in silence with the stale id kept for the next visit
