@@ -181,6 +181,10 @@ const PROGRESS_KEYS = ["ketiklab-state", "ketiklab-days", "ketiklab-fav", "ketik
  *  to sign in; a different id means someone else's data, which must not. */
 const SYNC_UID_KEY = "ketiklab-sync-uid";
 export function linkedUid(): string | null { try { return localStorage.getItem(SYNC_UID_KEY); } catch { return null; } }
+
+/** Progress from another device may predate the topic-word key namespace, so the
+ *  one-time key migration in App.tsx has to run again after it is written here. */
+function forgetKeyMigration() { try { localStorage.removeItem("ketiklab-keys"); } catch { /* ignore */ } }
 export function linkDevice(uid: string) { try { localStorage.setItem(SYNC_UID_KEY, uid); } catch { /* ignore */ } }
 
 export function collectLocal(): ProgressBlob {
@@ -288,7 +292,9 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     if (profileName) cloud["ketiklab-name"] = profileName;
     replaceLocal(cloud); linkDevice(userId);
     if (linkedUid() !== userId) return "same";
-    noteAfterReload("switched"); location.reload();
+    // the data that just landed may still use the old topic-word key shape
+  forgetKeyMigration();
+  noteAfterReload("switched"); location.reload();
     return "reloading";
   }
   if (!r.data) { await saveProgress(userId, local); linkDevice(userId); return "uploaded"; }
@@ -301,7 +307,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   await saveProgress(userId, merged);
   linkDevice(userId);
   if (linkedUid() !== userId || canon(merged) === canon(local)) return "same";
-  applyLocal(merged); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
+  applyLocal(merged); forgetKeyMigration(); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
   return "reloading";
 }
 

@@ -47,7 +47,7 @@ class KetikDB extends Dexie {
 
 const db = new KetikDB();
 
-export async function recordReview(en: string, correct: boolean, now = Date.now()): Promise<void> {
+export async function recordReview(en: string, correct: boolean, now = Date.now(), inherit?: string): Promise<void> {
   await db.transaction("rw", db.reviews, async () => {
     let existing = await db.reviews.get(en);
     // the same word under its old bare key: inherit its ladder position when this
@@ -56,6 +56,13 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
     if (i >= 0) {
       const old = await db.reviews.get(en.slice(i + 1));
       if (old) { await db.reviews.delete(old.en); if (!existing) existing = { ...old, en }; }
+    }
+    // a key an older build wrote for this very word, which another list may own too:
+    // English topic words shared "en:achieve" with the English dictionaries before topic
+    // words moved to "en:trio:achieve". The ladder is adopted, the row is left alone.
+    if (!existing && inherit && inherit !== en) {
+      const prev = await db.reviews.get(inherit);
+      if (prev) existing = { ...prev, en };
     }
     // clamped on read as well as on restore: a row imported before restoreRecords clamped
     // (step -3) answered correctly took INTERVALS[-2] and got a NaN dueAt, never due again
@@ -103,6 +110,42 @@ export async function getDueKeys(now = Date.now(), limit = REVIEW_CAP): Promise<
 // update) would otherwise count as due forever
 export async function deleteRecords(keys: string[]): Promise<void> {
   if (keys.length) await db.reviews.bulkDelete(keys);
+}
+
+// A word's key can move: topic words were keyed "<lang>:<en>" until 2026-10, the same
+// shape a dictionary entry uses, so the Indonesian word air (water) and the topic word
+// air → udara shared one row. The caller offers one pair per word per language, so the
+// table is read once for the pre-filter; every decision is then made inside the
+// transaction, which sees its own writes, and no row is ever deleted without being
+// written somewhere — two rows for one word are merged.
+export async function renameRecords(pairs: [string, string][]): Promise<number> {
+  const all = await db.reviews.toArray();
+  if (!all.length) return 0;
+  const have = new Set(all.map((r) => r.en));
+  const todo = pairs.filter(([from, to]) => from !== to && have.has(from));
+  if (!todo.length) return 0;
+  let moved = 0;
+  await db.transaction("rw", db.reviews, async () => {
+    for (const [from, to] of todo) {
+      const old = await db.reviews.get(from);
+      if (!old) continue;
+      const target = await db.reviews.get(to);
+      // the further-on ladder leads; both histories are kept so neither answer is lost
+      const lead = target && (target.step > old.step || (target.step === old.step && target.updatedAt >= old.updatedAt)) ? target : old;
+      await db.reviews.put({
+        en: to,
+        step: lead.step,
+        dueAt: lead.dueAt,
+        reps: old.reps + (target?.reps ?? 0),
+        lapses: old.lapses + (target?.lapses ?? 0),
+        lastResult: lead.lastResult,
+        updatedAt: Math.max(old.updatedAt, target?.updatedAt ?? 0),
+      });
+      await db.reviews.delete(from);
+      moved++;
+    }
+  });
+  return moved;
 }
 
 export async function getAllRecords(): Promise<ReviewRecord[]> {
