@@ -187,6 +187,25 @@ export function linkedUid(): string | null { try { return localStorage.getItem(S
 function forgetKeyMigration() { try { localStorage.removeItem("ketiklab-keys"); } catch { /* ignore */ } }
 export function linkDevice(uid: string) { try { localStorage.setItem(SYNC_UID_KEY, uid); } catch { /* ignore */ } }
 
+// Progress pushed before the topic-word key namespace (474a115) keeps its old keys in the
+// cloud: this device's migration rewrites only its own storage, and a merge compares keys
+// as strings, so "id:achieve" in the cloud and "id:trio:achieve" here were two entries for
+// good — the account page offered 合并到本机 after every reload, and the stale twin took a
+// slot of the 30-entry 错词本 cap. App registers the decision its migration makes, and
+// every cloud copy read here passes through it before it is compared or merged.
+let normalizer: ((b: ProgressBlob) => Promise<ProgressBlob>) | null = null;
+// App registers the normaliser once the words and the manifest have loaded; a push that comes
+// first (the tab hidden within a second of opening, the account page opened at once) waits
+// for it, bounded, rather than writing the old shape back beside the new one
+let normalizerReady: () => void = () => {};
+const normalizerWait = new Promise<void>(resolve => { normalizerReady = resolve; });
+export function setProgressNormalizer(f: ((b: ProgressBlob) => Promise<ProgressBlob>) | null) { normalizer = f; if (f) normalizerReady(); }
+async function normalized(b: ProgressBlob): Promise<ProgressBlob> {
+  if (!normalizer) await Promise.race([normalizerWait, new Promise<void>(r => setTimeout(r, 8000))]);
+  if (!normalizer) return b;
+  try { return await normalizer(b); } catch { return b; }
+}
+
 export function collectLocal(): ProgressBlob {
   const out: ProgressBlob = {};
   for (const k of SYNCED_KEYS) {
@@ -263,12 +282,15 @@ let lastPushed = "";
 /** Read the cloud copy, merge this device into it, write it back if that changed
  *  anything. Reports whether the cloud holds progress this device does not.
  *  Throws when either request fails; nothing is written after a failed read. */
-export async function pushProgress(userId: string, local: ProgressBlob = collectLocal()) {
+export async function pushProgress(userId: string, own?: ProgressBlob) {
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
-  const cloud: ProgressBlob = r.data ?? {};
+  const cloud = await normalized(r.data ?? {});
+  // this device's copy goes through the same decision, read after the wait above: while its
+  // own migration still waits for a dictionary, the old shape would otherwise be pushed
+  const local = await normalized(own ?? collectLocal());
   const merged = mergeProgress(cloud, local);
-  if (canon(merged) !== canon(cloud)) await saveProgress(userId, merged);
+  if (canon(merged) !== canon(cloud) || canon(cloud) !== canon(r.data ?? {})) await saveProgress(userId, merged);
   lastPushed = canon(local);
   return { merged, cloudHasMore: !coversProgress(local, cloud) };
 }
@@ -281,7 +303,7 @@ export async function pushProgress(userId: string, local: ProgressBlob = collect
 export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName = ""): Promise<"uploaded" | "same" | "reloading"> {
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
-  const cloud: ProgressBlob = r.data ?? {};
+  const cloud = await normalized(r.data ?? {});
   const local = collectLocal();
   const wasLinked = linkedUid() !== null;
   // Account only links a device that is unlinked or linked to a different account, so
