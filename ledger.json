@@ -1759,9 +1759,9 @@
    "fingerprint": "append-batch-untrimmed-and-typed-fields",
    "title": "append-batch.mjs 不 trim en/id/zh、不检查 pinyin/phonetic/idSyllables 类型",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "0f00567",
-   "reason": "trim 部分已修好并验证（VX1：\" achieve\" → dup-existing、内含空格新行入库已 trim、--dry-run 不写）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入；类型检查部分与 source 字段 trim 仍待做（append-batch-source-untrimmed）",
+   "status": "fixed",
+   "commit": "82621e4",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-01"
   },
   {
@@ -3352,9 +3352,9 @@
    "fingerprint": "seo-pages-muted-grey-3.8",
    "title": "生成的 SEO 页与 index.html 的 #7b7d8c 灰在 #f6f7fb 上 3.81:1（build-seo-pages.py:275-282、index.html:71，9 处）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "453b2dc + 9bd0023",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：5.36/5.50/5.73:1；41 页只此一色变；补丁 9bd0023 让深色预挂载壳的次要行用 var(--muted,#62657a)（6.46:1）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
+   "status": "fixed",
+   "commit": "6720518",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-01"
   },
   {
@@ -3442,18 +3442,18 @@
    "fingerprint": "loop-skip-count-carried-into-next-rep",
    "title": "每词重复 2× 时第 1 遍 3 次错得到的「跳过」按钮留到第 2 遍（wrongCountWord 只在换词时清）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "e7847a3",
-   "reason": "已修好并验证（VX2：第 2 遍开始 skip true → false；第 2 遍从 0 计、3 错再出；错词本一次）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
+   "status": "fixed",
+   "commit": "e8e8042",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-01"
   },
   {
    "fingerprint": "dark-shell-crawl-copy-invisible",
    "title": "深色主题下壳页预挂载文案 1.12:1：index.html 与三语落地壳 <main> 写死 color:#1c1d26，html.dark 先于首屏加上；JS 包未到时标题与段落不可见",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "09dc1b4 + 9bd0023",
-   "reason": "已修好并验证（V/VX1：h1/p 1.12 → 16.74:1，次要行 6.46:1，浅色 16.48/5.36 不变，无样式表时回落 #62657a，/zh/lib/* 不受影响）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
+   "status": "fixed",
+   "commit": "510cce3 + 6720518",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-01"
   },
   {
@@ -3487,9 +3487,9 @@
    "fingerprint": "display-name-placeholder-claims-others-see-it",
    "title": "注册页占位「别人看到的名字 / Nama yang dilihat orang / How you appear」，但名字只在本人侧栏/账户卡显示，无分享/排行/会员页",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "76f65d7",
-   "reason": "已修好并验证（V：三语占位 你的名字 / Nama kamu / Your name，与账户卡字段相同；旧字串 0 处）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
+   "status": "fixed",
+   "commit": "2ed2f08",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-01"
   },
   {
@@ -3505,9 +3505,9 @@
    "fingerprint": "seo-readings-nav-label-classic-160",
    "title": "「经典朗读 (160) / Bacaan klasik (160) / Classic readings (160)」导航链接、朗读页标题与 README 行把 2 篇本站练习短文算进经典（09-29 的修复只改了描述）",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "f5b5018",
-   "reason": "已修好并验证（V/VX1：标签改中性 朗读 / Bacaan / Readings，0 处 classic (160)，158 篇经典描述仍在，README 行改 Readings，爬取 40 页无坏链）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
+   "status": "fixed",
+   "commit": "9a971e2",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-01"
   },
   {
@@ -3577,63 +3577,63 @@
    "fingerprint": "read-rung-space-dead-after-pill-click-from-ime",
    "title": "输入法步骤点「认读」小药丸后 SPACE/ENTER 不前进（ZhSteps 未挂载，点击未被记录）",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "e12769b",
-   "reason": "已修好（监听移到模块加载时），作者 before/after 复现通过；VX3 复验；受 12 项上限留在分支 claude/daily-2026-10-02；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "5a15e30",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-02"
   },
   {
    "fingerprint": "pinyin-nv-er-accepts-nu",
    "title": "打拼音：女儿 打 nuer（努儿）判对——lve→lue 折叠跨音节生效",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "ccb9c85",
-   "reason": "已修好（按音节折叠，输入只在目标有 ue 处折叠；4995 条读音自测全过）；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "7ea8599",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-02"
   },
   {
    "fingerprint": "ime-longer-commit-graded-correct",
    "title": "输入法步骤：选了更长候选（实现了→实现）被截断判对",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "fc187c7",
-   "reason": "已修好（中文提交超长走错键路径，回退不超过词长-1）；作者 before/after 通过；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "02408dd",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-02"
   },
   {
    "fingerprint": "dictation-prevnext-shows-next-answer",
    "title": "默写开启时卡片下方‹上一个·下一个›条完整显示下一个答案",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "948b89b",
-   "reason": "已修好（默写遮挡时不渲染该条，同选汉字）；作者 before/after 通过；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "1e501cc",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-02"
   },
   {
    "fingerprint": "words-learned-counts-repeats",
    "title": "「已学词语」实为答对次数，重练同章翻倍（违反计数为下限）",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "b567867",
-   "reason": "已修好（标签改为 答对次数 / Jawaban benar / Correct answers，计数不变）；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "de5b505",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-02"
   },
   {
    "fingerprint": "sw-offline-generated-page-redirect-drops-target",
    "title": "离线时未缓存的生成页（/xx/readings/、/xx/lib/<id>/）被送到 /?ui=xx，丢了目标",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "e5fd659",
-   "reason": "已修好（重定向带 view=articles / lib=<id>，与页面按钮一致）；真服务器断网测试通过；在分支，下次合入；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "3c50e3b + e8d302e",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署；e8d302e 修正 3c50e3b 的离线回归",
    "date": "2026-10-02"
   },
   {
    "fingerprint": "topic-rows-idsyllables-missed-by-backfill",
    "title": "words.json 9 个多音节行缺 idSyllables（red tape、satiate…）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "9e3fb91",
-   "reason": "已修好（用构建脚本 syllables() 补齐）；在分支，下次合入。另：前 2200 行手写词 2143 行无 idSyllables，是否回填属主人定；VX3 独立 before/after 复验 HOLDS",
+   "status": "fixed",
+   "commit": "a5de441",
+   "reason": "2026-10-05 合入 main，VX1/VX2 复验 HOLDS，Build and deploy #726/#727 部署",
    "date": "2026-10-02"
   },
   {
@@ -3641,8 +3641,8 @@
    "title": "混合语言列表：下一个词是否自动朗读沿用当前词的 holdSpeech（默写隐藏发音时仍朗读 curious）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "F1 复现；修法：按下一个词自身的语言与步骤计算；下次做",
+   "commit": "394c718",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
    "date": "2026-10-02"
   },
   {
@@ -3650,8 +3650,8 @@
    "title": "Escape/失焦后遮罩显示「按任意键继续」但计时继续，WPM 下降、用时虚高",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "F1 复现；修法：失焦（非切词）与 visibilitychange 时停表；需小心切词时的失焦，下次做",
+   "commit": "1e2a631",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
    "date": "2026-10-02"
   },
   {
@@ -3689,6 +3689,132 @@
    "commit": "",
    "reason": "迁移属主人定（VX3 备注）",
    "date": "2026-10-02"
+  },
+  {
+   "fingerprint": "veil-enter-skips-fresh-word",
+   "title": "首访「按任意键开始」遮罩上按 ENTER 跳过第 1 词并记入错词本 + SRS 遗忘（App.tsx 窗口按键处理）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "e8d5a3e",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "veil-space-mid-word-graded-wrong",
+   "title": "词中途 Escape 后在「按任意键继续」遮罩上按 SPACE 被判为错字母，严格模式整词清空",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "8aee5e6",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "dialog-learn-cards-in-target-language",
+   "title": "首访对话框的学习语言卡片描述用该语言本身书写（印尼语/英语用户看到「练习中文打字与词汇」），且三臂含义不一",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "428e246",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "reading-header-classic-collection-160",
+   "title": "阅读页列表标题「经典选集 / Koleksi klasik / Classic collection · 160」把 2 篇本站练习短文算作经典",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "b089fba",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "word-examples-type-required",
+   "title": "types.ts 把 Word.examples 声明为三语必填，而 3867 行是 {}",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "0aa5c0c",
+   "reason": "已修好并经 VN 复验 HOLDS，在分支 claude/daily-2026-10-05（受 12 项上限），下次合入",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "sw-offline-lib-redirect-uncached",
+   "title": "3c50e3b 的回归：离线打开未缓存词库的生成页被送到 ?lib=<id>，出现加载失败横幅而非保存的词库",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "e8d302e",
+   "reason": "F4 发现，当日修复并部署（Build and deploy #727），离线实测两种情形通过",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "slip-erased-by-rung-pill",
+   "title": "选汉字/打拼音答错后点当前或其他档位小药丸再答对：hadWrong 被 resetWordRun 清除，SRS 记正确、正确率上升；复习中换档或换语言同样；离开该词不记遗忘",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F3 发现（Chromium 复现），修法：答错当时就写 lapse；未经独立复验，下次修",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "stats-total-typed-label",
+   "title": "数据统计「累计打词 / Total kata / Total typed」数的是完成次数（重练翻倍），id 臂读作词数",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 发现；改标签即可",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "missing-meaning-peek-button-no-action",
+   "title": "缺释义时的偷看按钮「Belum ada arti Indonesia · 中文」不说明点了会显示中文释义",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 发现",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "plan-kosong-label",
+   "title": "学习计划 7 日条「Kosong / None」措辞生硬（宜 Belum latihan / No practice）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 发现",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "password-min-hardcoded-6",
+   "title": "注册/改密「至少 6 位」与 minLength=6 写死，而服务端最小长度是动态读取的",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 发现，当前不触发",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "idtrans-malay-disagreed-replacements",
+   "title": "en-core/en-toefl 中查找者与校验者对替换词不一致的 idtrans：rate(cukai)、share(peratus/panggu)、guild(kelab)、command(amaran/tawaran)、manager(pengarah)、act(sijil)、traumatic(kecederaan)、ending(hujung)、pack/universal/worldwide(ramai)",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "需第三方判定替换词；马来语形式本身两方都认为错",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "gloss-2026-10-05-unsure",
+   "title": "释义未改：outbreak 暴发、ulcer tukak、excel unggul（校验者 KEEP）；thinking 首义（NOT SURE，建议 想法）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "校验者不同意或不确定",
+   "date": "2026-10-05"
+  },
+  {
+   "fingerprint": "parallel-keys-branch-2026-10-05",
+   "title": "另一会话今日推了分支 claude/keys-2026-10-05（「key a topic word by the word the learner types」，含 SRS/错词本/收藏迁移），触及主人保留的进度键决定",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "1409fb2",
+   "reason": "非本维护任务所建；未合入、未改动，由主人决定",
+   "date": "2026-10-05"
   }
  ]
 }
