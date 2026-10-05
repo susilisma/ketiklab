@@ -223,6 +223,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
           // (then dead to every key) and, cut by one letter, spelled the answer out
           let k = 0;
           while (k < v.length && k < target.length && v[k] === target[k]) k++;
+          // a correct prefix as long as the answer ("shixianq" for shixian) would fill the
+          // box without passing it, and the length guard above then ignored every key: like
+          // an over-long IME commit in App, it is rolled back one letter short instead
+          if (k >= target.length) k = target.length - 1;
           setTyped(v.slice(0, k));
         }
       }}
