@@ -105,6 +105,30 @@ export async function deleteRecords(keys: string[]): Promise<void> {
   if (keys.length) await db.reviews.bulkDelete(keys);
 }
 
+// A word's key can move: topic words were keyed by their English headword in every
+// language until 2026-10, so the Indonesian word a learner actually types ("udara")
+// had its ladder filed under "id:air". The ladder follows the word — the old row goes
+// and its position moves across, unless the new key already holds a fresher one.
+// The caller offers one pair per word per language — thousands of them — so the table
+// is read once and only the keys it actually holds are touched.
+export async function renameRecords(pairs: [string, string][]): Promise<number> {
+  const all = await db.reviews.toArray();
+  if (!all.length) return 0;
+  const byKey = new Map(all.map((r) => [r.en, r]));
+  const todo = pairs.filter(([from, to]) => from !== to && byKey.has(from));
+  if (!todo.length) return 0;
+  let moved = 0;
+  await db.transaction("rw", db.reviews, async () => {
+    for (const [from, to] of todo) {
+      const old = byKey.get(from)!;
+      const target = byKey.get(to);
+      await db.reviews.delete(from);
+      if (!target || target.updatedAt < old.updatedAt) { await db.reviews.put({ ...old, en: to }); moved++; }
+    }
+  });
+  return moved;
+}
+
 export async function getAllRecords(): Promise<ReviewRecord[]> {
   return db.reviews.toArray();
 }

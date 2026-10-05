@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
-import { recordReview, getStats, getDueKeys, deleteRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
+import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, SYNCED_KEYS } from "./cloud";
@@ -665,7 +665,16 @@ export default function Home() {
   // lists all of them — say so instead of printing the narrowed number alone
   const ladderNarrowed = source === "trio" && !ladder.broad && ladderWords.length < activeWords.length;
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
-  const wordByEn = useMemo(() => new Map(words.map(w => [w.en, w])), [words]);
+  // A topic word is identified by what the learner types in that language, the same
+  // key a dictionary headword gets: practising "udara" is practising that word
+  // wherever it is listed, and the Indonesian "air" (water) in a dictionary no longer
+  // shares its ladder, its star and its 错词本 entry with the topic word "air" → udara.
+  const wordByVal = useMemo(() => {
+    const m = new Map<string, Word>();
+    for (const w of words) for (const l of LANGS) { const v = wordValue(w, l); if (v) m.set(`${l}:${v}`, w); }
+    return m;
+  }, [words]);
+  const trioAt = (lg: Lang, key: string) => wordByVal.get(`${lg}:${key}`);
 
 
   const sourceKey = source === "trio" ? trioChapterKey(category, lang, zhStep) : source;
@@ -715,7 +724,7 @@ export default function Home() {
   useEffect(() => {
     if (!words.length || !favorites.some(f => !f.glosses)) return;
     let alive = true;
-    const byEn = new Map(words.map(w => [w.en, w]));
+    const byVal = new Map(words.flatMap(w => LANGS.map(l => [`${l}:${wordValue(w, l)}`, w] as const)));
     const dictOf = (f: PracticeItem) => f.dict ? dicts.find(d => d.lang === f.lang && (d.id === f.dictId || [d.name, d.name_id, d.name_en].includes(f.dict))) : undefined;
     (async () => {
       if (source === "fav") for (const d of dicts) {
@@ -726,7 +735,7 @@ export default function Home() {
       if (!alive || !mounted.current) return;
       const upgrade = (f: PracticeItem): PracticeItem => {
         if (f.glosses) return f;
-        if (!f.dict) { const w = byEn.get(f.key); return w ? { ...f, glosses: trioGlosses(w, f.lang) } : f; }
+        if (!f.dict) { const w = byVal.get(`${f.lang}:${f.key}`); return w ? { ...f, glosses: trioGlosses(w, f.lang) } : f; }
         const d = dictOf(f), e = d && dictCache.current.get(d.id)?.find(x => x.name === f.key);
         // the old snapshot kept the English definition in example
         return d && e ? { ...f, dictId: d.id, glosses: dictGlosses(d, e), def: e.def || undefined, example: undefined } : f;
@@ -735,6 +744,68 @@ export default function Home() {
     })();
     return () => { alive = false; };
   }, [favorites, words, dicts, source]);
+
+  // Until 2026-10 a topic word was keyed by its English headword in every language, so
+  // practising the Indonesian "udara" filed its ladder, its star and its 错词本 entry
+  // under "id:air" — where the Indonesian dictionary word "air" (water) kept its own,
+  // and the two shared one progress. Keys now name the word that is typed, and the rows
+  // written under the old key move across once per device. A key an Indonesian list also
+  // holds as a headword is left where it is: that row cannot be told from the dictionary
+  // word's own, and moving it would take progress that belongs to another word.
+  useEffect(() => {
+    if (!words.length || !dicts.length) return;
+    try { if (localStorage.getItem("ketiklab-keys") === "v2") return; } catch { return; }
+    let alive = true;
+    const done = () => { try { localStorage.setItem("ketiklab-keys", "v2"); } catch { /* ignore */ } };
+    (async () => {
+      // only keys this device actually holds are worth moving, and only they decide
+      // whether an Indonesian list has to be fetched to settle the ambiguous ones
+      const records = await getAllRecords().catch(() => []);
+      const held = new Set<string>([...records.map(r => r.en), ...mistakes, ...favorites.filter(f => !f.dict).map(f => `${f.lang}:${f.key}`)]);
+      if (!alive) return;
+      // English keys do not move: the word typed in English is the headword itself
+      let pairs: [string, string][] = [];
+      for (const w of words) for (const lg of ["zh", "id"] as Lang[]) {
+        const from = `${lg}:${w.en}`, to = `${lg}:${wordValue(w, lg)}`;
+        if (from !== to && held.has(from)) pairs.push([from, to]);
+      }
+      if (!pairs.length) { done(); return; }
+      if (pairs.some(([from]) => from.startsWith("id:"))) {
+        // a hanzi key cannot be mistaken for a topic word's English headword, an
+        // Indonesian one can: whatever an Indonesian list holds stays where it is
+        const taken = new Set<string>();
+        for (const d of dicts) {
+          if (d.lang !== "id") continue;
+          let data = dictCache.current.get(d.id) || allDicts[d.id];
+          if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { return; } }
+          for (const e of data) taken.add(`${d.lang}:${e.name}`);
+        }
+        if (!alive) return;
+        pairs = pairs.filter(([from]) => !taken.has(from));
+        if (!pairs.length) { done(); return; }
+      }
+      const moves = new Map(pairs);
+      // no IndexedDB (a browser that blocks storage) still leaves the lists to move
+      try { await renameRecords(pairs); } catch { /* ignore */ }
+      if (!alive || !mounted.current) return;
+      setMistakes(m => { const next = m.map(k => moves.get(k) || k); return next.some((k, i) => k !== m[i]) ? Array.from(new Set(next)) : m; });
+      setFavorites(list => {
+        let changed = false;
+        const next = list.map(f => {
+          if (f.dict) return f;
+          const to = moves.get(`${f.lang}:${f.key}`);
+          if (!to) return f;
+          changed = true;
+          return { ...f, key: to.slice(to.indexOf(":") + 1) };
+        });
+        return changed ? next : list;
+      });
+      done();
+      refreshSrs();
+    })();
+    return () => { alive = false; };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words, dicts, mistakes, favorites]);
 
   // readings gates too: readings[0] is dereferenced unguarded below, and both
   // files resolve from the same Promise.all, so requiring both costs nothing.
@@ -843,7 +914,9 @@ export default function Home() {
     // not part of what gets typed — it moves next to the pronunciation instead
     const gloss = lg === "zh" ? undefined : raw.match(/\s*\(([^)]*)\)\s*$/)?.[1];
     const it: PracticeItem = {
-      key: w.en,
+      // the word in the language being practised, not the English headword: that is
+      // what the learner types, and what every other list calls the same word
+      key: raw,
       text: gloss ? raw.replace(/\s*\([^)]*\)\s*$/, "") : raw,
       sub: (lg === "zh" && zhToned(zhMap, wordValue(w, "zh"))
         ? `普通话 · ${zhToned(zhMap, wordValue(w, "zh"))}`
@@ -863,7 +936,7 @@ export default function Home() {
   // starred; the line is rebuilt for the current one (a dictionary favourite's has no such text)
   // the current row's pronunciation line, but only while the row still names the saved word:
   // 17 rows were re-glossed since 09-21, and 教学大纲 was printed with the pinyin of 课程体系
-  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : wordByEn.get(f.key); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f; });
+  const favItems = () => favorites.map(f => { const w = f.dict ? undefined : trioAt(f.lang, f.key); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f; });
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favItems()
     : (dictInfo && dictWords && dictWords.length)
@@ -903,7 +976,7 @@ export default function Home() {
   const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && zhStep === "choose" && x.kind === "example"));
   // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
-  const trioW = item.dict ? undefined : wordByEn.get(item.key);
+  const trioW = item.dict ? undefined : trioAt(item.lang, item.key);
   // a favourite keeps the sense it was saved with; the row may have been re-glossed since, so
   // its pinyin is trusted only while it still names this word, else the saved line is read
   const trioRow = trioW && (practiceLang !== "zh" || wordValue(trioW, "zh") === targetWord) ? trioW : undefined;
@@ -1010,7 +1083,7 @@ export default function Home() {
   type KeyInfo = { text: string; meaning: string; note: boolean; label?: string };
   function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
-    const w = wordByEn.get(key);
+    const w = trioAt(lg, key);
     if (w) { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), meaning: m.text, note: m.note, label: m.label }; }
     for (const d of dicts) {
       if (d.lang !== lg) continue;
@@ -1041,7 +1114,7 @@ export default function Home() {
       const text = wordValue(w, lang), hay = `${w.en} ${w.id} ${w.zh}`;
       if (!hay.toLowerCase().includes(gq)) continue;
       const m = listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" });
-      globalResults.push({ src: "trio", key: w.en, text, sub: trioItem(w, lang).sub, meaning: m.text, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
+      globalResults.push({ src: "trio", key: text, text, sub: trioItem(w, lang).sub, meaning: m.text, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
     }
     for (const d of dicts) {
       const data = allDicts[d.id]; if (!data) continue;
@@ -1525,7 +1598,7 @@ export default function Home() {
     const ix = activeItems.findIndex(i => `${i.lang}:${i.key}` === id);
     if (ix >= 0) { jumpToItem(ix); return; }
     const [lg, key] = splitId(id);
-    const w = wordByEn.get(key);
+    const w = trioAt(lg, key);
     if (w) { if (lg !== lang) changeLanguage(lg); practiceWord(w, lg); return; }
     for (const d of dicts) if (d.lang === lg && dictCache.current.get(d.id)?.some(e => e.name === key)) { gotoDictWord(d.id, key); return; }
   }
@@ -1560,7 +1633,7 @@ export default function Home() {
     // a key from a hand-edited backup may carry a prefix that is no language ("fr:achieve"):
     // rendered, wordValue(w, "fr") is undefined and the review white-screened; left unresolved
     // it is retired like a removed word
-    for (const k of keys) { const [lg, en] = splitId(k); const w = wordByEn.get(en); if (w && isLang(lg) && !found.has(k)) found.set(k, { key: k, w, lang: lg }); }
+    for (const k of keys) { const [lg, key] = splitId(k); const w = trioAt(lg, key); if (w && isLang(lg) && !found.has(k)) found.set(k, { key: k, w, lang: lg }); }
     for (const d of dicts) {
       if (found.size === keys.length) break;
       if (!keys.some(k => !found.has(k) && splitId(k)[0] === d.lang)) continue;
