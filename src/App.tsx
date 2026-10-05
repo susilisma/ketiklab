@@ -3,7 +3,7 @@ import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, Di
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
-import { onAccountWanted, SYNCED_KEYS } from "./cloud";
+import { onAccountWanted, setProgressNormalizer, SYNCED_KEYS, type ProgressBlob } from "./cloud";
 import { ZhSteps, ZH_STEPS, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "account" | "settings";
@@ -794,13 +794,66 @@ export default function Home() {
   // cannot be told from that dictionary word's own row, and moving it would take progress
   // belonging to another word). The flag is only written once the move has happened, so an
   // import or a cloud merge that brings old keys back is migrated on the next load.
+  // The moves a set of held "<lang>:<key>" strings get under the topic-word namespace.
+  // `moves` is every topic key among them; `keyed` leaves out those a dictionary of that
+  // language also holds as a headword (an SRS row or a 错词本 entry is a bare key, and such
+  // a key may be that dictionary word's: taking it would take another word's progress).
+  // A favourite says which list it came from, so a topic one always moves (`moves`).
+  // `unsafe` names a language whose dictionary could not be fetched: its keys stay put.
+  const planKeyMoves = async (held: Set<string>) => {
+    const moves = new Map<string, string>();
+    for (const w of words) for (const lg of LANGS) {
+      const from = `${lg}:${w.en}`;
+      if (held.has(from)) moves.set(from, `${lg}:${TRIO}${w.en}`);
+    }
+    const langs = new Set(Array.from(moves.keys(), k => k.slice(0, k.indexOf(":"))));
+    const taken = new Set<string>();
+    const unsafe = new Set<string>();
+    for (const d of dicts) {
+      // a Chinese headword is hanzi and can never be an English topic headword
+      if (d.lang === "zh" || !langs.has(d.lang)) continue;
+      let data = dictCache.current.get(d.id) || allDicts[d.id];
+      if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { unsafe.add(d.lang); continue; } }
+      for (const e of data) taken.add(`${d.lang}:${e.name}`);
+    }
+    const keyed = new Map(Array.from(moves).filter(([from]) => !taken.has(from) && !unsafe.has(from.slice(0, from.indexOf(":")))));
+    return { moves, keyed, unsafe };
+  };
+  const mistakesOf = (state: { mistakes?: unknown }) => Array.isArray(state.mistakes) ? state.mistakes.filter(validMistakeKey) : [];
+  const renameFavs = (favs: PracticeItem[], moves: Map<string, string>) => {
+    const seen = new Set<string>();
+    return favs
+      .map(f => { const to = f.dict ? undefined : moves.get(`${f.lang}:${f.key}`); return to ? { ...f, key: to.slice(to.indexOf(":") + 1) } : f; })
+      .filter(f => { const id = `${f.dict ? f.dictId || f.dict : TRIO}${f.lang}:${f.key}`; if (seen.has(id)) return false; seen.add(id); return true; });
+  };
+  // The cloud copy is compared and merged by key, so a copy pushed before the namespace
+  // (or by a device that has not migrated yet) goes through the same decision first:
+  // otherwise its "id:achieve" and this device's "id:trio:achieve" never meet (cloud.ts)
+  useEffect(() => {
+    if (!words.length || !dicts.length) return;
+    setProgressNormalizer(async (blob: ProgressBlob) => {
+      const parse = (v: unknown) => { if (typeof v !== "string") return null; try { return JSON.parse(v) as unknown; } catch { return null; } };
+      const st = parse(blob["ketiklab-state"]);
+      const state = st && typeof st === "object" && !Array.isArray(st) ? st as Record<string, unknown> : null;
+      const stored = state ? mistakesOf(state) : [];
+      const favs = cleanFavorites(parse(blob["ketiklab-fav"]) ?? []);
+      const held = new Set<string>([...stored, ...favs.filter(f => !f.dict).map(f => `${f.lang}:${f.key}`)]);
+      const { moves, keyed } = await planKeyMoves(held);
+      if (!moves.size) return blob;
+      const out = { ...blob };
+      if (state) out["ketiklab-state"] = JSON.stringify({ ...state, mistakes: Array.from(new Set(stored.map(k => keyed.get(k) || k))) });
+      if (typeof blob["ketiklab-fav"] === "string") out["ketiklab-fav"] = JSON.stringify(renameFavs(favs, moves));
+      return out;
+    });
+    return () => setProgressNormalizer(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words, dicts]);
   useEffect(() => {
     if (!words.length || !dicts.length || migratingKeys) return;
     try { if (localStorage.getItem("ketiklab-keys") === "v2") return; } catch { return; }
     migratingKeys = true;
     let alive = true;
     const read = <T,>(key: string, fallback: T): T => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) as T : fallback; } catch { return fallback; } };
-    const mistakesOf = (state: { mistakes?: unknown }) => Array.isArray(state.mistakes) ? state.mistakes.filter(validMistakeKey) : [];
     (async () => {
       try {
         // the stored values, not the state: this runs beside a session that may be writing
@@ -810,41 +863,17 @@ export default function Home() {
         const records = await getAllRecords();
         if (!alive) return;
         const held = new Set<string>([...records.map(r => r.en), ...stored, ...favs.filter(f => !f.dict).map(f => `${f.lang}:${f.key}`)]);
-        const moves = new Map<string, string>();
-        for (const w of words) for (const lg of LANGS) {
-          const from = `${lg}:${w.en}`;
-          if (held.has(from)) moves.set(from, `${lg}:${TRIO}${w.en}`);
-        }
+        const { moves, keyed, unsafe } = await planKeyMoves(held);
         // nothing of the old shape here: leave the flag unset so a later import still migrates
         if (!moves.size) return;
-        // A favourite says which list it came from, so a topic one is always identifiable
-        // and always moves. An SRS row and a 错词本 entry are a bare "<lang>:<key>", so a key
-        // that a dictionary of that language also holds as a headword stays where it is: it
-        // may be that dictionary word's, and taking it would take another word's progress.
-        const langs = new Set(Array.from(moves.keys(), k => k.slice(0, k.indexOf(":"))));
-        const taken = new Set<string>();
-        const unsafe = new Set<string>();
-        for (const d of dicts) {
-          // a Chinese headword is hanzi and can never be an English topic headword
-          if (d.lang === "zh" || !langs.has(d.lang)) continue;
-          let data = dictCache.current.get(d.id) || allDicts[d.id];
-          // a list that cannot be fetched may hold any of these keys: its language waits
-          // for a load on which the file arrives, and the flag below stays unset
-          if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { unsafe.add(d.lang); continue; } }
-          for (const e of data) taken.add(`${d.lang}:${e.name}`);
-        }
         if (!alive || !mounted.current) return;
-        const keyed = new Map(Array.from(moves).filter(([from]) => !taken.has(from) && !unsafe.has(from.slice(0, from.indexOf(":")))));
         if (keyed.size) await renameRecords(Array.from(keyed));
         if (!alive || !mounted.current) return;
         // read again at the moment of the write: the session may have added a mistake or a
         // star while the dictionaries were being fetched, and a snapshot would drop it
         const state = read<Record<string, unknown>>("ketiklab-state", {});
         const nextMistakes = Array.from(new Set(mistakesOf(state).map(k => keyed.get(k) || k)));
-        const seen = new Set<string>();
-        const nextFavs = cleanFavorites(read<unknown[]>("ketiklab-fav", []))
-          .map(f => { const to = f.dict ? undefined : moves.get(`${f.lang}:${f.key}`); return to ? { ...f, key: to.slice(to.indexOf(":") + 1) } : f; })
-          .filter(f => { const id = `${f.dict ? f.dictId || f.dict : TRIO}${f.lang}:${f.key}`; if (seen.has(id)) return false; seen.add(id); return true; });
+        const nextFavs = renameFavs(cleanFavorites(read<unknown[]>("ketiklab-fav", [])), moves);
         // written here rather than left to the state effects: the flag below must not
         // outlive the lists it describes, so both land before it and a refusal throws
         localStorage.setItem("ketiklab-state", JSON.stringify({ ...state, mistakes: nextMistakes }));
