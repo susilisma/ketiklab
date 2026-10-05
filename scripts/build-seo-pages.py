@@ -182,8 +182,8 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
         f'        <h1 style="font-size:28px;margin:0 0 8px">{esc(T["h1"][lang])} — KetikLab</h1>\n'
         f'        <p lang="{HTML_LANG[lang]}">{esc(fmt("para", lang, **c))}</p>\n'
         f'        <p><a href="/?ui={lang}" style="color:#7165eb;font-weight:700">{esc(T["open"][lang])} →</a></p>\n'
-        f'        <p style="color:#7b7d8c;font-size:14px"><b>{esc(T["libs"][lang])}:</b> {lib_links} · <a href="/{lang}/readings/">{esc(T["readings"][lang])} ({n_readings})</a></p>\n'
-        f'        <p style="color:#7b7d8c;font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
+        f'        <p style="color:var(--muted,#62657a);font-size:14px"><b>{esc(T["libs"][lang])}:</b> {lib_links} · <a href="/{lang}/readings/">{esc(T["readings"][lang])} ({n_readings})</a></p>\n'
+        f'        <p style="color:var(--muted,#62657a);font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
         f"      </main>"
     )
     h = sub1(r'<main style="[^"]*">.*?</main>', lambda m: block, h, "crawlable <main>", re.S)
@@ -196,7 +196,7 @@ def root_page(index_html, n_readings):
     # index.html's <main> already links the three language pages; the build adds each language's readings page
     links = " · ".join(f'<a href="/{l}/readings/" hreflang="{HTML_LANG[l]}" style="color:#7165eb">{esc(T["readings"][l])}</a>' for l in LANGS)
     if "/zh/readings/" not in h:
-        h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:#7b7d8c;font-size:14px">{links} ({n_readings})</p>' + m.group(1), h, "</main> (root)")
+        h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:var(--muted,#62657a);font-size:14px">{links} ({n_readings})</p>' + m.group(1), h, "</main> (root)")
     return h
 
 
