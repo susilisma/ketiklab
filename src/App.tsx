@@ -60,10 +60,12 @@ const EYEBROW: Record<string, Record<Lang, string>> = {
 };
 const TX = (zh: string, id: string, en: string, lg: Lang) => lg === "zh" ? zh : lg === "id" ? id : en;
 
-const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: string; defDesc: string }[] = [
-  { code: "zh", name: "中文", uiDesc: "中文界面", learnDesc: "练习中文打字与词汇", defDesc: "用中文显示释义" },
-  { code: "id", name: "Bahasa Indonesia", uiDesc: "Antarmuka bahasa Indonesia", learnDesc: "Latihan mengetik bahasa Indonesia", defDesc: "Arti dalam bahasa Indonesia" },
-  { code: "en", name: "English", uiDesc: "English interface", learnDesc: "Practice English typing", defDesc: "Meanings in English" },
+// learnDesc is read by someone who does not know that language yet, so it is written in the
+// dialog's interface language (zh, id, en arms); uiDesc and defDesc stay in their own language
+const LANG_CARDS: { code: Lang; name: string; uiDesc: string; learnDesc: Record<Lang, string>; defDesc: string }[] = [
+  { code: "zh", name: "中文", uiDesc: "中文界面", learnDesc: { zh: "练习中文打字与词汇", id: "Latihan mengetik dan kosakata Mandarin", en: "Practice Chinese typing and vocabulary" }, defDesc: "用中文显示释义" },
+  { code: "id", name: "Bahasa Indonesia", uiDesc: "Antarmuka bahasa Indonesia", learnDesc: { zh: "练习印尼语打字与词汇", id: "Latihan mengetik dan kosakata bahasa Indonesia", en: "Practice Indonesian typing and vocabulary" }, defDesc: "Arti dalam bahasa Indonesia" },
+  { code: "en", name: "English", uiDesc: "English interface", learnDesc: { zh: "练习英语打字与词汇", id: "Latihan mengetik dan kosakata bahasa Inggris", en: "Practice English typing and vocabulary" }, defDesc: "Meanings in English" },
 ];
 const LANGS: Lang[] = ["zh", "id", "en"];
 
@@ -2112,7 +2114,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
         <p>{mt.learnDesc}</p>
         <div className="lang-cards">
           {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => setLearn(c.code)}>
-            <b>{c.name}</b><small>{c.learnDesc}</small>{learn === c.code && <span>{mt.selected}</span>}
+            <b>{c.name}</b><small>{c.learnDesc[ui]}</small>{learn === c.code && <span>{mt.selected}</span>}
           </button>)}
         </div>
       </div>
