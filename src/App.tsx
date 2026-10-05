@@ -1171,9 +1171,9 @@ export default function Home() {
   const filteredReadings = readings.filter(pc => readingLang === "all" || pc.lang === readingLang);
   const readingLangName: Record<"zh"|"id"|"en", string> = {
     // the groups hold prose too (three Indonesian pieces are PROSA), so the heading names no genre
-    zh: uiLang === "zh" ? "中文经典" : uiLang === "id" ? "Klasik Mandarin" : "Chinese classics",
-    id: uiLang === "zh" ? "印尼语经典" : uiLang === "id" ? "Klasik Indonesia" : "Indonesian classics",
-    en: uiLang === "zh" ? "英文经典" : uiLang === "id" ? "Klasik Inggris" : "English classics",
+    zh: uiLang === "zh" ? "中文篇目" : uiLang === "id" ? "Bacaan Mandarin" : "Chinese readings",
+    id: uiLang === "zh" ? "印尼语篇目" : uiLang === "id" ? "Bacaan Indonesia" : "Indonesian readings",
+    en: uiLang === "zh" ? "英文篇目" : uiLang === "id" ? "Bacaan Inggris" : "English readings",
   };
   const readingGroups: { label: string; items: ReadingPiece[] }[] = readingLang === "all"
     ? (["zh", "id", "en"] as const).map(lg => ({ label: readingLangName[lg], items: filteredReadings.filter(pc => pc.lang === lg) })).filter(g => g.items.length)
