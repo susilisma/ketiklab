@@ -118,11 +118,18 @@ const validMistakeKey = (k: unknown): k is string => typeof k === "string" && (k
 // The generated landing pages link into the app with ?ui=<lang>, ?lib=<id> and
 // ?view=articles. They are read once here and dropped from the address bar, so a
 // bookmark or a reload does not replay them; the values apply on the first render.
-const ENTRY: { ui: Lang | null; lib: string | null; articles: boolean } = (() => {
+const ENTRY: { ui: Lang | null; learn: Lang | null; lib: string | null; step: ZhStep | null; articles: boolean } = (() => {
   try {
     const p = new URLSearchParams(location.search);
-    const ui = p.get("ui"), lib = p.get("lib"), view = p.get("view");
-    if (p.has("ui") || p.has("lib") || p.has("view")) history.replaceState(null, "", location.pathname + location.hash);
+    const ui = p.get("ui"), learn = p.get("learn"), lib = p.get("lib"), view = p.get("view"), step = p.get("step");
+    // only the keys read here leave the address bar; a campaign tag (?from=) and anything
+    // else a link carries stays for whatever reads the URL, instead of the whole query going
+    const consumed = ["ui", "learn", "lib", "view", "step", "from"].filter(k => p.has(k));
+    if (consumed.length) {
+      for (const k of consumed) p.delete(k);
+      const rest = p.toString();
+      history.replaceState(null, "", location.pathname + (rest ? "?" + rest : "") + location.hash);
+    }
     // the landing pages /zh/ /id/ /en/ embed the app: opening one is opening the app in that
     // language, whatever the browser's locale says (a saved choice still wins, see the restore effect)
     const path = location.pathname.match(/^\/(zh|id|en)\/(index\.html)?$/)?.[1];
@@ -131,9 +138,20 @@ const ENTRY: { ui: Lang | null; lib: string | null; articles: boolean } = (() =>
     // button or the installed app's start page kept the link's language only once the dialog
     // was saved — closed instead, they came back in the browser's language
     if (entryUi) try { localStorage.setItem("ketiklab-ui", entryUi); } catch { /* ignore */ }
-    return { ui: entryUi, lib, articles: view === "articles" };
-  } catch { return { ui: null, lib: null, articles: false }; }
+    // ?learn= and ?step= let one link open the language and the rung a post is about: a post
+    // about typing pinyin landed its readers on the rung that has nothing to type, and every
+    // visitor arrived set to learn Chinese whichever landing page they came from
+    return {
+      ui: entryUi,
+      learn: isLang(learn) ? learn : null,
+      lib,
+      step: ZH_STEPS.some(st => st.id === step) ? step as ZhStep : null,
+      articles: view === "articles",
+    };
+  } catch { return { ui: null, learn: null, lib: null, step: null, articles: false }; }
 })();
+// a phone has no "any key"; the veil and the status line say what the gesture really is
+const COARSE = (() => { try { return matchMedia("(hover: none) and (pointer: coarse)").matches; } catch { return false; } })();
 // the interface language before any choice: the link's, else the one a link opened earlier, else the browser's when it is one of ours
 const rememberedUi = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-ui"); return isLang(u) ? u : null; } catch { return null; } };
 const initialUi = (): Lang => ENTRY.ui ?? rememberedUi() ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
@@ -292,7 +310,7 @@ export default function Home() {
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
-  const [lang, setLang] = useState<Lang>("zh");
+  const [lang, setLang] = useState<Lang>(ENTRY.learn ?? "zh");
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
   const sourceRef = useRef(source); sourceRef.current = source;
@@ -443,7 +461,12 @@ export default function Home() {
     };
   }, []);
   const [zhStep, setZhStep] = useState<ZhStep>(() => {
-    try { const s = localStorage.getItem("ketiklab-zh-step"); return ZH_STEPS.some(st => st.id === s) ? s as ZhStep : "read"; } catch { return "read"; }
+    try {
+      const s = localStorage.getItem("ketiklab-zh-step");
+      const saved = ZH_STEPS.some(st => st.id === s) ? s as ZhStep : null;
+      // a returning learner keeps the rung they were on; a link only names it on a first visit
+      return (localStorage.getItem("ketiklab-langs") ? saved : ENTRY.step ?? saved) ?? "read";
+    } catch { return ENTRY.step ?? "read"; }
   });
   const zhMap = useZhMap(DATA);
   useEffect(() => { try { localStorage.setItem("ketiklab-zh-step", zhStep); } catch { /* ignore */ } }, [zhStep]);
@@ -1808,13 +1831,14 @@ export default function Home() {
         {dictsError && <div className="review-banner"><span>⚠ {TX("考试词库加载失败", "Kamus ujian gagal dimuat", "Exam libraries failed to load", uiLang)}</span><button onClick={loadManifest}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
         {linkedMissing && <div className="review-banner"><span>⚠ {TX(`链接的词库不存在：${linkedMissing}`, `Daftar kata di tautan tidak ada: ${linkedMissing}`, `The linked word list does not exist: ${linkedMissing}`, uiLang)}</span><button onClick={() => { setLinkedMissing(null); setView("library"); }}>{t.library}</button></div>}
         {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${Math.max(reviewKeys.length, reviewDueTotal) > reviewItems.length ? ` / ${Math.max(reviewKeys.length, reviewDueTotal)}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata yang perlu diulang di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
-        <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `${narrowRow ? "Ch." : "Chapter"} ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
+        <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : COARSE ? TX("点击卡片开始", "Ketuk kartu untuk mulai", "Tap the card to start", uiLang) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `${narrowRow ? "Ch." : "Chapter"} ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row">{!zhLadder && <span className="mode-group"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</span>}{!zhLadder && <span className="mode-sep" />}<span className="mode-group"><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", TX("自动回退", "Mundur otomatis", "Auto rollback", uiLang)], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); cancelFlash(); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</span></div>
         {!chapterFinished && <>
         <div className={practiceLang === "zh" ? "word-card zh-compact" : "word-card"} onClick={() => input.current?.focus()}>
           {!typingFocus && !zhLadder && <div className="type-veil" onClick={() => input.current?.focus()}><b>{(() => {
             // a paused run (clock stopped, letters or seconds on the board) continues; only a fresh card starts
             const resume = running || seconds > 0 || typed.length > 0;
+            if (COARSE) return uiLang === "zh" ? (resume ? "点这里继续" : "点这里开始打字") : uiLang === "id" ? (resume ? "Ketuk di sini untuk lanjut" : "Ketuk di sini untuk mulai mengetik") : (resume ? "Tap here to continue" : "Tap here to start typing");
             return uiLang === "zh" ? (resume ? "按任意键继续" : "按任意键开始") : uiLang === "id" ? (resume ? "Tekan tombol apa saja untuk lanjut" : "Tekan tombol apa saja untuk mulai") : (resume ? "Press any key to continue" : "Press any key to start");
           })()}</b></div>}
           <div className="word-count">{String((index % learnItems.length) + 1).padStart(2,"0")} <span>/ {learnItems.length}</span></div>
@@ -2080,6 +2104,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
         </div>
       </div>
       <div className="lang-modal-actions">
+        {def === null && <small className="lang-modal-need">{mt.defRequired}</small>}
         <button className="lang-modal-cancel" onClick={onClose}>{mt.cancel}</button>
         <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, picked && picked !== learn ? picked : null); }}>{mt.save}</button>
       </div>

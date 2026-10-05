@@ -393,6 +393,36 @@ def sitemap(groups):
     return "\n".join(out) + "\n"
 
 
+# One short address per promotion channel. Xiaohongshu allows no link at all, so a visitor
+# from there arrives by typing the address — which is indistinguishable from direct traffic
+# unless the address itself names the channel. Each page opens the app in the language pair
+# that channel's posts are about, tags the visit with ?from= and is kept out of the sitemap
+# and out of search.
+CHANNELS = {
+    "xhs": ("zh", "id", None, "KetikLab · 小红书", "打开 KetikLab …"),
+    "ig": ("id", "zh", "pinyin", "KetikLab · Instagram", "Membuka KetikLab …"),
+}
+
+
+def channel_page(slug, ui, learn, step, title, waiting):
+    q = f"?ui={ui}&learn={learn}" + (f"&step={step}" if step else "") + f"&from={slug}"
+    return f"""<!doctype html>
+<html lang="{HTML_LANG[ui]}">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex, follow" />
+    <meta http-equiv="refresh" content="0; url=/{q}" />
+    <link rel="canonical" href="{SITE}/" />
+    <title>{title}</title>
+  </head>
+  <body style="margin:0;display:grid;place-items:center;min-height:100vh;font:16px/1.6 system-ui,-apple-system,'PingFang SC',sans-serif;background:#f6f6fb;color:#2a2a35">
+    <p><a href="/{q}" style="color:#6b5df6">{waiting}</a></p>
+    <script>location.replace("/{q}");</script>
+  </body>
+</html>
+"""
+
 def main():
     index_path = os.path.join(DIST, "index.html")
     if not os.path.exists(index_path):
@@ -425,10 +455,13 @@ def main():
         write(os.path.join(DIST, path.strip("/"), "index.html"), page); n_pages += 1
     groups.append({l: f"/{l}/readings/" for l in LANGS})
 
+    for slug, (ui, learn, step, title, waiting) in CHANNELS.items():
+        write(os.path.join(DIST, slug, "index.html"), channel_page(slug, ui, learn, step, title, waiting)); n_pages += 1
+
     write(index_path, root_page(index_html, len(readings)))
     write(os.path.join(DIST, "sitemap.xml"), sitemap(groups))
     urls = sum(len(set(g.values())) for g in groups)
-    print(f"build-seo-pages: {n_pages} pages written, sitemap lists {urls} URLs, "
+    print(f"build-seo-pages: {n_pages} pages written ({len(CHANNELS)} channel entries), sitemap lists {urls} URLs, "
           f"{len(manifest)} libraries + trio ({len(words)} words) + {len(readings)} readings")
 
 

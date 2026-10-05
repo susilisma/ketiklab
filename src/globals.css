@@ -483,3 +483,11 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 }
 /* 12px type floor: existing letter-spacing stays; vocabulary.css (imported later) carries its own */
 .chapter small,.session-meta,.sound,.hint,.meanings small,.word-card.zh-compact .meanings small,.metric span,.mini-progress span,.profile small,.panel-head span,.vocab-card>span,.vocab-card p,.mistake-list i,.reading-heading>div:first-child>span,.reading-filters button,.reading-library-title span,.piece-language,.reading-list small,.reading-list em,.reader-top>div>span,.reader-top p,.reader-top>button,.passage-preview p>span,.line-meta,.reading-input-wrap button,.typing-help,.reader-footer>p,.reader-footer>div,.reading-complete>small,.reading-complete p,.reading-complete>div small,.reading-complete>button,.goal-card>span,.week span,.week small,.setting p,.nav-badge,.review-cta small,.lang-card small,.lang-card span,.zh-go i,.zh-skip,.zh-ladder button i,.mode-group>span,.mode-row button,.mode-row em,.chapter-nav b,.chapter-select,.finish-wrong small,.heat-legend,.backup-row small,.reading-group-head span,.reading-group-head em,.reading-chevron,.res-src,.dict-card p,.dict-card small,.library-section-title span,.offer-price span,.pill,.ref-grid label small,.ref-stats .stat small,.checkout-ref small,.pay-method>small,.acct-field span,.acct-badge,.acct-who small,.type-veil b,.speech-unlock,.bars small{font-size:12px}
+
+/* The first-visit dialog is taller than a phone screen (1209px against 812px on a 375x812
+   screen), so its Save button sat 349px below the fold — and it is disabled until the meaning
+   row, which is the part below the fold, is answered. The dialog now scrolls inside itself
+   with the buttons pinned to its bottom edge, so the ask and the answer are always on screen. */
+.lang-modal{display:flex;flex-direction:column;max-height:calc(100dvh - 36px);overflow:auto;overscroll-behavior:contain;padding-bottom:0}
+.lang-modal-actions{position:sticky;bottom:0;z-index:1;flex-wrap:wrap;align-items:center;background:var(--surface);margin-top:auto;padding:14px 0 18px;box-shadow:0 -14px 20px -16px rgba(0,0,0,.45)}
+.lang-modal-need{margin-right:auto;color:var(--purple);font-size:12px;font-weight:600;line-height:1.35;max-width:60%}
