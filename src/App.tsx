@@ -126,7 +126,7 @@ const ENTRY: { ui: Lang | null; learn: Lang | null; lib: string | null; step: Zh
     const ui = p.get("ui"), learn = p.get("learn"), lib = p.get("lib"), view = p.get("view"), step = p.get("step");
     // only the keys read here leave the address bar; a campaign tag (?from=) and anything
     // else a link carries stays for whatever reads the URL, instead of the whole query going
-    const consumed = ["ui", "learn", "lib", "view", "step", "from"].filter(k => p.has(k));
+    const consumed = ["ui", "learn", "lib", "view", "step"].filter(k => p.has(k));
     if (consumed.length) {
       for (const k of consumed) p.delete(k);
       const rest = p.toString();
