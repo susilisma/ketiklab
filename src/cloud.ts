@@ -238,6 +238,11 @@ function record(v: unknown): Record<string, unknown> { const p = parsed(v); retu
 function list(v: unknown): unknown[] { const p = parsed(v); return Array.isArray(p) ? p : []; }
 const count = (v: unknown) => (typeof v === "number" && v > 0 ? v : 0);
 const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s): s is string => typeof s === "string");
+function interleave<T>(a: T[], b: T[]): T[] {
+  const out: T[] = [];
+  for (let i = 0; i < Math.max(a.length, b.length); i++) { if (i < a.length) out.push(a[i]); if (i < b.length) out.push(b[i]); }
+  return out;
+}
 
 export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressBlob {
   const out: ProgressBlob = {};
@@ -249,7 +254,9 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       out[k] = JSON.stringify({
         correct: Math.max(count(x.correct), count(y.correct)),
         attempts: Math.max(count(x.attempts), count(y.attempts)),
-        mistakes: Array.from(new Set([...strings(y.mistakes), ...strings(x.mistakes)])).slice(0, 30),
+        // each side is newest first; taking them in turns keeps the newest of both devices,
+        // where appending one list to the other let 30 stale keys evict the other device's
+        mistakes: Array.from(new Set(interleave(strings(y.mistakes), strings(x.mistakes)))).slice(0, 30),
       });
     } else if (k === "ketiklab-days" || k === "ketiklab-chapters") {
       const x = record(a), y = record(b), m: Record<string, number> = {};
