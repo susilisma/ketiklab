@@ -303,8 +303,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "今日渲染检查复测：语言 select 90×38、默写「关」36×40 仍在（唯一未过的两项）；紫字紫底未复测；F8/F6 10-01 复核：语言 select 90×38、默写 关 36×40 仍在；分类条当前项滚出视口（library 375 三语）仍在，修法 scrollIntoView；新数据点 768 触屏 .reading-filters 按钮 36 px 高；紫字紫底 3.80:1 仍在；10-06 L 复测：默写「关」已为 41×40（消失）；语言 select 90×38、分类条滚出视口、紫字紫底 3.80 仍在",
-   "date": "2026-10-06"
+   "reason": "今日渲染检查复测：语言 select 90×38、默写「关」36×40 仍在（唯一未过的两项）；紫字紫底未复测；F8/F6 10-01 复核：语言 select 90×38、默写 关 36×40 仍在；分类条当前项滚出视口（library 375 三语）仍在，修法 scrollIntoView；新数据点 768 触屏 .reading-filters 按钮 36 px 高；紫字紫底 3.80:1 仍在；10-06 L 复测：默写「关」已为 41×40（消失）；语言 select 90×38、分类条滚出视口、紫字紫底 3.80 仍在｜10-07 L：语言 select 94×38（随回退字体）、默写 关 36×40 又量到、浅色白字紫底 4.41",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "timer-runs-in-other-views",
@@ -509,7 +509,7 @@
    "title": "「今日待复习」实为「此刻到期」（srs.ts getStats）",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "改文案或按当天结束计算，由主人定",
+   "reason": "改文案或按当天结束计算，由主人定｜10-07 F3 场景 I 再复现（22:00 练 08:00 开为 0）",
    "date": "2026-09-15",
    "commit": ""
   },
@@ -797,8 +797,8 @@
    "title": "挂载时先把 state/days/fav/dark/name 的默认值写入 localStorage，23 ms 后才写回真值",
    "priority": "P3",
    "status": "deferred",
-   "reason": "约 10 行 lazy useState；未观察到实际丢失 ｜ 09-30 F2/V3 新证据：第二个标签页挂载时第一个标签页 打拼音 框被清空、卡片与计数闪烁（默认值先写入再恢复）；V3 已在旁路构建验证约 12 行修法（favorites/profileName/dayCounts/correct-attempts-mistakes 改惰性初始化，删挂载读取；首访/坏值/导入字节一致），diff 见 reports/2026-09-30.md 未修复节；明日做｜10-01 run2：fav 部分已修（df23f32 惰性初始化，VX2 验证第二标签页不再收到 ketiklab-fav 事件）；state/days 仍先写默认值（VX2 t16 仍见 ketiklab-state/days 默认→真值两次写），在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01",
+   "reason": "约 10 行 lazy useState；未观察到实际丢失 ｜ 09-30 F2/V3 新证据：第二个标签页挂载时第一个标签页 打拼音 框被清空、卡片与计数闪烁（默认值先写入再恢复）；V3 已在旁路构建验证约 12 行修法（favorites/profileName/dayCounts/correct-attempts-mistakes 改惰性初始化，删挂载读取；首访/坏值/导入字节一致），diff 见 reports/2026-09-30.md 未修复节；明日做｜10-01 run2：fav 部分已修（df23f32 惰性初始化，VX2 验证第二标签页不再收到 ketiklab-fav 事件）；state/days 仍先写默认值（VX2 t16 仍见 ketiklab-state/days 默认→真值两次写），在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入｜10-07 F3 再复现：state/days 先写零 ~10 ms，第二标签页回显零值；收藏已修，这两键未修",
+   "date": "2026-10-07",
    "commit": ""
   },
   {
@@ -1914,8 +1914,8 @@
    "priority": "P2",
    "status": "needs-owner",
    "commit": "",
-   "reason": "校验者复现；SRS 行从不上云，清掉即毁掉上一账号唯一的一份，留着则归新账号——阶梯按设备还是按账号由主人定；若按按钮字面意思清空，1 行 resetAll()",
-   "date": "2026-09-23"
+   "reason": "校验者复现；SRS 行从不上云，清掉即毁掉上一账号唯一的一份，留着则归新账号——阶梯按设备还是按账号由主人定；若按按钮字面意思清空，1 行 resetAll()｜10-07 F3 场景 E 再复现：只用云端记录 后 IndexedDB 行与徽标仍是上一账号的",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "trio-gloss-corrections-0923",
@@ -3289,10 +3289,10 @@
    "fingerprint": "seo-trio-pages-orphaned",
    "title": "主题词汇 3 个 SEO 页无任何入链（sitemap 有、lib_links/libs_nav 只遍历 manifest）（build-seo-pages.py:178,300）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "95e5e53",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：爬取 37/40 → 40/40，每页 13 个入链，0 坏链；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "fd47c03",
+   "reason": "10-01 的 95e5e53 三方合并重做；/zh/、lib 页、readings 页各含 /zh/lib/trio/ 链接；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "account-id-arm-english-streak",
@@ -3477,11 +3477,11 @@
   {
    "fingerprint": "fav-star-on-state-1.8-light",
    "title": "浅色主题已收藏 ★ #e9ae4e 在 12% 同色淡底上 1.83:1，悬停 1.85:1（深色 6.81:1 正常）",
-   "priority": "P3",
-   "status": "deferred",
-   "commit": "6e6a5a9",
-   "reason": "已修好并验证（V：浅色 on 6.26:1、hover 6.32:1，深色 6.81 不变，边框/底色/☆★ 形状状态线索不变）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "1141730",
+   "reason": "10-01 的 6e6a5a9 cherry-pick；L 的 audit.cjs 最终 dist 286 格 ★ 1.83 不再出现；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "display-name-placeholder-claims-others-see-it",
@@ -3892,64 +3892,64 @@
    "fingerprint": "migration-skipped-idb-blocked",
    "title": "IndexedDB 被禁时进度键迁移整体进 catch，收藏/错词本保留旧键，★ 加第二条",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "21f3299",
-   "reason": "getAllRecords().catch(null)，SRS 与 flag 等待、收藏与错词本照常改名；VX2 HOLDS；在 claude/daily-2026-10-06，受 12 项上限下次合入",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "eab85ce",
+   "reason": "VN 双向复验 HOLDS（main 构建 ★ 加第二条，分支正常；IndexedDB 可用时逐字节一致）；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "seo-static-muted-contrast",
    "title": "静态页次要文字 #7b7d8c 3.81:1（10-01 453b2dc 冲突未合入）",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "fc0bd22",
-   "reason": "改 #62657a；VX HOLDS 5.36/5.50/5.73；在 claude/daily-2026-10-06",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "ac2a31f",
+   "reason": "VN HOLDS 41 页 0 处 #7b7d8c；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "lib-trio-param-banner",
    "title": "?lib=trio（SEO 路径与 sitemap 用的 id）被报「链接的词库不存在」",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "f85c36b",
-   "reason": "识别 trio 为来源；f2check 无横幅；在 claude/daily-2026-10-06",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "e23c3b5",
+   "reason": "VN HOLDS；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "reading-groups-called-classics",
    "title": "阅读分组 中文经典/印尼语经典/英文经典 含本站练习短文（954f36e 残留）",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "019acf0",
-   "reason": "改 篇目 / Bacaan / readings；在 claude/daily-2026-10-06",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "070990a",
+   "reason": "VN HOLDS 三语；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "peek-button-missing-meaning-copy",
    "title": "缺释义的偷看按钮只写 Belum ada arti Indonesia · 中文，没说点了会显示",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "84b725f",
-   "reason": "VX HOLDS 三语；在 claude/daily-2026-10-06",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "1231efe",
+   "reason": "VN HOLDS 三语；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "plan-kosong-wording",
    "title": "计划页未练日 Kosong 措辞生硬",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "ac68367",
-   "reason": "改 Absen；在 claude/daily-2026-10-06",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "f201035",
+   "reason": "VN HOLDS；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "stats-total-kata-reads-as-word-count",
    "title": "统计 累计打词 印尼语臂 Total kata 读起来像词数",
    "priority": "P3",
-   "status": "fixed-on-branch",
-   "commit": "e6ec0ca",
-   "reason": "改 Total diketik；在 claude/daily-2026-10-06",
-   "date": "2026-10-06"
+   "status": "fixed",
+   "commit": "3bc2898",
+   "reason": "VN HOLDS；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "purple-white-dark-contrast",
@@ -3993,8 +3993,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 10-06 polish",
-   "date": "2026-10-06"
+   "reason": "F2 10-06 polish｜10-07 F2 再复现：initialUi 不读 ketiklab-langs.ui，回访首帧闪一下",
+   "date": "2026-10-07"
   },
   {
    "fingerprint": "berth-def-inconsistent",
@@ -4022,6 +4022,231 @@
    "commit": "",
    "reason": "10-06 复核；受 12 项上限未合，下次按价值补",
    "date": "2026-10-06"
+  },
+  {
+   "fingerprint": "cloud-mistakes-union-evicts-other-device",
+   "title": "云端错词本合并本机优先再截 30，另一设备近期错词被挤出云端（cloud.ts:252）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "302ac55, d66781d",
+   "reason": "F3 复现（本机 30 旧键推送后云端 0 条另一设备键）；302ac55 两边轮流取；V3 发现按下标轮流不吸收（合并到本机 后 20/10），d66781d 改为跳过已放入的键：A 15/15 且再推无写、B 前缀不变、m(a,m(a,b))=m(a,b) 2 万随机对 0 失败、t4/t6 回归一致；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "lookupkey-dictcache-residue",
+   "title": "错词本列表里旧键 id:air 显示为主题词 udara 而 开始复习 给词典词 air（lookupKey 只看 dictCache）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "c5bfc75",
+   "reason": "V3：mistakes=[id:air] 列表 air/水（pre-fix udara/空气）与 开始复习 一致，indonesian.json 只取一次；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "stale-slipon-after-skip-marks-clean-retry-as-missed",
+   "title": "滑错后跳过的词，下一次完美打完仍判为错且不写 SRS（App.tsx skipWord 不清 slipOn）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "cd47411, 8090a15",
+   "reason": "F1 复现（练习错词/重练本章/重选列表后完美打完仍算错不写 SRS）；cd47411 skipWord 清 slipOn；V1 发现放进 resetChapterRun 让换语言也清（回归），8090a15 改 freshListRun 只给选列表三处；V1 复跑 t6/t2/t9 HOLDS、换档与换语言仍保留滑错、普通跳过单次遗忘、20 词 2 错正确；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "zh-dicts-idtrans-malay-round3",
+   "title": "8 个词库 31 行 idtrans 仍含马来语/错义词（sijil、kasut、jiran、tuala、kelab、polis、pejabat、kemalangan 作事故、doktor 作医师）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "7a5dbcc",
+   "reason": "D 扫描 44 行、VD 逐行复核 24 真错 + 7 重排 + 11 误报；只改两人一致的 31 行；check.py DEFECT 1836→1805；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "zh-dicts-trans-rare-sense-46",
+   "title": "zh-core/plus/upper 英文释义首项为 WordNet 罕见义（抽样行）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "7a5dbcc",
+   "reason": "D 抽样 + VD 复核一致的 46 行 zh-* trans/def/idtrans 改常用义（奶油 cream、椭圆形 oval、方案 plan、口吻 tone of voice…）；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "words-gloss-round-1007",
+   "title": "words.json 26 行主题词释义（形容词用动词短语、定义片段领头、印尼语名词/短语顶形容词或 KBBI 词头）",
+   "priority": "释义",
+   "status": "fixed",
+   "commit": "418a179",
+   "reason": "G 提 46、VG 同意 26（驳回 20）；pinyin/idSyllables 重生成，唯一性与字符规则 0 问题；已合入 main bc9b439..d66781d，Build check #64 成功 0 注解",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "zh-dicts-trans-first-synset-bulk",
+   "title": "zh-core/plus/upper 英文释义行约 40% 首项为 WordNet 罕见义（VD 抽样 180 行 ~75 行）",
+   "priority": "P1",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "今日只改两人一致的 46 行；根治需 build-zh-dicts.py 换中文优先源（CC-CEDICT CC BY-SA 4.0）并钉住已改行，授权与重生成由主人定；VD 单方另列 ~45 行待独立复核",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "zh-dicts-vd-single-voice-rows",
+   "title": "VD 单方提出的 ~45 行 zh-* 首项错（现在 moment、打算 aim、漆黑、酗酒、居住区、仪表板…）与 偶然/年鉴 trans、劳改 idtrans",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "",
+   "reason": "只有校验者一方提出，下次派独立查找者复核后应用；清单见报告 2026-10-07 释义修正末段",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "session-status-label-truncated-on-phone",
+   "title": "手机 375–430 遮罩期间学习页状态标签截成「T…/点击…/Ketuk…」（globals.css:439）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4 量到 21/36/76 px 宽对 184 px 标签；修法：≤430 遮罩期间隐藏该标签（遮罩已写同一句）或换行；受上限未动",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "landing-page-jsonld-url-stays-root",
+   "title": "/zh/ /id/ /en/ 的 ld+json url 仍是根地址与三语描述（build-seo-pages.py language_page）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "一行 sub1；受上限未动",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "generated-page-stale-for-http-max-age-after-deploy",
+   "title": "生成页（/zh/lib/*、/zh/readings/）部署后 max-age 窗口内读旧版并写回 SW 缓存（sw.js:86 只对 shell/landing 用 no-cache）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4 模拟部署复现；修法把 generated 判断提前并加入 shellReq 条件；受上限未动",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "ladder-clock-starts-only-after-first-pass",
+   "title": "阶梯档计时器到第一个词过了才开始（ZhSteps 框 onFocus 不 setRunning）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F1 复现 3 s 仍 00:00；修法给 ZhSteps 传 onStart 回调",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "correction-toggle-shown-but-inert-on-pinyin-rung",
+   "title": "打拼音档显示纠错开关但无效（App.tsx mode-row 只隐藏默写组）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F1 复现；修法 zhLadder 时同样隐藏纠错组",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "pause-on-ladder-word-leaves-next-latin-word-unfocused",
+   "title": "混合收藏列表在阶梯词上按暂停，下一 Latin 词无焦点无遮罩时钟在走（pausedByButton 只由 App 输入框 onFocus 清）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F1 复现，下一键自愈；修法 ZhSteps 框 onFocus 清 pausedByButton",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "reader-waiting-lines-contrast",
+   "title": "阅读器未到行 2.48:1 浅 / 3.03:1 深（globals.css:24 .passage-preview p.waiting 60% 透明）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "L 量到；修法 color-mix 85% 或只用字重区分",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "dictation-off-pill-36px",
+   "title": "zh 界面默写「关」胶囊 36×40（globals.css:126）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "L 量到（昨日报告曾说消失，今日 L 在 375 zh 学 id/en 又量到）；.mode-row button 加 min-width:40px",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "missing-saved-list-banner-says-linked",
+   "title": "保存的词库下架后横幅说「链接的词库不存在」（App.tsx:557 复用 linkedMissing）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2 复现 ketiklab-source=en-gone；修法给保存情形单独文案",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "id-terminology-kamus-ujian",
+   "title": "印尼语 Kamus ujian / Semua kamus / Cari di semua kamus… / Buku kesalahan 与其它处 daftar kata 不一致",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "view-switch-not-in-history",
+   "title": "侧栏视图不入历史，Back 直接离站 / PWA 硬件返回退出",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F2；pushState + popstate 约 10 行，是否要由主人定",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "cloud-merge-keeps-filtered-junk-keys",
+   "title": "云端残留本机已过滤的坏键（fr:bank、非法收藏）让「云端有更多」横幅常驻（mergeProgress 不过滤）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F3 场景 G 单次复现；修法在 mergeProgress 或归一器里套同一过滤",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "bare-legacy-key-listed-twice-in-mistakes",
+   "title": "裸旧键 \"achieve\" 与 id:trio:achieve 并列显示为第二个 mencapai（planKeyMoves 只改 <lang>:<en>）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F3 复现",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "seo-page-inline-link-targets",
+   "title": "静态 SEO 页正文内链 17 px、「打开练习 →」20 px（WCAG 2.5.8 行内豁免）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "L；只有「打开练习 →」值得做成按钮",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "usphone-empty-string-rows",
+   "title": "50 行 usphone 为 \"\"（英式拼写不在 CMUdict）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "D/VD；应用当假值，无害；build-en-dicts.py 可改为省略键",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "en-toefl-pos-label-spacing",
+   "title": "en-toefl 12 项 POS 标签后无空格、spite 无标签、29 处 ... / … 混用",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "D 体例项",
+   "date": "2026-10-07"
+  },
+  {
+   "fingerprint": "indonesian-person-party-headwords",
+   "title": "indonesian.json 约 35 个人名/党派缩写/公司名词头带百科式释义（pdip、nasdem、pranowo、pertamina、thohir、cnbc…）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "D；与 gloss-candidates-2026-09-25 C.1 同类，是否删除或统一由主人定",
+   "date": "2026-10-07"
   }
  ]
 }
