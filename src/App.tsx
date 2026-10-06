@@ -671,7 +671,9 @@ export default function Home() {
   const [, setDictTick] = useState(0);
   useEffect(() => {
     if (!ready || view !== "mistakes" || !mistakes.length || !dicts.length) return;
-    const missing = mistakes.filter(k => !lookupKey(k));
+    // a legacy key named by the topic word only because its dictionaries are not loaded yet
+    // would be served as the dictionary word by 开始复习, so those are fetched too
+    const missing = mistakes.filter(k => { const info = lookupKey(k); return !info || (info.legacy && dicts.some(d => d.lang === splitId(k)[0] && !dictCache.current.has(d.id))); });
     if (!missing.length) return;
     let alive = true;
     resolveReviewRefs(missing).then(() => { if (alive) setDictTick(n => n + 1); }).catch(() => {});
@@ -1190,7 +1192,7 @@ export default function Home() {
   const readingProgress = Math.round(((readingLine + Math.min(readingTyped.length / Math.max(readingTarget.length, 1), 1)) / reading.lines.length) * 100);
   // "<lang>:<key>" → the trio word in that language, else a loaded dictionary of that language
   const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
-  type KeyInfo = { text: string; meaning: string; note: boolean; label?: string };
+  type KeyInfo = { text: string; meaning: string; note: boolean; label?: string; legacy?: boolean };
   function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
     const trioInfo = (w: Word): KeyInfo => { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), meaning: m.text, note: m.note, label: m.label }; };
@@ -1204,7 +1206,7 @@ export default function Home() {
     // written before topic words had their own namespace: the bare English headword, which
     // a dictionary of this language may hold too — that is why the dictionaries went first
     const legacy = wordByEn.get(key);
-    return legacy ? trioInfo(legacy) : undefined;
+    return legacy ? { ...trioInfo(legacy), legacy: true } : undefined;
   }
   const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes"
     ? mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter(x => x.info) as { key: string; info: KeyInfo }[]
