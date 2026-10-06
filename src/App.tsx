@@ -437,7 +437,7 @@ export default function Home() {
   // every path that starts a list from its first word: the chapter's tally, its finish
   // card and its clock start over too — choosing the list that is already open used to
   // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
-  const resetChapterRun = () => { setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
+  const resetChapterRun = () => { setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; slipOn.current = ""; };
   const [speechBlocked, setSpeechBlocked] = useState(false);
   const speechPrimed = useRef(false);
   useEffect(() => {
@@ -1427,6 +1427,10 @@ export default function Home() {
     if (finishing.current) return;
     if (!lapseRecorded.current && slipOn.current !== wordId) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
     resetWordRun();
+    // the skip is the word's verdict and its lapse is written: a later run of the same word
+    // that leaves index at 0 (a one-word list retried, 练习错词 after a one-word review) never
+    // passes the [index] effect, and the stale slip graded a perfect answer as missed
+    slipOn.current = "";
     setAttempts(n => n + 1);
     setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
     setTyped("");
