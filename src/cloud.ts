@@ -238,9 +238,18 @@ function record(v: unknown): Record<string, unknown> { const p = parsed(v); retu
 function list(v: unknown): unknown[] { const p = parsed(v); return Array.isArray(p) ? p : []; }
 const count = (v: unknown) => (typeof v === "number" && v > 0 ? v : 0);
 const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s): s is string => typeof s === "string");
-function interleave<T>(a: T[], b: T[]): T[] {
-  const out: T[] = [];
-  for (let i = 0; i < Math.max(a.length, b.length); i++) { if (i < a.length) out.push(a[i]); if (i < b.length) out.push(b[i]); }
+/** The two lists in turns, each turn taking its side's next key not placed yet: a key the
+ *  other side already placed is skipped rather than re-emitted at this side's rank, so
+ *  merging a device into a cloud copy that already holds the merge gives that copy back. */
+function turns(a: string[], b: string[]): string[] {
+  const out: string[] = [], seen = new Set<string>();
+  let i = 0, j = 0;
+  while (i < a.length || j < b.length) {
+    while (i < a.length && seen.has(a[i])) i++;
+    if (i < a.length) { seen.add(a[i]); out.push(a[i++]); }
+    while (j < b.length && seen.has(b[j])) j++;
+    if (j < b.length) { seen.add(b[j]); out.push(b[j++]); }
+  }
   return out;
 }
 
@@ -256,7 +265,7 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
         attempts: Math.max(count(x.attempts), count(y.attempts)),
         // each side is newest first; taking them in turns keeps the newest of both devices,
         // where appending one list to the other let 30 stale keys evict the other device's
-        mistakes: Array.from(new Set(interleave(strings(y.mistakes), strings(x.mistakes)))).slice(0, 30),
+        mistakes: turns(strings(y.mistakes), strings(x.mistakes)).slice(0, 30),
       });
     } else if (k === "ketiklab-days" || k === "ketiklab-chapters") {
       const x = record(a), y = record(b), m: Record<string, number> = {};
