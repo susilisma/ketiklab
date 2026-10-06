@@ -437,7 +437,11 @@ export default function Home() {
   // every path that starts a list from its first word: the chapter's tally, its finish
   // card and its clock start over too — choosing the list that is already open used to
   // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
-  const resetChapterRun = () => { setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; slipOn.current = ""; };
+  const resetChapterRun = () => { setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
+  // choosing a list anew is a fresh run: a slip remembered on its first word (whose lapse is
+  // already written) must not grade the new run's perfect answer as missed. Not for a
+  // language change, which also resets the chapter but keeps the slip by design.
+  const freshListRun = () => { resetChapterRun(); slipOn.current = ""; };
   const [speechBlocked, setSpeechBlocked] = useState(false);
   const speechPrimed = useRef(false);
   useEffect(() => {
@@ -1598,7 +1602,7 @@ export default function Home() {
     if (reviewKeys) setChapter(savedChapter(trioChapterKey(nextCategory, lang, zhStep)));
     setReviewKeys(null);
     setCategory(nextCategory);
-    setIndex(0); resetChapterRun();
+    setIndex(0); freshListRun();
     setTyped("");
     setSearch("");
     resetWordRun();
@@ -1628,7 +1632,7 @@ export default function Home() {
     setSource(d.id);
     persistSource(d.id);
     setGlobalSearch(false);
-    setReviewKeys(null); setIndex(0); resetChapterRun(); setTyped(""); resetWordRun();
+    setReviewKeys(null); setIndex(0); freshListRun(); setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setView("learn");
     setTimeout(() => input.current?.focus(), 40);
@@ -1637,7 +1641,7 @@ export default function Home() {
     sourceReq.current++; pendingIndex.current = null;
     setSource("fav"); persistSource("fav");
     setGlobalSearch(false);
-    setReviewKeys(null); setIndex(0); resetChapterRun(); setTyped(""); resetWordRun();
+    setReviewKeys(null); setIndex(0); freshListRun(); setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setView("learn"); setTimeout(() => input.current?.focus(), 40);
   }
