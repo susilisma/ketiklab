@@ -87,13 +87,17 @@ self.addEventListener("fetch", (e) => {
     // "no-cache": a shell is revalidated with the server rather than taken from the HTTP
     // cache, which for ten minutes after a deploy still holds the previous HTML — and
     // that HTML names bundle files this worker's activate has just dropped
-    const shellReq = isShell || landing ? new Request(req.url, { cache: "no-cache", credentials: "same-origin" }) : req;
-    // a landing page is cached under its bare path: stored under the full URL, a visit
-    // with ?utm_source=… never served the plain /id/ offline, and each query made a copy
-    const landingKey = landing ? `./${landing[1]}/` : null;
     // a generated page (/zh/lib/en-core/, /id/readings/ …) is a plain document: kept
     // once seen, so a page read online opens offline instead of failing to load
     const generated = !isShell && !landing && /^\/(zh|id|en)\//.test(url.pathname);
+    // a generated page is revalidated the same way, or for the max-age window after a deploy
+    // the HTTP cache answered with the previous version and that copy was stored below as
+    // the current one. Only in its slash form: the bare /zh/lib/en-core is a 301 on GitHub
+    // Pages, and a redirected no-cache Request cannot answer a navigation (net::ERR_FAILED)
+    const shellReq = isShell || landing || (generated && url.pathname.endsWith("/")) ? new Request(req.url, { cache: "no-cache", credentials: "same-origin" }) : req;
+    // a landing page is cached under its bare path: stored under the full URL, a visit
+    // with ?utm_source=… never served the plain /id/ offline, and each query made a copy
+    const landingKey = landing ? `./${landing[1]}/` : null;
     // keyed by path like a landing page: stored under the full URL, a page opened from a
     // shared link with ?utm_… never served its plain address offline, and each query made a copy
     const pageKey = landingKey || (generated ? url.pathname : null);
