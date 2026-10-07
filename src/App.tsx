@@ -1818,7 +1818,10 @@ export default function Home() {
     setReviewRefs(refs);
     setReviewKeys(keys);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
-    setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
+    // the slip remembered for the word at index 0 belongs to the list it happened in: kept, a
+    // review that opens on the same word graded its perfect answer as a miss (setIndex(0)
+    // while index is 0 does not run the [index] reset)
+    setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
     setView("learn"); setRunning(true);
     setTimeout(() => input.current?.focus(), 40);
   }
@@ -1831,7 +1834,8 @@ export default function Home() {
     setChapter(savedChapter(sourceKey));
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
     chapterStart.current = secondsRef.current;
-    setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
+    // same as startReview: the slip noted inside the review must not grade word 1 of the list
+    setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
   }
   function practiceWord(w: Word, lg: Lang = lang) {
     setReviewKeys(null);
