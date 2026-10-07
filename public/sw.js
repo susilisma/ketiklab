@@ -8,7 +8,8 @@ const ASSETS = [];
 // The language landing pages are shells too (they carry <base href="/"> and load the
 // same bundle), so they are precached: served the root shell instead, /zh/ resolved
 // the bundle's relative asset URLs under /zh/assets/ and the app never mounted.
-const CORE = ["./", "./index.html", "./zh/", "./id/", "./en/", "./manifest.webmanifest",
+// "./index.html" alone: the shell is read back by that key, so a "./" entry was only a third download of the same document
+const CORE = ["./index.html", "./zh/", "./id/", "./en/", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./maskable-512.png"];
 // the content the app fetches at start-up: without it an offline shell shows no words
 const DATA_CORE = ["./data/words.json", "./data/readings.json", "./data/manifest.json", "./data/zh-pinyin.json"];
