@@ -346,7 +346,11 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   await saveProgress(userId, merged);
   linkDevice(userId);
   if (linkedUid() !== userId || canon(merged) === canon(local)) return "same";
-  applyLocal(merged); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
+  // `local` was read before the upsert: a word typed meanwhile (a second tab, or the
+  // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,
+  // and writing `merged` alone erased it. The merge is cheap, so it is redone on what the
+  // device holds now; merged stays on top, as before, for the settings it carries.
+  applyLocal(mergeProgress(collectLocal(), merged)); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
   return "reloading";
 }
 
