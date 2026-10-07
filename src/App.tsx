@@ -1462,7 +1462,9 @@ export default function Home() {
     // the review list is built from refs, so resolve the missed words the same way a due list is
     resolveReviewRefs(keys).then(refs => {
       if (!refs.length) return;
-      setReviewRefs(refs); setReviewKeys(keys);
+      // this session holds the chapter's missed words, not the due list: the earlier review's
+      // total would otherwise be printed under it as "复习模式 · 2 / 5"
+      setReviewRefs(refs); setReviewKeys(keys); setReviewDueTotal(0);
       setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
       setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
       setRunning(true);
@@ -1830,7 +1832,7 @@ export default function Home() {
   // 打拼音): the list now current opens at its own saved chapter, not at the one the
   // review started from — which 下一章 then wrote over the real position
   function exitReview() {
-    setReviewKeys(null);
+    setReviewKeys(null); setReviewDueTotal(0);
     setChapter(savedChapter(sourceKey));
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
     chapterStart.current = secondsRef.current;
