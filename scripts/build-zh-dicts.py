@@ -143,6 +143,16 @@ def main():
             "usphone": toned(word),     # the card's phonetic line
         })
 
+    # pinned corrections: rows whose English line, Indonesian line or definition was corrected
+    # by hand (不能 fail → cannot, 卧室 bilik → kamar tidur). Applied last, so a rebuild keeps
+    # them instead of putting the WordNet sense back (scripts/zh-gloss-fixes.json, keyed by
+    # headword only: a word moves between the bands when the frequency list changes)
+    fixes_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "zh-gloss-fixes.json")
+    fixes = json.load(open(fixes_path, encoding="utf-8")) if os.path.exists(fixes_path) else {}
+    for row in kept:
+        for field, value in fixes.get(row["name"], {}).items():
+            row[field] = value
+
     print(f"scanned {scanned} headwords, kept {len(kept)}")
 
     manifest_path = os.path.join(DATA, "manifest.json")

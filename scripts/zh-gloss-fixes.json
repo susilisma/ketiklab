@@ -1,0 +1,623 @@
+{
+ "_comment": "Pinned corrections applied by build-zh-dicts.py after the WordNet pass: rows whose English line, Indonesian line or definition was corrected by hand (不能 fail → cannot, 卧室 bilik → kamar tidur). Keyed by headword only, because a headword moves between zh-core / zh-plus / zh-upper when the frequency list changes; each entry replaces the fields it names. pinyin-fixes.json pins readings.",
+ "不能": {
+  "trans": [
+   "cannot",
+   "unable to"
+  ]
+ },
+ "电话": {
+  "idtrans": [
+   "telepon"
+  ]
+ },
+ "造成": {
+  "trans": [
+   "cause",
+   "bring about",
+   "result in"
+  ],
+  "def": "to cause or bring about (usually a bad result)"
+ },
+ "人物": {
+  "trans": [
+   "figure",
+   "character",
+   "personage"
+  ],
+  "def": "a notable person; a character in a story"
+ },
+ "先生": {
+  "trans": [
+   "Mr.",
+   "sir"
+  ],
+  "def": "polite title or address for a man; Mr."
+ },
+ "全部": {
+  "trans": [
+   "all",
+   "whole",
+   "entire"
+  ],
+  "def": "all of something; the whole"
+ },
+ "方案": {
+  "trans": [
+   "plan",
+   "proposal",
+   "scheme"
+  ],
+  "def": "a plan or proposal for doing something"
+ },
+ "宪法": {
+  "idtrans": [
+   "undang-undang dasar",
+   "konstitusi"
+  ]
+ },
+ "体系": {
+  "def": "a structured set of related parts; a system of ideas or institutions"
+ },
+ "货币": {
+  "idtrans": [
+   "mata uang",
+   "uang"
+  ]
+ },
+ "基金": {
+  "idtrans": [
+   "dana"
+  ]
+ },
+ "冠军": {
+  "idtrans": [
+   "juara",
+   "kejuaraan"
+  ]
+ },
+ "俱乐部": {
+  "idtrans": [
+   "klub",
+   "perkumpulan"
+  ]
+ },
+ "事故": {
+  "idtrans": [
+   "kecelakaan"
+  ]
+ },
+ "充分": {
+  "trans": [
+   "sufficient",
+   "ample",
+   "full"
+  ],
+  "def": "enough; ample; to the full extent"
+ },
+ "不满": {
+  "trans": [
+   "dissatisfied",
+   "discontent"
+  ],
+  "def": "not satisfied; unhappy with something"
+ },
+ "实验室": {
+  "idtrans": [
+   "laboratorium"
+  ]
+ },
+ "人体": {
+  "trans": [
+   "human body"
+  ]
+ },
+ "变革": {
+  "trans": [
+   "transformation",
+   "reform",
+   "change"
+  ],
+  "def": "a major change or reform"
+ },
+ "邻居": {
+  "idtrans": [
+   "tetangga"
+  ]
+ },
+ "医药": {
+  "idtrans": [
+   "obat",
+   "pengobatan",
+   "penawar"
+  ]
+ },
+ "手法": {
+  "idtrans": [
+   "teknik",
+   "cara",
+   "metode"
+  ]
+ },
+ "公安": {
+  "idtrans": [
+   "polisi",
+   "kepolisian"
+  ]
+ },
+ "毒品": {
+  "idtrans": [
+   "narkoba",
+   "narkotika"
+  ]
+ },
+ "通用": {
+  "trans": [
+   "universal",
+   "general-purpose"
+  ],
+  "def": "used everywhere or for all purposes"
+ },
+ "证书": {
+  "idtrans": [
+   "sertifikat",
+   "ijazah"
+  ]
+ },
+ "医师": {
+  "idtrans": [
+   "dokter",
+   "tabib"
+  ]
+ },
+ "屋顶": {
+  "idtrans": [
+   "atap"
+  ]
+ },
+ "超市": {
+  "idtrans": [
+   "supermarket",
+   "pasar swalayan"
+  ]
+ },
+ "传达": {
+  "def": "to pass on or communicate a message or instruction"
+ },
+ "肚子": {
+  "def": "the belly; the abdomen"
+ },
+ "伤口": {
+  "idtrans": [
+   "luka"
+  ]
+ },
+ "卡车": {
+  "idtrans": [
+   "truk"
+  ]
+ },
+ "机密": {
+  "idtrans": [
+   "rahasia"
+  ]
+ },
+ "偶然": {
+  "idtrans": [
+   "kebetulan"
+  ]
+ },
+ "事务所": {
+  "idtrans": [
+   "kantor",
+   "biro"
+  ]
+ },
+ "抓紧": {
+  "idtrans": [
+   "genggaman",
+   "cengkeraman",
+   "pegangan"
+  ]
+ },
+ "大麻": {
+  "idtrans": [
+   "ganja",
+   "mariyuana"
+  ]
+ },
+ "玩笑": {
+  "trans": [
+   "joke",
+   "jest"
+  ],
+  "def": "a joke; something said in jest"
+ },
+ "警报": {
+  "idtrans": [
+   "alarm",
+   "tanda bahaya",
+   "peringatan"
+  ]
+ },
+ "鞋子": {
+  "idtrans": [
+   "sepatu"
+  ]
+ },
+ "比率": {
+  "idtrans": [
+   "persentase",
+   "kadar",
+   "rasio"
+  ]
+ },
+ "警官": {
+  "idtrans": [
+   "polisi",
+   "petugas polisi"
+  ]
+ },
+ "卧室": {
+  "idtrans": [
+   "kamar tidur",
+   "kamar"
+  ]
+ },
+ "欢呼": {
+  "trans": [
+   "cheer",
+   "hail"
+  ],
+  "def": "to shout with joy or approval"
+ },
+ "捕捉": {
+  "trans": [
+   "capture",
+   "catch"
+  ]
+ },
+ "狩猎": {
+  "trans": [
+   "hunt",
+   "hunting"
+  ],
+  "def": "to hunt wild animals"
+ },
+ "倒退": {
+  "trans": [
+   "go backwards",
+   "regress"
+  ]
+ },
+ "峰会": {
+  "idtrans": [
+   "konferensi tingkat tinggi",
+   "pertemuan puncak"
+  ]
+ },
+ "艺术品": {
+  "trans": [
+   "artwork",
+   "work of art"
+  ]
+ },
+ "公职": {
+  "idtrans": [
+   "jabatan publik",
+   "jabatan"
+  ]
+ },
+ "剧团": {
+  "idtrans": [
+   "rombongan sandiwara",
+   "rombongan",
+   "grup teater"
+  ]
+ },
+ "品味": {
+  "def": "to savour; (noun) one's taste or refinement"
+ },
+ "嫌疑": {
+  "trans": [
+   "suspicion"
+  ]
+ },
+ "毛巾": {
+  "idtrans": [
+   "handuk"
+  ]
+ },
+ "背包": {
+  "trans": [
+   "backpack"
+  ]
+ },
+ "去掉": {
+  "trans": [
+   "remove",
+   "get rid of"
+  ]
+ },
+ "发抖": {
+  "trans": [
+   "tremble",
+   "shiver"
+  ]
+ },
+ "奶油": {
+  "trans": [
+   "cream"
+  ],
+  "idtrans": [
+   "krim"
+  ],
+  "def": "the thick fatty part of milk, whipped for cakes and desserts"
+ },
+ "自尊": {
+  "trans": [
+   "self-esteem",
+   "self-respect"
+  ]
+ },
+ "告诫": {
+  "idtrans": [
+   "peringatan",
+   "teguran",
+   "nasihat"
+  ]
+ },
+ "发热": {
+  "trans": [
+   "have a fever",
+   "give off heat"
+  ],
+  "def": "to run a fever; to give off heat"
+ },
+ "明信片": {
+  "trans": [
+   "postcard"
+  ]
+ },
+ "控制器": {
+  "idtrans": [
+   "pengontrol",
+   "pengendali",
+   "alat kontrol"
+  ]
+ },
+ "隐居": {
+  "idtrans": [
+   "privasi",
+   "kesendirian",
+   "pengasingan diri"
+  ]
+ },
+ "尖端": {
+  "idtrans": [
+   "ujung",
+   "pucuk"
+  ]
+ },
+ "橙色": {
+  "idtrans": [
+   "jingga",
+   "oranye"
+  ]
+ },
+ "顶点": {
+  "idtrans": [
+   "puncak",
+   "titik puncak",
+   "titik tertinggi"
+  ]
+ },
+ "和睦": {
+  "trans": [
+   "harmony",
+   "harmonious"
+  ],
+  "def": "living together peacefully and in harmony"
+ },
+ "椭圆形": {
+  "trans": [
+   "oval",
+   "ellipse"
+  ],
+  "idtrans": [
+   "lonjong",
+   "oval",
+   "elips"
+  ],
+  "def": "an oval or elliptical shape; a flattened circle"
+ },
+ "残废": {
+  "trans": [
+   "disabled",
+   "crippled"
+  ]
+ },
+ "显赫": {
+  "trans": [
+   "illustrious",
+   "prominent"
+  ]
+ },
+ "最高点": {
+  "idtrans": [
+   "puncak",
+   "titik tertinggi",
+   "mercu"
+  ]
+ },
+ "歪曲": {
+  "trans": [
+   "distort",
+   "twist"
+  ]
+ },
+ "年鉴": {
+  "idtrans": [
+   "buku tahunan",
+   "almanak"
+  ]
+ },
+ "公共汽车": {
+  "idtrans": [
+   "bus",
+   "bis"
+  ]
+ },
+ "口吻": {
+  "trans": [
+   "tone of voice",
+   "manner of speaking"
+  ],
+  "idtrans": [
+   "nada bicara",
+   "nada"
+  ],
+  "def": "the tone or manner in which someone speaks"
+ },
+ "总线": {
+  "idtrans": [
+   "bus"
+  ]
+ },
+ "劳改": {
+  "trans": [
+   "reform through labor"
+  ]
+ },
+ "条子": {
+  "idtrans": [
+   "polisi"
+  ]
+ },
+ "回绝": {
+  "idtrans": [
+   "menolak"
+  ],
+  "def": "to refuse or turn down a request or offer"
+ },
+ "尖峰": {
+  "idtrans": [
+   "puncak",
+   "mercu"
+  ]
+ },
+ "火炉": {
+  "trans": [
+   "stove",
+   "furnace"
+  ]
+ },
+ "柑橘": {
+  "idtrans": [
+   "jeruk",
+   "limau"
+  ]
+ },
+ "修士": {
+  "idtrans": [
+   "rahib",
+   "biarawan",
+   "biksu"
+  ]
+ },
+ "增益": {
+  "trans": [
+   "gain"
+  ],
+  "def": "an increase; (electronics) amplification gain"
+ },
+ "校验": {
+  "trans": [
+   "verify",
+   "check"
+  ],
+  "idtrans": [
+   "memverifikasi",
+   "memeriksa"
+  ],
+  "def": "to check or validate for correctness"
+ },
+ "阴沉": {
+  "trans": [
+   "gloomy",
+   "overcast",
+   "sombre"
+  ]
+ },
+ "意志力": {
+  "trans": [
+   "willpower"
+  ]
+ },
+ "复述": {
+  "trans": [
+   "retell",
+   "restate"
+  ],
+  "def": "to retell or restate in one's own words"
+ },
+ "处方药": {
+  "idtrans": [
+   "obat resep"
+  ]
+ },
+ "持续时间": {
+  "idtrans": [
+   "durasi",
+   "jangka waktu",
+   "lama waktu"
+  ]
+ },
+ "尖头": {
+  "idtrans": [
+   "ujung runcing",
+   "ujung",
+   "puncak"
+  ]
+ },
+ "邻接": {
+  "idtrans": [
+   "bersebelahan"
+  ]
+ },
+ "训诫": {
+  "idtrans": [
+   "teguran",
+   "peringatan",
+   "hardikan"
+  ]
+ },
+ "公共厕所": {
+  "idtrans": [
+   "toilet umum",
+   "wc umum",
+   "kakus"
+  ]
+ },
+ "帐目": {
+  "trans": [
+   "accounts",
+   "account entries"
+  ]
+ },
+ "法律界": {
+  "trans": [
+   "legal profession"
+  ]
+ },
+ "皮靴": {
+  "idtrans": [
+   "sepatu bot"
+  ]
+ },
+ "势均力敌": {
+  "trans": [
+   "evenly matched"
+  ]
+ }
+}
