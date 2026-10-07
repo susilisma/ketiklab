@@ -4,6 +4,10 @@
   "trans": [
    "cannot",
    "unable to"
+  ],
+  "idtrans": [
+   "tidak bisa",
+   "tidak dapat"
   ]
  },
  "电话": {
@@ -205,6 +209,11 @@
  "偶然": {
   "idtrans": [
    "kebetulan"
+  ],
+  "trans": [
+   "by chance",
+   "accidental",
+   "chance"
   ]
  },
  "事务所": {
@@ -460,6 +469,11 @@
   "idtrans": [
    "buku tahunan",
    "almanak"
+  ],
+  "trans": [
+   "yearbook",
+   "annual",
+   "almanac"
   ]
  },
  "公共汽车": {
@@ -487,6 +501,10 @@
  "劳改": {
   "trans": [
    "reform through labor"
+  ],
+  "idtrans": [
+   "reformasi melalui kerja",
+   "kerja paksa"
   ]
  },
  "条子": {
@@ -618,6 +636,283 @@
  "势均力敌": {
   "trans": [
    "evenly matched"
+  ]
+ },
+ "现在": {
+  "trans": [
+   "now",
+   "at present"
+  ]
+ },
+ "没有": {
+  "trans": [
+   "not have",
+   "there is not",
+   "without"
+  ],
+  "idtrans": [
+   "tidak ada",
+   "tidak punya",
+   "tanpa"
+  ]
+ },
+ "打算": {
+  "trans": [
+   "plan",
+   "intend",
+   "intention"
+  ],
+  "idtrans": [
+   "berencana",
+   "bermaksud",
+   "rencana"
+  ]
+ },
+ "记录": {
+  "trans": [
+   "record",
+   "note down",
+   "record (noun)"
+  ],
+  "idtrans": [
+   "mencatat",
+   "catatan",
+   "rekaman"
+  ]
+ },
+ "可能": {
+  "trans": [
+   "possible",
+   "maybe",
+   "possibility"
+  ],
+  "idtrans": [
+   "mungkin",
+   "kemungkinan"
+  ]
+ },
+ "漆黑": {
+  "trans": [
+   "pitch-black",
+   "pitch-dark"
+  ]
+ },
+ "酗酒": {
+  "trans": [
+   "excessive drinking",
+   "alcohol abuse",
+   "binge drinking"
+  ],
+  "idtrans": [
+   "mabuk-mabukan",
+   "minum berlebihan"
+  ]
+ },
+ "有线电视": {
+  "trans": [
+   "cable TV",
+   "cable television"
+  ],
+  "idtrans": [
+   "TV kabel",
+   "televisi kabel"
+  ]
+ },
+ "世界末日": {
+  "trans": [
+   "end of the world",
+   "doomsday",
+   "apocalypse"
+  ],
+  "idtrans": [
+   "kiamat",
+   "akhir dunia"
+  ]
+ },
+ "生计": {
+  "trans": [
+   "livelihood",
+   "means of living"
+  ],
+  "idtrans": [
+   "nafkah",
+   "mata pencaharian",
+   "penghidupan"
+  ]
+ },
+ "保管": {
+  "trans": [
+   "keep (in custody)",
+   "safeguard",
+   "take care of"
+  ]
+ },
+ "奖赏": {
+  "trans": [
+   "reward",
+   "award"
+  ]
+ },
+ "发酵": {
+  "trans": [
+   "fermentation",
+   "ferment"
+  ]
+ },
+ "亮度": {
+  "trans": [
+   "brightness",
+   "luminance",
+   "luminosity"
+  ],
+  "idtrans": [
+   "kecerahan",
+   "tingkat terang"
+  ]
+ },
+ "海里": {
+  "trans": [
+   "nautical mile"
+  ],
+  "idtrans": [
+   "mil laut"
+  ]
+ },
+ "居住区": {
+  "trans": [
+   "residential area",
+   "residential district"
+  ],
+  "idtrans": [
+   "kawasan permukiman",
+   "permukiman"
+  ]
+ },
+ "天井": {
+  "trans": [
+   "courtyard",
+   "patio",
+   "skywell"
+  ]
+ },
+ "丰产": {
+  "trans": [
+   "high yield",
+   "bumper harvest"
+  ],
+  "idtrans": [
+   "hasil melimpah",
+   "panen melimpah"
+  ]
+ },
+ "要价": {
+  "trans": [
+   "asking price",
+   "ask a price"
+  ],
+  "idtrans": [
+   "harga yang diminta",
+   "meminta harga"
+  ]
+ },
+ "仪表板": {
+  "trans": [
+   "dashboard",
+   "instrument panel"
+  ],
+  "idtrans": [
+   "dasbor",
+   "panel instrumen"
+  ]
+ },
+ "农场主": {
+  "trans": [
+   "farm owner",
+   "farmer"
+  ]
+ },
+ "卡住": {
+  "trans": [
+   "get stuck",
+   "jam",
+   "stick"
+  ],
+  "idtrans": [
+   "macet",
+   "tersangkut",
+   "terjepit"
+  ]
+ },
+ "独木舟": {
+  "trans": [
+   "canoe",
+   "dugout canoe"
+  ],
+  "idtrans": [
+   "kano",
+   "perahu lesung"
+  ]
+ },
+ "藏匿": {
+  "trans": [
+   "hide",
+   "conceal",
+   "harbor (a fugitive)"
+  ],
+  "idtrans": [
+   "menyembunyikan",
+   "bersembunyi"
+  ]
+ },
+ "讨论会": {
+  "trans": [
+   "discussion meeting",
+   "seminar",
+   "symposium"
+  ],
+  "idtrans": [
+   "diskusi",
+   "seminar"
+  ]
+ },
+ "答谢": {
+  "trans": [
+   "express thanks",
+   "thank in return",
+   "return a favor"
+  ],
+  "idtrans": [
+   "mengucapkan terima kasih",
+   "membalas budi"
+  ]
+ },
+ "口译": {
+  "trans": [
+   "interpret (orally)",
+   "oral interpretation",
+   "interpreting"
+  ],
+  "idtrans": [
+   "menerjemahkan secara lisan"
+  ]
+ },
+ "肉牛": {
+  "trans": [
+   "beef cattle"
+  ],
+  "idtrans": [
+   "sapi potong",
+   "sapi pedaging"
+  ]
+ },
+ "腹痛": {
+  "trans": [
+   "abdominal pain",
+   "stomachache"
+  ],
+  "idtrans": [
+   "sakit perut",
+   "nyeri perut"
   ]
  }
 }
