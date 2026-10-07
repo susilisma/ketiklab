@@ -179,6 +179,11 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
         h = sub1(rf'(<meta (?:property|name)="{prop}" content=")[^"]*(")', lambda m: m.group(1) + esc(desc, quote=True) + m.group(2), h, prop)
     h = sub1(r'<link rel="canonical" href="[^"]*" />', f'<link rel="canonical" href="{url}" />', h, "canonical")
     h = sub1(r'<meta property="og:url" content="[^"]*" />', f'<meta property="og:url" content="{url}" />', h, "og:url")
+    # the structured data is per language too: copied from index.html, the /zh/ /id/ /en/ pages
+    # still declared the root address, the three languages and the trilingual description
+    h = sub1(r'("url":\s*")[^"]*(")', lambda m: m.group(1) + url + m.group(2), h, "ld+json url")
+    h = sub1(r'"inLanguage":\s*\[[^\]]*\]', f'"inLanguage": {json.dumps(HTML_LANG[lang])}', h, "ld+json inLanguage")
+    h = sub1(r'("description":\s*")[^"]*(")', lambda m: m.group(1) + json.dumps(desc)[1:-1] + m.group(2), h, "ld+json description")
     h = sub1(r'<meta property="og:locale" content="[^"]*" />', f'<meta property="og:locale" content="{OG_LOCALE[lang]}" />', h, "og:locale")
     others = [l for l in LANGS if l != lang]
     h = re.sub(r'\s*<meta property="og:locale:alternate" content="[^"]*" />', "", h)
