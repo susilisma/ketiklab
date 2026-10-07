@@ -2039,6 +2039,18 @@
     "cara",
     "metode"
    ]
+  },
+  "act": {
+   "idtrans": [
+    "undang-undang",
+    "akta"
+   ]
+  },
+  "bedroom": {
+   "idtrans": [
+    "kamar tidur",
+    "kamar"
+   ]
   }
  },
  "en-plus": {
@@ -5638,6 +5650,31 @@
     "komoditas",
     "barang dagangan"
    ]
+  },
+  "shoe": {
+   "idtrans": [
+    "sepatu"
+   ]
+  },
+  "boot": {
+   "idtrans": [
+    "sepatu bot"
+   ]
+  },
+  "neighbor": {
+   "idtrans": [
+    "tetangga"
+   ]
+  },
+  "towel": {
+   "idtrans": [
+    "handuk"
+   ]
+  },
+  "guild": {
+   "idtrans": [
+    "persatuan"
+   ]
   }
  },
  "en-academic": {
@@ -7474,6 +7511,23 @@
     "persen",
     "persentase",
     "kadar"
+   ]
+  },
+  "clubhouse": {
+   "idtrans": [
+    "gedung klub",
+    "rumah klub"
+   ]
+  },
+  "enactment": {
+   "idtrans": [
+    "undang-undang"
+   ]
+  },
+  "horseshoe": {
+   "idtrans": [
+    "tapal kuda",
+    "ladam"
    ]
   }
  },
@@ -10158,6 +10212,21 @@
     "pengendalian diri",
     "pengekangan",
     "kesabaran"
+   ]
+  },
+  "deed": {
+   "idtrans": [
+    "akta"
+   ]
+  },
+  "lipstick": {
+   "idtrans": [
+    "lipstik"
+   ]
+  },
+  "nightclub": {
+   "idtrans": [
+    "klub malam"
    ]
   }
  }
