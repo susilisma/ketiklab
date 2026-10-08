@@ -829,6 +829,11 @@
   "trans": [
    "farm owner",
    "farmer"
+  ],
+  "idtrans": [
+   "pemilik lahan pertanian",
+   "pemilik perkebunan",
+   "petani"
   ]
  },
  "卡住": {
