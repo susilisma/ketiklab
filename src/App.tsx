@@ -1777,7 +1777,10 @@ export default function Home() {
   // the click moved focus to the button; refocusing the input would run its onFocus,
   // which sets running again, so only a start gives the focus back
   function start() {
-    if (running) { pausedByButton.current = true; setRunning(false); return; }
+    // the boxes are blurred as well: Safari and Firefox on macOS do not move focus to a
+    // clicked button, so the box kept grading the letters typed while "paused" and the
+    // next finished word quietly resumed the clock
+    if (running) { pausedByButton.current = true; setRunning(false); input.current?.blur(); document.querySelector<HTMLElement>(".zh-typebox")?.blur(); return; }
     // the finish card has no word to type: 开始 would only start the clock on nothing
     if (chapterFinished) return;
     setRunning(true); setTimeout(() => input.current?.focus(), 20);
