@@ -286,11 +286,25 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
   return out;
 }
 
-const canon = (b: ProgressBlob) => JSON.stringify(mergeProgress(b, b));
+/** The form two copies are compared in: mergeProgress(b, b), with the 错词本 as a set. The same
+ *  words in another order are the same progress — compared as lists, two devices that missed
+ *  the same words in a different order rewrote the cloud on every push and one of them showed
+ *  云端有更多 for good. The order itself is untouched: mergeProgress still keeps it for the cap. */
+function canonical(b: ProgressBlob): ProgressBlob {
+  const c = mergeProgress(b, b);
+  if (typeof c["ketiklab-state"] === "string") {
+    const s = record(c["ketiklab-state"]);
+    c["ketiklab-state"] = JSON.stringify({ ...s, mistakes: strings(s.mistakes).slice().sort() });
+  }
+  return c;
+}
+const canon = (b: ProgressBlob) => JSON.stringify(canonical(b));
+/** Same progress (lists as sets) and same settings (as strings): nothing to write. */
+export function sameBlob(a: ProgressBlob, b: ProgressBlob): boolean { return canon(a) === canon(b); }
 
 /** True when `b` holds no progress (words, days, favourites, chapters) that `a` lacks. */
 export function coversProgress(a: ProgressBlob, b: ProgressBlob): boolean {
-  const m = mergeProgress(b, a), n = mergeProgress(a, a);
+  const m = canonical(mergeProgress(b, a)), n = canonical(a);
   return PROGRESS_KEYS.every(k => m[k] === n[k]);
 }
 
@@ -306,7 +320,7 @@ export async function pushProgress(userId: string, own?: ProgressBlob) {
   // own migration still waits for a dictionary, the old shape would otherwise be pushed
   const local = await normalized(own ?? collectLocal());
   const merged = mergeProgress(cloud, local);
-  if (canon(merged) !== canon(cloud) || canon(cloud) !== canon(r.data ?? {})) await saveProgress(userId, merged);
+  if (!sameBlob(merged, cloud) || !sameBlob(cloud, r.data ?? {})) await saveProgress(userId, merged);
   lastPushed = canon(local);
   return { merged, cloudHasMore: !coversProgress(local, cloud) };
 }
@@ -345,7 +359,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
   await saveProgress(userId, merged);
   linkDevice(userId);
-  if (linkedUid() !== userId || canon(merged) === canon(local)) return "same";
+  if (linkedUid() !== userId || sameBlob(merged, local)) return "same";
   // `local` was read before the upsert: a word typed meanwhile (a second tab, or the
   // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,
   // and writing `merged` alone erased it. The merge is cheap, so it is redone on what the
