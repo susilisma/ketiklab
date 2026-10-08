@@ -816,12 +816,21 @@ export default function Home() {
       const from = `${lg}:${w.en}`;
       if (held.has(from)) moves.set(from, `${lg}:${TRIO}${w.en}`);
     }
+    // older still: a Chinese topic word was keyed by the hanzi typed ("实现", made "zh:实现"
+    // by the database upgrade), the shape a zh-* dictionary entry uses — so such a row is
+    // exempt in the same way an "id:" one is when a Chinese dictionary holds that headword,
+    // and the three Chinese dictionaries are fetched for the check only when one exists
+    let hanzi = false;
+    for (const w of words) {
+      const from = `zh:${wordValue(w, "zh")}`;
+      if (held.has(from) && !moves.has(from)) { moves.set(from, `zh:${TRIO}${w.en}`); hanzi = true; }
+    }
     const langs = new Set(Array.from(moves.keys(), k => k.slice(0, k.indexOf(":"))));
     const taken = new Set<string>();
     const unsafe = new Set<string>();
     for (const d of dicts) {
       // a Chinese headword is hanzi and can never be an English topic headword
-      if (d.lang === "zh" || !langs.has(d.lang)) continue;
+      if (!langs.has(d.lang) || (d.lang === "zh" && !hanzi)) continue;
       let data = dictCache.current.get(d.id) || allDicts[d.id];
       if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { unsafe.add(d.lang); continue; } }
       for (const e of data) taken.add(`${d.lang}:${e.name}`);
@@ -1063,7 +1072,9 @@ export default function Home() {
   // (see recordReview's inherit).
   // ...and only when the word typed is that headword itself: "id:air" may be the Indonesian
   // dictionary word air (water), which has nothing to do with the topic word air → udara
-  const legacyId = item && !item.dict && trioEn(item.key) === item.text ? `${item.lang}:${item.text}` : undefined;
+  // A Chinese topic word is typed as its first sense, which was its key before the English
+  // headword was: "zh:实现" may likewise be the zh-core word 实现's own row.
+  const legacyId = item && !item.dict && (trioEn(item.key) === item.text || (item.lang === "zh" && trioOf(item.key))) ? `${item.lang}:${item.text}` : undefined;
   const isFav = favorites.some(f => `${f.lang}:${f.key}` === wordId);
   const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
