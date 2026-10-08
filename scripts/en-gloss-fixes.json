@@ -1991,6 +1991,9 @@
     "privasi",
     "rahasia",
     "sulit"
+   ],
+   "trans": [
+    "隐私"
    ]
   },
   "luxury": {
@@ -2050,6 +2053,1831 @@
    "idtrans": [
     "kamar tidur",
     "kamar"
+   ]
+  },
+  "heat": {
+   "trans": [
+    "热",
+    "热量"
+   ],
+   "idtrans": [
+    "panas"
+   ]
+  },
+  "murder": {
+   "idtrans": [
+    "pembunuhan"
+   ]
+  },
+  "queen": {
+   "trans": [
+    "女王",
+    "王后"
+   ]
+  },
+  "accept": {
+   "trans": [
+    "接受"
+   ]
+  },
+  "attempt": {
+   "trans": [
+    "尝试",
+    "企图"
+   ],
+   "idtrans": [
+    "usaha",
+    "percobaan"
+   ]
+  },
+  "channel": {
+   "trans": [
+    "频道",
+    "渠道"
+   ]
+  },
+  "fell": {
+   "trans": [
+    "倒下（fall 过去式）",
+    "砍倒"
+   ],
+   "idtrans": [
+    "jatuh"
+   ]
+  },
+  "receive": {
+   "idtrans": [
+    "menerima"
+   ]
+  },
+  "royal": {
+   "idtrans": [
+    "kerajaan"
+   ]
+  },
+  "screen": {
+   "trans": [
+    "屏幕"
+   ],
+   "idtrans": [
+    "layar"
+   ]
+  },
+  "serve": {
+   "trans": [
+    "服务",
+    "供应"
+   ],
+   "idtrans": [
+    "melayani"
+   ]
+  },
+  "wearing": {
+   "trans": [
+    "穿着"
+   ],
+   "idtrans": [
+    "memakai"
+   ]
+  },
+  "demand": {
+   "trans": [
+    "需求",
+    "要求"
+   ]
+  },
+  "partner": {
+   "trans": [
+    "伙伴",
+    "合作伙伴"
+   ],
+   "idtrans": [
+    "mitra",
+    "pasangan"
+   ]
+  },
+  "solution": {
+   "trans": [
+    "解决方案",
+    "溶液"
+   ],
+   "idtrans": [
+    "solusi",
+    "larutan"
+   ]
+  },
+  "realize": {
+   "idtrans": [
+    "menyadari"
+   ]
+  },
+  "throw": {
+   "trans": [
+    "扔",
+    "投掷"
+   ],
+   "idtrans": [
+    "melempar"
+   ]
+  },
+  "arms": {
+   "trans": [
+    "武器"
+   ],
+   "idtrans": [
+    "senjata"
+   ]
+  },
+  "benefit": {
+   "trans": [
+    "利益",
+    "好处"
+   ]
+  },
+  "click": {
+   "trans": [
+    "点击"
+   ],
+   "idtrans": [
+    "klik"
+   ]
+  },
+  "fashion": {
+   "trans": [
+    "时尚"
+   ],
+   "idtrans": [
+    "mode"
+   ]
+  },
+  "hearing": {
+   "trans": [
+    "听力",
+    "听证会"
+   ]
+  },
+  "jack": {
+   "trans": [
+    "千斤顶",
+    "插孔"
+   ],
+   "idtrans": [
+    "dongkrak"
+   ]
+  },
+  "pull": {
+   "trans": [
+    "拉"
+   ],
+   "idtrans": [
+    "menarik"
+   ]
+  },
+  "push": {
+   "trans": [
+    "推"
+   ],
+   "idtrans": [
+    "mendorong"
+   ]
+  },
+  "sexual": {
+   "trans": [
+    "性的"
+   ],
+   "idtrans": [
+    "seksual"
+   ]
+  },
+  "understanding": {
+   "trans": [
+    "理解"
+   ],
+   "idtrans": [
+    "pemahaman"
+   ]
+  },
+  "agent": {
+   "trans": [
+    "代理人",
+    "经纪人"
+   ]
+  },
+  "animal": {
+   "trans": [
+    "动物"
+   ]
+  },
+  "draw": {
+   "trans": [
+    "画",
+    "拉"
+   ],
+   "idtrans": [
+    "menggambar"
+   ]
+  },
+  "prime": {
+   "trans": [
+    "主要的",
+    "首要的"
+   ]
+  },
+  "ring": {
+   "trans": [
+    "戒指",
+    "环"
+   ]
+  },
+  "silver": {
+   "trans": [
+    "银"
+   ]
+  },
+  "artist": {
+   "idtrans": [
+    "seniman"
+   ]
+  },
+  "chairman": {
+   "trans": [
+    "主席"
+   ],
+   "idtrans": [
+    "ketua"
+   ]
+  },
+  "healthy": {
+   "trans": [
+    "健康的"
+   ],
+   "idtrans": [
+    "sehat"
+   ]
+  },
+  "option": {
+   "trans": [
+    "选择",
+    "选项"
+   ]
+  },
+  "somebody": {
+   "trans": [
+    "某人"
+   ],
+   "idtrans": [
+    "seseorang"
+   ]
+  },
+  "negative": {
+   "trans": [
+    "负面的",
+    "否定的"
+   ]
+  },
+  "spirit": {
+   "trans": [
+    "精神",
+    "灵魂"
+   ],
+   "idtrans": [
+    "semangat",
+    "roh"
+   ]
+  },
+  "advantage": {
+   "trans": [
+    "优势"
+   ]
+  },
+  "function": {
+   "trans": [
+    "功能",
+    "函数"
+   ]
+  },
+  "helping": {
+   "trans": [
+    "帮助"
+   ],
+   "idtrans": [
+    "membantu"
+   ]
+  },
+  "proud": {
+   "idtrans": [
+    "bangga"
+   ]
+  },
+  "require": {
+   "idtrans": [
+    "membutuhkan",
+    "memerlukan"
+   ]
+  },
+  "van": {
+   "trans": [
+    "厢式货车"
+   ],
+   "idtrans": [
+    "mobil van"
+   ]
+  },
+  "dear": {
+   "trans": [
+    "亲爱的"
+   ],
+   "idtrans": [
+    "sayang"
+   ]
+  },
+  "labor": {
+   "trans": [
+    "劳动",
+    "劳工"
+   ]
+  },
+  "patient": {
+   "trans": [
+    "病人",
+    "有耐心的"
+   ],
+   "idtrans": [
+    "pasien",
+    "sabar"
+   ]
+  },
+  "tough": {
+   "trans": [
+    "艰难的",
+    "坚韧的"
+   ]
+  },
+  "bitch": {
+   "trans": [
+    "母狗",
+    "泼妇"
+   ]
+  },
+  "magic": {
+   "trans": [
+    "魔法",
+    "魔术"
+   ],
+   "idtrans": [
+    "sihir"
+   ]
+  },
+  "wake": {
+   "trans": [
+    "醒来"
+   ],
+   "idtrans": [
+    "bangun"
+   ]
+  },
+  "billion": {
+   "trans": [
+    "十亿"
+   ]
+  },
+  "fix": {
+   "trans": [
+    "修理",
+    "固定"
+   ],
+   "idtrans": [
+    "memperbaiki"
+   ]
+  },
+  "frank": {
+   "trans": [
+    "坦率的"
+   ],
+   "idtrans": [
+    "terus terang"
+   ]
+  },
+  "raise": {
+   "trans": [
+    "提高",
+    "举起",
+    "加薪"
+   ]
+  },
+  "responsibility": {
+   "idtrans": [
+    "tanggung jawab"
+   ]
+  },
+  "technical": {
+   "trans": [
+    "技术的"
+   ],
+   "idtrans": [
+    "teknis"
+   ]
+  },
+  "treat": {
+   "trans": [
+    "对待",
+    "治疗"
+   ]
+  },
+  "variety": {
+   "trans": [
+    "多样性",
+    "种类"
+   ],
+   "idtrans": [
+    "variasi"
+   ]
+  },
+  "violence": {
+   "idtrans": [
+    "kekerasan"
+   ]
+  },
+  "evil": {
+   "trans": [
+    "邪恶"
+   ]
+  },
+  "religion": {
+   "trans": [
+    "宗教"
+   ]
+  },
+  "mention": {
+   "trans": [
+    "提到"
+   ],
+   "idtrans": [
+    "menyebut"
+   ]
+  },
+  "port": {
+   "trans": [
+    "港口"
+   ],
+   "idtrans": [
+    "pelabuhan"
+   ]
+  },
+  "shoot": {
+   "trans": [
+    "射击",
+    "拍摄"
+   ],
+   "idtrans": [
+    "menembak"
+   ]
+  },
+  "stress": {
+   "trans": [
+    "压力"
+   ]
+  },
+  "taste": {
+   "trans": [
+    "味道",
+    "品尝"
+   ]
+  },
+  "initial": {
+   "trans": [
+    "最初的",
+    "首字母"
+   ]
+  },
+  "kick": {
+   "trans": [
+    "踢"
+   ]
+  },
+  "massive": {
+   "trans": [
+    "大规模的",
+    "巨大的"
+   ]
+  },
+  "plane": {
+   "trans": [
+    "飞机",
+    "平面"
+   ],
+   "idtrans": [
+    "pesawat"
+   ]
+  },
+  "plenty": {
+   "trans": [
+    "大量",
+    "充足"
+   ],
+   "idtrans": [
+    "banyak"
+   ]
+  },
+  "quarter": {
+   "trans": [
+    "四分之一",
+    "季度"
+   ],
+   "idtrans": [
+    "seperempat",
+    "kuartal"
+   ]
+  },
+  "shape": {
+   "trans": [
+    "形状"
+   ]
+  },
+  "drinking": {
+   "trans": [
+    "喝",
+    "饮用"
+   ]
+  },
+  "fantastic": {
+   "trans": [
+    "极好的",
+    "奇妙的"
+   ]
+  },
+  "path": {
+   "trans": [
+    "路径",
+    "小路"
+   ],
+   "idtrans": [
+    "jalan",
+    "jalur"
+   ]
+  },
+  "remove": {
+   "trans": [
+    "移除",
+    "去掉"
+   ]
+  },
+  "supporting": {
+   "trans": [
+    "支持的"
+   ]
+  },
+  "grew": {
+   "trans": [
+    "生长（grow 过去式）"
+   ]
+  },
+  "jump": {
+   "trans": [
+    "跳",
+    "跳跃"
+   ]
+  },
+  "native": {
+   "trans": [
+    "本地的",
+    "本土的"
+   ]
+  },
+  "survey": {
+   "trans": [
+    "调查"
+   ],
+   "idtrans": [
+    "survei"
+   ]
+  },
+  "ancient": {
+   "trans": [
+    "古代的"
+   ]
+  },
+  "express": {
+   "trans": [
+    "表达",
+    "快递"
+   ],
+   "idtrans": [
+    "mengungkapkan"
+   ]
+  },
+  "stuck": {
+   "trans": [
+    "卡住",
+    "困住"
+   ],
+   "idtrans": [
+    "terjebak"
+   ]
+  },
+  "entry": {
+   "trans": [
+    "进入",
+    "条目"
+   ],
+   "idtrans": [
+    "masuk",
+    "entri"
+   ]
+  },
+  "pool": {
+   "trans": [
+    "游泳池"
+   ],
+   "idtrans": [
+    "kolam"
+   ]
+  },
+  "concern": {
+   "trans": [
+    "关注",
+    "担忧"
+   ],
+   "idtrans": [
+    "kekhawatiran"
+   ]
+  },
+  "leg": {
+   "trans": [
+    "腿"
+   ]
+  },
+  "pack": {
+   "trans": [
+    "包",
+    "背包"
+   ],
+   "idtrans": [
+    "bungkus",
+    "paket"
+   ]
+  },
+  "sector": {
+   "trans": [
+    "部门",
+    "行业"
+   ]
+  },
+  "storm": {
+   "trans": [
+    "暴风雨"
+   ]
+  },
+  "committed": {
+   "trans": [
+    "坚定的",
+    "承诺的"
+   ]
+  },
+  "equal": {
+   "trans": [
+    "平等的",
+    "相等的"
+   ]
+  },
+  "split": {
+   "trans": [
+    "分裂",
+    "分开"
+   ]
+  },
+  "lay": {
+   "trans": [
+    "放置",
+    "躺（lie 过去式）"
+   ],
+   "idtrans": [
+    "meletakkan"
+   ]
+  },
+  "coverage": {
+   "trans": [
+    "覆盖范围",
+    "报道"
+   ]
+  },
+  "dying": {
+   "trans": [
+    "垂死的"
+   ]
+  },
+  "ministry": {
+   "trans": [
+    "部",
+    "部委"
+   ]
+  },
+  "vision": {
+   "trans": [
+    "视力",
+    "愿景"
+   ]
+  },
+  "opposite": {
+   "trans": [
+    "相反的",
+    "对面"
+   ]
+  },
+  "assembly": {
+   "trans": [
+    "集会",
+    "装配"
+   ],
+   "idtrans": [
+    "majelis",
+    "perakitan"
+   ]
+  },
+  "chosen": {
+   "idtrans": [
+    "terpilih"
+   ]
+  },
+  "chose": {
+   "idtrans": [
+    "memilih"
+   ]
+  },
+  "cutting": {
+   "trans": [
+    "切割",
+    "剪裁"
+   ]
+  },
+  "draft": {
+   "trans": [
+    "草稿",
+    "草案"
+   ],
+   "idtrans": [
+    "draf"
+   ]
+  },
+  "fail": {
+   "trans": [
+    "失败"
+   ]
+  },
+  "humans": {
+   "idtrans": [
+    "manusia"
+   ]
+  },
+  "aside": {
+   "trans": [
+    "在一边",
+    "撇开"
+   ]
+  },
+  "circumstances": {
+   "trans": [
+    "情况",
+    "境况"
+   ]
+  },
+  "cry": {
+   "trans": [
+    "哭"
+   ]
+  },
+  "crying": {
+   "trans": [
+    "哭泣"
+   ]
+  },
+  "mile": {
+   "idtrans": [
+    "mil"
+   ]
+  },
+  "realized": {
+   "trans": [
+    "意识到"
+   ],
+   "idtrans": [
+    "menyadari"
+   ]
+  },
+  "universe": {
+   "idtrans": [
+    "alam semesta"
+   ]
+  },
+  "frame": {
+   "trans": [
+    "框架",
+    "画框"
+   ],
+   "idtrans": [
+    "bingkai"
+   ]
+  },
+  "represent": {
+   "trans": [
+    "代表"
+   ]
+  },
+  "academy": {
+   "trans": [
+    "学院"
+   ]
+  },
+  "favourite": {
+   "trans": [
+    "最喜爱的"
+   ],
+   "idtrans": [
+    "favorit"
+   ]
+  },
+  "crown": {
+   "trans": [
+    "王冠"
+   ],
+   "idtrans": [
+    "mahkota"
+   ]
+  },
+  "grace": {
+   "trans": [
+    "优雅",
+    "恩典"
+   ]
+  },
+  "identify": {
+   "trans": [
+    "识别",
+    "确认"
+   ]
+  },
+  "identified": {
+   "trans": [
+    "识别",
+    "确认"
+   ]
+  },
+  "manufacturing": {
+   "idtrans": [
+    "manufaktur",
+    "pembuatan"
+   ]
+  },
+  "pattern": {
+   "trans": [
+    "模式",
+    "图案"
+   ]
+  },
+  "pregnant": {
+   "idtrans": [
+    "hamil"
+   ]
+  },
+  "severe": {
+   "trans": [
+    "严重的",
+    "严厉的"
+   ]
+  },
+  "carbon": {
+   "trans": [
+    "碳"
+   ],
+   "idtrans": [
+    "karbon"
+   ]
+  },
+  "circle": {
+   "trans": [
+    "圆",
+    "圆圈"
+   ]
+  },
+  "depth": {
+   "trans": [
+    "深度"
+   ]
+  },
+  "mate": {
+   "trans": [
+    "伙伴",
+    "配偶"
+   ],
+   "idtrans": [
+    "pasangan",
+    "teman"
+   ]
+  },
+  "origin": {
+   "trans": [
+    "起源",
+    "来源"
+   ]
+  },
+  "retail": {
+   "idtrans": [
+    "eceran",
+    "ritel"
+   ]
+  },
+  "shame": {
+   "trans": [
+    "羞耻",
+    "遗憾"
+   ]
+  },
+  "cable": {
+   "trans": [
+    "电缆"
+   ]
+  },
+  "hide": {
+   "trans": [
+    "隐藏"
+   ],
+   "idtrans": [
+    "menyembunyikan"
+   ]
+  },
+  "print": {
+   "trans": [
+    "打印",
+    "印刷"
+   ]
+  },
+  "worldwide": {
+   "idtrans": [
+    "di seluruh dunia"
+   ]
+  },
+  "universal": {
+   "idtrans": [
+    "universal"
+   ]
+  },
+  "attractive": {
+   "idtrans": [
+    "menarik"
+   ]
+  },
+  "bike": {
+   "trans": [
+    "自行车"
+   ],
+   "idtrans": [
+    "sepeda"
+   ]
+  },
+  "height": {
+   "trans": [
+    "高度"
+   ],
+   "idtrans": [
+    "tinggi",
+    "ketinggian"
+   ]
+  },
+  "letting": {
+   "trans": [
+    "让",
+    "出租"
+   ]
+  },
+  "princess": {
+   "idtrans": [
+    "putri"
+   ]
+  },
+  "solar": {
+   "idtrans": [
+    "surya",
+    "tenaga surya"
+   ]
+  },
+  "suffering": {
+   "trans": [
+    "痛苦",
+    "苦难"
+   ]
+  },
+  "chest": {
+   "trans": [
+    "胸部",
+    "箱子"
+   ],
+   "idtrans": [
+    "dada"
+   ]
+  },
+  "engaged": {
+   "trans": [
+    "订婚的",
+    "忙于"
+   ]
+  },
+  "grab": {
+   "trans": [
+    "抓住"
+   ]
+  },
+  "principal": {
+   "trans": [
+    "主要的",
+    "校长"
+   ],
+   "idtrans": [
+    "utama",
+    "kepala sekolah"
+   ]
+  },
+  "recognize": {
+   "trans": [
+    "认出",
+    "承认"
+   ],
+   "idtrans": [
+    "mengenali",
+    "mengakui"
+   ]
+  },
+  "registered": {
+   "trans": [
+    "注册的",
+    "登记的"
+   ]
+  },
+  "smoking": {
+   "trans": [
+    "吸烟"
+   ],
+   "idtrans": [
+    "merokok"
+   ]
+  },
+  "survive": {
+   "trans": [
+    "幸存"
+   ],
+   "idtrans": [
+    "bertahan hidup"
+   ]
+  },
+  "commander": {
+   "trans": [
+    "指挥官"
+   ],
+   "idtrans": [
+    "komandan"
+   ]
+  },
+  "defence": {
+   "trans": [
+    "防御",
+    "国防"
+   ]
+  },
+  "democracy": {
+   "trans": [
+    "民主"
+   ]
+  },
+  "fee": {
+   "trans": [
+    "费用"
+   ]
+  },
+  "suspect": {
+   "idtrans": [
+    "tersangka"
+   ]
+  },
+  "hanging": {
+   "trans": [
+    "悬挂",
+    "绞刑"
+   ]
+  },
+  "lift": {
+   "trans": [
+    "电梯",
+    "举起"
+   ]
+  },
+  "shoulder": {
+   "idtrans": [
+    "bahu",
+    "pundak"
+   ]
+  },
+  "contemporary": {
+   "trans": [
+    "当代的"
+   ]
+  },
+  "monster": {
+   "idtrans": [
+    "monster",
+    "raksasa"
+   ]
+  },
+  "philosophy": {
+   "trans": [
+    "哲学"
+   ],
+   "idtrans": [
+    "filsafat"
+   ]
+  },
+  "settlement": {
+   "trans": [
+    "解决",
+    "定居点"
+   ]
+  },
+  "grey": {
+   "trans": [
+    "灰色"
+   ]
+  },
+  "gray": {
+   "trans": [
+    "灰色"
+   ]
+  },
+  "meanwhile": {
+   "trans": [
+    "与此同时"
+   ]
+  },
+  "pants": {
+   "trans": [
+    "裤子"
+   ],
+   "idtrans": [
+    "celana"
+   ]
+  },
+  "partnership": {
+   "trans": [
+    "伙伴关系",
+    "合伙"
+   ],
+   "idtrans": [
+    "kemitraan"
+   ]
+  },
+  "pocket": {
+   "idtrans": [
+    "saku",
+    "kantong"
+   ]
+  },
+  "sharp": {
+   "trans": [
+    "锋利的",
+    "尖锐的"
+   ]
+  },
+  "format": {
+   "trans": [
+    "格式"
+   ]
+  },
+  "gate": {
+   "trans": [
+    "大门"
+   ]
+  },
+  "mount": {
+   "trans": [
+    "安装",
+    "登上"
+   ],
+   "idtrans": [
+    "memasang",
+    "mendaki"
+   ]
+  },
+  "reputation": {
+   "trans": [
+    "名声"
+   ]
+  },
+  "assessment": {
+   "trans": [
+    "评估"
+   ]
+  },
+  "colors": {
+   "trans": [
+    "颜色"
+   ]
+  },
+  "offensive": {
+   "trans": [
+    "冒犯的",
+    "攻势"
+   ]
+  },
+  "wash": {
+   "trans": [
+    "洗"
+   ],
+   "idtrans": [
+    "mencuci"
+   ]
+  },
+  "encourage": {
+   "trans": [
+    "鼓励"
+   ]
+  },
+  "refer": {
+   "trans": [
+    "提及",
+    "参考"
+   ],
+   "idtrans": [
+    "merujuk"
+   ]
+  },
+  "select": {
+   "trans": [
+    "选择"
+   ]
+  },
+  "arrival": {
+   "trans": [
+    "到达"
+   ]
+  },
+  "ideal": {
+   "trans": [
+    "理想的",
+    "理想"
+   ]
+  },
+  "mood": {
+   "idtrans": [
+    "suasana hati"
+   ]
+  },
+  "picking": {
+   "trans": [
+    "采摘",
+    "挑选"
+   ]
+  },
+  "retired": {
+   "idtrans": [
+    "pensiun"
+   ]
+  },
+  "wage": {
+   "trans": [
+    "工资"
+   ]
+  },
+  "salary": {
+   "trans": [
+    "工资"
+   ]
+  },
+  "electricity": {
+   "idtrans": [
+    "listrik"
+   ]
+  },
+  "electrical": {
+   "idtrans": [
+    "listrik"
+   ]
+  },
+  "horror": {
+   "trans": [
+    "恐怖"
+   ]
+  },
+  "label": {
+   "trans": [
+    "标签"
+   ]
+  },
+  "wire": {
+   "idtrans": [
+    "kawat"
+   ]
+  },
+  "assist": {
+   "trans": [
+    "协助"
+   ]
+  },
+  "designer": {
+   "trans": [
+    "设计师"
+   ]
+  },
+  "dressed": {
+   "trans": [
+    "穿好衣服的"
+   ]
+  },
+  "efficient": {
+   "idtrans": [
+    "efisien"
+   ]
+  },
+  "employed": {
+   "trans": [
+    "受雇的"
+   ]
+  },
+  "ghost": {
+   "idtrans": [
+    "hantu"
+   ]
+  },
+  "nervous": {
+   "trans": [
+    "紧张的"
+   ]
+  },
+  "suck": {
+   "trans": [
+    "吸"
+   ]
+  },
+  "bureau": {
+   "trans": [
+    "局",
+    "办事处"
+   ],
+   "idtrans": [
+    "biro"
+   ]
+  },
+  "hired": {
+   "trans": [
+    "被雇用的"
+   ]
+  },
+  "saint": {
+   "trans": [
+    "圣人",
+    "圣徒"
+   ]
+  },
+  "annoying": {
+   "trans": [
+    "烦人的"
+   ]
+  },
+  "buried": {
+   "trans": [
+    "埋葬"
+   ],
+   "idtrans": [
+    "mengubur"
+   ]
+  },
+  "conclusion": {
+   "trans": [
+    "结论"
+   ]
+  },
+  "landing": {
+   "trans": [
+    "着陆"
+   ],
+   "idtrans": [
+    "pendaratan"
+   ]
+  },
+  "marry": {
+   "idtrans": [
+    "menikah",
+    "kawin"
+   ]
+  },
+  "nurse": {
+   "idtrans": [
+    "perawat",
+    "suster"
+   ]
+  },
+  "thrown": {
+   "trans": [
+    "扔（throw 过去分词）"
+   ]
+  },
+  "damaged": {
+   "trans": [
+    "损坏的"
+   ]
+  },
+  "reduction": {
+   "trans": [
+    "减少",
+    "降低"
+   ]
+  },
+  "resource": {
+   "trans": [
+    "资源"
+   ],
+   "idtrans": [
+    "sumber daya"
+   ]
+  },
+  "arrive": {
+   "idtrans": [
+    "tiba",
+    "datang"
+   ]
+  },
+  "enterprise": {
+   "trans": [
+    "企业"
+   ],
+   "idtrans": [
+    "perusahaan"
+   ]
+  },
+  "occasion": {
+   "idtrans": [
+    "kesempatan",
+    "acara"
+   ]
+  },
+  "agriculture": {
+   "trans": [
+    "农业"
+   ]
+  },
+  "fraud": {
+   "trans": [
+    "欺诈"
+   ]
+  },
+  "introduce": {
+   "trans": [
+    "介绍"
+   ],
+   "idtrans": [
+    "memperkenalkan"
+   ]
+  },
+  "programming": {
+   "trans": [
+    "编程"
+   ],
+   "idtrans": [
+    "pemrograman"
+   ]
+  },
+  "settle": {
+   "trans": [
+    "解决",
+    "定居"
+   ],
+   "idtrans": [
+    "menyelesaikan",
+    "menetap"
+   ]
+  },
+  "spell": {
+   "trans": [
+    "拼写",
+    "咒语"
+   ],
+   "idtrans": [
+    "mengeja",
+    "mantra"
+   ]
+  },
+  "fate": {
+   "idtrans": [
+    "nasib",
+    "takdir"
+   ]
+  },
+  "frequency": {
+   "idtrans": [
+    "frekuensi"
+   ]
+  },
+  "logic": {
+   "idtrans": [
+    "logika"
+   ]
+  },
+  "organisation": {
+   "idtrans": [
+    "organisasi"
+   ]
+  },
+  "reducing": {
+   "trans": [
+    "减少"
+   ]
+  },
+  "roughly": {
+   "trans": [
+    "大约",
+    "粗略地"
+   ]
+  },
+  "script": {
+   "trans": [
+    "剧本",
+    "脚本"
+   ]
+  },
+  "breast": {
+   "idtrans": [
+    "payudara",
+    "dada"
+   ]
+  },
+  "consumption": {
+   "trans": [
+    "消费",
+    "消耗"
+   ]
+  },
+  "corruption": {
+   "trans": [
+    "腐败"
+   ]
+  },
+  "impression": {
+   "idtrans": [
+    "kesan"
+   ]
+  },
+  "indicate": {
+   "idtrans": [
+    "menunjukkan"
+   ]
+  },
+  "input": {
+   "trans": [
+    "输入"
+   ]
+  },
+  "painted": {
+   "trans": [
+    "涂漆的",
+    "画的（paint 过去分词）"
+   ]
+  },
+  "terrorist": {
+   "idtrans": [
+    "teroris"
+   ]
+  },
+  "contribute": {
+   "idtrans": [
+    "berkontribusi"
+   ]
+  },
+  "contribution": {
+   "trans": [
+    "贡献"
+   ],
+   "idtrans": [
+    "kontribusi",
+    "sumbangan"
+   ]
+  },
+  "brave": {
+   "idtrans": [
+    "berani"
+   ]
+  },
+  "density": {
+   "idtrans": [
+    "kepadatan"
+   ]
+  },
+  "ethnic": {
+   "idtrans": [
+    "etnis"
+   ]
+  },
+  "fleet": {
+   "idtrans": [
+    "armada"
+   ]
+  },
+  "guidance": {
+   "idtrans": [
+    "bimbingan",
+    "panduan"
+   ]
+  },
+  "radical": {
+   "trans": [
+    "激进的",
+    "根本的"
+   ]
+  },
+  "shore": {
+   "trans": [
+    "海岸"
+   ],
+   "idtrans": [
+    "pantai"
+   ]
+  },
+  "spots": {
+   "trans": [
+    "斑点",
+    "地点"
+   ]
+  },
+  "substantial": {
+   "trans": [
+    "大量的",
+    "实质的"
+   ]
+  },
+  "transmission": {
+   "trans": [
+    "传输",
+    "变速器"
+   ]
+  },
+  "uniform": {
+   "trans": [
+    "制服",
+    "统一的"
+   ]
+  },
+  "bones": {
+   "trans": [
+    "骨头"
+   ]
+  },
+  "complaint": {
+   "trans": [
+    "投诉",
+    "抱怨"
+   ]
+  },
+  "invest": {
+   "idtrans": [
+    "berinvestasi",
+    "menanam modal"
+   ]
+  },
+  "listing": {
+   "idtrans": [
+    "daftar"
+   ]
+  },
+  "manual": {
+   "trans": [
+    "手册",
+    "手动的"
+   ],
+   "idtrans": [
+    "manual",
+    "buku panduan"
+   ]
+  },
+  "operator": {
+   "trans": [
+    "操作员",
+    "运营商"
+   ]
+  },
+  "pound": {
+   "idtrans": [
+    "pon"
+   ]
+  },
+  "preparation": {
+   "trans": [
+    "准备"
+   ]
+  },
+  "sufficient": {
+   "idtrans": [
+    "cukup",
+    "memadai"
+   ]
+  },
+  "attending": {
+   "trans": [
+    "参加",
+    "出席"
+   ]
+  },
+  "boards": {
+   "trans": [
+    "板",
+    "董事会"
+   ]
+  },
+  "chip": {
+   "trans": [
+    "芯片",
+    "薯片",
+    "碎片"
+   ]
+  },
+  "documentary": {
+   "trans": [
+    "纪录片"
+   ]
+  },
+  "domain": {
+   "trans": [
+    "领域",
+    "域名"
+   ]
+  },
+  "engagement": {
+   "trans": [
+    "订婚",
+    "参与"
+   ],
+   "idtrans": [
+    "pertunangan",
+    "keterlibatan"
+   ]
+  },
+  "literary": {
+   "idtrans": [
+    "sastra"
+   ]
+  },
+  "praise": {
+   "trans": [
+    "赞扬"
+   ]
+  },
+  "bow": {
+   "trans": [
+    "弓",
+    "鞠躬"
+   ],
+   "idtrans": [
+    "busur",
+    "membungkuk"
+   ]
+  },
+  "craft": {
+   "trans": [
+    "工艺",
+    "手艺"
+   ],
+   "idtrans": [
+    "kerajinan"
+   ]
+  },
+  "equity": {
+   "idtrans": [
+    "ekuitas"
+   ]
+  },
+  "hardware": {
+   "trans": [
+    "硬件",
+    "五金"
+   ]
+  },
+  "phrase": {
+   "trans": [
+    "短语"
+   ],
+   "idtrans": [
+    "frasa"
+   ]
+  },
+  "seal": {
+   "trans": [
+    "海豹",
+    "印章",
+    "密封"
+   ]
+  },
+  "separated": {
+   "idtrans": [
+    "terpisah"
+   ]
+  },
+  "touched": {
+   "trans": [
+    "感动的"
    ]
   }
  },
@@ -5674,6 +7502,664 @@
   "guild": {
    "idtrans": [
     "persatuan"
+   ]
+  },
+  "beast": {
+   "trans": [
+    "野兽"
+   ]
+  },
+  "equipped": {
+   "idtrans": [
+    "dilengkapi"
+   ]
+  },
+  "accommodate": {
+   "idtrans": [
+    "menampung"
+   ]
+  },
+  "odds": {
+   "trans": [
+    "几率",
+    "可能性"
+   ],
+   "idtrans": [
+    "peluang"
+   ]
+  },
+  "tap": {
+   "trans": [
+    "水龙头",
+    "轻拍"
+   ]
+  },
+  "offense": {
+   "trans": [
+    "冒犯",
+    "犯罪"
+   ]
+  },
+  "requirement": {
+   "trans": [
+    "要求",
+    "需求"
+   ]
+  },
+  "loaded": {
+   "trans": [
+    "装载的",
+    "满载"
+   ]
+  },
+  "dirt": {
+   "trans": [
+    "污垢",
+    "泥土"
+   ]
+  },
+  "isolated": {
+   "idtrans": [
+    "terisolasi",
+    "terpencil"
+   ]
+  },
+  "municipal": {
+   "idtrans": [
+    "kota",
+    "munisipal"
+   ]
+  },
+  "asset": {
+   "trans": [
+    "资产"
+   ]
+  },
+  "casual": {
+   "trans": [
+    "随意的",
+    "休闲的"
+   ]
+  },
+  "civilian": {
+   "idtrans": [
+    "sipil",
+    "warga sipil"
+   ]
+  },
+  "graphic": {
+   "trans": [
+    "图形的",
+    "生动的"
+   ]
+  },
+  "serial": {
+   "trans": [
+    "连续的",
+    "连续剧"
+   ]
+  },
+  "usage": {
+   "trans": [
+    "用法",
+    "使用"
+   ]
+  },
+  "longest": {
+   "trans": [
+    "最长的"
+   ]
+  },
+  "continuous": {
+   "idtrans": [
+    "terus-menerus",
+    "berkelanjutan"
+   ]
+  },
+  "attract": {
+   "idtrans": [
+    "menarik"
+   ]
+  },
+  "occupation": {
+   "idtrans": [
+    "pekerjaan",
+    "profesi"
+   ]
+  },
+  "punk": {
+   "trans": [
+    "朋克"
+   ]
+  },
+  "resist": {
+   "idtrans": [
+    "menolak",
+    "melawan"
+   ]
+  },
+  "tourist": {
+   "idtrans": [
+    "turis",
+    "wisatawan"
+   ]
+  },
+  "blade": {
+   "trans": [
+    "刀片",
+    "叶片"
+   ]
+  },
+  "census": {
+   "idtrans": [
+    "sensus"
+   ]
+  },
+  "excitement": {
+   "idtrans": [
+    "kegembiraan",
+    "kegairahan"
+   ]
+  },
+  "trace": {
+   "trans": [
+    "痕迹",
+    "追踪"
+   ]
+  },
+  "acknowledge": {
+   "trans": [
+    "承认"
+   ]
+  },
+  "liver": {
+   "idtrans": [
+    "hati"
+   ]
+  },
+  "lease": {
+   "trans": [
+    "租约",
+    "租赁"
+   ]
+  },
+  "lens": {
+   "idtrans": [
+    "lensa"
+   ]
+  },
+  "counsel": {
+   "idtrans": [
+    "penasihat hukum",
+    "pengacara"
+   ]
+  },
+  "icon": {
+   "trans": [
+    "图标",
+    "偶像"
+   ]
+  },
+  "installation": {
+   "trans": [
+    "安装"
+   ],
+   "idtrans": [
+    "instalasi",
+    "pemasangan"
+   ]
+  },
+  "politician": {
+   "idtrans": [
+    "politikus",
+    "politisi"
+   ]
+  },
+  "realistic": {
+   "idtrans": [
+    "realistis"
+   ]
+  },
+  "travelling": {
+   "trans": [
+    "旅行"
+   ]
+  },
+  "travelled": {
+   "trans": [
+    "旅行"
+   ]
+  },
+  "crop": {
+   "trans": [
+    "农作物"
+   ]
+  },
+  "cow": {
+   "idtrans": [
+    "sapi"
+   ]
+  },
+  "harsh": {
+   "trans": [
+    "严厉的",
+    "苛刻的"
+   ]
+  },
+  "inventory": {
+   "trans": [
+    "库存",
+    "清单"
+   ]
+  },
+  "missile": {
+   "trans": [
+    "导弹"
+   ],
+   "idtrans": [
+    "rudal"
+   ]
+  },
+  "pepper": {
+   "trans": [
+    "胡椒",
+    "辣椒"
+   ],
+   "idtrans": [
+    "lada",
+    "merica"
+   ]
+  },
+  "acquire": {
+   "idtrans": [
+    "memperoleh"
+   ]
+  },
+  "controller": {
+   "trans": [
+    "控制器",
+    "管理员"
+   ]
+  },
+  "iconic": {
+   "trans": [
+    "标志性的"
+   ]
+  },
+  "keen": {
+   "idtrans": [
+    "tajam",
+    "bersemangat"
+   ]
+  },
+  "colony": {
+   "trans": [
+    "殖民地"
+   ]
+  },
+  "divide": {
+   "trans": [
+    "分开",
+    "除"
+   ]
+  },
+  "heal": {
+   "idtrans": [
+    "menyembuhkan"
+   ]
+  },
+  "occasional": {
+   "trans": [
+    "偶尔的"
+   ]
+  },
+  "rap": {
+   "trans": [
+    "说唱"
+   ]
+  },
+  "artwork": {
+   "trans": [
+    "艺术品"
+   ]
+  },
+  "humble": {
+   "trans": [
+    "谦虚的"
+   ]
+  },
+  "hybrid": {
+   "idtrans": [
+    "hibrida"
+   ]
+  },
+  "lighter": {
+   "idtrans": [
+    "pemantik",
+    "korek api"
+   ]
+  },
+  "olive": {
+   "trans": [
+    "橄榄"
+   ]
+  },
+  "vacuum": {
+   "trans": [
+    "真空",
+    "吸尘器"
+   ]
+  },
+  "curse": {
+   "trans": [
+    "诅咒"
+   ]
+  },
+  "inn": {
+   "trans": [
+    "客栈",
+    "小旅馆"
+   ]
+  },
+  "shorts": {
+   "idtrans": [
+    "celana pendek"
+   ]
+  },
+  "observe": {
+   "trans": [
+    "观察"
+   ]
+  },
+  "medieval": {
+   "idtrans": [
+    "abad pertengahan"
+   ]
+  },
+  "stack": {
+   "trans": [
+    "堆",
+    "叠"
+   ]
+  },
+  "batch": {
+   "trans": [
+    "批"
+   ]
+  },
+  "static": {
+   "trans": [
+    "静态的",
+    "静止的"
+   ]
+  },
+  "withdrawal": {
+   "trans": [
+    "撤回",
+    "提款",
+    "戒断"
+   ]
+  },
+  "audit": {
+   "trans": [
+    "审计"
+   ]
+  },
+  "comply": {
+   "idtrans": [
+    "mematuhi"
+   ]
+  },
+  "placement": {
+   "idtrans": [
+    "penempatan"
+   ]
+  },
+  "container": {
+   "idtrans": [
+    "wadah",
+    "kontainer"
+   ]
+  },
+  "bail": {
+   "idtrans": [
+    "jaminan"
+   ]
+  },
+  "evaluate": {
+   "idtrans": [
+    "mengevaluasi",
+    "menilai"
+   ]
+  },
+  "upside": {
+   "trans": [
+    "好处",
+    "上行"
+   ]
+  },
+  "cottage": {
+   "idtrans": [
+    "pondok",
+    "rumah kecil"
+   ]
+  },
+  "straw": {
+   "trans": [
+    "稻草",
+    "吸管"
+   ]
+  },
+  "intake": {
+   "trans": [
+    "摄入",
+    "进气口"
+   ]
+  },
+  "needle": {
+   "trans": [
+    "针"
+   ]
+  },
+  "organize": {
+   "trans": [
+    "组织"
+   ]
+  },
+  "admire": {
+   "idtrans": [
+    "mengagumi"
+   ]
+  },
+  "circular": {
+   "trans": [
+    "圆形的",
+    "通告"
+   ]
+  },
+  "employ": {
+   "trans": [
+    "雇用"
+   ]
+  },
+  "cab": {
+   "trans": [
+    "出租车"
+   ]
+  },
+  "hike": {
+   "trans": [
+    "徒步旅行",
+    "上涨"
+   ],
+   "idtrans": [
+    "mendaki"
+   ]
+  },
+  "aggregate": {
+   "trans": [
+    "总计",
+    "聚合"
+   ]
+  },
+  "fare": {
+   "idtrans": [
+    "ongkos",
+    "tarif"
+   ]
+  },
+  "grove": {
+   "trans": [
+    "小树林"
+   ],
+   "idtrans": [
+    "hutan kecil"
+   ]
+  },
+  "modeling": {
+   "trans": [
+    "建模",
+    "模特工作"
+   ]
+  },
+  "simulation": {
+   "idtrans": [
+    "simulasi"
+   ]
+  },
+  "swept": {
+   "idtrans": [
+    "menyapu"
+   ]
+  },
+  "terrified": {
+   "trans": [
+    "害怕的",
+    "惊恐的"
+   ]
+  },
+  "verified": {
+   "idtrans": [
+    "memverifikasi",
+    "terverifikasi"
+   ]
+  },
+  "verify": {
+   "idtrans": [
+    "memverifikasi",
+    "terverifikasi"
+   ]
+  },
+  "unclear": {
+   "idtrans": [
+    "tidak jelas"
+   ]
+  },
+  "baked": {
+   "trans": [
+    "烤的"
+   ]
+  },
+  "delegation": {
+   "idtrans": [
+    "delegasi"
+   ]
+  },
+  "hail": {
+   "trans": [
+    "冰雹",
+    "欢呼"
+   ]
+  },
+  "ambition": {
+   "trans": [
+    "雄心",
+    "抱负"
+   ]
+  },
+  "hay": {
+   "idtrans": [
+    "rumput kering"
+   ]
+  },
+  "nationalist": {
+   "trans": [
+    "民族主义者"
+   ]
+  },
+  "chrome": {
+   "trans": [
+    "铬",
+    "镀铬"
+   ]
+  },
+  "conclude": {
+   "trans": [
+    "得出结论",
+    "结束"
+   ]
+  },
+  "shaft": {
+   "trans": [
+    "轴",
+    "柄"
+   ],
+   "idtrans": [
+    "poros"
+   ]
+  },
+  "frog": {
+   "trans": [
+    "青蛙"
+   ]
+  },
+  "liable": {
+   "trans": [
+    "有责任的",
+    "易于"
+   ],
+   "idtrans": [
+    "bertanggung jawab"
+   ]
+  },
+  "choir": {
+   "trans": [
+    "合唱团"
+   ]
+  },
+  "consume": {
+   "trans": [
+    "消费",
+    "消耗"
+   ]
+  },
+  "header": {
+   "trans": [
+    "标题",
+    "页眉"
+   ]
+  },
+  "sliding": {
+   "trans": [
+    "滑动"
+   ]
+  },
+  "aired": {
+   "trans": [
+    "播出"
+   ]
+  },
+  "messy": {
+   "trans": [
+    "凌乱"
+   ]
+  },
+  "bury": {
+   "trans": [
+    "埋葬"
+   ],
+   "idtrans": [
+    "mengubur"
    ]
   }
  },
