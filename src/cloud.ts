@@ -201,8 +201,11 @@ let normalizer: ((b: ProgressBlob) => Promise<ProgressBlob>) | null = null;
 let normalizerReady: () => void = () => {};
 const normalizerWait = new Promise<void>(resolve => { normalizerReady = resolve; });
 export function setProgressNormalizer(f: ((b: ProgressBlob) => Promise<ProgressBlob>) | null) { normalizer = f; if (f) normalizerReady(); }
+// one bounded wait per page, not per call: a push and a link each normalise two copies, and
+// with no normaliser ever coming (the words failed to load) they waited 8 s twice
+let bounded: Promise<void> | null = null;
 async function normalized(b: ProgressBlob): Promise<ProgressBlob> {
-  if (!normalizer) await Promise.race([normalizerWait, new Promise<void>(r => setTimeout(r, 8000))]);
+  if (!normalizer) await (bounded ??= Promise.race([normalizerWait, new Promise<void>(r => setTimeout(r, 8000))]));
   if (!normalizer) return b;
   try { return await normalizer(b); } catch { return b; }
 }
