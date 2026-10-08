@@ -1471,7 +1471,10 @@ export default function Home() {
     } catch { /* ignore */ }
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
-    setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
+    // a new run of the chapter, like choosing the list anew: a slip remembered on its first
+    // word (lapse already written) must not grade the run's perfect answer as missed — when
+    // the index is already 0 the [index] reset that clears it does not fire
+    setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
     setTimeout(() => input.current?.focus(), 30);
   }
   function retryChapter() { setChapterTo(chapterSafe); }
@@ -1708,6 +1711,10 @@ export default function Home() {
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     pendingIndex.current = null;
+    // the word asked for may be the one just slipped on (错词本 练习 →, the library card): a
+    // fresh run of it, so the slip is forgotten here too, since setIndex to the same index
+    // does not run the [index] reset
+    slipOn.current = "";
     setIndex(gi % 20);
   }
   // Opening a word harder than the current rung is an explicit request for that
