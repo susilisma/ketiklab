@@ -353,7 +353,9 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
   const cloud = await normalized(r.data ?? {});
-  const local = collectLocal();
+  // through the same decision as in pushProgress: a device whose own key migration is still
+  // fetching a dictionary would otherwise upload the old shape beside the cloud's new one
+  const local = await normalized(collectLocal());
   const wasLinked = linkedUid() !== null;
   // Account only links a device that is unlinked or linked to a different account, so
   // wasLinked means the name stored here is another person's: the account's own name
