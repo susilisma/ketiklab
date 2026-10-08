@@ -437,9 +437,10 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 @media(pointer:coarse),(max-width:640px){.meaning-pick,.meaning-peek{min-height:var(--touch)}}
 @media(max-width:640px){
 /* the text span ellipsizes so the row stays one 40px chapter-nav tall; the veil repeats the same hint */
-.session-meta{gap:8px}.session-meta>span:first-child{flex:1 1 0;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.session-meta{gap:8px}.session-meta>span:first-child{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* at 320px the English "Chapter 1 / 31" select gives way, not the timer, which was clipped to "00:0" */
-.session-meta .chapter-nav{min-width:0}.session-meta .chapter-select{min-width:0;flex:1 1 auto}.session-meta b{flex-shrink:0}
+/* the select gives way ten times faster than the label: it shows a clipped "Chapter 1 / 194" while the label keeps its words; the arrows never shrink */
+.session-meta .chapter-nav{min-width:0;flex:0 1 auto}.session-meta .chapter-nav button{flex:0 0 auto}.session-meta .chapter-select{min-width:44px;flex:0 10 auto}.session-meta b{flex-shrink:0}
 /* --strip-h counts on exactly two 40px rows: each group is one row that scrolls sideways, whatever the language or the hint state */
 .mode-group{display:flex;flex:0 0 100%;min-width:0;align-items:center;gap:7px;overflow-x:auto;scrollbar-width:thin}.mode-sep{display:none}
 /* chapter-nav and the ladder pills already say where the learner is; the tips are keyboard instructions — kept only while they carry the skip button */
