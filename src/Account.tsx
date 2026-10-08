@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
-  loadProfile, saveName, pushProgress, linkThisDevice, applyLocal, collectLocal, mergeProgress, linkedUid, linkDevice,
+  loadProfile, saveName, pushProgress, linkThisDevice, applyMerged, collectLocal, linkedUid, linkDevice,
   recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, type SyncNote,
 } from "./cloud";
 
@@ -289,7 +289,7 @@ export function Account({ uiLang, name, onName }: {
       const { merged } = await pushProgress(session.user.id);
       // same as linkThisDevice: a word typed during the push is on this device but not in
       // `merged`, so the merge is redone over what localStorage holds now before it is applied
-      applyLocal(mergeProgress(collectLocal(), merged)); noteAfterReload("merged"); window.location.reload();
+      applyMerged(merged); noteAfterReload("merged"); window.location.reload();
     } catch (e2: unknown) { setErr(humanError(e2, uiLang)); setBusy(false); }
   }
 

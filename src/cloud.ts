@@ -174,7 +174,8 @@ export const SYNCED_KEYS = [
   "ketiklab-langs", "ketiklab-source", "ketiklab-category", "ketiklab-loop", "ketiklab-input",
   "ketiklab-name", "ketiklab-extra-meanings", "ketiklab-meaning-visibility", "ketiklab-hide-pron",
 ];
-const PROGRESS_KEYS = ["ketiklab-state", "ketiklab-days", "ketiklab-fav", "ketiklab-chapters"];
+// what 云端有更多 looks at: a chapter position is a place, not progress the device lacks
+const PROGRESS_KEYS = ["ketiklab-state", "ketiklab-days", "ketiklab-fav"];
 
 /** Device-local, deliberately not in SYNCED_KEYS: which account the data on this
  *  device belongs to. Absent means anonymous data that may join the first account
@@ -224,6 +225,17 @@ export function applyLocal(blob: ProgressBlob) {
   }
 }
 
+/** A merged copy written over what the device holds now: a word typed meanwhile is kept (the
+ *  merge is redone), and so is a chapter moved meanwhile — a position is the device's own, so
+ *  the copy read before the round trip must not put it back. */
+export function applyMerged(merged: ProgressBlob) {
+  const now = collectLocal();
+  const out = mergeProgress(now, merged);
+  const ch = mergeProgress(merged, now)["ketiklab-chapters"];
+  if (typeof ch === "string") out["ketiklab-chapters"] = ch;
+  applyLocal(out);
+}
+
 export function replaceLocal(blob: ProgressBlob) {
   for (const k of SYNCED_KEYS) { try { localStorage.removeItem(k); } catch { /* ignore */ } }
   applyLocal(blob);
@@ -267,9 +279,16 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
         // where appending one list to the other let 30 stale keys evict the other device's
         mistakes: turns(strings(y.mistakes), strings(x.mistakes)).slice(0, 30),
       });
-    } else if (k === "ketiklab-days" || k === "ketiklab-chapters") {
+    } else if (k === "ketiklab-days") {
       const x = record(a), y = record(b), m: Record<string, number> = {};
       for (const d of Object.keys({ ...x, ...y }).sort()) m[d] = Math.max(count(x[d]), count(y[d]));
+      out[k] = JSON.stringify(m);
+    } else if (k === "ketiklab-chapters") {
+      // a position in a list, not a tally: per list the side on top wins (this device on every
+      // push, so a list restarted from chapter 1 stays there; max() put the old chapter back on
+      // every merge), and a list only one side has opened keeps its place
+      const x = record(a), y = record(b), m: Record<string, number> = {};
+      for (const d of Object.keys({ ...x, ...y }).sort()) m[d] = count(typeof y[d] === "number" ? y[d] : x[d]);
       out[k] = JSON.stringify(m);
     } else if (k === "ketiklab-fav") {
       const seen = new Set<string>(), m: unknown[] = [];
@@ -302,7 +321,7 @@ const canon = (b: ProgressBlob) => JSON.stringify(canonical(b));
 /** Same progress (lists as sets) and same settings (as strings): nothing to write. */
 export function sameBlob(a: ProgressBlob, b: ProgressBlob): boolean { return canon(a) === canon(b); }
 
-/** True when `b` holds no progress (words, days, favourites, chapters) that `a` lacks. */
+/** True when `b` holds no progress (words, days, favourites) that `a` lacks. */
 export function coversProgress(a: ProgressBlob, b: ProgressBlob): boolean {
   const m = canonical(mergeProgress(b, a)), n = canonical(a);
   return PROGRESS_KEYS.every(k => m[k] === n[k]);
@@ -355,7 +374,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // top its 30 mistakes came first and the words just missed here were cut by the cap.
   // The settings keys stay the account's choice, as before.
   const merged = mergeProgress(local, cloud);
-  for (const k of PROGRESS_KEYS) { const m = mergeProgress(cloud, local)[k]; if (typeof m === "string") merged[k] = m; }
+  for (const k of [...PROGRESS_KEYS, "ketiklab-chapters"]) { const m = mergeProgress(cloud, local)[k]; if (typeof m === "string") merged[k] = m; }
   if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
   await saveProgress(userId, merged);
   linkDevice(userId);
@@ -364,7 +383,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,
   // and writing `merged` alone erased it. The merge is cheap, so it is redone on what the
   // device holds now; merged stays on top, as before, for the settings it carries.
-  applyLocal(mergeProgress(collectLocal(), merged)); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
+  applyMerged(merged); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
   return "reloading";
 }
 
