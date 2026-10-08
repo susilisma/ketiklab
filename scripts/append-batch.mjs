@@ -73,10 +73,13 @@ function materializeWord(w) {
   }
   // object form
   if (!w || typeof w !== "object") return { err: "not-object" };
-  const { examples, source } = w;
-  const [en, id, zh, category, level = "A1", phonetic, idSyllables, pinyin] =
-    [w.en, w.id, w.zh, w.category, w.level, w.phonetic, w.idSyllables, w.pinyin].map(t);
+  const { examples } = w;
+  const [en, id, zh, category, level = "A1", phonetic, idSyllables, pinyin, source] =
+    [w.en, w.id, w.zh, w.category, w.level, w.phonetic, w.idSyllables, w.pinyin, w.source].map(t);
   if (![en, id, zh, category].every((x) => typeof x === "string" && x)) return { err: "empty-field" };
+  // the card prints these and the ladder splits pinyin on spaces: an array or an object
+  // stored as typed would print "cè,shì" or crash the 打拼音 rung
+  if (![phonetic, idSyllables, pinyin, source].every((x) => x === undefined || x === null || x === "" || typeof x === "string")) return { err: "bad-type" };
   if (!CATEGORIES.has(category)) return { err: "bad-category" };
   if (!LEVELS.has(level)) return { err: "bad-level" };
   if (badZh(zh)) return { err: "bad-zh-senses" };
