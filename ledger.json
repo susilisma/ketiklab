@@ -301,10 +301,10 @@
    "fingerprint": "touch-targets-contrast",
    "title": "语言 select 38px、默写 关 36px、分类条当前项滚出视口、紫字紫底 3.80:1（深色 4.28:1）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "今日渲染检查复测：语言 select 90×38、默写「关」36×40 仍在（唯一未过的两项）；紫字紫底未复测；F8/F6 10-01 复核：语言 select 90×38、默写 关 36×40 仍在；分类条当前项滚出视口（library 375 三语）仍在，修法 scrollIntoView；新数据点 768 触屏 .reading-filters 按钮 36 px 高；紫字紫底 3.80:1 仍在；10-06 L 复测：默写「关」已为 41×40（消失）；语言 select 90×38、分类条滚出视口、紫字紫底 3.80 仍在｜10-07 L：语言 select 94×38（随回退字体）、默写 关 36×40 又量到、浅色白字紫底 4.41 ｜ 10-08 L：语言 select 94×38（≥768 为 75×38，53 张手机截图全部命中，修法 .language{height:42px}）；分类条当前项右缘 638 > 343（三语）；默写 关 36×40、英文 Hide all 折成 64.8×48；紫字紫底 3.80/4.28、紫字 12px 粗体 4.12/4.41、白字紫底 4.41/3.25（方案 --purple:#6054df、深色 --purple-soft:#23203f + --on-purple:#111218，主人待定）",
-   "date": "2026-10-07"
+   "status": "fixed",
+   "commit": "9265831",
+   "reason": "语言 select 42px、默写 关 min-width 40、分类条居中滚动三项已修并经 L 复测；紫色调色板对比度仍待主人（palette-contrast-owner）",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "timer-runs-in-other-views",
@@ -4099,10 +4099,10 @@
    "fingerprint": "session-status-label-truncated-on-phone",
    "title": "手机 375–430 遮罩期间学习页状态标签截成「T…/点击…/Ketuk…」（globals.css:439）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F4 量到 21/36/76 px 宽对 184 px 标签；修法：≤430 遮罩期间隐藏该标签（遮罩已写同一句）或换行；受上限未动 ｜ 10-08 F2 与 L 都测到且与遮罩无关：根因是 .chapter-nav select「Chapter 1 / 194」占 343 px 中 232–266 px，narrowRow「Ch.」只在 <343 生效；修法 .session-meta>span:first-child{flex:1 1 auto} + .chapter-select{flex:0 1 auto;max-width:40%} + 阈值 ~480",
-   "date": "2026-10-07"
+   "status": "fixed",
+   "commit": "272d6d9",
+   "reason": "中文标签完整显示；id/en 长句仍截断为 136 px（行内放不下，需缩短手机文案，见 report）",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "landing-page-jsonld-url-stays-root",
@@ -4306,28 +4306,28 @@
    "fingerprint": "hanzi-era-srs-rows-not-migrated",
    "title": "hanzi 时代 SRS 行（zh:实现）不被 planKeyMoves 收编、抬高到期徽标、开始复习时被当孤键删除，step 2 阶梯丢失",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F3 发现、V3 复验升为 P2；F3 修法（再提供 zh:<hanzi> 作 from）不安全——907 个主题词 zh 值是 zh-core/plus/upper 词头，会劫持词库活行；V3 安全版：提供 hanzi from 时把 zh 三库装入 taken（实现 非词头仍合并 → step 2 reps 3）；需种子浏览器测试（F3 seed.mjs --idb-version 10）+ 校验，明日第一件",
-   "date": "2026-10-08"
+   "status": "fixed",
+   "commit": "a4d5594",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；VH 12 个场景复验 HOLDS（zh 三库装入 taken，zh:世界 不被劫持；继承路径可用）",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "mistakes-order-false-cloud-banner",
    "title": "错词本集合相同顺序不同 → 一台设备常驻「云端有更多」横幅，两台交替推送云端每次重写（不丢词）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F3 发现、V3 复验 6 次推送 write=true ×6；V3：F3 的「coversProgress 为真就跳过写」会漏掉只改设置的推送；安全版：同一 sameBlob（state 按集合、其余字符串相等）同时用于 coversProgress 与写判断",
-   "date": "2026-10-08"
+   "status": "fixed",
+   "commit": "f6e0303",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；VC 复验 HOLDS（6 次交替推送 0 写 0 横幅；仅改设置仍写）",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "chapters-max-merge-restart-banner",
    "title": "chapters 按 max 合并：从第 1 章重练后横幅常驻，合并到本机 跳回第 6 章",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F3 发现、V3 复验（其它进度仍同步）；V3：整键 over 优先会丢别的列表位置，应按列表 over 优先 + chapters 移出 PROGRESS_KEYS（同时覆盖 reset-progress-not-pushed）",
-   "date": "2026-10-08"
+   "status": "fixed",
+   "commit": "18e9867",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；VC 复验 HOLDS；首次绑定本机章节优先为有意取舍（见 needs-owner first-link-chapter-precedence）",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "reset-progress-not-pushed",
@@ -4360,10 +4360,10 @@
    "fingerprint": "reading-filters-768-wrap",
    "title": "768 触屏阅读页筛选行 52 px 高，中文 按钮 36 px 宽折成两行",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "L 量到；修法 .reading-filters button{white-space:nowrap} 移出 ≤640 块或 min-width:40px",
-   "date": "2026-10-08"
+   "status": "fixed",
+   "commit": "cd72965",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；L 复测 375/768 三语 50 px 无折行",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "srs-correct-on-step-minus-one-stays",
@@ -4378,10 +4378,10 @@
    "fingerprint": "words-adjective-noun-gloss-unsure-rows",
    "title": "words.json 70 行 D 不确定：thermal 热→热力的、central tengah→sentral、artisan tukang→perajin、embankment tambak→tanggul（VD 同意）、current saat ini→terkini（VD 反对）、causeway（VD 不确定）、~50 行汉语已作定语用的名词；另 农场主 idtrans 仍是 farmer、因子/算子 读音 zǐ 未钉",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-08 D 不确定、VD 单方表态，按规则未改；明日派查找者再判前四行",
-   "date": "2026-10-08"
+   "status": "fixed",
+   "commit": "c432f59",
+   "reason": "central/artisan/embankment + 25 行 zh 经 D+VD 同意改入；thermal/current 保留；U1 48 行与 U3 结转 gloss-candidates-2026-10-09.md",
+   "date": "2026-10-09"
   },
   {
    "fingerprint": "seo-static-page-link-targets-small",
@@ -4391,6 +4391,159 @@
    "commit": "",
    "reason": "F4 量到；修法 build-seo-pages.py:192/290/283 加 display:inline-block + padding",
    "date": "2026-10-08"
+  },
+  {
+   "fingerprint": "stale-slipon-on-chapter-repick-and-mistake-practice",
+   "title": "重选当前章节 / › ‹ / 错词本 练习 → / 词库卡打开刚滑错的词后，完美一遍仍判错、SRS 不记通过（setChapterTo、moveWithinList 不清 slipOn）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "c69d422",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；F1 5 个场景复验 1/1、3/3、整章 100%；V1 复验",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "pause-inert-when-focus-stays-in-box",
+   "title": "macOS Safari/Firefox 点暂停不移焦点，输入框继续判分、时钟停、下一词静默恢复（start() 暂停分支不 blur）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "c090ee1",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；暂停后 activeElement 为 body，按键经遮罩恢复",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "first-link-local-not-normalised",
+   "title": "首次绑定把本机未归一的旧键形与云端新键并存（30 条上限时挤掉对方一词）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "4a2aa65",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；VC 复验 HOLDS",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "normalizer-wait-twice-per-call",
+   "title": "4a2aa65 后无归一器时绑定/推送各等两次 8 s",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "84470ed",
+   "reason": "同日修：bounded 单次；VC 计时 602→301 ms",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "dark-empty-state-icon-still-light",
+   "title": "深色主题错词本/复习空态图标仍浅绿圆（.empty>b 无 .dark 覆盖）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "3f49df5",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "append-batch-typed-fields-regression",
+   "title": "append-batch.mjs 仍接受数组/对象/数字的 pinyin/phonetic/idSyllables/source（10-01 修复只移植了 trim 一半）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "c6dbc1b",
+   "reason": "已合入 main，Build check 与 Build and deploy 成功；干跑 4 坏行全部 bad-type",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "learn-param-ignored-on-returning-device",
+   "title": "?learn= 在已有 ketiklab-langs 的设备上被保存的学习语言覆盖：/zh/lib/trio/ 的 练这个词库 与 /ig /xhs 回访落到保存的语言（bc9b439 明确决定保存的语言优先）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F2 复现；若要链接生效需改 ?learn= 语义或让主题页 CTA 走 ?lib=trio&learn=id 路线",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "ladder-rung-names-differ-readme-seo",
+   "title": "README/SEO 页写 read → type the pinyin → pick the character，App 药丸为 Recognize / Type pinyin / Pick hanzi / IME typing",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2；改 README.md:22,62 与 build-seo-pages.py:58-59 对齐药丸名",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "site-cron-fires-4x-daily",
+   "title": "site.yml 的每小时 cron 实际约每天 4 次（GitHub 调度不均），promote 追赶上限 24 h 会一次放出最多 96 词",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F4 用 Actions 记录证实；可降 MAX_CATCHUP_HOURS 或改 README 的节奏说明",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "pinyin-fixes-dead-keys",
+   "title": "pinyin-fixes.json 夹肢窝、运动夹克、子宫、咽（今日再加 似天使、似马）钉值无对应行",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4；无害，清理即可",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "hanzi-migration-fetches-zh-dicts-for-dict-learners",
+   "title": "a4d5594 后只要错词本/SRS 有一个 zh 词典词头恰是主题词首义（902/3213），迁移与归一器首次调用会拉 zh 三库（~547 KB，SW 缓存+重验）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VH 指出；仅带宽；可加注释或建词头索引",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "first-link-chapter-precedence",
+   "title": "首次绑定时本机章节位置覆盖云端（18e9867 有意：重开列表要生效；代价：新设备签到前点到第 2 章会把账号的第 15 章改成 2）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "VC；替代方案：首次绑定云端优先、之后本机优先",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "fav-order-false-cloud-write",
+   "title": "收藏同集合不同顺序仍按字符串比较：两台设备交替推送每次重写云端（不出横幅、不丢数据）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VC；修法：canonical() 里按 lang:key 排序收藏",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "toefl-pool-rows-worse-than-toefl",
+   "title": "en-toefl refresh 会把池值复制进 11 行（share/considerable/guild/bronze/duration/commodity/entity/luxury/command/monk/traumatic），池值更差（gangsa、ramai…）；今日保留 en-toefl 原值",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "见 gloss-candidates-2026-10-09.md A 段；应先修池中行",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "status-label-phone-copy-too-long",
+   "title": "375 px 空闲状态标签 Ketuk kartu untuk mulai / Tap the card to start（210/184 px）放不进含章节选择与时钟的行，现截为 136 px",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "272d6d9 之后余项；需更短的手机文案（文案决定）",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "library-word-grid-56k-tall",
+   "title": "375 px 词库页一次渲染分类全部 614 词（2,100 节点），页高 56,466 px",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "L 观察；可分页或限高，产品决定",
+   "date": "2026-10-09"
+  },
+  {
+   "fingerprint": "stale-slipon-cross-dictionary-pending-index",
+   "title": "跨列表跳转（gotoDictWord/gotoTrioWord/practiceWord 的 pendingIndex 分支）落到同 index 且同 wordId 时 slipOn 残留：🌐 搜索 Core English essential (04/20) 滑错 → 🌐 TOEFL essential (04/20) 完美 → 0/1（26 个词头在两本英语词典同章内偏移相同）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V1 发现，修前修后相同；修法：App.tsx:1740/1754/1887 的 pendingIndex.current = gi % 20 旁加 slipOn.current = \"\"（勿改 [sourceKey] effect，它也服务换档/换语言保留滑错）",
+   "date": "2026-10-09"
   }
  ]
 }
