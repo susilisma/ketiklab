@@ -231,11 +231,23 @@ export function applyLocal(blob: ProgressBlob) {
 /** A merged copy written over what the device holds now: a word typed meanwhile is kept (the
  *  merge is redone), and so is a chapter moved meanwhile — a position is the device's own, so
  *  the copy read before the round trip must not put it back. */
-export function applyMerged(merged: ProgressBlob) {
+export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged) {
   const now = collectLocal();
   const out = mergeProgress(now, merged);
   const ch = mergeProgress(merged, now)["ketiklab-chapters"];
   if (typeof ch === "string") out["ketiklab-chapters"] = ch;
+  // `merged` already holds this device's 错词本, cut to the cap together with the other device's:
+  // re-merging the whole list put the words the cap had cut back on top and evicted the other
+  // device's again, so 云端有更多 never cleared. Only what was missed since the read goes on top.
+  // A miss moves its word to the front, so that is everything ahead of the snapshot's newest word
+  // (a word re-missed meanwhile included), or every word the snapshot lacks when that one is gone.
+  const was = strings(record(before["ketiklab-state"]).mistakes), cur = strings(record(now["ketiklab-state"]).mistakes);
+  const at = was.length ? cur.indexOf(was[0]) : cur.length;
+  const fresh = at >= 0 ? cur.slice(0, at) : cur.filter(k => !was.includes(k));
+  if (typeof out["ketiklab-state"] === "string") {
+    const rest = strings(record(merged["ketiklab-state"]).mistakes).filter(k => !fresh.includes(k));
+    out["ketiklab-state"] = JSON.stringify({ ...record(out["ketiklab-state"]), mistakes: [...fresh, ...rest].slice(0, 30) });
+  }
   applyLocal(out);
 }
 
@@ -358,7 +370,8 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   const cloud = await normalized(r.data ?? {});
   // through the same decision as in pushProgress: a device whose own key migration is still
   // fetching a dictionary would otherwise upload the old shape beside the cloud's new one
-  const local = await normalized(collectLocal());
+  const raw = collectLocal();
+  const local = await normalized(raw);
   const wasLinked = linkedUid() !== null;
   // Account only links a device that is unlinked or linked to a different account, so
   // wasLinked means the name stored here is another person's: the account's own name
@@ -388,7 +401,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,
   // and writing `merged` alone erased it. The merge is cheap, so it is redone on what the
   // device holds now; merged stays on top, as before, for the settings it carries.
-  applyMerged(merged); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
+  applyMerged(merged, raw); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
   return "reloading";
 }
 
