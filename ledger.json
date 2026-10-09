@@ -164,12 +164,12 @@
   },
   {
    "fingerprint": "keys-dropped-320ms-window",
-   "title": "切词后 320 ms 内按键被丢弃（App.tsx handleType finishing.current）",
-   "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "Chromium 复现：40/80 ms 后的 c、o 被丢，350 ms 后正常；修法约 10 行（暂存后缀到下一词），下次做 ｜ 10-08 V1 复测仍在（gap 0/150 ms「co」丢失，400 ms 正常）",
-   "date": "2026-09-15"
+   "title": "切词后 320 ms 内按键被丢弃 → 连续打字（≥35 WPM、每词重复、预读下一词）时下一词完美一遍判错、写 SRS lapse 与错词本（App.tsx handleType finishing.current；ZhSteps 打拼音同）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "916ae03",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；F1 发现、V1 复验升级：en/id 盒与打拼音档、复习会话、循环×2 均复现；修法为只把下一词开头匹配的前缀带入下一词（V1 建议，不可能新写 lapse）；:4301 achieveconfidentcurious 200 ms/键 strict/soft/打拼音 3/3（修前 1/3）；F1 回归套件与 VL 320 ms 窗内 Escape 用例全部不变",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "controlled-input-composition-android",
@@ -544,19 +544,19 @@
    "fingerprint": "account-offline-expired-session",
    "title": "离线且 token 过期时账户页 25.7 s Loading… 后显示登录表单（仍处于登录态）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "约 10 行：getSession 加 3 s 超时回退到已存会话 ｜ 10-08 F3 复测 25.7 s 仍在",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；currentSession 3 s Promise.race（带拒绝处理），VC 在真实 supabase-js 2.116 上测：冷加载过期 token 3.0 s 出结果（原 25.4 s），网络恢复后 TOKEN_REFRESHED 仍到达",
+   "date": "2026-10-10",
+   "commit": "852928b"
   },
   {
    "fingerprint": "account-offline-valid-session-14s",
    "title": "离线且 token 有效时账户页 14 s 无提示（postgrest 重试）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": ".retry(false) 两处 ｜ 10-08 F3 复测 14.6 s 仍在",
-   "date": "2026-09-15",
-   "commit": ""
+   "status": "fixed",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；createClient db.retry:false（仅 GET/HEAD 曾重试，upsert 不受影响），VC 实测读失败 1 ms（原 7 s）；代价：读的瞬时 503 不再重试，autoPush 一分钟后重试",
+   "date": "2026-10-10",
+   "commit": "852928b"
   },
   {
    "fingerprint": "profile-select-dead-columns",
@@ -2463,8 +2463,8 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "改 job 级 permissions + persist-credentials:false 属工作流结构；校验者：promote 保留 write 与凭据则小时任务不受影响，build 需 pages: write（configure-pages enablement）；由主人定",
-   "date": "2026-09-24"
+   "reason": "改 job 级 permissions + persist-credentials:false 属工作流结构；校验者：promote 保留 write 与凭据则小时任务不受影响，build 需 pages: write（configure-pages enablement）；由主人定 ｜ 10-10 F5/VS 复核仍在；VS 给出不破坏部署的精确 YAML（promote contents:write；build contents:read + pages:write，configure-pages 要 pages 读；deploy pages:write + id-token:write；ci.yml 锁文件提交用 step 级 GH_TOKEN）",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "indonesian-json-english-loans-new",
@@ -2659,19 +2659,19 @@
    "fingerprint": "public-sitemap-stub-tracked",
    "title": "public/sitemap.xml 一条 URL 的桩文件被跟踪，build-seo-pages 会覆盖；跳过该步的构建会发一条 URL 的 sitemap",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "d07c25b",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：无引用；build+SEO 后 dist/sitemap.xml 40 URL；仅跳过 SEO 步的构建无 sitemap（两工作流都跑该步）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "38bb34d",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；10-01 分支 d07c25b 重放，dist/sitemap.xml 仍 40 URL",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "manifest-rewrite-drops-trailing-newline",
    "title": "build-en-dicts.py / build-zh-dicts.py 写 manifest.json 无尾换行，与 manifest-coverage.py 来回翻转",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "9ce3938",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：dump+\"\\n\" == 提交字节；备注：翻转方是重建脚本去 / 手改恢复，manifest-coverage.py 保留原状；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "fa36d28",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；10-01 分支 9ce3938 重放",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "soft-mode-correct-key-after-wrong-counts-as-miss",
@@ -3271,19 +3271,19 @@
    "fingerprint": "review-list-button-prints-category-and-narrowed-total",
    "title": "复习会话上方列表按钮印分类名与档位缩窄总数「Business & Work · 2 / 614」（App.tsx:1617）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "bd30fae",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：商务工作 · 2 / 614 → 复习模式 · 2；退出后恢复分类标签；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "62962a4",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；10-01 分支 bd30fae 重放，:4301 复验",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "global-search-card-pinyin-in-ipa-slashes",
    "title": "🌐 全库搜索卡把 zh 库拼音夹在 IPA 斜杠里 /xiàn zài/，印尼语库卡片发音行为空（App.tsx:1001）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "d52c0e8",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：/xiàn zài/ → 普通话 · xiàn zài；yang \"\" → Bahasa Indonesia；无 usphone 行 American English；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "a3dd8b2",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；10-01 分支 d52c0e8 重放，:4301 🌐 搜索 现在 → 普通话 · xiàn zài、sekarang → Bahasa Indonesia",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "seo-trio-pages-orphaned",
@@ -3298,10 +3298,10 @@
    "fingerprint": "account-id-arm-english-streak",
    "title": "Account.tsx:399 印尼语句子里夹英文 streak（应 hari berturut-turut）；App.tsx:1620 顶栏 \"Indonesia\" vs 设置页 \"Bahasa Indonesia\"；:1569 \"from Stats\" vs 导航 \"Statistics\"；:185 有无音标时 English/American English 不一致",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "0507488",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：dropdown Bahasa Indonesia、from Statistics、American English、hari berturut-turut；尾巴：设置页发音详情仍 English · 0.8×、阅读筛选 Indonesia、英式拼写行标 American English（见 american-english-label-on-british-rows）；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "status": "fixed",
+   "commit": "8729b73",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；10-01 分支 0507488 重放，下拉显示 Bahasa Indonesia",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "saved-source-gone-silent-fallback",
@@ -4097,12 +4097,12 @@
   },
   {
    "fingerprint": "session-status-label-truncated-on-phone",
-   "title": "手机 375–430 遮罩期间学习页状态标签截成「T…/点击…/Ketuk…」（globals.css:439）",
+   "title": "手机 375 学习页状态标签截断：272d6d9 后中文 点击卡片开始/按任意键开始 仍截为 80–85/92 px（flex 0 10 auto 放在 .chapter-select 上只与箭头分摊）",
    "priority": "P3",
    "status": "fixed",
-   "commit": "272d6d9",
-   "reason": "中文标签完整显示；id/en 长句仍截断为 136 px（行内放不下，需缩短手机文案，见 report）",
-   "date": "2026-10-09"
+   "commit": "875f430",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；L 发现 272d6d9 未修到中文（账上误记 fixed），VL 复验：.chapter-nav flex 0 1000 auto + min-width 140 后 zh 12 组合 92/92，id/en 147 px，640+ 字节不变",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "landing-page-jsonld-url-stays-root",
@@ -4209,8 +4209,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F3 复现 ｜ 10-08 F3 浏览器复现仍在",
-   "date": "2026-10-07"
+   "reason": "F3 复现 ｜ 10-08 F3 浏览器复现仍在 ｜ 10-10 VS 复现仍在（裸 世界 + zh:世界 复习两次），见 bare-hanzi-mistake-keys-unlisted",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "seo-page-inline-link-targets",
@@ -4479,8 +4479,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F4；无害，清理即可",
-   "date": "2026-10-09"
+   "reason": "F5 复核仍在：夹肢窝、运动夹克、子宫、咽、似天使、似马，另加 电子烟产品（zh-pinyin.json 孤键）；无害，清理即可",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "hanzi-migration-fetches-zh-dicts-for-dict-learners",
@@ -4506,8 +4506,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "VC；修法：canonical() 里按 lang:key 排序收藏",
-   "date": "2026-10-09"
+   "reason": "VC；修法：canonical() 里按 lang:key 排序收藏 ｜ 10-10 F4 S7 复测仍在（4 次交替推送 4 写 0 横幅）",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "toefl-pool-rows-worse-than-toefl",
@@ -4524,8 +4524,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "272d6d9 之后余项；需更短的手机文案（文案决定）",
-   "date": "2026-10-09"
+   "reason": "272d6d9 之后余项；875f430 后 id/en 显示 147 px（原 136），仍需更短的手机文案（文案决定）",
+   "date": "2026-10-10"
   },
   {
    "fingerprint": "library-word-grid-56k-tall",
@@ -4540,10 +4540,118 @@
    "fingerprint": "stale-slipon-cross-dictionary-pending-index",
    "title": "跨列表跳转（gotoDictWord/gotoTrioWord/practiceWord 的 pendingIndex 分支）落到同 index 且同 wordId 时 slipOn 残留：🌐 搜索 Core English essential (04/20) 滑错 → 🌐 TOEFL essential (04/20) 完美 → 0/1（26 个词头在两本英语词典同章内偏移相同）",
    "priority": "P3",
+   "status": "fixed",
+   "commit": "3ba2121",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；V1 复验场景与修处；:4301 R7 essential 跨库 4/4、en:essential correct（修前 3/4）",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "dictation-hide-all-pill-wraps-375",
+   "title": "375/360 px 英文界面默写「Hide all」药丸折成两行（66×48），默写组 48 px 与纠错组 40 px 不齐；320 Auto rollback 也折（globals.css .mode-row button）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b478c8f",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；L 发现、VL 复验：white-space:nowrap 后 320–430 三语所有药丸 40 px，组内横滚，页面无横向滚动",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "escape-leaves-focus-mode-running",
+   "title": "Escape / Shift+TAB 离开输入框后 running 仍 true：侧栏 visibility:hidden 不可聚焦、章节选择与模式行隐藏、标签仍 专注模式、按钮仍 暂停；未尝试的词上 Escape → ENTER 直接跳过并记 miss + SRS lapse（App.tsx handleGhostKeys）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "8b77c02",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；F2 发现、VL 复验并发现 ENTER 跳词后果；修后与暂停按钮一致：布局恢复、遮罩 按任意键继续、时钟冻结、下一键恢复；VL 复验 en/zh/默写/输入法/手机全部通过",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "cloud-cap-merge-back-banner-never-clears",
+   "title": "合并到本机 / 首次绑定时 applyMerged 对本机全量错词本重做合并：两边各 30 词时被上限裁掉的本机词重新顶回、挤掉对方 14 词，本机永远 ≠ 云端，云端有更多 横幅常驻、每次重载 0 写（cloud.ts applyMerged）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "1d14057",
+   "reason": "已合入 main（e0eaff8..cf5624b），Build check 与 Build and deploy 成功；F4 发现、VC 复验（V1 三轮 16a/14b 常驻横幅）；修法：只把快照后新错的词（快照最新词之前的前缀）顶在 merged 之上，pullNow/linkThisDevice 传原始 collectLocal；VC 复测 V1–V13：15/15、0 写、无横幅，93dc0ac 往返期间打错/再错的词保留，d66781d/f6e0303/18e9867 语义不变",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "hanzi-era-srs-rows-regloss-orphaned",
+   "title": "10-05 以来 97 行首义改动（直走→笔直的、收费公路→通行费…）的 hanzi 时代 SRS 行 zh:直走 不被 planKeyMoves 收编，徽标计数、开始复习 当孤键删除并从错词本移除；74 个旧义既非 zh 库词头也非现义，随每次改义增长（App.tsx planKeyMoves/resolveReviewRefs）",
+   "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "V1 发现，修前修后相同；修法：App.tsx:1740/1754/1887 的 pendingIndex.current = gi % 20 旁加 slipOn.current = \"\"（勿改 [sourceKey] effect，它也服务换档/换语言保留滑错）",
-   "date": "2026-10-09"
+   "reason": "F3 发现、VS 种子复现；修法：生成 zh-renames.json（旧首义→en）由 planKeyMoves 读取，再提供 zh:<旧义>；仅「不退休未解析 zh: 键」不安全（徽标永远不清，flag 已 v2 不会重跑）；浅克隆只能数到 10-05 以后",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "bare-hanzi-mistake-keys-unlisted",
+   "title": "错词本裸 hanzi 键（\"实现\"）不显示但 开始复习 静默丢弃；裸 \"世界\" + \"zh:世界\" 同词列两次、复习两次（App.tsx lookupKey/planKeyMoves 从不给裸 hanzi 加 zh:）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F3 发现、VS 部分复验（头部计数与列表一致，不是「计数多」；两次的一半 = 账上 bare-legacy-key-listed-twice-in-mistakes）；修法：迁移/归一器给裸 hanzi 键加 zh: 并去重，App.tsx:899 moves 为空时也要写",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "pinyin-rollback-lue-loses-v",
+   "title": "打拼音 lüe/nüe 词（策略 celv）接受 lv 后再打错回退到 cel 而不是 celv：回退前缀按折叠后的 celue 算（ZhSteps.tsx 回退循环）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F3 发现、VS 浏览器复现；一行修法 while 循环后 `if (v.startsWith(typed)) k = Math.max(k, typed.length)`，VS 验证只改 celvz→celv，其余账上拼音用例不变；受 12 项上限未做",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "sw-data-refresh-serves-http-cache",
+   "title": "sw.js /data/ stale-while-revalidate 的后台刷新用默认 cache 模式：部署后 10 分钟内每次打开都把 HTTP 缓存里的旧 words.json 重新存入，新词第三次打开才出现（sw.js:149）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F5 发现、VS 自建 ETag/max-age=600 服务器复现（部署后 2/3/4 次加载均旧版，无数据请求）；修法 fetch(new Request(req,{cache:\"no-cache\"}))，304 由浏览器合成 200 交给 store()；受上限未做",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "pull-reverts-setting-changed-meanwhile",
+   "title": "合并到本机 往返期间改的设置（隐藏发音、循环次数）被 applyMerged 用快照值放回（cloud.ts applyMerged 对设置键让 merged 赢）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4 发现、VC 复验 V9/V9b；修法：applyMerged 第三参数 ownSettings 仅 pullNow 传 true，对非进度键取 now 值（VC 已测）；首次绑定保持账号设置",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "header-lang-change-skips-meaning-dialog",
+   "title": "顶栏切换到没有释义默认值的学习语言时不开对话框（卡内选择器兜底），但下次刷新 restore effect 打开完整语言设置对话框，每次刷新都开直到选定（App.tsx changeLanguage/restore effect）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F2 复现（en-US、ui=en、learn zh→en）；二选一：changeLanguage 在 !defByLearn[next] && !defaultDef 时 setShowLangSetup(true)，或 ketiklab-langs 已存在时 restore effect 不开对话框",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "start-then-click-away-enter-skips",
+   "title": "点开始 → 点页面空白处（输入框失焦、running 仍 true）→ ENTER 跳过未尝试的词并记 miss + SRS lapse（onAnyKey 新卡守卫读 runningRef）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VL 在 8b77c02 之外发现（f2c.mjs 两个点击位置）；修法：onAnyKey 新卡守卫去掉 !runningRef.current（输入框有焦点时 ENTER 到不了 onAnyKey）；未对补丁验证",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "topic-handwritten-rows-missing-idsyllables",
+   "title": "words.json 手写行（index < 2200）2,136 行有可切音节的 id 却无 idSyllables：印尼语学习者在 55% 主题词上看到 Bahasa Indonesia · ketuk untuk mendengar（09-30 回填只做了 ≥ 2200）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "D 发现（integrity.py info）；修法同 ed9a08c 用生成器 syllables() 回填并跳过单音节，但生成器对 jangkauan 类有已知偏差（账上 idsyllables-monosyllables-and-loanwords），2,136 行需抽样校验后再批量写",
+   "date": "2026-10-10"
+  },
+  {
+   "fingerprint": "srs-zh-key-adopts-bare-latin-row",
+   "title": "recordReview 让 zh: 键收编并删除裸拉丁行（裸 achieve step 5 → zh:trio:achieve 继承，en:trio:achieve 之后从 0 起）",
+   "priority": "P3",
+   "status": "refuted",
+   "commit": "",
+   "reason": "F3 提出、VS 反驳：08-21 至 09-13 期间中文学习者的 实现 也写裸 achieve（trioItem key: w.en 对所有学习语言），fb90e83 明确「拉丁键等待继承它的答案」；守卫只是把歧义行改给 en/id 学习者；至多主人决定",
+   "date": "2026-10-10"
   }
  ]
 }
