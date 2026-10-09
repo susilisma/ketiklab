@@ -1767,7 +1767,7 @@ export default function Home() {
     sourceReq.current++;
     const key = trioChapterKey("all", lang, step);
     if (source === "trio" && key === sourceKey) moveWithinList(gi);
-    else { pendingIndex.current = gi % 20; writeChapter(key, Math.floor(gi / 20)); }
+    else { pendingIndex.current = gi % 20; slipOn.current = ""; writeChapter(key, Math.floor(gi / 20)); }
     setGlobalSearch(false);
     setReviewKeys(null); setCategory("all"); setSource("trio"); persistSource("trio");
     setTyped(""); resetWordRun(); autoSpokenWord.current = null;
@@ -1781,7 +1781,7 @@ export default function Home() {
     if (req !== sourceReq.current) return;
     const gi = data.findIndex(e => e.name === key); if (gi < 0) return;
     if (source === d.id) moveWithinList(gi);
-    else { pendingIndex.current = gi % 20; writeChapter(d.id, Math.floor(gi / 20)); }
+    else { pendingIndex.current = gi % 20; slipOn.current = ""; writeChapter(d.id, Math.floor(gi / 20)); }
     setGlobalSearch(false);
     setDictWords(data); setReviewKeys(null); setSource(d.id); persistSource(d.id);
     setTyped(""); resetWordRun(); autoSpokenWord.current = null;
@@ -1913,6 +1913,7 @@ export default function Home() {
     if (source === "trio" && key === sourceKey) moveWithinList(gi);
     else {
       pendingIndex.current = gi % 20;
+      slipOn.current = "";
       writeChapter(key, Math.floor(gi / 20));
       if (cat !== category) setCategory(cat);
       if (source !== "trio") { setSource("trio"); persistSource("trio"); }
