@@ -123,7 +123,7 @@
 .mode-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 7px;margin:13px 0 -6px}
 /* a group is a label plus its buttons; it has no box of its own until the phone block turns it into a row */
 .mode-group{display:contents}.mode-group>span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
-.mode-row button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:9px;padding:5px 11px;font-size:11px;min-width:40px}
+.mode-row button{border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:9px;padding:5px 11px;font-size:11px;min-width:40px;white-space:nowrap}
 .mode-row button.active{background:var(--purple-soft);color:var(--purple);border-color:color-mix(in srgb,var(--purple) 30%,transparent);font-weight:700}
 .mode-row em{font-style:normal;font-size:10px;color:var(--purple);margin-left:4px}
 .letter.masked{color:transparent;border-bottom:2px solid var(--line)}
