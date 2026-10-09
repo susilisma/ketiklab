@@ -1594,8 +1594,11 @@ export default function Home() {
   function handleGhostKeys(event: React.KeyboardEvent<HTMLInputElement>) {
     if (isComposing.current || (event.nativeEvent as any).isComposing || event.key === "Process" || (event as any).keyCode === 229) return;
     // Shift+TAB and Escape leave the input, so the page stays reachable by keyboard
-    if (event.key === "Escape") { leftByKey.current = true; input.current?.blur(); return; }
-    if (event.key === "Tab" && event.shiftKey) { leftByKey.current = true; return; }
+    // leaving the box is a pause: with running left true the page stayed in focus mode (the
+    // sidebar hidden and unfocusable, the header still saying 暂停) and, on a word not yet
+    // tried, ENTER skipped it as a miss because the fresh-card guard read running
+    if (event.key === "Escape") { leftByKey.current = true; setRunning(false); input.current?.blur(); return; }
+    if (event.key === "Tab" && event.shiftKey) { leftByKey.current = true; setRunning(false); return; }
     if (event.key === "Tab") {
       event.preventDefault(); setReveal(true);
       // held speech: the TAB that shows the pronunciation line also plays it, once per word
