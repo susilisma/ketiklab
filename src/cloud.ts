@@ -9,6 +9,8 @@ export const SUPABASE_KEY = "sb_publishable_tajFpjuBEdX13YwnR-k2nA_-IxP5R14";
 // the hash, and auth-js only turns them into a session when it is allowed to look.
 export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true },
+  // offline, postgrest-js retries a read 3 times (1/2/4 s) before failing: the account page said nothing for 14 s
+  db: { retry: false },
 });
 
 // member_until / ref_code are no longer read (the membership page is unused): optional so nothing else has to change
@@ -98,8 +100,10 @@ supabase.auth.onAuthStateChange((event, s) => {
 });
 
 export async function currentSession(): Promise<Session | null> {
-  try { const { data } = await supabase.auth.getSession(); return data.session ?? null; }
-  catch { return null; }
+  // offline with an expired token auth-js retries the refresh for ~25 s before answering; the panel shows what is
+  // known after 3 s, and onAuthStateChange (Account.tsx) delivers the session when the refresh later succeeds
+  const got = supabase.auth.getSession().then(({ data }) => data.session ?? null, () => null);
+  return Promise.race([got, new Promise<Session | null>(r => setTimeout(() => r(session), 3000))]);
 }
 
 export async function signUp(email: string, password: string, name: string) {
