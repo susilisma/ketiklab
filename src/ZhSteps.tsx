@@ -88,6 +88,14 @@ const T = (ui: UiLang, zh: string, idn: string, en: string) => (ui === "zh" ? zh
 // NFD first: tone marks fall away, and ü (also ǖǘǚǜ) is then u + U+0308,
 // which becomes the IME "v" before the strip
 const UMLAUT_U = "u" + String.fromCharCode(0x308);
+// letters typed in the 320 ms after a 打拼音 pass: the box ignored them (the word was full) and
+// the next word's instance mounted empty, so a learner typing without a pause at the boundary
+// lost the first letters of every word and the key after them was graded a miss. The instance
+// of the next word types them in as it mounts; a list change drops them.
+const pinyinCarry = { current: "" };
+export function dropPinyinCarry() { pinyinCarry.current = ""; }
+const foldPinyin = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "");
+
 // lüe/nüe are the one ü case every IME also takes as lue/nue (no other syllable
 // spells that way), so both spellings meet at "ue" — for the target and the typing alike
 const norm = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "").replace(/([ln])ve/g, "$1ue");
@@ -121,6 +129,44 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
   // not while a dialog is open: the box would pull the focus out from under it
   useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
+
+  const grade = (value: string) => {
+    // the typing gets the "ve" → "ue" fold only where the target itself has "ue"
+    const v = foldPinyin(value)
+      .replace(/([ln])ve/g, (m, c: string, at: number) => target.startsWith("ue", at + 1) ? c + "ue" : m);
+    // norm reads a finished "lve"/"nve" as "lue"/"nue", but the learner gets there
+    // one key at a time: "celv" is on its way to "celve" for 策略, so a trailing
+    // l/n + v is accepted when the target goes on with "ue" at that point
+    const onItsWay = /[ln]v$/.test(v) && target.startsWith(v.slice(0, -1) + "ue");
+    if (target.startsWith(v) || onItsWay) {
+      setTyped(v);
+      if (v.length === target.length && v.length > 0) { onSpeak(); onPass(); }
+    } else {
+      onMiss();
+      setWrong(n => n + 1);
+      // roll back to what was right so far — never to a slice of the target: a paste or
+      // an autocorrect that put in several letters at once used to leave the box full
+      // (then dead to every key) and, cut by one letter, spelled the answer out
+      let k = 0;
+      while (k < v.length && k < target.length && v[k] === target[k]) k++;
+      // a correct prefix as long as the answer ("shixianq" for shixian) would fill the
+      // box without passing it, and the length guard above then ignored every key: like
+      // an over-long IME commit in App, it is rolled back one letter short instead
+      if (k >= target.length) k = target.length - 1;
+      setTyped(v.slice(0, k));
+    }
+  };
+  // the letters carried over from the word just passed, typed into this word as it mounts
+  useEffect(() => {
+    const c = pinyinCarry.current; pinyinCarry.current = "";
+    // only the letters this word's pinyin starts with: the rest was typed before the word was
+    // on screen, and dropping it, as before, grades nothing — a carried key never counts a miss
+    let n = 0;
+    while (n < c.length && n < target.length && c[n] === target[n]) n++;
+    if (n && step === "pinyin") grade(c.slice(0, n));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word, step]);
+
 
   /* step 1 — recognise, advance on SPACE / ENTER */
   useEffect(() => {
@@ -204,31 +250,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       inputMode="text"
       placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
       onChange={e => {
-        if (target.length > 0 && typed.length >= target.length) return;
-        // the typing gets the "ve" → "ue" fold only where the target itself has "ue"
-        const v = e.target.value.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "")
-          .replace(/([ln])ve/g, (m, c: string, at: number) => target.startsWith("ue", at + 1) ? c + "ue" : m);
-        // norm reads a finished "lve"/"nve" as "lue"/"nue", but the learner gets there
-        // one key at a time: "celv" is on its way to "celve" for 策略, so a trailing
-        // l/n + v is accepted when the target goes on with "ue" at that point
-        const onItsWay = /[ln]v$/.test(v) && target.startsWith(v.slice(0, -1) + "ue");
-        if (target.startsWith(v) || onItsWay) {
-          setTyped(v);
-          if (v.length === target.length && v.length > 0) { onSpeak(); onPass(); }
-        } else {
-          onMiss();
-          setWrong(n => n + 1);
-          // roll back to what was right so far — never to a slice of the target: a paste or
-          // an autocorrect that put in several letters at once used to leave the box full
-          // (then dead to every key) and, cut by one letter, spelled the answer out
-          let k = 0;
-          while (k < v.length && k < target.length && v[k] === target[k]) k++;
-          // a correct prefix as long as the answer ("shixianq" for shixian) would fill the
-          // box without passing it, and the length guard above then ignored every key: like
-          // an over-long IME commit in App, it is rolled back one letter short instead
-          if (k >= target.length) k = target.length - 1;
-          setTyped(v.slice(0, k));
-        }
+        if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += foldPinyin(e.target.value.slice(typed.length)); return; }
+        grade(e.target.value);
       }}
       onKeyDown={e => {
         // Shift+TAB and Escape leave the box, so the page stays reachable by keyboard

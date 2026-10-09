@@ -4,7 +4,7 @@ import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, reset
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, setProgressNormalizer, SYNCED_KEYS, type ProgressBlob } from "./cloud";
-import { ZhSteps, ZH_STEPS, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
+import { ZhSteps, ZH_STEPS, dropPinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "account" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
@@ -424,6 +424,10 @@ export default function Home() {
   // set the moment a word is graded, cleared when its advance timer fires: keys
   // that land in that window must not grade the same word again or skip it
   const finishing = useRef(false);
+  // letters typed inside the 320 ms "done" window after a word: they belong to the next word
+  // and used to be wiped with the box, so the key after them was graded against the new word's
+  // first letter — every word typed without a pause at the boundary came out as a miss
+  const carry = useRef("");
   // a slip on any repetition of a looped word is its one lapse
   const lapseRecorded = useRef(false);
   // the word a slip was noted on: a rung or language change resets hadWrong and lapseRecorded
@@ -442,7 +446,7 @@ export default function Home() {
   // strict-mode flash timers so neither can act on the word that replaced it, and
   // start its repetitions, reveal and slip count from zero — the [index] effect
   // does the same but only fires when the index actually changes
-  const resetWordRun = () => { autoAdvance.current++; finishing.current = false; hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setMeaningPeek(false); setWrongCountWord(0); };
+  const resetWordRun = () => { autoAdvance.current++; finishing.current = false; carry.current = ""; dropPinyinCarry(); hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setMeaningPeek(false); setWrongCountWord(0); };
   // every path that starts a list from its first word: the chapter's tally, its finish
   // card and its clock start over too — choosing the list that is already open used to
   // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
@@ -539,6 +543,22 @@ export default function Home() {
     // between compositions the box is made to match `typed`, so nothing stale is left in it
     if (el.value !== typed) el.value = typed;
     staleLen.current = 0;
+  });
+  // the letters carried over from the previous word's done window are typed into the new word
+  // as soon as it is up: the render that cleared the box is the one that put the new word in place
+  useEffect(() => {
+    const c = carry.current;
+    if (!c || finishing.current) return;
+    carry.current = "";
+    if (typed !== "" || wrongFlash || view !== "learn" || chapterFinished || !input.current || isComposing.current) return;
+    // only the letters the new word starts with: the rest was typed before the word was on
+    // screen, and dropping it, as before, grades nothing — a carried key never writes a lapse
+    const folded = foldTypography(c), want = targetWord.toLowerCase();
+    let n = 0;
+    while (n < folded.length && n < want.length && folded[n].toLowerCase() === want[n]) n++;
+    if (!n) return;
+    input.current.value = folded.slice(0, n);
+    handleType(folded.slice(0, n));
   });
   // a word left behind while a composition is open: remember what the box still holds
   const markStale = () => { if (isComposing.current) staleLen.current = compStartLen.current; };
@@ -1497,7 +1517,15 @@ export default function Home() {
     }).catch(() => {});
   }
   function handleType(raw: string) {
-    if (finishing.current || wrongFlash) return;
+    if (finishing.current) {
+      // the box still shows the finished word; what follows it is the start of the next one
+      if (practiceLang !== "zh" && !isComposing.current && raw.length > typed.length && raw.startsWith(typed)) {
+        carry.current += raw.slice(typed.length);
+        if (input.current) input.current.value = typed;
+      }
+      return;
+    }
+    if (wrongFlash) return;
     if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
     // the box still shows the previous word (or the rolled-back text) in front of
     // this commit: grade only what was committed since, after the kept prefix
