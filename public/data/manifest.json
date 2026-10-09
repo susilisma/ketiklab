@@ -48,7 +48,7 @@
   "file": "en-core.json",
   "coverage": {
    "zh": 2590,
-   "id": 2368,
+   "id": 2373,
    "en": 0,
    "def": 2590
   }
@@ -84,7 +84,7 @@
   "file": "en-upper.json",
   "coverage": {
    "zh": 2131,
-   "id": 1678,
+   "id": 1700,
    "en": 0,
    "def": 2131
   }
