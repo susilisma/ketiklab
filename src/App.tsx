@@ -852,10 +852,16 @@ export default function Home() {
     // and the three Chinese dictionaries are fetched for the check only when one exists
     let hanzi = false;
     for (const w of words) {
-      const from = `zh:${wordValue(w, "zh")}`;
+      const hz = wordValue(w, "zh");
+      const from = `zh:${hz}`;
       if (held.has(from) && !moves.has(from)) { moves.set(from, `zh:${TRIO}${w.en}`); hanzi = true; }
+      // older still: the 错词本 of that time kept the hanzi with no language at all ("实现"),
+      // which no lookup resolved — the entry was never listed and 开始复习 dropped it in silence
+      if (held.has(hz) && !moves.has(hz)) { moves.set(hz, `zh:${TRIO}${w.en}`); hanzi = true; }
     }
-    const langs = new Set(Array.from(moves.keys(), k => k.slice(0, k.indexOf(":"))));
+    // a key with no language prefix is hanzi from that era: Chinese
+    const langOf = (k: string) => { const i = k.indexOf(":"); return i < 0 ? "zh" : k.slice(0, i); };
+    const langs = new Set(Array.from(moves.keys(), langOf));
     const taken = new Set<string>();
     const unsafe = new Set<string>();
     for (const d of dicts) {
@@ -865,7 +871,14 @@ export default function Home() {
       if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { unsafe.add(d.lang); continue; } }
       for (const e of data) taken.add(`${d.lang}:${e.name}`);
     }
-    const keyed = new Map(Array.from(moves).filter(([from]) => !taken.has(from) && !unsafe.has(from.slice(0, from.indexOf(":")))));
+    const keyed = new Map(Array.from(moves).flatMap(([from, to]): [string, string][] => {
+      if (unsafe.has(langOf(from))) return [];
+      const full = from.includes(":") ? from : `zh:${from}`;
+      // a Chinese dictionary holds the headword too: the row keeps its name (exempt, as an id:
+      // row is), and a bare one at least gains its language, so it meets its "zh:" twin
+      if (taken.has(full)) return full === from ? [] : [[from, full]];
+      return [[from, to]];
+    }));
     return { moves, keyed, unsafe };
   };
   const mistakesOf = (state: { mistakes?: unknown }) => Array.isArray(state.mistakes) ? state.mistakes.filter(validMistakeKey) : [];
@@ -899,7 +912,9 @@ export default function Home() {
   }, [words, dicts]);
   useEffect(() => {
     if (!words.length || !dicts.length || migratingKeys) return;
-    try { if (localStorage.getItem("ketiklab-keys") === "v2") return; } catch { return; }
+    // v3: the migration learnt to move bare hanzi keys and re-glossed first senses, so a
+    // device that finished the v2 pass goes through it once more
+    try { if (localStorage.getItem("ketiklab-keys") === "v3") return; } catch { return; }
     migratingKeys = true;
     let alive = true;
     const read = <T,>(key: string, fallback: T): T => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) as T : fallback; } catch { return fallback; } };
@@ -930,7 +945,7 @@ export default function Home() {
         // outlive the lists it describes, so both land before it and a refusal throws
         localStorage.setItem("ketiklab-state", JSON.stringify({ ...state, mistakes: nextMistakes }));
         localStorage.setItem("ketiklab-fav", JSON.stringify(nextFavs));
-        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", "v2");
+        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", "v3");
         setMistakes(nextMistakes);
         setFavorites(nextFavs);
         refreshSrs();
