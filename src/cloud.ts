@@ -334,6 +334,13 @@ function canonical(b: ProgressBlob): ProgressBlob {
     const s = record(c["ketiklab-state"]);
     c["ketiklab-state"] = JSON.stringify({ ...s, mistakes: strings(s.mistakes).slice().sort() });
   }
+  // the favourites too: the same stars in another order (each device puts its newest first)
+  // compared as different progress, and two devices starring in turns rewrote the cloud on
+  // every push — no banner and nothing lost, but a write a minute apiece for nothing
+  if (typeof c["ketiklab-fav"] === "string") {
+    const favId = (f: unknown) => `${(f as { lang?: unknown })?.lang}:${(f as { key?: unknown })?.key}`;
+    c["ketiklab-fav"] = JSON.stringify(list(c["ketiklab-fav"]).slice().sort((a, b) => favId(a) < favId(b) ? -1 : favId(a) > favId(b) ? 1 : 0));
+  }
   return c;
 }
 const canon = (b: ProgressBlob) => JSON.stringify(canonical(b));
