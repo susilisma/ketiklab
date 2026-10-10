@@ -250,11 +250,13 @@ export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged,
   // `merged` already holds this device's 错词本, cut to the cap together with the other device's:
   // re-merging the whole list put the words the cap had cut back on top and evicted the other
   // device's again, so 云端有更多 never cleared. Only what was missed since the read goes on top.
-  // A miss moves its word to the front, so that is everything ahead of the snapshot's newest word
-  // (a word re-missed meanwhile included), or every word the snapshot lacks when that one is gone.
+  // A miss moves its word to the front, so that is everything up to the snapshot's newest word
+  // (a word re-missed meanwhile included) plus every word the snapshot lacks: a word missed and
+  // then overtaken by a re-miss of that newest word sits behind it, and taking only the words
+  // ahead of it lost such a word from both copies.
   const was = strings(record(before["ketiklab-state"]).mistakes), cur = strings(record(now["ketiklab-state"]).mistakes);
   const at = was.length ? cur.indexOf(was[0]) : cur.length;
-  const fresh = at >= 0 ? cur.slice(0, at) : cur.filter(k => !was.includes(k));
+  const fresh = cur.filter((k, i) => (at >= 0 && i <= at) || !was.includes(k));
   if (typeof out["ketiklab-state"] === "string") {
     const rest = strings(record(merged["ketiklab-state"]).mistakes).filter(k => !fresh.includes(k));
     out["ketiklab-state"] = JSON.stringify({ ...record(out["ketiklab-state"]), mistakes: [...fresh, ...rest].slice(0, 30) });
