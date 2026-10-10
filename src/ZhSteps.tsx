@@ -149,6 +149,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       // (then dead to every key) and, cut by one letter, spelled the answer out
       let k = 0;
       while (k < v.length && k < target.length && v[k] === target[k]) k++;
+      // what was accepted so far stays: "celv" for 策略 was taken on its way to "celue", but
+      // measured against the folded target it ends at "cel" and the v had to be typed again
+      if (v.startsWith(typed)) k = Math.max(k, typed.length);
       // a correct prefix as long as the answer ("shixianq" for shixian) would fill the
       // box without passing it, and the length guard above then ignored every key: like
       // an over-long IME commit in App, it is rolled back one letter short instead
