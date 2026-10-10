@@ -343,9 +343,6 @@ button.profile:hover>i{color:var(--purple)}
 .acct-who div{display:flex;flex-direction:column;line-height:1.3}
 .acct-who b{font-size:15px}
 .acct-who small{font-size:11.5px;color:var(--muted)}
-.acct-badge{margin-left:auto;font-style:normal;font-size:10.5px;font-weight:800;letter-spacing:.4px;
-  color:var(--muted);background:var(--bg);border:1px solid var(--line);border-radius:7px;padding:4px 9px}
-.acct-badge.on{color:var(--purple);background:var(--purple-soft);border-color:transparent}
 .acct-typo{display:block;width:100%;text-align:left;margin:-6px 0 14px;cursor:pointer;
   border:1px solid #f0c36a;background:#fff8e6;color:#8a5a00;border-radius:10px;
   padding:9px 12px;font-size:12.5px;line-height:1.5}
@@ -484,7 +481,7 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 .chapter-nav button,.lang-modal-close{width:var(--touch);height:var(--touch)}.chapter-nav button{border-radius:10px}.acct-link{display:inline-flex;align-items:center}.profile>span{width:40px;height:40px}
 }
 /* 12px type floor: existing letter-spacing stays; vocabulary.css (imported later) carries its own */
-.chapter small,.session-meta,.sound,.hint,.meanings small,.word-card.zh-compact .meanings small,.metric span,.mini-progress span,.profile small,.panel-head span,.vocab-card>span,.vocab-card p,.mistake-list i,.reading-heading>div:first-child>span,.reading-filters button,.reading-library-title span,.piece-language,.reading-list small,.reading-list em,.reader-top>div>span,.reader-top p,.reader-top>button,.passage-preview p>span,.line-meta,.reading-input-wrap button,.typing-help,.reader-footer>p,.reader-footer>div,.reading-complete>small,.reading-complete p,.reading-complete>div small,.reading-complete>button,.goal-card>span,.week span,.week small,.setting p,.nav-badge,.review-cta small,.lang-card small,.lang-card span,.zh-go i,.zh-skip,.zh-ladder button i,.mode-group>span,.mode-row button,.mode-row em,.chapter-nav b,.chapter-select,.finish-wrong small,.heat-legend,.backup-row small,.reading-group-head span,.reading-group-head em,.reading-chevron,.res-src,.dict-card p,.dict-card small,.library-section-title span,.offer-price span,.pill,.ref-grid label small,.ref-stats .stat small,.checkout-ref small,.pay-method>small,.acct-field span,.acct-badge,.acct-who small,.type-veil b,.speech-unlock,.bars small{font-size:12px}
+.chapter small,.session-meta,.sound,.hint,.meanings small,.word-card.zh-compact .meanings small,.metric span,.mini-progress span,.profile small,.panel-head span,.vocab-card>span,.vocab-card p,.mistake-list i,.reading-heading>div:first-child>span,.reading-filters button,.reading-library-title span,.piece-language,.reading-list small,.reading-list em,.reader-top>div>span,.reader-top p,.reader-top>button,.passage-preview p>span,.line-meta,.reading-input-wrap button,.typing-help,.reader-footer>p,.reader-footer>div,.reading-complete>small,.reading-complete p,.reading-complete>div small,.reading-complete>button,.goal-card>span,.week span,.week small,.setting p,.nav-badge,.review-cta small,.lang-card small,.lang-card span,.zh-go i,.zh-skip,.zh-ladder button i,.mode-group>span,.mode-row button,.mode-row em,.chapter-nav b,.chapter-select,.finish-wrong small,.heat-legend,.backup-row small,.reading-group-head span,.reading-group-head em,.reading-chevron,.res-src,.dict-card p,.dict-card small,.library-section-title span,.offer-price span,.pill,.ref-grid label small,.ref-stats .stat small,.checkout-ref small,.pay-method>small,.acct-field span,.acct-who small,.type-veil b,.speech-unlock,.bars small{font-size:12px}
 
 /* The first-visit dialog is taller than a phone screen (1209px against 812px on a 375x812
    screen), so its Save button sat 349px below the fold — and it is disabled until the meaning
