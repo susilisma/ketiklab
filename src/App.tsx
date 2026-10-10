@@ -1538,7 +1538,7 @@ export default function Home() {
       if (!refs.length) return;
       // this session holds the chapter's missed words, not the due list: the earlier review's
       // total would otherwise be printed under it as "复习模式 · 2 / 5"
-      setReviewRefs(refs); setReviewKeys(keys); setReviewDueTotal(0);
+      setReviewRefs(refs); setReviewKeys(refs.map(r => r.key)); setReviewDueTotal(0);
       setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
       setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
       setRunning(true);
@@ -1920,7 +1920,8 @@ export default function Home() {
     // would never clear a single due word; it starts one rung up
     if (zhStep === "read") setZhStep("pinyin");
     setReviewRefs(refs);
-    setReviewKeys(keys);
+    // the keys the resolved items keep: two keys for one word were counted as "1 / 2" otherwise
+    setReviewKeys(refs.map(r => r.key));
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
     // the slip remembered for the word at index 0 belongs to the list it happened in: kept, a
     // review that opens on the same word graded its perfect answer as a miss (setIndex(0)
