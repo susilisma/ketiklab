@@ -235,11 +235,18 @@ export function applyLocal(blob: ProgressBlob) {
 /** A merged copy written over what the device holds now: a word typed meanwhile is kept (the
  *  merge is redone), and so is a chapter moved meanwhile — a position is the device's own, so
  *  the copy read before the round trip must not put it back. */
-export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged) {
+export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged, ownSettings = false) {
   const now = collectLocal();
   const out = mergeProgress(now, merged);
   const ch = mergeProgress(merged, now)["ketiklab-chapters"];
   if (typeof ch === "string") out["ketiklab-chapters"] = ch;
+  // 合并到本机 keeps the settings this device holds now: `merged` carries the copy pushed at the
+  // start of the round trip, and a setting changed meanwhile (hide pronunciation, the loop
+  // count) was put back to the snapshot. The first link still takes the account's settings.
+  if (ownSettings) for (const k of SYNCED_KEYS) {
+    if (PROGRESS_KEYS.includes(k) || k === "ketiklab-chapters") continue;
+    if (typeof now[k] === "string") out[k] = now[k];
+  }
   // `merged` already holds this device's 错词本, cut to the cap together with the other device's:
   // re-merging the whole list put the words the cap had cut back on top and evicted the other
   // device's again, so 云端有更多 never cleared. Only what was missed since the read goes on top.
