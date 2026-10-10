@@ -5,6 +5,11 @@ import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type
 import { Account } from "./Account";
 import { onAccountWanted, setProgressNormalizer, SYNCED_KEYS, type ProgressBlob } from "./cloud";
 import { ZhSteps, ZH_STEPS, dropPinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
+// first Chinese senses that were re-glossed since topic words were keyed by the hanzi typed
+// (old sense → English headword): a hanzi-era row like zh:直走 names no current word, and
+// without this map it was retired as an orphan by 开始复习. Grows with each re-gloss.
+import zhRenamesJson from "./zh-renames.json";
+const ZH_RENAMES: Record<string, string> = zhRenamesJson;
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "account" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
@@ -859,6 +864,11 @@ export default function Home() {
       // which no lookup resolved — the entry was never listed and 开始复习 dropped it in silence
       if (held.has(hz) && !moves.has(hz)) { moves.set(hz, `zh:${TRIO}${w.en}`); hanzi = true; }
     }
+    // and the hanzi of a first sense re-glossed since: zh:直走 for 笔直的 (straight)
+    for (const [old, en] of Object.entries(ZH_RENAMES)) {
+      const w = wordByEn.get(en); if (!w) continue;
+      for (const from of [`zh:${old}`, old]) if (held.has(from) && !moves.has(from)) { moves.set(from, `zh:${TRIO}${w.en}`); hanzi = true; }
+    }
     // a key with no language prefix is hanzi from that era: Chinese
     const langOf = (k: string) => { const i = k.indexOf(":"); return i < 0 ? "zh" : k.slice(0, i); };
     const langs = new Set(Array.from(moves.keys(), langOf));
@@ -1265,7 +1275,7 @@ export default function Home() {
     }
     // written before topic words had their own namespace: the bare English headword, which
     // a dictionary of this language may hold too — that is why the dictionaries went first
-    const legacy = wordByEn.get(key);
+    const legacy = wordByEn.get(key) || (lg === "zh" && ZH_RENAMES[key] ? wordByEn.get(ZH_RENAMES[key]) : undefined);
     return legacy ? { ...trioInfo(legacy), legacy: true } : undefined;
   }
   const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes"
@@ -1865,8 +1875,13 @@ export default function Home() {
       if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { complete = false; continue; } }
       scan(d, data);
     }
-    // keys from before topic words had their own namespace, once no dictionary claimed them
-    for (const k of keys) { const [lg, key] = splitId(k); const w = wordByEn.get(key); if (w && isLang(lg) && !found.has(k)) found.set(k, { key: k, w, lang: lg }); }
+    // keys from before topic words had their own namespace, once no dictionary claimed them —
+    // the English headword, or the hanzi of a first sense re-glossed since
+    for (const k of keys) {
+      const [lg, key] = splitId(k);
+      const w = wordByEn.get(key) || (lg === "zh" && ZH_RENAMES[key] ? wordByEn.get(ZH_RENAMES[key]) : undefined);
+      if (w && isLang(lg) && !found.has(k)) found.set(k, { key: k, w, lang: lg });
+    }
     if (report) { report.unresolved = keys.filter(k => !found.has(k)); report.complete = complete; }
     return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r);
   }
