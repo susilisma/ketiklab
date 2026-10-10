@@ -199,9 +199,16 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     // the stride must be coprime with the pool size or the walk keeps landing on the same slots
     const stride = others.length % 7 ? 7 : 5;
     const picks: string[] = [];
-    for (let i = 0; i < others.length && picks.length < 3; i++) {
-      const c = others[(seed + i * stride) % others.length];
-      if (!picks.includes(c)) picks.push(c);
+    // distractors of the answer's own length first: a one-character 是 among 昨天, 法规 and
+    // 星期 was the only short option on the card, and the length gave the answer away (12 % of
+    // all items, every single-character word of chapter 1); the rest fill in when the chapter
+    // has too few words of that length
+    const len = Array.from(word).length;
+    for (const same of [true, false]) {
+      for (let i = 0; i < others.length && picks.length < 3; i++) {
+        const c = others[(seed + i * stride) % others.length];
+        if ((Array.from(c).length === len) === same && !picks.includes(c)) picks.push(c);
+      }
     }
     const all = [word, ...picks];
     return all.sort((a, b) => ((seed + a.charCodeAt(0)) % 7) - ((seed + b.charCodeAt(0)) % 7));
