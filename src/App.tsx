@@ -381,10 +381,10 @@ export default function Home() {
     if (!bar || !cur || bar.scrollWidth <= bar.clientWidth) return;
     bar.scrollLeft = Math.max(0, cur.offsetLeft - bar.offsetLeft - (bar.clientWidth - cur.offsetWidth) / 2);
   }, [view, category, source]);
-  const [narrowRow, setNarrowRow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 343px)").matches);
+  const [narrowRow, setNarrowRow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 430px)").matches);
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
-    const mq = window.matchMedia("(max-width: 343px)"); const on = () => setNarrowRow(mq.matches);
+    const mq = window.matchMedia("(max-width: 430px)"); const on = () => setNarrowRow(mq.matches);
     mq.addEventListener("change", on); return () => mq.removeEventListener("change", on);
   }, []);
   // how many were due when the session started: the session takes REVIEW_CAP of them
