@@ -565,6 +565,9 @@ export default function Home() {
     if (!n) return;
     input.current.value = folded.slice(0, n);
     handleType(folded.slice(0, n));
+    // the carried letters completed this word outright (yes, no): what follows them was typed
+    // for the word after, and dropping it graded that word's first letters as missing
+    if (n === want.length && folded.length > n) carry.current = folded.slice(n);
   });
   // a word left behind while a composition is open: remember what the box still holds
   const markStale = () => { if (isComposing.current) staleLen.current = compStartLen.current; };
