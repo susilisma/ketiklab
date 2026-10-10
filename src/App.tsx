@@ -516,9 +516,10 @@ export default function Home() {
       if (e.key === "Enter") {
         if (!input.current || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
         e.preventDefault();
-        // on a fresh card the veil says "press any key to start": ENTER is that key, not a
-        // skip that files a word the learner never tried as a miss and an SRS lapse
-        if (!runningRef.current && !typedRef.current && secondsRef.current === 0) { input.current.focus(); return; }
+        // on an untouched card the veil says "press any key to start / continue": ENTER is that
+        // key, not a skip that files a word the learner never tried as a miss and an SRS lapse —
+        // also with the clock running, after 开始 and a click on the page took the focus away
+        if (!typedRef.current) { input.current.focus(); return; }
         if (!e.repeat) skipRef.current(); return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
