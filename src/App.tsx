@@ -1883,7 +1883,12 @@ export default function Home() {
       if (w && isLang(lg) && !found.has(k)) found.set(k, { key: k, w, lang: lg });
     }
     if (report) { report.unresolved = keys.filter(k => !found.has(k)); report.complete = complete; }
-    return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r);
+    // two keys for one word (a bare legacy "achieve" beside id:trio:achieve, "世界" beside zh:世界)
+    // are one review item: listed twice, the second pass found the rung already mounted for
+    // that word with its box full and dead to every key, and the session could only end in ENTER
+    const seen = new Set<string>();
+    return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r)
+      .filter(r => { const id = "w" in r ? `${r.lang}:${TRIO}${r.w.en}` : `${r.d.lang}:${r.e.name}`; if (seen.has(id)) return false; seen.add(id); return true; });
   }
   async function startReview() {
     // no IndexedDB (a browser that blocks storage): the 错词本 review needs none of it
