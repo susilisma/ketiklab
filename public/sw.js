@@ -146,7 +146,11 @@ self.addEventListener("fetch", (e) => {
   // Content JSON: stale-while-revalidate (instant + refreshes in background)
   if (url.pathname.includes("/data/")) {
     e.respondWith(caches.match(req).then((hit) => {
-      const net = fetch(req);
+      // revalidated at the server, not the HTTP cache: GitHub Pages serves the data with
+      // max-age=600, so for ten minutes after a deploy the default mode answered from the
+      // HTTP cache and stored the old words.json back over itself — a new word showed only
+      // on the third visit. With no-cache a 304 still costs no transfer.
+      const net = fetch(new Request(req, { cache: "no-cache" }));
       // the event is still open here (the response is pending), so the refresh can be
       // registered now; once the cached copy has been returned the worker may be stopped
       // before the network answers, and an unregistered put with it
