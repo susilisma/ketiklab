@@ -4,7 +4,7 @@ import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, reset
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, setProgressNormalizer, SYNCED_KEYS, type ProgressBlob } from "./cloud";
-import { ZhSteps, ZH_STEPS, dropPinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
+import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 // first Chinese senses that were re-glossed since topic words were keyed by the hanzi typed
 // (old sense → English headword): a hanzi-era row like zh:直走 names no current word, and
 // without this map it was retired as an orphan by 开始复习. Grows with each re-gloss.
@@ -432,7 +432,8 @@ export default function Home() {
   // letters typed inside the 320 ms "done" window after a word: they belong to the next word
   // and used to be wiped with the box, so the key after them was graded against the new word's
   // first letter — every word typed without a pause at the boundary came out as a miss
-  const carry = useRef("");
+  // one buffer with the ladder's, so letters typed on cross a Latin ⇄ pinyin word boundary too
+  const carry = pinyinCarry;
   // a slip on any repetition of a looped word is its one lapse
   const lapseRecorded = useRef(false);
   // the word a slip was noted on: a rung or language change resets hadWrong and lapseRecorded

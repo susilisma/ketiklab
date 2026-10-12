@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 
 export type ZhStep = "read" | "pinyin" | "choose" | "hanzi";
 export type UiLang = "zh" | "id" | "en";
@@ -92,7 +92,9 @@ const UMLAUT_U = "u" + String.fromCharCode(0x308);
 // the next word's instance mounted empty, so a learner typing without a pause at the boundary
 // lost the first letters of every word and the key after them was graded a miss. The instance
 // of the next word types them in as it mounts; a list change drops them.
-const pinyinCarry = { current: "" };
+// Shared with App's carry for Latin words, so letters typed on across a boundary between a pinyin
+// word and an English or Indonesian one (a mixed review or favourites list) reach the next word.
+export const pinyinCarry = { current: "" };
 export function dropPinyinCarry() { pinyinCarry.current = ""; }
 const foldPinyin = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "");
 
@@ -126,7 +128,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   const byPointer = pointerFocus;
   const target = normWord(plain);
 
-  useEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
+  // layout effects, this one and the carry below: as passive effects the next key could land in
+  // the still-empty box before the carried letters were typed in, and was graded as a miss
+  useLayoutEffect(() => { setTyped(""); setWrong(0); setPeek(false); setPicked(null); }, [word, step]);
   // not while a dialog is open: the box would pull the focus out from under it
   useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
 
@@ -160,7 +164,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     }
   };
   // the letters carried over from the word just passed, typed into this word as it mounts
-  useEffect(() => {
+  useLayoutEffect(() => {
     const c = pinyinCarry.current; pinyinCarry.current = "";
     // only the letters this word's pinyin starts with: the rest was typed before the word was
     // on screen, and dropping it, as before, grades nothing — a carried key never counts a miss
