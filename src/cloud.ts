@@ -85,6 +85,8 @@ let fromLink = (() => { try { return location.hash.includes("access_token="); } 
 // keeps the session and re-emits SIGNED_IN with no hash), and a second tab never had it.
 const TYPED_KEY = "ketiklab-typed-uid";
 export function sessionTyped(uid: string) { try { return localStorage.getItem(TYPED_KEY) === uid; } catch { return false; } }
+// set by signOut() before its push, cleared by the SIGNED_OUT that ends it (see below)
+const OUT_KEY = "ketiklab-signing-out";
 function markTyped(uid: string | undefined) { try { if (uid) localStorage.setItem(TYPED_KEY, uid); } catch { /* ignore */ } }
 function tidyUrl() {
   try { if (/#(access_token|error)|#$/.test(location.href)) history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ }
@@ -94,10 +96,19 @@ supabase.auth.onAuthStateChange((event, s) => {
   if (event === "PASSWORD_RECOVERY") { recovery = true; ss.set(RECOVERY_KEY, "1"); }
   // a sign-out from another tab ends a password recovery too, or the form stayed up
   // for the next, ordinary sign-in and the sync effect kept returning early
-  if (event === "SIGNED_OUT") { finishRecovery(); try { localStorage.removeItem(TYPED_KEY); } catch { /* ignore */ } }
+  if (event === "SIGNED_OUT") { finishRecovery(); try { localStorage.removeItem(TYPED_KEY); localStorage.removeItem(OUT_KEY); } catch { /* ignore */ } }
   if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; wantAccount(); }
   tidyUrl();
 });
+// a sign-out the page did not live to finish — the tab closed during the push in signOut(), or
+// 合并到本机 reloaded the page first — is finished on the next load instead of leaving the
+// account signed in on a shared computer; a sign-in link opened since then wins over it
+try {
+  if (localStorage.getItem(OUT_KEY)) {
+    if (fromLink) localStorage.removeItem(OUT_KEY);
+    else void supabase.auth.signOut().catch(() => { /* offline: the mark stays and the next load tries again */ });
+  }
+} catch { /* ignore */ }
 
 export async function currentSession(): Promise<Session | null> {
   // offline with an expired token auth-js retries the refresh for ~25 s before answering; the panel shows what is
@@ -119,11 +130,14 @@ export async function signIn(email: string, password: string) {
   const { data, error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) throw error;
   markTyped(data.user?.id);
+  // a password typed now is a newer wish than an unfinished sign-out from before
+  try { localStorage.removeItem(OUT_KEY); } catch { /* ignore */ }
   return data;
 }
 
 export async function signOut() {
   finishRecovery();
+  try { localStorage.setItem(OUT_KEY, "1"); } catch { /* ignore */ }
   // the last minute of typing sits on this device until autoPush's next tick; a sign-out
   // followed by "use the cloud copy only" for another account used to drop it. Bounded,
   // so an outage does not hold the sign-out; offline, the data stays here as before.

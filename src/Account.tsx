@@ -409,7 +409,8 @@ export function Account({ uiLang, name, onName }: {
           {!foreign && <button className="acct-btn" onClick={pushNow} disabled={busy}>
             {T("立即同步", "Sinkronkan sekarang", "Sync now", uiLang)}
           </button>}
-          <button className="acct-btn ghost" onClick={() => signOut()}>
+          {/* signOut() first pushes for up to 5 s: say so, and do not take a second press */}
+          <button className="acct-btn ghost" disabled={busy} onClick={async () => { setErr(""); setBusy(true); setMsg(T("正在退出…", "Sedang keluar…", "Signing out…", uiLang)); try { await signOut(); } finally { setBusy(false); setMsg(""); } }}>
             {T("退出登录", "Keluar", "Sign out", uiLang)}
           </button>
         </div>
