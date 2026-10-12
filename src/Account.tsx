@@ -87,6 +87,8 @@ function humanError(e: unknown, l: Lang): string {
 
 /** A dead link's hash is untrusted: two outcomes are ever printed, never its text. */
 function linkError(code: string, l: Lang): string {
+  if (code === "link_failed")
+    return T("无法用这个链接登录：链接可能已失效，或网络不通。刷新重试，或重新申请一封。", "Tidak bisa masuk lewat tautan ini: mungkin sudah kedaluwarsa, atau jaringan terputus. Muat ulang untuk mencoba lagi, atau minta yang baru.", "Could not sign in with this link: it may have expired, or the connection failed. Reload to retry, or request a new one.", l);
   return /expired/.test(code)
     ? T("这个链接已失效或过期，请重新申请一封。", "Tautan ini sudah kedaluwarsa. Minta yang baru.", "That link has expired. Request a new one.", l)
     : T("这个链接无效，请重新申请一封。", "Tautan ini tidak valid. Minta yang baru.", "That link is not valid. Request a new one.", l);

@@ -82,7 +82,8 @@ let fromLink = (() => { try { return location.hash.includes("access_token="); } 
 // with the same tokens again, so Back never left the page while the token lived (about an hour)
 const LINK_SEEN = "ketiklab-link-seen";
 const linkTag = (h: string) => { try { return (new URLSearchParams(h.slice(1)).get("access_token") || "").slice(-24); } catch { return ""; } };
-if (fromLink) ss.set(LINK_SEEN, linkTag(location.hash));
+const thisLink = fromLink ? linkTag(location.hash) : "";
+if (fromLink) ss.set(LINK_SEEN, thisLink);
 // A session that came out of the URL was not typed in here: anyone can put their own
 // tokens in a link and send it round. Nothing on this device is joined to such a
 // session until the learner presses 立即同步 (Account checks this before linking).
@@ -103,17 +104,23 @@ supabase.auth.onAuthStateChange((event, s) => {
   // a sign-out from another tab ends a password recovery too, or the form stayed up
   // for the next, ordinary sign-in and the sync effect kept returning early
   if (event === "SIGNED_OUT") { finishRecovery(); try { localStorage.removeItem(TYPED_KEY); localStorage.removeItem(OUT_KEY); } catch { /* ignore */ } }
-  if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; wantAccount(); }
+  // the link signed in: an unfinished sign-out from before it is over (see below)
+  if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; try { localStorage.removeItem(OUT_KEY); } catch { /* ignore */ } wantAccount(); }
+  // the link's token was rejected or could not be checked: auth-js keeps whatever session it had (none, or
+  // the one a sign-out never finished) and reports nothing. Said on the account page; the hash stays so a
+  // reload retries the link; a sign-out still pending is finished now
+  if (event === "INITIAL_SESSION" && fromLink && (!s || s.access_token.slice(-24) !== thisLink)) {
+    fromLink = false; urlError = "link_failed"; wantAccount();
+    try { if (localStorage.getItem(OUT_KEY)) void supabase.auth.signOut().catch(() => { /* offline: the mark stays */ }); } catch { /* ignore */ }
+    return;
+  }
   tidyUrl();
 });
 // a sign-out the page did not live to finish — the tab closed during the push in signOut(), or
 // 合并到本机 reloaded the page first — is finished on the next load instead of leaving the
 // account signed in on a shared computer; a sign-in link opened since then wins over it
 try {
-  if (localStorage.getItem(OUT_KEY)) {
-    if (fromLink) localStorage.removeItem(OUT_KEY);
-    else void supabase.auth.signOut().catch(() => { /* offline: the mark stays and the next load tries again */ });
-  }
+  if (localStorage.getItem(OUT_KEY) && !fromLink) void supabase.auth.signOut().catch(() => { /* offline: the mark stays and the next load tries again */ });
 } catch { /* ignore */ }
 
 export async function currentSession(): Promise<Session | null> {
