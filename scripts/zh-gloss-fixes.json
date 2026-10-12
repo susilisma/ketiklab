@@ -919,5 +919,198 @@
    "sakit perut",
    "nyeri perut"
   ]
+ },
+ "列表": {
+  "idtrans": [
+   "daftar"
+  ]
+ },
+ "巨人": {
+  "idtrans": [
+   "raksasa"
+  ]
+ },
+ "科学家": {
+  "idtrans": [
+   "ilmuwan"
+  ]
+ },
+ "窗口": {
+  "idtrans": [
+   "jendela",
+   "loket"
+  ]
+ },
+ "裤子": {
+  "idtrans": [
+   "celana"
+  ]
+ },
+ "犯人": {
+  "idtrans": [
+   "narapidana",
+   "penjahat"
+  ]
+ },
+ "目录": {
+  "idtrans": [
+   "katalog",
+   "daftar isi"
+  ]
+ },
+ "剩余": {
+  "idtrans": [
+   "sisa",
+   "kelebihan"
+  ]
+ },
+ "学院": {
+  "idtrans": [
+   "akademi",
+   "institut",
+   "sekolah tinggi"
+  ]
+ },
+ "推荐": {
+  "trans": [
+   "recommend",
+   "recommendation"
+  ],
+  "idtrans": [
+   "merekomendasikan",
+   "rekomendasi"
+  ]
+ },
+ "情报": {
+  "trans": [
+   "intelligence",
+   "information"
+  ]
+ },
+ "做到": {
+  "trans": [
+   "achieve",
+   "manage to do"
+  ]
+ },
+ "意味": {
+  "trans": [
+   "meaning",
+   "implication"
+  ],
+  "idtrans": [
+   "makna",
+   "arti"
+  ]
+ },
+ "体操": {
+  "idtrans": [
+   "senam"
+  ]
+ },
+ "定罪": {
+  "idtrans": [
+   "menghukum",
+   "memvonis"
+  ]
+ },
+ "审问": {
+  "trans": [
+   "interrogate",
+   "question"
+  ],
+  "idtrans": [
+   "menginterogasi",
+   "memeriksa"
+  ]
+ },
+ "机动车": {
+  "trans": [
+   "motor vehicle"
+  ],
+  "idtrans": [
+   "kendaraan bermotor"
+  ]
+ },
+ "残余": {
+  "idtrans": [
+   "sisa",
+   "sisa-sisa"
+  ]
+ },
+ "海绵": {
+  "idtrans": [
+   "spons",
+   "busa"
+  ]
+ },
+ "示威者": {
+  "idtrans": [
+   "demonstran",
+   "pengunjuk rasa"
+  ]
+ },
+ "蘑菇": {
+  "idtrans": [
+   "jamur",
+   "cendawan"
+  ]
+ },
+ "下狱": {
+  "idtrans": [
+   "dipenjara",
+   "pemenjaraan"
+  ]
+ },
+ "剧增": {
+  "idtrans": [
+   "melonjak",
+   "meningkat tajam"
+  ]
+ },
+ "吝啬": {
+  "trans": [
+   "stingy",
+   "miserly"
+  ],
+  "idtrans": [
+   "pelit",
+   "kikir"
+  ]
+ },
+ "唆使": {
+  "idtrans": [
+   "menghasut",
+   "membujuk"
+  ]
+ },
+ "手推车": {
+  "idtrans": [
+   "kereta dorong",
+   "troli"
+  ]
+ },
+ "掺和": {
+  "idtrans": [
+   "campuran",
+   "mencampur"
+  ]
+ },
+ "检查员": {
+  "idtrans": [
+   "pemeriksa",
+   "inspektur"
+  ]
+ },
+ "节俭": {
+  "idtrans": [
+   "hemat",
+   "cermat"
+  ]
+ },
+ "雪茄": {
+  "idtrans": [
+   "cerutu"
+  ]
  }
 }
