@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
@@ -543,7 +543,10 @@ export default function Home() {
     return () => { window.removeEventListener("pointerdown", down, true); window.removeEventListener("keydown", onAnyKey); };
   }, [view, showLangSetup]);
 
-  useEffect(() => {
+  // layout effects, these two: as passive effects they ran after the browser could already
+  // deliver the next key, which was then graded against the new word with the old word still
+  // in the box ("pleaser" against sorry: a miss and a lapse on a word typed right)
+  useLayoutEffect(() => {
     const el = input.current;
     if (!el || isComposing.current) return;
     // between compositions the box is made to match `typed`, so nothing stale is left in it
@@ -552,7 +555,7 @@ export default function Home() {
   });
   // the letters carried over from the previous word's done window are typed into the new word
   // as soon as it is up: the render that cleared the box is the one that put the new word in place
-  useEffect(() => {
+  useLayoutEffect(() => {
     const c = carry.current;
     if (!c || finishing.current) return;
     carry.current = "";
@@ -1501,8 +1504,13 @@ export default function Home() {
   skipRef.current = skipWord;
   runningRef.current = running;
   targetRef.current = targetWord;
+  // the 320 ms done-window timer has cleared `finishing` but the next word is not rendered yet:
+  // this render's handlers still hold the finished word, which must not be graded or skipped
+  // again (it was counted twice, the key after it lost, and the next word filed as a miss).
+  // Not during the red flash of a wrong 输入法 commit, which ENTER still skips as before
+  function wordDone() { return !wrongFlash && typed.length > 0 && (practiceLang === "zh" ? typed === targetWord : typed.toLowerCase() === foldTypography(targetWord).toLowerCase()); }
   function skipWord() {
-    if (finishing.current) return;
+    if (finishing.current || wordDone()) return;
     if (!lapseRecorded.current && slipOn.current !== wordId) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
     resetWordRun();
     // the skip is the word's verdict and its lapse is written: a later run of the same word
@@ -1549,11 +1557,12 @@ export default function Home() {
     }).catch(() => {});
   }
   function handleType(raw: string) {
-    if (finishing.current) {
+    if (finishing.current || wordDone()) {
       // the box still shows the finished word; what follows it is the start of the next one
-      if (practiceLang !== "zh" && !isComposing.current && raw.length > typed.length && raw.startsWith(typed)) {
-        carry.current += raw.slice(typed.length);
-        if (input.current) input.current.value = typed;
+      const n = targetWord.length;
+      if (practiceLang !== "zh" && !isComposing.current && raw.length > n && foldTypography(raw.slice(0, n)).toLowerCase() === foldTypography(targetWord).toLowerCase()) {
+        carry.current += raw.slice(n);
+        if (input.current) input.current.value = raw.slice(0, n);
       }
       return;
     }
