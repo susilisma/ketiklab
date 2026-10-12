@@ -168,6 +168,19 @@ def load_pool():
     return pool
 
 
+def load_pins():
+    """The en-toefl rows corrected by hand (scripts/en-gloss-fixes.json, "en-toefl")."""
+    with io.open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "en-gloss-fixes.json"), encoding="utf-8") as f:
+        return json.load(f).get("en-toefl", {})
+
+
+def pin(entry, pins):
+    """A hand correction outranks the pool: without this a refresh copied the pool's value back over it."""
+    for field, value in pins.get(entry["name"], {}).items():
+        entry[field] = value
+    return entry
+
+
 def enrich(entry, pool):
     """Copy the Indonesian glosses and the US pronunciation of the pool's row for this headword."""
     src = pool.get(entry["name"].lower())
@@ -190,12 +203,12 @@ def refresh():
     Returns the number of rows changed."""
     with io.open(OUT, encoding="utf-8") as f:
         rows = json.load(f)
-    pool = load_pool()
+    pool, pins = load_pool(), load_pins()
     changed = 0
     for row in rows:
-        before = (row.get("idtrans"), row.get("usphone"))
-        enrich(row, pool)
-        changed += (row.get("idtrans"), row.get("usphone")) != before
+        before = json.dumps(row, sort_keys=True)
+        pin(enrich(row, pool), pins)
+        changed += json.dumps(row, sort_keys=True) != before
     if changed:
         with io.open(OUT, "w", encoding="utf-8") as f:
             json.dump(rows, f, ensure_ascii=False, separators=(",", ":"))
@@ -206,7 +219,7 @@ def main():
     if len(sys.argv) < 2:
         sys.exit("usage: build-toefl-dict.py <wordlist.pdf>")
 
-    pool = load_pool()
+    pool, pins = load_pool(), load_pins()
 
     seen, out, dropped = set(), [], []
     for e in parse(sys.argv[1]):
@@ -219,7 +232,7 @@ def main():
             continue
         seen.add(word.lower())
         entry = {"name": word, "trans": trans}
-        enrich(entry, pool)
+        pin(enrich(entry, pool), pins)
         out.append(entry)
 
     with io.open(OUT, "w", encoding="utf-8") as f:
