@@ -496,3 +496,7 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 /* html.dark only recoloured the page: with color-scheme left at `normal`, the native select
    popups, scrollbars and form controls still drew light, white bars down a dark reading list */
 html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .chapter-select option{color:var(--text);background:var(--surface)}
+
+/* the mode row wraps, but its buttons and labels shrank first: at 320px in English the dictation
+   pills overran their border by 5-7px and the Backspace note by 29-34px instead of wrapping */
+.mode-group>*{flex-shrink:0}
