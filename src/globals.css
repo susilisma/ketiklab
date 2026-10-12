@@ -500,3 +500,7 @@ html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .
 /* the mode row wraps, but its buttons and labels shrank first: at 320px in English the dictation
    pills overran their border by 5-7px and the Backspace note by 29-34px instead of wrapping */
 .mode-group>*{flex-shrink:0}
+
+/* reading titles were cut to one line at 1024-1439px where the library column is 240-300px wide,
+   so three "Gurindam Pasal…" rows read the same; the title now wraps instead */
+.reading-list b{white-space:normal}
