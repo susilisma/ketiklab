@@ -2028,7 +2028,7 @@ export default function Home() {
         <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b><span>{reviewKeys ? t.reviewing : dictInfo ? dictName(dictInfo) : source === "fav" ? TX("我的收藏", "Favorit saya", "My favorites", uiLang) : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])}</span><span>{` · ${reviewKeys ? learnItems.length : activeItems.length}${ladderNarrowed && !reviewKeys ? ` / ${activeWords.length}` : ""}`}</span></b></button>
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label={dark ? TX("浅色模式", "Mode terang", "Light mode", uiLang) : TX("深色模式", "Mode gelap", "Dark mode", uiLang)}>{dark ? "☀" : "☾"}</button>
-          <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">Bahasa Indonesia</option><option value="en">English</option></select></label>
+          <label className="language"><span>文</span><select value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh">中文</option><option value="id">{/* a select is as wide as its longest option: on a phone the long name took 154px and squeezed the word-list button to 16–27px */}{narrowRow ? "Indonesia" : "Bahasa Indonesia"}</option><option value="en">English</option></select></label>
           <button className={running ? "primary running" : "primary"} onClick={start}>{running ? t.pause : t.start}<span>→</span></button>
         </div>
       </header>
