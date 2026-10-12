@@ -289,6 +289,8 @@
 .app.focused .chapter small{display:none}
 .app.focused .session-meta .chapter-nav{display:none}
 .app.focused .mode-row,.app.focused .prevnext,.app.focused .hint{display:none}
+/* a session that lost the focus without a pause keeps running under the "press any key to continue" pill, which sits at the card's foot: the hint line gives it that room again, or it lay over the meaning line (and over the 输入法 box) */
+.app.focused .word-card:has(.type-veil) .hint{display:block}
 .app.focused .meanings{max-width:560px}
 .mode-sep{display:inline-block;width:1px;height:14px;background:var(--line);margin:0 6px}
 /* ---- softer "press any key" hint: no blur, word stays readable ---- */
