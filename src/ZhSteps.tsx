@@ -165,12 +165,26 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   };
   // the letters carried over from the word just passed, typed into this word as it mounts
   useLayoutEffect(() => {
-    const c = pinyinCarry.current; pinyinCarry.current = "";
+    const raw = pinyinCarry.current; pinyinCarry.current = "";
+    if (!raw || step !== "pinyin") return;
     // only the letters this word's pinyin starts with: the rest was typed before the word was
-    // on screen, and dropping it, as before, grades nothing — a carried key never counts a miss
-    let n = 0;
-    while (n < c.length && n < target.length && c[n] === target[n]) n++;
-    if (n && step === "pinyin") grade(c.slice(0, n));
+    // on screen, and dropping it, as before, grades nothing — a carried key never counts a miss.
+    // They are taken the way grade takes keys, one at a time ("celv", "celve" for 策略), and
+    // the raw text is kept: App's carry needs the space of "ingin tahu"
+    const fold = (s: string) => foldPinyin(s).replace(/([ln])ve/g, (m, c: string, at: number) => target.startsWith("ue", at + 1) ? c + "ue" : m);
+    const takes = (s: string) => { const f = fold(s); return target.startsWith(f) || (/[ln]v$/.test(f) && target.startsWith(f.slice(0, -1) + "ue")); };
+    let v = "", end = 0;
+    for (let i = 0; i < raw.length; i++) {
+      if (!foldPinyin(raw[i])) continue;
+      if (!takes(v + raw[i])) break;
+      v += raw[i]; end = i + 1;
+      if (fold(v).length === target.length) break;
+    }
+    if (!v) return;
+    grade(v);
+    // the carried letters completed this word outright (是 "shi"): what follows them was typed
+    // for the word after, and dropping it graded that word's first letters as missing
+    if (fold(v).length === target.length && end < raw.length) pinyinCarry.current = raw.slice(end);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word, step]);
 
@@ -264,7 +278,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       inputMode="text"
       placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
       onChange={e => {
-        if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += foldPinyin(e.target.value.slice(typed.length)); return; }
+        if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += e.target.value.slice(typed.length); return; }
         grade(e.target.value);
       }}
       onKeyDown={e => {
