@@ -4442,6 +4442,203 @@
   },
   "range": {
    "def": "an area in which something acts or operates or has power or control"
+  },
+  "boss": {
+   "trans": [
+    "老板",
+    "上司"
+   ]
+  },
+  "plant": {
+   "trans": [
+    "植物",
+    "工厂"
+   ],
+   "idtrans": [
+    "tanaman",
+    "tumbuhan",
+    "pabrik"
+   ],
+   "def": "a living thing that grows in the ground, such as a flower or tree; also a factory"
+  },
+  "gave": {
+   "trans": [
+    "给（give 过去式）"
+   ],
+   "idtrans": [
+    "memberi",
+    "memberikan"
+   ]
+  },
+  "part": {
+   "trans": [
+    "部分",
+    "零件"
+   ]
+  },
+  "quit": {
+   "trans": [
+    "辞职",
+    "放弃"
+   ],
+   "idtrans": [
+    "berhenti",
+    "keluar",
+    "mengundurkan diri"
+   ]
+  },
+  "mike": {
+   "trans": [
+    "麦克风",
+    "话筒"
+   ]
+  },
+  "bowl": {
+   "idtrans": [
+    "mangkuk"
+   ]
+  },
+  "gun": {
+   "idtrans": [
+    "senjata api",
+    "pistol",
+    "senapan"
+   ]
+  },
+  "movie": {
+   "idtrans": [
+    "film"
+   ]
+  },
+  "movement": {
+   "idtrans": [
+    "gerakan",
+    "gerak"
+   ]
+  },
+  "plan": {
+   "idtrans": [
+    "rencana",
+    "rancangan"
+   ]
+  },
+  "small": {
+   "idtrans": [
+    "kecil"
+   ]
+  },
+  "weekly": {
+   "trans": [
+    "每周的",
+    "每周一次",
+    "周刊"
+   ]
+  },
+  "illness": {
+   "idtrans": [
+    "penyakit",
+    "sakit"
+   ]
+  },
+  "driver": {
+   "idtrans": [
+    "sopir",
+    "pengemudi"
+   ]
+  },
+  "file": {
+   "idtrans": [
+    "berkas",
+    "file"
+   ]
+  },
+  "victim": {
+   "idtrans": [
+    "korban"
+   ]
+  },
+  "common": {
+   "idtrans": [
+    "umum",
+    "bersama"
+   ]
+  },
+  "general": {
+   "idtrans": [
+    "umum",
+    "menyeluruh"
+   ]
+  },
+  "child": {
+   "idtrans": [
+    "anak"
+   ]
+  },
+  "boy": {
+   "idtrans": [
+    "anak laki-laki"
+   ]
+  },
+  "member": {
+   "idtrans": [
+    "anggota"
+   ]
+  },
+  "society": {
+   "idtrans": [
+    "masyarakat"
+   ]
+  },
+  "card": {
+   "idtrans": [
+    "kartu"
+   ]
+  },
+  "emergency": {
+   "idtrans": [
+    "darurat"
+   ]
+  },
+  "mail": {
+   "idtrans": [
+    "surat",
+    "pos"
+   ]
+  },
+  "hospital": {
+   "idtrans": [
+    "rumah sakit"
+   ]
+  },
+  "tax": {
+   "idtrans": [
+    "pajak"
+   ]
+  },
+  "game": {
+   "idtrans": [
+    "permainan",
+    "pertandingan"
+   ]
+  },
+  "reach": {
+   "def": "the distance or area that someone or something can reach"
+  },
+  "precious": {
+   "def": "of great value; rare and valuable"
+  },
+  "atmosphere": {
+   "trans": [
+    "大气",
+    "气氛",
+    "大气层"
+   ]
+  },
+  "army": {
+   "idtrans": [
+    "angkatan darat",
+    "tentara"
+   ]
   }
  },
  "en-plus": {
@@ -9166,6 +9363,11 @@
     "pendapatan",
     "penghasilan",
     "laba"
+   ],
+   "trans": [
+    "收入",
+    "收益",
+    "利润"
    ]
   },
   "firing": {
@@ -9488,6 +9690,10 @@
    "trans": [
     "费用",
     "开支"
+   ],
+   "idtrans": [
+    "biaya",
+    "pengeluaran"
    ]
   },
   "jumping": {
@@ -10313,7 +10519,8 @@
    ],
    "idtrans": [
     "warna"
-   ]
+   ],
+   "def": "shades such as red, blue and green (plural of colour)"
   },
   "eliminate": {
    "trans": [
@@ -11126,7 +11333,10 @@
     "枢纽",
     "轮毂"
    ],
-   "def": "the central or most important part of a place or activity"
+   "def": "the central or most important part of a place or activity",
+   "idtrans": [
+    "pusat"
+   ]
   },
   "merchant": {
    "idtrans": [
@@ -11166,6 +11376,10 @@
    "idtrans": [
     "terwujud",
     "menyadari"
+   ],
+   "trans": [
+    "意识到（realise 过去式）",
+    "实现"
    ]
   },
   "rotation": {
@@ -11561,6 +11775,10 @@
    "trans": [
     "节奏",
     "韵律"
+   ],
+   "idtrans": [
+    "irama",
+    "ritme"
    ]
   },
   "savage": {
@@ -11610,6 +11828,11 @@
     "menarik",
     "menarik diri",
     "mundur"
+   ],
+   "trans": [
+    "撤回",
+    "取出",
+    "撤退"
    ]
   },
   "authentic": {
@@ -12027,6 +12250,9 @@
    "trans": [
     "晒黑",
     "棕褐色"
+   ],
+   "idtrans": [
+    "kulit kecokelatan"
    ]
   },
   "timber": {
@@ -13050,6 +13276,10 @@
    "idtrans": [
     "bengkok",
     "ketagihan"
+   ],
+   "trans": [
+    "钩状的",
+    "上瘾的"
    ]
   },
   "indicator": {
@@ -13354,7 +13584,8 @@
    "idtrans": [
     "gigih",
     "terus-menerus"
-   ]
+   ],
+   "def": "continuing firmly in spite of difficulty, or lasting a long time"
   },
   "pharmaceutical": {
    "trans": [
@@ -13564,7 +13795,8 @@
    "idtrans": [
     "pengaruh",
     "daya ungkit"
-   ]
+   ],
+   "def": "the power to influence what happens, or the action of a lever"
   },
   "lining": {
    "idtrans": [
@@ -13583,6 +13815,10 @@
   "robbed": {
    "trans": [
     "抢劫（rob 过去式）"
+   ],
+   "idtrans": [
+    "dirampok",
+    "merampok"
    ]
   },
   "teddy": {
@@ -13649,6 +13885,10 @@
    "trans": [
     "假说",
     "假设"
+   ],
+   "idtrans": [
+    "hipotesis",
+    "dugaan"
    ]
   },
   "learnt": {
@@ -15460,7 +15700,11 @@
     "观察",
     "观测结果"
    ],
-   "def": "the act of watching something carefully"
+   "def": "the act of watching something carefully",
+   "idtrans": [
+    "pengamatan",
+    "observasi"
+   ]
   },
   "banner": {
    "idtrans": [
@@ -15690,7 +15934,8 @@
    "trans": [
     "继承",
     "一连串"
-   ]
+   ],
+   "def": "the act of taking over a position or title from someone; a series of things one after another"
   },
   "superintendent": {
    "trans": [
@@ -15803,6 +16048,10 @@
    "trans": [
     "聚光灯",
     "公众关注"
+   ],
+   "idtrans": [
+    "lampu sorot",
+    "sorotan"
    ]
   },
   "unemployed": {
@@ -16009,6 +16258,140 @@
    "idtrans": [
     "kamar bayi",
     "tempat penitipan anak"
+   ]
+  },
+  "bacon": {
+   "idtrans": [
+    "daging babi asap"
+   ]
+  },
+  "node": {
+   "idtrans": [
+    "simpul",
+    "titik"
+   ]
+  },
+  "noble": {
+   "trans": [
+    "高尚的",
+    "贵族的"
+   ]
+  },
+  "dose": {
+   "idtrans": [
+    "dosis",
+    "takaran"
+   ]
+  },
+  "patch": {
+   "idtrans": [
+    "tambalan"
+   ]
+  },
+  "layout": {
+   "idtrans": [
+    "tata letak"
+   ]
+  },
+  "strings": {
+   "trans": [
+    "弦（string 复数）",
+    "附加条件"
+   ]
+  },
+  "headache": {
+   "idtrans": [
+    "sakit kepala",
+    "pusing"
+   ]
+  },
+  "robust": {
+   "idtrans": [
+    "kuat",
+    "tangguh"
+   ]
+  },
+  "treasurer": {
+   "idtrans": [
+    "bendahara"
+   ]
+  },
+  "leaning": {
+   "idtrans": [
+    "kecenderungan",
+    "kemiringan"
+   ]
+  },
+  "owl": {
+   "idtrans": [
+    "burung hantu"
+   ]
+  },
+  "dough": {
+   "idtrans": [
+    "adonan"
+   ]
+  },
+  "prompt": {
+   "idtrans": [
+    "cepat",
+    "segera"
+   ]
+  },
+  "arbitrary": {
+   "idtrans": [
+    "sewenang-wenang",
+    "acak"
+   ]
+  },
+  "diagram": {
+   "idtrans": [
+    "diagram",
+    "bagan"
+   ]
+  },
+  "recession": {
+   "idtrans": [
+    "resesi"
+   ]
+  },
+  "norm": {
+   "trans": [
+    "规范",
+    "常态"
+   ]
+  },
+  "convenient": {
+   "idtrans": [
+    "mudah",
+    "praktis",
+    "nyaman"
+   ]
+  },
+  "ace": {
+   "trans": [
+    "王牌",
+    "高手"
+   ]
+  },
+  "slot": {
+   "idtrans": [
+    "celah",
+    "lubang"
+   ]
+  },
+  "hardy": {
+   "idtrans": [
+    "tangguh",
+    "kuat",
+    "tahan banting"
+   ]
+  },
+  "dense": {
+   "trans": [
+    "稠密的",
+    "密集的",
+    "浓密的"
    ]
   }
  },
@@ -22366,7 +22749,8 @@
    "trans": [
     "光谱（spectrum 复数）",
     "范围"
-   ]
+   ],
+   "def": "bands of colours produced when light is split (plural of spectrum)"
   },
   "stomp": {
    "idtrans": [
@@ -22464,6 +22848,10 @@
   "hanger": {
    "trans": [
     "衣架"
+   ],
+   "idtrans": [
+    "gantungan baju",
+    "gantungan"
    ]
   },
   "hem": {
@@ -24103,7 +24491,12 @@
     "人字拖",
     "皮带"
    ],
-   "def": "underwear with a narrow strip at the back"
+   "def": "underwear with a narrow strip at the back",
+   "idtrans": [
+    "celana dalam tali",
+    "sandal jepit",
+    "tali kulit"
+   ]
   },
   "tycoon": {
    "idtrans": [
@@ -24352,7 +24745,8 @@
    "idtrans": [
     "roti bundar",
     "bokong"
-   ]
+   ],
+   "def": "small round bread rolls (plural of bun)"
   },
   "realty": {
    "idtrans": [
@@ -24368,7 +24762,8 @@
    "idtrans": [
     "tikungan",
     "penyakit dekompresi"
-   ]
+   ],
+   "def": "curves in a road or river (plural of bend)"
   },
   "involuntary": {
    "idtrans": [
@@ -24653,6 +25048,9 @@
    "trans": [
     "乡村的",
     "质朴的"
+   ],
+   "idtrans": [
+    "pedesaan"
    ]
   },
   "spartan": {
@@ -24733,7 +25131,8 @@
    "idtrans": [
     "setrika",
     "belenggu"
-   ]
+   ],
+   "def": "devices heated to press clothes smooth (plural of iron)"
   },
   "manifold": {
    "trans": [
@@ -24751,7 +25150,11 @@
     "醇厚的",
     "成熟的"
    ],
-   "def": "soft, smooth and pleasant; calm and relaxed"
+   "def": "soft, smooth and pleasant; calm and relaxed",
+   "idtrans": [
+    "lembut",
+    "matang"
+   ]
   },
   "effected": {
    "trans": [
@@ -24948,17 +25351,26 @@
     "凉亭",
     "藤架"
    ],
-   "def": "a shelter in a garden made of climbing plants growing over a frame"
+   "def": "a shelter in a garden made of climbing plants growing over a frame",
+   "idtrans": [
+    "punjung"
+   ]
   },
   "astronomical": {
    "trans": [
     "天文的",
     "天文数字的"
+   ],
+   "idtrans": [
+    "astronomis"
    ]
   },
   "bitten": {
    "trans": [
     "咬（bite 过去分词）"
+   ],
+   "idtrans": [
+    "digigit"
    ]
   },
   "botanical": {
@@ -25016,6 +25428,9 @@
    "idtrans": [
     "mengocok",
     "mengacak"
+   ],
+   "trans": [
+    "洗牌"
    ]
   },
   "skyline": {
@@ -25057,7 +25472,11 @@
     "健美的",
     "结实的"
    ],
-   "def": "having firm, strong muscles"
+   "def": "having firm, strong muscles",
+   "idtrans": [
+    "kencang",
+    "berotot"
+   ]
   },
   "biomedical": {
    "trans": [
@@ -25275,6 +25694,10 @@
    "trans": [
     "承担（undertake 过去式）",
     "着手"
+   ],
+   "idtrans": [
+    "memikul",
+    "melakukan"
    ]
   },
   "vaginal": {
@@ -25300,6 +25723,10 @@
   "hugged": {
    "trans": [
     "拥抱（hug 过去式）"
+   ],
+   "idtrans": [
+    "memeluk",
+    "berpelukan"
    ]
   },
   "incompetence": {
@@ -25724,6 +26151,9 @@
    "trans": [
     "行为的",
     "行为方面的"
+   ],
+   "idtrans": [
+    "perilaku"
    ]
   },
   "calves": {
@@ -27006,7 +27436,8 @@
    "idtrans": [
     "umum",
     "menyeluruh"
-   ]
+   ],
+   "def": "general; not limited to one part or thing"
   },
   "hammered": {
    "idtrans": [
@@ -27854,7 +28285,8 @@
    "idtrans": [
     "cekung",
     "tenggelam"
-   ]
+   ],
+   "def": "having sunk to the bottom of the sea; lower than the area around it"
   },
   "alum": {
    "idtrans": [
@@ -28497,7 +28929,8 @@
    "idtrans": [
     "tali",
     "celana korduroi"
-   ]
+   ],
+   "def": "pieces of thin rope or string (plural of cord)"
   },
   "deficient": {
    "idtrans": [
@@ -28687,7 +29120,8 @@
     "tebal",
     "kekar",
     "berbongkah"
-   ]
+   ],
+   "def": "thick and solid; short and heavy"
   },
   "physique": {
    "idtrans": [
@@ -28789,7 +29223,11 @@
    ]
   },
   "nil": {
-   "def": "nothing; zero, especially in a sports score"
+   "def": "nothing; zero, especially in a sports score",
+   "trans": [
+    "零",
+    "无"
+   ]
   },
   "slab": {
    "idtrans": [
@@ -29116,6 +29554,10 @@
    "trans": [
     "假说（hypothesis 复数）",
     "假设"
+   ],
+   "idtrans": [
+    "hipotesis",
+    "dugaan"
    ]
   },
   "amaze": {
@@ -29479,6 +29921,72 @@
    "idtrans": [
     "lapuk",
     "usang"
+   ]
+  },
+  "psychotic": {
+   "idtrans": [
+    "psikotik"
+   ]
+  },
+  "hamster": {
+   "idtrans": [
+    "hamster"
+   ]
+  },
+  "nonstop": {
+   "idtrans": [
+    "tanpa henti"
+   ]
+  },
+  "malignant": {
+   "idtrans": [
+    "ganas"
+   ]
+  },
+  "autopilot": {
+   "idtrans": [
+    "pilot otomatis"
+   ]
+  },
+  "flap": {
+   "trans": [
+    "翻盖",
+    "拍打",
+    "襟翼"
+   ]
+  },
+  "chow": {
+   "trans": [
+    "松狮犬",
+    "食物"
+   ]
+  },
+  "hugging": {
+   "idtrans": [
+    "memeluk",
+    "berpelukan"
+   ]
+  },
+  "symbolism": {
+   "trans": [
+    "象征主义",
+    "象征手法"
+   ]
+  },
+  "discord": {
+   "idtrans": [
+    "perselisihan"
+   ]
+  },
+  "strung": {
+   "trans": [
+    "串起（string 过去式）"
+   ]
+  },
+  "visceral": {
+   "trans": [
+    "本能的",
+    "内脏的"
    ]
   }
  },
@@ -32229,7 +32737,8 @@
    "idtrans": [
     "tong",
     "barel"
-   ]
+   ],
+   "def": "large round containers with flat ends (plural of barrel)"
   },
   "breakthrough": {
    "idtrans": [
@@ -32970,7 +33479,8 @@
    "idtrans": [
     "terpenuhi",
     "puas"
-   ]
+   ],
+   "def": "achieved or carried out what was hoped for or required (past tense of fulfil)"
   },
   "fulfilling": {
    "trans": [
@@ -33341,7 +33851,8 @@
    "idtrans": [
     "tersesat",
     "liar"
-   ]
+   ],
+   "def": "lost or having no home (of an animal)"
   },
   "wander": {
    "trans": [
@@ -34347,7 +34858,8 @@
    ],
    "idtrans": [
     "penyelam"
-   ]
+   ],
+   "def": "people who swim underwater (plural of diver)"
   },
   "endorse": {
    "trans": [
@@ -35103,7 +35615,8 @@
    "idtrans": [
     "kios",
     "warung"
-   ]
+   ],
+   "def": "tables or small shops selling goods in a market (plural of stall)"
   },
   "cologne": {
    "idtrans": [
@@ -35149,6 +35662,63 @@
     "negosiasi",
     "perundingan",
     "perbincangan"
+   ]
+  },
+  "repression": {
+   "trans": [
+    "镇压",
+    "压抑",
+    "抑制"
+   ]
+  },
+  "emphasized": {
+   "trans": [
+    "强调（emphasize 过去式）"
+   ],
+   "idtrans": [
+    "ditekankan",
+    "menekankan"
+   ]
+  },
+  "bowel": {
+   "idtrans": [
+    "usus"
+   ]
+  },
+  "summon": {
+   "idtrans": [
+    "memanggil",
+    "memanggil ke pengadilan"
+   ]
+  },
+  "mash": {
+   "trans": [
+    "捣碎"
+   ],
+   "idtrans": [
+    "melumatkan"
+   ]
+  },
+  "muse": {
+   "idtrans": [
+    "merenung",
+    "merenungkan"
+   ]
+  },
+  "align": {
+   "idtrans": [
+    "menyelaraskan",
+    "menyejajarkan",
+    "meluruskan"
+   ]
+  },
+  "duct": {
+   "def": "a tube or channel that carries air, liquid or cables"
+  },
+  "stabbing": {
+   "idtrans": [
+    "penikaman",
+    "menikam"
    ]
   }
  },

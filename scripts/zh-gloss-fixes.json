@@ -352,6 +352,10 @@
   "trans": [
    "tremble",
    "shiver"
+  ],
+  "idtrans": [
+   "gemetar",
+   "menggigil"
   ]
  },
  "奶油": {
@@ -918,7 +922,8 @@
   "idtrans": [
    "sakit perut",
    "nyeri perut"
-  ]
+  ],
+  "def": "pain in the stomach or belly"
  },
  "列表": {
   "idtrans": [
@@ -1165,7 +1170,8 @@
   "idtrans": [
    "berguna",
    "bermanfaat"
-  ]
+  ],
+  "def": "able to be used for a practical purpose; helpful"
  },
  "处置": {
   "trans": [
@@ -1198,7 +1204,8 @@
    "efektif",
    "berlaku",
    "sah"
-  ]
+  ],
+  "def": "producing the intended result; legally in force"
  },
  "名声": {
   "idtrans": [
@@ -1415,5 +1422,278 @@
  },
  "母牛": {
   "def": "a mature female of domestic cattle"
+ },
+ "企图": {
+  "trans": [
+   "attempt",
+   "try"
+  ]
+ },
+ "提炼": {
+  "idtrans": [
+   "pemurnian"
+  ]
+ },
+ "召回": {
+  "trans": [
+   "recall"
+  ],
+  "def": "to order the return of a product or person"
+ },
+ "即位": {
+  "trans": [
+   "ascend the throne"
+  ],
+  "idtrans": [
+   "naik takhta"
+  ]
+ },
+ "扶手": {
+  "idtrans": [
+   "pegangan tangan",
+   "birai",
+   "sandaran tangan"
+  ]
+ },
+ "小吃": {
+  "trans": [
+   "snack",
+   "refreshments"
+  ],
+  "idtrans": [
+   "kudapan",
+   "camilan",
+   "jajanan"
+  ]
+ },
+ "保险": {
+  "trans": [
+   "insurance",
+   "safe"
+  ],
+  "idtrans": [
+   "asuransi",
+   "aman"
+  ],
+  "def": "an arrangement in which you pay a company and it pays you if something bad happens"
+ },
+ "厨师": {
+  "idtrans": [
+   "koki",
+   "juru masak"
+  ]
+ },
+ "圆周": {
+  "trans": [
+   "circumference"
+  ],
+  "idtrans": [
+   "keliling lingkaran"
+  ],
+  "def": "the distance around a circle"
+ },
+ "场地": {
+  "trans": [
+   "venue",
+   "site",
+   "ground"
+  ]
+ },
+ "彷徨": {
+  "trans": [
+   "hesitate",
+   "waver"
+  ],
+  "idtrans": [
+   "ragu-ragu",
+   "bimbang"
+  ]
+ },
+ "祈求": {
+  "trans": [
+   "pray for",
+   "beseech"
+  ],
+  "idtrans": [
+   "memohon"
+  ]
+ },
+ "庇护": {
+  "trans": [
+   "shelter",
+   "protect",
+   "asylum"
+  ],
+  "idtrans": [
+   "melindungi",
+   "suaka"
+  ],
+  "def": "to protect someone from harm or danger"
+ },
+ "正义": {
+  "trans": [
+   "justice",
+   "righteousness"
+  ],
+  "idtrans": [
+   "keadilan"
+  ]
+ },
+ "大炮": {
+  "idtrans": [
+   "meriam",
+   "artileri"
+  ]
+ },
+ "光亮": {
+  "trans": [
+   "bright",
+   "shiny",
+   "brightness"
+  ],
+  "idtrans": [
+   "terang",
+   "berkilau"
+  ]
+ },
+ "欲望": {
+  "trans": [
+   "desire",
+   "craving",
+   "lust"
+  ],
+  "idtrans": [
+   "hasrat",
+   "nafsu",
+   "keinginan"
+  ]
+ },
+ "干净": {
+  "trans": [
+   "clean",
+   "neat"
+  ],
+  "idtrans": [
+   "bersih"
+  ],
+  "def": "free from dirt; clean"
+ },
+ "商店": {
+  "idtrans": [
+   "toko"
+  ]
+ },
+ "函数": {
+  "idtrans": [
+   "fungsi"
+  ]
+ },
+ "通向": {
+  "trans": [
+   "lead to"
+  ],
+  "idtrans": [
+   "menuju",
+   "mengarah ke"
+  ]
+ },
+ "上学": {
+  "trans": [
+   "go to school",
+   "attend school"
+  ],
+  "idtrans": [
+   "bersekolah",
+   "pergi ke sekolah"
+  ],
+  "def": "to go to school as a pupil"
+ },
+ "外皮": {
+  "trans": [
+   "outer skin",
+   "rind",
+   "casing"
+  ],
+  "idtrans": [
+   "kulit luar",
+   "selubung"
+  ]
+ },
+ "应该": {
+  "trans": [
+   "should",
+   "ought to"
+  ]
+ },
+ "气流": {
+  "trans": [
+   "airflow",
+   "air current"
+  ],
+  "idtrans": [
+   "aliran udara",
+   "arus udara"
+  ]
+ },
+ "观察员": {
+  "trans": [
+   "observer"
+  ]
+ },
+ "制作者": {
+  "idtrans": [
+   "pembuat",
+   "produsen"
+  ]
+ },
+ "疏忽": {
+  "trans": [
+   "negligence",
+   "oversight",
+   "carelessness"
+  ]
+ },
+ "司机": {
+  "idtrans": [
+   "sopir",
+   "pengemudi"
+  ]
+ },
+ "传票": {
+  "idtrans": [
+   "surat panggilan"
+  ]
+ },
+ "吹嘘": {
+  "trans": [
+   "boast",
+   "brag"
+  ],
+  "idtrans": [
+   "membual",
+   "menyombongkan diri"
+  ],
+  "def": "to talk with excessive pride about oneself or one's achievements"
+ },
+ "鲨鱼": {
+  "idtrans": [
+   "hiu"
+  ]
+ },
+ "受害人": {
+  "idtrans": [
+   "korban"
+  ]
+ },
+ "电路板": {
+  "idtrans": [
+   "papan sirkuit"
+  ]
+ },
+ "发病率": {
+  "idtrans": [
+   "angka kesakitan",
+   "morbiditas"
+  ]
  }
 }
