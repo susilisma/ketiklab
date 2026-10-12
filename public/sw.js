@@ -117,6 +117,11 @@ self.addEventListener("fetch", (e) => {
     // a list is named only when its data is in the cache: ?lib= wins over the saved list, so an
     // uncached one left an offline learner on a load-error banner instead of the list they had
     const toShell = async () => {
+      // the channel entry pages (/xhs/, /ig/: the addresses printed in posts) are not precached and
+      // not generated-page keys, so offline they resolved to nothing and the browser showed its own
+      // error page; they are sent where their own meta refresh sends a visitor (build-seo-pages.py CHANNELS)
+      const channel = /^\/(xhs|ig)\/?$/.exec(url.pathname);
+      if (channel) return Response.redirect(new URL(channel[1] === "xhs" ? "./?ui=zh&learn=id&from=xhs" : "./?ui=id&learn=zh&step=pinyin&from=ig", self.location).href, 302);
       if (!(landing || generated)) return undefined;
       const lib = target && target[2] && target[2] !== "trio" ? target[2] : null;
       const x = lib && !(await caches.match(`./data/${lib}.json`)) ? "" : extra;
