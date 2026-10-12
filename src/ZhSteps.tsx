@@ -269,7 +269,12 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         if (e.key === "Escape") box.current?.blur();
         if (e.key === "Enter") { e.preventDefault(); if (!e.repeat) onSkip(); }
       }}
-      onKeyUp={e => { if (e.key === "Tab") setPeek(false); }}
+      // the box centres its text, so a click (or a tap) back into it put the caret before or inside
+      // the letters already typed, and the next letter was graded there — "shi", a click, "xian"
+      // filed a correct 实现 as a miss; Shift+TAB then TAB selected the letters and the next key
+      // replaced them. The caret goes back to the end unless a selection was made on purpose
+      onKeyUp={e => { if (e.key === "Tab") { setPeek(false); const el = e.currentTarget, n = el.value.length; el.setSelectionRange(n, n); } }}
+      onMouseUp={e => { const el = e.currentTarget, n = el.value.length; if (el.selectionStart === el.selectionEnd && el.selectionStart !== n) el.setSelectionRange(n, n); }}
       // Escape or a tap elsewhere while TAB is held: the keyup lands outside the box,
       // so the peek must end with the focus or the whole answer stays on screen
       onBlur={() => setPeek(false)}
