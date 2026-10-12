@@ -508,3 +508,6 @@ html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .
 /* at >=1280px wide and <=800px tall the nav row is 40px, but an Indonesian label (or an English
    one beside a due badge) needs two lines and spilled 1px over the next row */
 @media(min-width:1280px) and (max-height:800px){.nav{height:auto;min-height:40px;padding-top:4px;padding-bottom:4px}}
+
+/* a phone keyboard leaves the 44px reading box one line tall for a line that wraps to three */
+@media(max-width:640px){.reading-input-wrap textarea{height:auto;min-height:70px;overflow:auto}}
