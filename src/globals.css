@@ -436,8 +436,8 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 /* the text span ellipsizes so the row stays one 40px chapter-nav tall; the veil repeats the same hint */
 .session-meta{gap:8px}.session-meta>span:first-child{flex:1 1 auto;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 /* at 320px the English "Chapter 1 / 31" select gives way, not the timer, which was clipped to "00:0" */
-/* the chapter nav gives way a thousand times faster than the label, down to its two 40px arrows and a 44px select: shrink 1 on both split the overflow by size and the label lost its last word; the arrows never shrink */
-.session-meta .chapter-nav{min-width:140px;flex:0 1000 auto}.session-meta .chapter-nav button{flex:0 0 auto}.session-meta .chapter-select{min-width:max-content;flex:0 0 auto}.session-meta b{flex-shrink:0}
+/* the chapter nav keeps its own width (two 40px arrows and a select showing its whole text, numbers only on phones) and the label gives way: with a 140px floor while the select refused to shrink, the nav spilled out of its box, the select ran under the timer and the › button off the screen */
+.session-meta .chapter-nav{min-width:0;flex:0 0 auto}.session-meta .chapter-nav button{flex:0 0 auto}.session-meta .chapter-select{min-width:max-content;flex:0 0 auto}.session-meta b{flex-shrink:0}
 /* --strip-h counts on exactly two 40px rows: each group is one row that scrolls sideways, whatever the language or the hint state */
 .mode-group{display:flex;flex:0 0 100%;min-width:0;align-items:center;gap:7px;overflow-x:auto;scrollbar-width:thin}.mode-sep{display:none}
 /* chapter-nav and the ladder pills already say where the learner is; the tips are keyboard instructions — kept only while they carry the skip button */
