@@ -20038,36 +20038,28 @@
   "fulfilled": {
    "trans": [
     "实现的",
-    "满足的 ／ 令人满足的 ／ 履行",
-    "实现"
+    "满足的"
    ],
    "idtrans": [
     "terpenuhi",
-    "puas ／ memuaskan ／ memenuhi",
-    "mewujudkan"
+    "puas"
    ]
   },
   "fulfilling": {
    "trans": [
-    "实现的",
-    "满足的 ／ 令人满足的 ／ 履行",
-    "实现"
+    "令人满足的"
    ],
    "idtrans": [
-    "terpenuhi",
-    "puas ／ memuaskan ／ memenuhi",
-    "mewujudkan"
+    "memuaskan"
    ]
   },
   "fulfil": {
    "trans": [
-    "实现的",
-    "满足的 ／ 令人满足的 ／ 履行",
+    "履行",
     "实现"
    ],
    "idtrans": [
-    "terpenuhi",
-    "puas ／ memuaskan ／ memenuhi",
+    "memenuhi",
     "mewujudkan"
    ]
   },
@@ -20112,14 +20104,12 @@
   "vegetation": {
    "idtrans": [
     "vegetasi",
-    "tumbuh-tumbuhan ／ flora",
-    "tumbuhan"
+    "tumbuh-tumbuhan"
    ]
   },
   "flora": {
    "idtrans": [
-    "vegetasi",
-    "tumbuh-tumbuhan ／ flora",
+    "flora",
     "tumbuhan"
    ]
   },
@@ -20408,24 +20398,20 @@
   "stray": {
    "trans": [
     "流浪的",
-    "走失的 ／ 徘徊",
-    "漫游"
+    "走失的"
    ],
    "idtrans": [
     "tersesat",
-    "liar ／ berkeliaran",
-    "mengembara"
+    "liar"
    ]
   },
   "wander": {
    "trans": [
-    "流浪的",
-    "走失的 ／ 徘徊",
+    "徘徊",
     "漫游"
    ],
    "idtrans": [
-    "tersesat",
-    "liar ／ berkeliaran",
+    "berkeliaran",
     "mengembara"
    ]
   },
@@ -20526,12 +20512,12 @@
   },
   "regain": {
    "idtrans": [
-    "memperoleh kembali ／ mengambil kembali"
+    "memperoleh kembali"
    ]
   },
   "retrieve": {
    "idtrans": [
-    "memperoleh kembali ／ mengambil kembali"
+    "mengambil kembali"
    ]
   },
   "resemble": {
@@ -20722,13 +20708,12 @@
   "rubbing": {
    "idtrans": [
     "menggosok",
-    "gosokan ／ menggosok"
+    "gosokan"
    ]
   },
   "rubbed": {
    "idtrans": [
-    "menggosok",
-    "gosokan ／ menggosok"
+    "menggosok"
    ]
   },
   "vogue": {
@@ -20806,14 +20791,12 @@
   "domination": {
    "idtrans": [
     "dominasi",
-    "penguasaan ／ supremasi",
-    "keunggulan"
+    "penguasaan"
    ]
   },
   "supremacy": {
    "idtrans": [
-    "dominasi",
-    "penguasaan ／ supremasi",
+    "supremasi",
     "keunggulan"
    ]
   },
@@ -20975,17 +20958,17 @@
   },
   "strengthened": {
    "idtrans": [
-    "diperkuat ／ penguatan ／ diperkuat"
+    "diperkuat"
    ]
   },
   "strengthening": {
    "idtrans": [
-    "diperkuat ／ penguatan ／ diperkuat"
+    "penguatan"
    ]
   },
   "reinforced": {
    "idtrans": [
-    "diperkuat ／ penguatan ／ diperkuat"
+    "diperkuat"
    ]
   },
   "troop": {
@@ -21239,28 +21222,24 @@
   "satire": {
    "idtrans": [
     "satire",
-    "sindiran ／ sarkasme",
     "sindiran"
    ]
   },
   "sarcasm": {
    "idtrans": [
-    "satire",
-    "sindiran ／ sarkasme",
+    "sarkasme",
     "sindiran"
    ]
   },
   "undermine": {
    "idtrans": [
     "melemahkan",
-    "merongrong ／ menyabotase",
-    "sabotase"
+    "merongrong"
    ]
   },
   "sabotage": {
    "idtrans": [
-    "melemahkan",
-    "merongrong ／ menyabotase",
+    "menyabotase",
     "sabotase"
    ]
   },
@@ -22270,8 +22249,7 @@
   },
   "flora": {
    "idtrans": [
-    "vegetasi",
-    "tumbuh-tumbuhan ／ flora",
+    "flora",
     "tumbuhan"
    ]
   },
@@ -22312,13 +22290,12 @@
   "stray": {
    "idtrans": [
     "tersesat",
-    "liar ／ berkeliaran",
-    "mengembara"
+    "liar"
    ]
   },
   "retrieve": {
    "idtrans": [
-    "memperoleh kembali ／ mengambil kembali"
+    "mengambil kembali"
    ]
   },
   "resemble": {
@@ -22404,8 +22381,7 @@
   "undermine": {
    "idtrans": [
     "melemahkan",
-    "merongrong ／ menyabotase",
-    "sabotase"
+    "merongrong"
    ]
   },
   "assemble": {
