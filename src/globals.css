@@ -504,3 +504,7 @@ html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .
 /* reading titles were cut to one line at 1024-1439px where the library column is 240-300px wide,
    so three "Gurindam Pasal…" rows read the same; the title now wraps instead */
 .reading-list b{white-space:normal}
+
+/* at >=1280px wide and <=800px tall the nav row is 40px, but an Indonesian label (or an English
+   one beside a due badge) needs two lines and spilled 1px over the next row */
+@media(min-width:1280px) and (max-height:800px){.nav{height:auto;min-height:40px;padding-top:4px;padding-bottom:4px}}
