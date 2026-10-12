@@ -103,10 +103,10 @@
    "fingerprint": "langsetup-no-focus-trap",
    "title": "语言对话框无焦点陷阱，onAnyKey 与拼音框自动聚焦让背后的词被计分",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "886d600",
-   "reason": "L 10-11：886d600 只拦键，无焦点陷阱——Tab 40 次 26/45 落在对话框外，可在对话框后切视图/开始会话，焦点在外时 Escape 不关；修法 onKeyDown Tab 首尾循环 + aria-labelledby；受上限未做，明日第一项",
-   "date": "2026-10-11"
+   "status": "fixed",
+   "commit": "3fa343d",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；sidebar/main inert + window Escape + aria-labelledby，45 次 Tab 仅 <body> 3 次在外",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "settings-select-overflow-id",
@@ -931,10 +931,10 @@
    "fingerprint": "id-dict-trio-shared-identity",
    "title": "主题词按 en 键、印尼语词典按词头键，练印尼语时 id:<en> 与词典同形词共用进度/收藏/SRS（air/udara 等 13 组，去掉英文词后剩 air、cup、platform、chat、happy、like、live、full…）",
    "priority": "P1",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "根治要改主题词的进度标识（按所打文本键 id:udara）并迁移旧行 id:<en>（SRS/错词本/收藏，约 20–40 行），属进度标识改动，由主人定；本次删掉 indonesian.json 里的 20 个英文词后碰撞从 13 组降到 4 组同形词",
-   "date": "2026-09-16"
+   "status": "fixed",
+   "commit": "474a115",
+   "reason": "474a115 起主题词用 <lang>:trio:<en> 独立命名空间，与词典同形词不再共用进度（10-12 D 复核确认）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "indonesian-json-colloquial-loans",
@@ -1705,10 +1705,10 @@
    "fingerprint": "unfav-last-during-fav-review-restarts",
    "title": "从收藏列表复习时取消最后一个收藏，source 切回 trio 使复习从第 1 词重来",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "reviewKeys 存在时推迟 setSource(trio)",
-   "date": "2026-09-21"
+   "reason": "10-12 复核已消失（F1）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "ladder-rungs-ignore-clock-and-pause",
@@ -2299,10 +2299,10 @@
    "fingerprint": "pull-in-other-tab-overwritten-by-stale-tab",
    "title": "「合并到本机」只重载本标签页，同账号另一标签页下一次状态变化把内存副本写回覆盖已合并存储（云端仍保留并集）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "写 ketiklab-sync-tick 标记并让 storage 监听器重载",
-   "date": "2026-09-24"
+   "reason": "10-12 复核已消失（F4）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "signup-on-linked-device-renames-header",
@@ -2389,10 +2389,10 @@
    "fingerprint": "reader-upcoming-lines-contrast",
    "title": "阅读器 .passage-preview p.waiting 14px 浅色 2.40:1 / 深色 3.03:1",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "调色",
-   "date": "2026-09-24"
+   "reason": "10-12 复核已消失（L）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "finish-wrong-danger-text-contrast",
@@ -2425,10 +2425,10 @@
    "fingerprint": "render-blocking-google-fonts-in-offline-shell",
    "title": "index.html 的 Google Fonts 样式表阻塞渲染：断网/强制门户下缓存壳白屏到超时",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "preload + media=print 切换或 font-display；F6 10-01 复核仍在（离线壳 20 s 才挂载）",
-   "date": "2026-10-01"
+   "reason": "10-12 复核已消失（F5）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "promote-validation-failure-leaves-words-json-appended",
@@ -2739,11 +2739,11 @@
   {
    "fingerprint": "link-tokens-one-back-press-away",
    "title": "auth-js 的 location.hash=\"\" 推了一条历史：Back 显示带 access_token 的 URL，刷新再消费一次；共享设备上 token 在返回栈里 1 小时",
-   "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "detectSessionInUrl:false + 自行解析/replaceState/setSession（改动较大）",
-   "date": "2026-09-25"
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "daed243",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；10-12 复核变严重（每次 Back 重新登录、离不开页面），sessionStorage 记链接 token 标签，Back 到同一 token 去掉 hash 并继续后退",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "signup-existing-email-overwrites-typed-uid",
@@ -2821,10 +2821,10 @@
    "fingerprint": "readings-app-group-label-for-practice-texts",
    "title": "应用内两篇本站练习短文归在「印尼语经典 / Klasik Indonesia / Indonesian classics」分组下",
    "priority": "P3",
-   "status": "needs-owner",
+   "status": "fixed",
    "commit": "",
-   "reason": "是否给本站练习短文单独分组名（内容元数据展示，属主人定）",
-   "date": "2026-09-25"
+   "reason": "10-12 复核已消失（F2/D）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "readings-accented-letters-untypable",
@@ -2839,10 +2839,10 @@
    "fingerprint": "tablet-nav-50px-row-tight",
    "title": "1024×700 短笔记本 50px nav 行里两行标签刚好放满，字体回落更高会溢出（校验者 A）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "P3：该媒体块 .nav min-height 或 line-height 再收 0.05",
-   "date": "2026-09-25"
+   "reason": "10-12 复核已消失（L）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "manifest-down-banner-for-everyone",
@@ -3262,10 +3262,10 @@
    "fingerprint": "retry-missed-banner-keeps-old-due-total",
    "title": "重练错词会话横幅印上一场复习的到期总数「复习模式 · 2 / 5」（App.tsx:1191 practiceChapterWrong 不清 reviewDueTotal）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "26f4b1d",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX2：重练横幅 2 / 5 → 2；新复习仍印 n / total；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入",
-   "date": "2026-10-01"
+   "reason": "10-12 复核已消失（F2/F3）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "review-list-button-prints-category-and-narrowed-total",
@@ -3318,8 +3318,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 t3；是 topic-page-cta-lands-on-saved-dictionary 的补充；修法 CTA 加 &lib=trio&learn=，App 端 ENTRY.learn + ?lib=trio 时 setSource(\"trio\")，两端要同日落地",
-   "date": "2026-10-01"
+   "reason": "10-12 F2/F5：CTA 已带 learn=，首访正确；回访设备落到保存的词典（同 topic-page-cta-lands-on-saved-dictionary）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "sw-activate-discards-first-open-download",
@@ -3496,10 +3496,10 @@
    "fingerprint": "append-batch-source-untrimmed",
    "title": "append-batch.mjs 的 source 字段仍不 trim（0f00567 只 trim 了 en/id/zh/category/level/phonetic/idSyllables/pinyin/examples）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "VX1 备注；1 行：source: t(source) || DEFAULT_SOURCE",
-   "date": "2026-10-01"
+   "reason": "10-12 复核已消失（F5）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "seo-readings-nav-label-classic-160",
@@ -3667,10 +3667,10 @@
    "fingerprint": "en-toefl-idtrans-from-pool-wrong",
    "title": "en-toefl/en-core 的 idtrans 来自 Wordnet 池仍有错义：luxury → keluasan/kemantapan、entity → kewujudan（马来西亚）；zh-upper 第一百 idtrans ratusan（=数百）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "本次顺带发现，未经独立校验；并入 en-dicts-rare-sense-likely-rows 的下一轮释义扫描",
-   "date": "2026-10-02"
+   "status": "fixed",
+   "commit": "2b8f228",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；refresh 后 luxury/entity 等已随来源库；仅 zh-upper 第一百 ratusan 未动（见候选）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "gloss-candidates-owner-2026-10-02",
@@ -3766,10 +3766,10 @@
    "fingerprint": "missing-meaning-peek-button-no-action",
    "title": "缺释义时的偷看按钮「Belum ada arti Indonesia · 中文」不说明点了会显示中文释义",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "F2 发现",
-   "date": "2026-10-05"
+   "reason": "10-12 复核已消失（F2）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "plan-kosong-label",
@@ -3793,10 +3793,10 @@
    "fingerprint": "idtrans-malay-disagreed-replacements",
    "title": "en-core/en-toefl 中查找者与校验者对替换词不一致的 idtrans：rate(cukai)、share(peratus/panggu)、guild(kelab)、command(amaran/tawaran)、manager(pengarah)、act(sijil)、traumatic(kecederaan)、ending(hujung)、pack/universal/worldwide(ramai)",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "需第三方判定替换词；马来语形式本身两方都认为错",
-   "date": "2026-10-05"
+   "status": "fixed",
+   "commit": "c9b6c79",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；rate cukai → tingkat/laju/tarif，manager pengarah → manajer",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "gloss-2026-10-05-unsure",
@@ -4389,8 +4389,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F4 量到；修法 build-seo-pages.py:192/290/283 加 display:inline-block + padding",
-   "date": "2026-10-08"
+   "reason": "10-12 L/F5：「打开练习 →」已 143×50；页眉链接 107×34、nav.more 17px、页脚 16px 仍小",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "stale-slipon-on-chapter-repick-and-mistake-practice",
@@ -4513,10 +4513,10 @@
    "fingerprint": "toefl-pool-rows-worse-than-toefl",
    "title": "en-toefl refresh 会把池值复制进 11 行（share/considerable/guild/bronze/duration/commodity/entity/luxury/command/monk/traumatic），池值更差（gangsa、ramai…）；今日保留 en-toefl 原值",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "见 gloss-candidates-2026-10-09.md A 段；应先修池中行",
-   "date": "2026-10-09"
+   "status": "fixed",
+   "commit": "27db470, 2b8f228",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；来源库已校订，refresh 复制 95 字段且保留 en-toefl 钉值",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "status-label-phone-copy-too-long",
@@ -4722,8 +4722,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F4 10-11（cloud.ts signOut Promise.race 5000 vs normalized 8000）；修法：上限 ≥10 s 或退出推送跳过等待",
-   "date": "2026-10-11"
+   "reason": "10-12 V4 证实；提高到 10s 仍丢且更久，建议退出时跳过归一器等待（约 4 行，7 例全过）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "fav-same-key-different-body-cloud-ping-pong",
@@ -4731,8 +4731,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "VC 10-11；修法 canonical() 收藏只比 lang:key",
-   "date": "2026-10-11"
+   "reason": "10-12 V4 证实；canonical() 收藏只比 lang:key（1 行）验证 0 写",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "no-print-stylesheet",
@@ -4749,17 +4749,17 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F5 10-11；加前需评估 .language option / .meaning-pick option 的颜色补偿",
-   "date": "2026-10-11"
+   "reason": "10-12 L/V5 证实（computed normal，深色阅读列表白滚动条）；修法 html.dark{color-scheme:dark} + .dark .language option{color:var(--text);background:var(--surface)}，V5 验证浅色不变",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "header-language-select-154px-hides-list-name",
    "title": "顶栏语言下拉因「Bahasa Indonesia」从 94 变 154 px，手机词库名省略到 0–42 px",
-   "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "L 10-11（8729b73 副作用）；修法 .language select{field-sizing:content} 或顶栏用短标签",
-   "date": "2026-10-11"
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "e978abd",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；≤430px 顶栏选项显示 Indonesia，词表按钮 76–168px，54 格 0 失败（主人知悉：与设置页 Bahasa Indonesia 不同名）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "dictation-pills-flex-shrunk-at-320-en",
@@ -4767,8 +4767,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "L 10-11（min-width:40px 取代了 min-content）；修法 .mode-row button{flex-shrink:0}",
-   "date": "2026-10-11"
+   "reason": "10-12 L/V5：仍在且更宽（Backspace 模式说明溢出 29–34px）；V5 验证的修法是 .mode-group>*{flex-shrink:0}（L 的 .mode-row button{flex-shrink:0} 会把挤压转给说明文字）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "double-enter-skips-two-words",
@@ -4812,17 +4812,17 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 10-11；修法 sourceReq.current++ 处 setLinkedMissing(null)",
-   "date": "2026-10-11"
+   "reason": "10-12 VA 证实；在 selectDict/changeCategory/selectFav 及 🌐 跳词处 setLinkedMissing(null)",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "readings-entry-opens-english-first-row",
    "title": "/zh/readings、/id/readings 的 打开练习 打开英文 Sonnet 18（setReadingId(r[0]) 不看语言）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2 10-11；修法 r.find(p=>p.lang===lang) ?? r[0]",
-   "date": "2026-10-11"
+   "status": "fixed",
+   "commit": "bade437",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；加载取学习语言首篇（langRef），首访对话框选定语言后未开始的篇目跟随",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "en-copy-dialog-subtitle-and-schedule",
@@ -4830,35 +4830,35 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 10-11；两处文案",
-   "date": "2026-10-11"
+   "reason": "10-12 VA 证实；\"…meaning languages\"、\"N words in your review schedule\"",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "loop-x2-continuous-typing-timing-flake",
    "title": "循环 ×2 连续打字偶发第 2 遍由窗口字母完成/下一词多记 miss（两端一致、时间相关）",
-   "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "V1 10-11 s8/s9 偶发，非今日改动引起；需稳定复现",
-   "date": "2026-10-11"
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "bd2219d",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；F1 找到根因（320ms 计时器与 React 渲染之间的旧闭包 + 被动 effect），VA 48 次 25 失败 → 修后 0/48、组合构建 0/48",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "console-404-at-every-load",
    "title": "每次加载一条「Failed to load resource 404」控制台错误（两端一致，response hook 未捕到 4xx URL，疑 SW 取资源）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "V1 10-11；L 的 harness（SW 屏蔽）计 0 控制台错误，待定位",
-   "date": "2026-10-11"
+   "reason": "10-12 复核已消失（F5/L）",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "en-upper-27-rows-def-describes-old-synset",
    "title": "27 个 en-upper 行今日改了 trans 但 def 仍描述旧义项（cultivation、divers、groom、temporal、liaison…）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "VG 10-11；先例 advantage/sector/treat/committed 已改 def；候选在 gloss-candidates-2026-10-11.md B 段",
-   "date": "2026-10-11"
+   "status": "fixed",
+   "commit": "47f1720, 76027b8",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；G1 查 142 行，73 行 def 改写并经校验",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "stale-local-main-branch-in-sandbox",
@@ -4866,8 +4866,8 @@
    "priority": "P2",
    "status": "deferred",
    "commit": "",
-   "reason": "10-11 发现；每日开场先 git checkout --detach origin/main；不要推本地 main；-B 重置被分类器拒绝",
-   "date": "2026-10-11"
+   "reason": "10-12 仍在（本地 main=bc9b439）；今日开场即 detached 在 origin/main，修复在 ../fix worktree 的 claude/daily-2026-10-12 上做",
+   "date": "2026-10-12"
   },
   {
    "fingerprint": "css-acct-badge-unused",
@@ -4877,6 +4877,303 @@
    "commit": "5c673d6",
    "reason": "F5 10-10 发现、10-11 复核；删除后 src 与构建 css 0 处",
    "date": "2026-10-11"
+  },
+  {
+   "fingerprint": "continuous-typing-stale-closure-grading",
+   "title": "连续打字跨词边界：320ms 计时器清 finishing 后、下一词渲染前的按键让上一词被二次完成并把下一词判错（miss + lapse）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "bd2219d",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "pinyin-box-caret-click-miss",
+   "title": "打拼音框文字居中，点回框内光标落在已打字母前/中，下一字母判错 → 错词本 + SRS -1（Shift+TAB/TAB 全选同害）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "a1cf0ca",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；onMouseUp 与 TAB keyup 把折叠光标移到末尾，拖选保留",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "en-toefl-stale-against-pool-2",
+   "title": "en-toefl 95 个印尼语释义落后于 10-08…10-10 已校订的来源库（accumulate bercancut、carve membacok、inhabit menjajah、formulate berkata…；13 行无释义）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "27db470, 2b8f228",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；build-toefl-dict.py 应用 en-toefl 钉值后 --refresh，覆盖 1334→1402",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "pasted-grouped-candidate-separator",
+   "title": "cf5624b 把成组候选「A ／ B ／ C」整串贴进每个词头：en-upper 25 + en-toefl 4 字段（满足的 ／ 令人满足的 ／ 履行），钉值同错",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "81c95b5",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；按组内位置拆回 10-10 已同意的各段，今日查找者与盲校验者一致",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "en-toefl-pins-applied-by-no-builder",
+   "title": "en-toefl 的 56 个钉值没有任何脚本应用，refresh/重建会覆盖",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "27db470",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "signout-no-busy-state-lost-signout",
+   "title": "退出登录先推送最多 5s：按钮无忙碌态无提示；推送中关标签页则从未登出，重开仍登录（共享电脑）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "79d11d3",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；按钮 disabled +「正在退出…」，ketiklab-signing-out 标记由下次加载补完退出，输入密码登录或打开登录链接会清除标记",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "chapter-row-phone-regression-96ca933",
+   "title": "96ca933 后手机上章节选择框压到计时器上、› 按钮出屏（54 格 50 格坏）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "edb143f",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；.chapter-nav{min-width:0;flex:0 0 auto} + ≤430px 选项只显示数字，54 格 0 坏，平板/桌面不变",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "continue-pill-covers-meaning",
+   "title": "会话失焦未暂停时「按任意键继续」药丸盖住释义行（87×30 @375）与输入法框",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "c807ea5",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；焦点模式下遮罩出现时保留 .hint 行占位，7 格 0 重叠",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "bare-hanzi-mistake-keys-lost-non-zh",
+   "title": "08-20…09-13 的裸汉字错词本键（现在）在学英语/印尼语时不列出且被开始复习删除；zh-renames 28 行词典词头离线把 企图 当 试图",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "d67d972",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；splitId 把纯汉字裸键读作 zh，删 zh-renames 中 28 个 zh 库词头行；三种学习语言 × 在线/离线种子测试无删除、二次加载不变",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "cross-language-carry-lost",
+   "title": "混合列表中打拼音词与拉丁词交界处连续打字，带入字母丢失，下一词判错（0/8 干净）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "d45623d",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；App carry 与 ZhSteps 共用 pinyinCarry，ZhSteps 两个 effect 改 layout；144 次全干净",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "malay-and-unrelated-sense-dict-lines",
+   "title": "词库印尼语行马来语专用（comel、senarai、hospital…）与 zh 库不相关义项（英寸 fathom、卫星 moon…）、OEWN 语法注释残留定义",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "c9b6c79, 47f1720, 518c46c, 76027b8",
+   "reason": "已合入 main d45623d（Build check #72「no type errors」0 注解，Build and deploy #765 成功）；integrity 4.14 由 85 行降到 7 行，余下见 gloss-candidates-2026-10-12",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "escape-done-window-carried-word-refocuses",
+   "title": "完成窗口内按 Escape 后带入的字母打完下一词，finishWord setRunning(true) 回到焦点模式（8b77c02 去掉的状态）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA：F1 的守卫会让阶梯档时钟不再启动；已验证的替代：carry effect 在 pausedByButton/leftByKey 时早退（App.tsx ~559），带入字母丢弃",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "ime-commit-in-done-window-dropped",
+   "title": "输入法档 320ms 完成窗口内提交的下一词被丢弃，需要重打",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "修法：handleType 完成窗口分支的 carry 不排除 practiceLang zh（VA 验证）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "review-banner-pending-migration-count",
+   "title": "键迁移未完成时（indonesian.json 取不到）同词两行到期，横幅「2 / 3」且旧行每次复习再出现",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V3 公式：srs.due - (complete ? unresolved.length : 0) - (keys.length - refs.length - (complete ? 0 : unresolved.length))；旧行续到期属保留旧键设计",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "single-dict-fail-generic-banner",
+   "title": "一个词库文件取不到时横幅只说「考试词库加载失败」不点名、重试无效",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA 验证：App.tsx:615 setDictLoadError(d)，学习页也显示具名横幅",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "settings-meaning-row-edits-learning-lang",
+   "title": "打开另一语言词库时设置页「释义语言」改的是存储的学习语言而非当前列表",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA：用 dictInfo?.lang ?? lang（practiceLang 在混合列表里逐词变化）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "practice-word-no-lang-attr",
+   "title": "练习词/释义行/词库卡/阅读器文本无 lang 属性，读屏用界面语言念",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA 验证 App.tsx:2050,2067,2148-2149,2195/2201/2205 加 lang，无 CSS 依赖",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "orphan-mistake-key-misleading-copy",
+   "title": "错词本里任何列表都没有的键提示「去打开那个列表」，开始复习又静默删除",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA：报告式删除会在打开页面时就退休 toefl 改名旧键（主人项），或只改文案",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "browser-locale-ms-jv-zh-ui",
+   "title": "ms-MY / ms / jv-ID / su-ID 浏览器首访整站中文",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA：先判 zh/id/en，再把 in/ms/*-ID 映射 id（en-ID、zh-ID 不能被 -ID 抢走）；未知语言回落英文与否待主人",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "settings-language-row-detail-two-of-three",
+   "title": "设置页「语言设置」行只写 界面语言 + 学习语言，漏了释义语言",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "VA：复用 MODAL_T.subtitle（先改 languages）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "choose-answer-unique-length-43-cards",
+   "title": "选汉字 43/2342 张卡答案是唯一的同长选项（章内无同长词）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V3 验证：zhPool 用 ladderWords 同长词补足 → 3 张",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "retired-mistake-returns-from-cloud",
+   "title": "开始复习在本机退休的错词本键下次推送又写回云端，「云端有更多」横幅常驻，合并后回来",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V4：本机 ketiklab-retired 记录（不同步），归一器在早退前丢弃；再错时移出",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "fav-cap-500-cuts-other-device-star",
+   "title": "500 收藏上限时另一设备的新星标每次推送被切掉（两设备轮流写，无横幅）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V4 验证 turns() 式交替合并 3 行",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "offline-expired-token-shows-signin-form",
+   "title": "离线且 token 过期时账户页 3.3s 后显示登录表单，会话仍在",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V4：currentSession 3s 回退返回 pending 或读存储显示「仍在登录」提示",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "reading-titles-cut-1024-1439",
+   "title": "1024–1439px 阅读列表标题截到 145px，Gurindam Pasal… 三个相同残片",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": ".reading-list b{white-space:normal}（V5 验证）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "nav-label-two-lines-wide-short",
+   "title": "≥1280 宽 ≤800 高印尼语导航标签 42px 溢出 40px 行（en 有到期徽标时同）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "@media(min-width:1280px) and (max-height:800px){.nav{height:auto;min-height:40px}}",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "reader-textarea-phone-three-lines",
+   "title": "阅读输入框手机 44px（需 70–94px）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V5：≤360px 三行最小高度，375 两行",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "ime-veil-pill-2px-overlap",
+   "title": "输入法档遮罩胶囊压住输入框 2px（768×1024、1440×900、1920×1080）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": ".word-card:has(.ime-input){padding-bottom:48px}（V5 验证 0 重叠）",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "dict-def-stale-after-trans-pin",
+   "title": "钉了 trans 未钉 def 的行 def 仍描述旧义项：en-core 230、en-plus 81、en-academic 392（附加释义「英文释义」开启时可见）",
+   "priority": "P2",
+   "status": "deferred",
+   "commit": "",
+   "reason": "G1 跟进；明日查找者 + 校验者逐库处理",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "indonesian-json-texting-abbreviations",
+   "title": "indonesian.json 32 个网络缩写（tdk、sdh、blm、dgn、wkwk…）当词教，25 个与全写重复",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "V5：内容决定；删除会让保存的章节位置后移最多 32 词，标注（如 wkwkw 已做）更安全",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "renamed-topic-headwords-lose-progress",
+   "title": "09-23 改名的主题词（marmot→guinea pig、typhus→typhoid、as far as→so far、demographic bonus→demographic dividend）旧 id: 键与 SRS 行被退休",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "V3：en-renames 表由 planKeyMoves 读取可救，需主人决定",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "toll-road-zh-renames-conflict",
+   "title": "toll road 首义两方同意改 收费公路；高速公路，但 zh-renames 把 收费公路 映射到 toll",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "今日未改；先定 zh-renames 该行去留",
+   "date": "2026-10-12"
+  },
+  {
+   "fingerprint": "vulgar-headwords-mildest-gloss",
+   "title": "en-plus 含 faggot、fag、dyke、retard、tit、boob、pussy 等词头，按最温和义项释义",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "G2 提出；是否保留这些词头属主人内容决定",
+   "date": "2026-10-12"
   }
  ]
 }
