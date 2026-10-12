@@ -1112,5 +1112,173 @@
   "idtrans": [
    "cerutu"
   ]
+ },
+ "旅游": {
+  "idtrans": [
+   "wisata",
+   "pariwisata"
+  ]
+ },
+ "理事": {
+  "idtrans": [
+   "anggota dewan",
+   "pengurus",
+   "direktur"
+  ]
+ },
+ "英寸": {
+  "trans": [
+   "inch"
+  ],
+  "idtrans": [
+   "inci"
+  ]
+ },
+ "卫星": {
+  "trans": [
+   "satellite"
+  ],
+  "idtrans": [
+   "satelit"
+  ]
+ },
+ "有用": {
+  "trans": [
+   "useful",
+   "helpful"
+  ],
+  "idtrans": [
+   "berguna",
+   "bermanfaat"
+  ]
+ },
+ "处置": {
+  "trans": [
+   "deal with",
+   "handle",
+   "dispose of"
+  ]
+ },
+ "失去": {
+  "trans": [
+   "lose"
+  ],
+  "idtrans": [
+   "kehilangan"
+  ]
+ },
+ "有效": {
+  "trans": [
+   "effective",
+   "valid"
+  ],
+  "idtrans": [
+   "efektif",
+   "berlaku",
+   "sah"
+  ]
+ },
+ "名声": {
+  "idtrans": [
+   "reputasi",
+   "nama baik",
+   "ketenaran"
+  ]
+ },
+ "亲戚": {
+  "trans": [
+   "relative",
+   "relation",
+   "kin"
+  ],
+  "idtrans": [
+   "kerabat",
+   "saudara",
+   "famili"
+  ]
+ },
+ "英里": {
+  "idtrans": [
+   "mil"
+  ]
+ },
+ "邮票": {
+  "idtrans": [
+   "prangko"
+  ]
+ },
+ "上瘾": {
+  "idtrans": [
+   "kecanduan",
+   "ketagihan"
+  ]
+ },
+ "强壮": {
+  "trans": [
+   "strong",
+   "sturdy",
+   "robust"
+  ],
+  "idtrans": [
+   "kuat",
+   "kekar",
+   "tegap"
+  ],
+  "def": "physically strong and healthy"
+ },
+ "订阅": {
+  "trans": [
+   "subscribe",
+   "subscription"
+  ]
+ },
+ "配偶": {
+  "trans": [
+   "spouse",
+   "partner"
+  ],
+  "def": "a husband or wife"
+ },
+ "共生": {
+  "trans": [
+   "symbiosis",
+   "coexist"
+  ]
+ },
+ "买得起": {
+  "idtrans": [
+   "mampu membeli",
+   "mampu"
+  ]
+ },
+ "会话": {
+  "idtrans": [
+   "percakapan",
+   "dialog"
+  ]
+ },
+ "恶性肿瘤": {
+  "idtrans": [
+   "kanker",
+   "tumor ganas"
+  ]
+ },
+ "痢疾": {
+  "idtrans": [
+   "disentri"
+  ]
+ },
+ "医务室": {
+  "idtrans": [
+   "klinik",
+   "ruang kesehatan"
+  ]
+ },
+ "暗指": {
+  "trans": [
+   "allude to",
+   "imply",
+   "hint at"
+  ]
  }
 }

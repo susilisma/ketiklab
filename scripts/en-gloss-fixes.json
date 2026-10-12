@@ -3905,6 +3905,11 @@
   "praise": {
    "trans": [
     "赞扬"
+   ],
+   "idtrans": [
+    "pujian",
+    "sanjungan",
+    "memuji"
    ]
   },
   "bow": {
@@ -4230,6 +4235,82 @@
    "idtrans": [
     "ancaman"
    ]
+  },
+  "town": {
+   "idtrans": [
+    "kota kecil",
+    "kota"
+   ]
+  },
+  "rate": {
+   "idtrans": [
+    "tingkat",
+    "laju",
+    "tarif"
+   ]
+  },
+  "manager": {
+   "idtrans": [
+    "manajer",
+    "pengelola",
+    "pengurus"
+   ]
+  },
+  "interview": {
+   "idtrans": [
+    "wawancara"
+   ]
+  },
+  "conversation": {
+   "idtrans": [
+    "percakapan",
+    "obrolan",
+    "perbincangan"
+   ]
+  },
+  "joint": {
+   "idtrans": [
+    "bersama",
+    "gabungan"
+   ]
+  },
+  "crowd": {
+   "idtrans": [
+    "kerumunan",
+    "orang banyak",
+    "khalayak"
+   ]
+  },
+  "cute": {
+   "idtrans": [
+    "lucu",
+    "imut",
+    "menggemaskan"
+   ]
+  },
+  "urban": {
+   "idtrans": [
+    "perkotaan",
+    "kota"
+   ]
+  },
+  "talks": {
+   "idtrans": [
+    "perundingan",
+    "pembicaraan",
+    "negosiasi"
+   ]
+  },
+  "glasses": {
+   "idtrans": [
+    "kacamata"
+   ]
+  },
+  "nothing": {
+   "def": "not anything; no single thing"
+  },
+  "whatever": {
+   "def": "anything at all; no matter what"
   }
  },
  "en-plus": {
@@ -8718,6 +8799,44 @@
    "idtrans": [
     "katalog",
     "daftar"
+   ]
+  },
+  "dialogue": {
+   "idtrans": [
+    "dialog",
+    "percakapan"
+   ]
+  },
+  "tourism": {
+   "idtrans": [
+    "pariwisata",
+    "wisata"
+   ]
+  },
+  "administrator": {
+   "idtrans": [
+    "administrator",
+    "pengelola",
+    "pengurus"
+   ]
+  },
+  "cookie": {
+   "idtrans": [
+    "kue kering",
+    "biskuit"
+   ]
+  },
+  "machinery": {
+   "idtrans": [
+    "mesin",
+    "permesinan"
+   ]
+  },
+  "visitor": {
+   "idtrans": [
+    "pengunjung",
+    "tamu",
+    "wisatawan"
    ]
   }
  },
@@ -17474,6 +17593,12 @@
     "jamur",
     "fungi"
    ]
+  },
+  "dialog": {
+   "idtrans": [
+    "dialog",
+    "percakapan"
+   ]
   }
  },
  "en-upper": {
@@ -23051,6 +23176,13 @@
     "terdiri atas",
     "meliputi",
     "mencakup"
+   ]
+  },
+  "crappy": {
+   "idtrans": [
+    "buruk",
+    "jelek",
+    "payah"
    ]
   }
  },
