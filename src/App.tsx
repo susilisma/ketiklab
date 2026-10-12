@@ -1999,7 +1999,8 @@ export default function Home() {
   }
 
   return <div className={`app${dark ? " dark" : ""}${running && view === "learn" ? " focused" : ""}`}>
-    <aside className="sidebar">
+    {/* while the language dialog is open everything behind it is inert: Tab cannot walk out of it and ENTER cannot press a button behind it */}
+    <aside className="sidebar" inert={showLangSetup}>
       <button className="brand" onClick={() => setView("learn")} aria-label={TX("KetikLab 首页", "Beranda KetikLab", "KetikLab home", uiLang)}><span>KL</span><b>KetikLab</b></button>
       <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} title={t[item.id]} aria-label={t[item.id]} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
@@ -2012,7 +2013,7 @@ export default function Home() {
       </div>
     </aside>
 
-    <main className="main">
+    <main className="main" inert={showLangSetup}>
       <header>
         {/* a review session is its own list: the button names it, not the category or the rung's narrowed total it would otherwise print ("Business & Work · 2 / 614") */}
         <button className="chapter" onClick={() => setView("library")}><small>{t.choose}</small><b><span>{reviewKeys ? t.reviewing : dictInfo ? dictName(dictInfo) : source === "fav" ? TX("我的收藏", "Favorit saya", "My favorites", uiLang) : ladder.broad ? TX("入门阶梯", "Tangga dasar", "Starter ladder", uiLang) : (category === "all" ? t.all : CATEGORY_META[category][uiLang])}</span><span>{` · ${reviewKeys ? learnItems.length : activeItems.length}${ladderNarrowed && !reviewKeys ? ` / ${activeWords.length}` : ""}`}</span></b></button>
@@ -2264,10 +2265,16 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
   const first = useRef<HTMLButtonElement>(null);
   // a dialog takes the focus with it, or keys keep landing on the practice card behind it
   useEffect(() => { first.current?.focus(); }, []);
-  return <div className="lang-modal-backdrop" role="dialog" aria-modal="true" onKeyDown={e => { if (e.key === "Escape") onClose(); }}>
+  // Escape closes it wherever the focus is: a click on the backdrop leaves the focus on <body>, outside this element
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [onClose]);
+  return <div className="lang-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
     <div className="lang-modal">
       <button className="lang-modal-close" onClick={onClose} aria-label={mt.cancel}>✕</button>
-      <h2>{mt.title}</h2>
+      <h2 id="lang-modal-title">{mt.title}</h2>
       <p className="lang-modal-subtitle">{mt.subtitle}</p>
       <div className="lang-modal-section">
         <h3>🖥 {mt.ui}</h3>
