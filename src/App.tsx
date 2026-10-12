@@ -1270,7 +1270,10 @@ export default function Home() {
     : 100;
   const readingProgress = Math.round(((readingLine + Math.min(readingTyped.length / Math.max(readingTarget.length, 1), 1)) / reading.lines.length) * 100);
   // "<lang>:<key>" → the trio word in that language, else a loaded dictionary of that language
-  const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
+  // a bare key in hanzi is a Chinese one whatever is being learned now: the first Chinese build
+  // stored a zh dictionary mistake as the bare headword (现在), and read as the learning language
+  // it was named by nothing for a learner of English or Indonesian and retired by 开始复习
+  const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [/^[\u3400-\u9fff]+$/.test(id) ? "zh" : lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
   type KeyInfo = { text: string; meaning: string; note: boolean; label?: string; legacy?: boolean };
   function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
