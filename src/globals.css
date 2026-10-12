@@ -492,3 +492,7 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 .lang-modal{display:flex;flex-direction:column;max-height:calc(100dvh - 36px);overflow:auto;overscroll-behavior:contain;padding-bottom:0}
 .lang-modal-actions{position:sticky;bottom:0;z-index:1;flex-wrap:wrap;align-items:center;background:var(--surface);margin-top:auto;padding:14px 0 18px;box-shadow:0 -14px 20px -16px rgba(0,0,0,.45)}
 .lang-modal-need{margin-right:auto;color:var(--purple);font-size:12px;font-weight:600;line-height:1.35;max-width:60%}
+
+/* html.dark only recoloured the page: with color-scheme left at `normal`, the native select
+   popups, scrollbars and form controls still drew light, white bars down a dark reading list */
+html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .chapter-select option{color:var(--text);background:var(--surface)}
