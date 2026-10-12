@@ -77,6 +77,12 @@ let session: Session | null = null;
 // a sign-up confirmation link also arrives with tokens in the hash; that sign-in
 // should land on the account page rather than silently on the home view
 let fromLink = (() => { try { return location.hash.includes("access_token="); } catch { return false; } })();
+// auth-js clears the hash with location.hash = "", which pushes a history entry: the link's own
+// entry stays behind it, and Back onto it reloaded (see the hashchange listener) and signed in
+// with the same tokens again, so Back never left the page while the token lived (about an hour)
+const LINK_SEEN = "ketiklab-link-seen";
+const linkTag = (h: string) => { try { return (new URLSearchParams(h.slice(1)).get("access_token") || "").slice(-24); } catch { return ""; } };
+if (fromLink) ss.set(LINK_SEEN, linkTag(location.hash));
 // A session that came out of the URL was not typed in here: anyone can put their own
 // tokens in a link and send it round. Nothing on this device is joined to such a
 // session until the learner presses 立即同步 (Account checks this before linking).
@@ -461,6 +467,11 @@ try {
   window.addEventListener("storage", (e) => { if (e.key === SYNC_UID_KEY && linkedUid() !== bootLinked) location.reload(); });
   // auth-js reads the hash once, at start-up: a sign-in or reset link pasted into a tab that
   // is already on the site is a same-document navigation and would sit unread in the address bar
-  window.addEventListener("hashchange", () => { if (/^#(access_token=|error)/.test(location.hash)) location.reload(); });
+  window.addEventListener("hashchange", () => {
+    if (!/^#(access_token=|error)/.test(location.hash)) return;
+    // Back onto the entry of the link already used here: drop the tokens from the URL and keep going back
+    if (linkTag(location.hash) && linkTag(location.hash) === ss.get(LINK_SEEN)) { tidyUrl(); history.back(); return; }
+    location.reload();
+  });
 } catch { /* no window: nothing to guard */ }
 document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") void autoPush(); });
