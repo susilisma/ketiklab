@@ -390,6 +390,9 @@
  "明信片": {
   "trans": [
    "postcard"
+  ],
+  "idtrans": [
+   "kartu"
   ]
  },
  "控制器": {
@@ -1694,6 +1697,71 @@
   "idtrans": [
    "angka kesakitan",
    "morbiditas"
+  ]
+ },
+ "社会": {
+  "idtrans": [
+   "masyarakat"
+  ]
+ },
+ "计划": {
+  "idtrans": [
+   "rencana",
+   "program",
+   "rancangan"
+  ]
+ },
+ "少年": {
+  "idtrans": [
+   "putra"
+  ]
+ },
+ "会员": {
+  "idtrans": [
+   "anggota"
+  ]
+ },
+ "删除": {
+  "idtrans": [
+   "menghapus",
+   "hapus"
+  ]
+ },
+ "开车": {
+  "idtrans": [
+   "mengemudi",
+   "menyetir"
+  ]
+ },
+ "邮件": {
+  "idtrans": [
+   "surat",
+   "pos"
+  ]
+ },
+ "邮政": {
+  "idtrans": [
+   "pos"
+  ]
+ },
+ "按钮": {
+  "idtrans": [
+   "tombol"
+  ]
+ },
+ "名片": {
+  "idtrans": [
+   "kartu"
+  ]
+ },
+ "回转": {
+  "idtrans": [
+   "putaran"
+  ]
+ },
+ "紧急情况": {
+  "idtrans": [
+   "darurat"
   ]
  }
 }

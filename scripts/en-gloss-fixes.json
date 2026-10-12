@@ -4823,6 +4823,17 @@
     "angkatan darat",
     "tentara"
    ]
+  },
+  "turn": {
+   "idtrans": [
+    "belokan",
+    "giliran"
+   ]
+  },
+  "ticket": {
+   "idtrans": [
+    "tiket"
+   ]
   }
  },
  "en-plus": {
