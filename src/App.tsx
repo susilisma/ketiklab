@@ -633,7 +633,10 @@ export default function Home() {
       if (!Array.isArray(w) || !w.length || !Array.isArray(r) || !r.length) { setDataError(true); return; }
       setWords(w);
       setReadings(r);
-      if (r.length) setReadingId(r[0].id);
+      // open on a reading in the language being learned: r[0] is the English Sonnet 18, which every
+      // learner of Chinese or Indonesian got from the sidebar and from /zh/readings and /id/readings.
+      // langRef, not lang: this effect runs once, before the saved learning language is restored
+      if (r.length) setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id);
     }).catch(() => { if (alive) setDataError(true); });
     loadManifest();
     { const sp = initSoundPref(); setSoundProfileState(sp.profile); }
@@ -1668,6 +1671,12 @@ export default function Home() {
       setTyped(""); resetWordRun();
       autoSpokenWord.current = null;
       setSpeakingWord(null);
+      // a reading not yet begun follows the language just chosen, as it does on load: a first
+      // visit from /en/readings/ opened on the Chinese default while the dialog was up
+      if (!readingTyped && readingLine === 0 && reading && reading.lang !== learn) {
+        const first = readings.find(pc => pc.lang === learn);
+        if (first) setReadingId(first.id);
+      }
     }
     writeLangs(ui, learn, byLearn);
     setShowLangSetup(false);
