@@ -145,6 +145,9 @@ const ENTRY: { ui: Lang | null; learn: Lang | null; lib: string | null; step: Zh
     // button or the installed app's start page kept the link's language only once the dialog
     // was saved — closed instead, they came back in the browser's language
     if (entryUi) try { localStorage.setItem("ketiklab-ui", entryUi); } catch { /* ignore */ }
+    // the learning language a link named is remembered the same way: closed instead of
+    // saved, the dialog left /?ui=zh&learn=id learning Chinese again on the next load
+    if (isLang(learn)) try { localStorage.setItem("ketiklab-learn", learn); } catch { /* ignore */ }
     // ?learn= and ?step= let one link open the language and the rung a post is about: a post
     // about typing pinyin landed its readers on the rung that has nothing to type, and every
     // visitor arrived set to learn Chinese whichever landing page they came from
@@ -162,6 +165,8 @@ const COARSE = (() => { try { return matchMedia("(hover: none) and (pointer: coa
 // the interface language before any choice: the link's, else the one a link opened earlier, else the browser's when it is one of ours
 const rememberedUi = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-ui"); return isLang(u) ? u : null; } catch { return null; } };
 const initialUi = (): Lang => ENTRY.ui ?? rememberedUi() ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
+// the learning language before any choice: the link's, else the one a link opened earlier (a saved ketiklab-langs still wins in the restore effect)
+const rememberedLearn = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-learn"); return isLang(u) ? u : null; } catch { return null; } };
 // the document's own title and language as served (index.html is Chinese; /en/ and /id/ carry
 // their SEO titles), read before any effect rewrites them
 const PAGE_TITLE = document.title;
@@ -317,7 +322,7 @@ export default function Home() {
   const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
 
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
-  const [lang, setLang] = useState<Lang>(ENTRY.learn ?? "zh");
+  const [lang, setLang] = useState<Lang>(ENTRY.learn ?? rememberedLearn() ?? "zh");
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
   const sourceRef = useRef(source); sourceRef.current = source;
