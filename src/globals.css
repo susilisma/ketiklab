@@ -393,7 +393,9 @@ button.profile:hover>i{color:var(--purple)}
 /* every view stays reachable: the 7 nav buttons and the account avatar split the bar into 8 equal slots */
 .sidebar nav{flex:7 1 0;min-width:0;flex-direction:row;gap:0}.nav{flex:1 1 0;min-width:0;height:48px;position:relative;padding:0;justify-content:center;border-radius:11px}.nav i{width:auto;font-size:22px}.nav span{display:none}.nav .nav-badge{position:absolute;top:2px;right:2px;margin:0;min-width:18px;height:18px;padding:0 4px;border-radius:9px;font-size:12px}
 .sidebar-bottom{flex:1 1 0;min-width:0;margin:0;display:flex;align-items:center}.mini-progress{display:none}.sidebar-bottom .profile{border:0;padding:0;height:48px;justify-content:center}.profile div,.profile>i{display:none}.profile>span{width:40px;height:40px}.sidebar-bottom .profile:hover{border-radius:11px}
-.main>header{gap:8px}.chapter small{display:none}.chapter b{font-size:13px}.round{display:none}.language{padding:0 6px}.language span{display:none}.primary{padding:0 12px;gap:8px}
+.main>header{gap:8px}.chapter small{display:none}.round{display:none}
+/* the title may take two lines beside the two 40px controls ("Business & Work · 614" and "Hidup di Indonesia · 399" were ellipsized at 375px); a longer name still ends in … after the second line */
+.chapter b{font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow:hidden}.chapter b>span:first-child{display:inline;overflow:visible}.chapter b>span:last-child{display:inline}.language{padding:0 6px}.language span{display:none}.primary{padding:0 12px;gap:8px}
 }
 /* learn: the word's top edge = header + strip + card padding + air, and air is solved from --word-top, so it lands at the same share of every viewport, idle or focused */
 /* width:100%: margin:0 auto would otherwise shrink-wrap the flex item */
