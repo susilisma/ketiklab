@@ -10,6 +10,10 @@ import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, useZhMap, zhToned, zhP
 // without this map it was retired as an orphan by 开始复习. Grows with each re-gloss.
 import zhRenamesJson from "./zh-renames.json";
 const ZH_RENAMES: Record<string, string> = zhRenamesJson;
+// the one-time key migration is flagged per device; the flag carries the size of the renames
+// list, so a re-glossed first sense added later sends a flagged device through the pass once
+// more (renameRecords merges, so a second pass over moved keys changes nothing)
+const KEYS_FLAG = "v4." + Object.keys(ZH_RENAMES).length;
 
 type View = "learn" | "library" | "mistakes" | "articles" | "plan" | "stats" | "member" | "account" | "settings";
 type ReadingLang = "all" | "en" | "id" | "zh";
@@ -945,9 +949,9 @@ export default function Home() {
   useEffect(() => {
     if (!words.length || !dicts.length || migratingKeys) return;
     // v3: the migration learnt to move bare hanzi keys and re-glossed first senses, so a
-    // device that finished the v2 pass goes through it once more; v4: and the bare hanzi
-    // keys that are no topic word (renameRecords merges, so a second pass is safe)
-    try { if (localStorage.getItem("ketiklab-keys") === "v4") return; } catch { return; }
+    // device that finished the v2 pass goes through it once more; v4.<n>: and the bare hanzi
+    // keys that are no topic word, with n the renames list's size (see KEYS_FLAG)
+    try { if (localStorage.getItem("ketiklab-keys") === KEYS_FLAG) return; } catch { return; }
     migratingKeys = true;
     let alive = true;
     const read = <T,>(key: string, fallback: T): T => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) as T : fallback; } catch { return fallback; } };
@@ -978,7 +982,7 @@ export default function Home() {
         // outlive the lists it describes, so both land before it and a refusal throws
         localStorage.setItem("ketiklab-state", JSON.stringify({ ...state, mistakes: nextMistakes }));
         localStorage.setItem("ketiklab-fav", JSON.stringify(nextFavs));
-        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", "v4");
+        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", KEYS_FLAG);
         setMistakes(nextMistakes);
         setFavorites(nextFavs);
         refreshSrs();
@@ -1870,7 +1874,9 @@ export default function Home() {
     const w = trioOf(key);
     if (w) { if (lg !== lang) changeLanguage(lg); practiceWord(w, lg); return; }
     for (const d of dicts) if (d.lang === lg && dictCache.current.get(d.id)?.some(e => e.name === key)) { gotoDictWord(d.id, key); return; }
-    const legacy = wordByEn.get(key);
+    // a hanzi key of a first sense re-glossed since (zh:直走 for straight) is listed through
+    // ZH_RENAMES by lookupKey and served by 开始复习, so 练习 → resolves it the same way
+    const legacy = wordByEn.get(key) || (lg === "zh" && ZH_RENAMES[key] ? wordByEn.get(ZH_RENAMES[key]) : undefined);
     if (legacy) { if (lg !== lang) changeLanguage(lg); practiceWord(legacy, lg); }
   }
   // the click moved focus to the button; refocusing the input would run its onFocus,
