@@ -108,6 +108,10 @@ supabase.auth.onAuthStateChange((event, s) => {
   // for the next, ordinary sign-in and the sync effect kept returning early
   if (event === "SIGNED_OUT") { finishRecovery(); try { localStorage.removeItem(TYPED_KEY); localStorage.removeItem(OUT_KEY); } catch { /* ignore */ } }
   // the link signed in: an unfinished sign-out from before it is over (see below)
+  // a link that signs in is a new session: a password recovery an earlier link left
+  // unfinished in this tab is not its (the New-password form showed for the next
+  // account's link, and the sync waited behind it)
+  if (event === "SIGNED_IN" && fromLink) finishRecovery();
   if (event === "PASSWORD_RECOVERY" || (event === "SIGNED_IN" && fromLink)) { fromLink = false; try { localStorage.removeItem(OUT_KEY); } catch { /* ignore */ } wantAccount(); }
   // the link's token was rejected or could not be checked: auth-js keeps whatever session it had (none, or
   // the one a sign-out never finished) and reports nothing. Said on the account page; the hash stays so a
