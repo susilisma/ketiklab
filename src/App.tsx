@@ -881,6 +881,11 @@ export default function Home() {
       const w = wordByEn.get(en); if (!w) continue;
       for (const from of [`zh:${old}`, old]) if (held.has(from) && !moves.has(from)) { moves.set(from, `zh:${TRIO}${w.en}`); hanzi = true; }
     }
+    // the same era's bare key that is no topic word's first sense (一些: a dictionary
+    // headword, or a sense re-glossed and not renamed) stayed bare, so 开始复习 wrote the
+    // word again as zh:一些 and the 错词本 listed it twice: it gains its language here, and
+    // the dictionary check below keeps that name when a Chinese dictionary holds it
+    for (const k of held) if (k.indexOf(":") < 0 && /^[\u3400-\u9fff]+$/.test(k) && !moves.has(k)) { moves.set(k, `zh:${k}`); hanzi = true; }
     // a key with no language prefix is hanzi from that era: Chinese
     const langOf = (k: string) => { const i = k.indexOf(":"); return i < 0 ? "zh" : k.slice(0, i); };
     const langs = new Set(Array.from(moves.keys(), langOf));
@@ -935,8 +940,9 @@ export default function Home() {
   useEffect(() => {
     if (!words.length || !dicts.length || migratingKeys) return;
     // v3: the migration learnt to move bare hanzi keys and re-glossed first senses, so a
-    // device that finished the v2 pass goes through it once more
-    try { if (localStorage.getItem("ketiklab-keys") === "v3") return; } catch { return; }
+    // device that finished the v2 pass goes through it once more; v4: and the bare hanzi
+    // keys that are no topic word (renameRecords merges, so a second pass is safe)
+    try { if (localStorage.getItem("ketiklab-keys") === "v4") return; } catch { return; }
     migratingKeys = true;
     let alive = true;
     const read = <T,>(key: string, fallback: T): T => { try { const v = localStorage.getItem(key); return v ? JSON.parse(v) as T : fallback; } catch { return fallback; } };
@@ -967,7 +973,7 @@ export default function Home() {
         // outlive the lists it describes, so both land before it and a refusal throws
         localStorage.setItem("ketiklab-state", JSON.stringify({ ...state, mistakes: nextMistakes }));
         localStorage.setItem("ketiklab-fav", JSON.stringify(nextFavs));
-        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", "v3");
+        if (!unsafe.size && records) localStorage.setItem("ketiklab-keys", "v4");
         setMistakes(nextMistakes);
         setFavorites(nextFavs);
         refreshSrs();
