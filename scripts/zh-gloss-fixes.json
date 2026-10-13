@@ -457,7 +457,7 @@
    "postcard"
   ],
   "idtrans": [
-   "kartu"
+   "kartu pos"
   ]
  },
  "控制器": {
@@ -1527,7 +1527,11 @@
   "trans": [
    "recall"
   ],
-  "def": "to order the return of a product or person"
+  "def": "to order the return of a product or person",
+  "idtrans": [
+   "menarik kembali",
+   "memanggil kembali"
+  ]
  },
  "即位": {
   "trans": [
@@ -1542,6 +1546,11 @@
    "pegangan tangan",
    "birai",
    "sandaran tangan"
+  ],
+  "trans": [
+   "handrail",
+   "armrest",
+   "banister"
   ]
  },
  "小吃": {
@@ -1842,7 +1851,7 @@
  },
  "名片": {
   "idtrans": [
-   "kartu"
+   "kartu nama"
   ]
  },
  "回转": {
@@ -6748,6 +6757,19 @@
   "trans": [
    "enumerate",
    "list"
+  ]
+ },
+ "反感": {
+  "trans": [
+   "dislike",
+   "aversion",
+   "antipathy"
+  ]
+ },
+ "乌贼": {
+  "trans": [
+   "cuttlefish",
+   "squid"
   ]
  }
 }

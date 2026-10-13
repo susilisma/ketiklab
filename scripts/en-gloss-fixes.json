@@ -4834,6 +4834,17 @@
    "idtrans": [
     "tiket"
    ]
+  },
+  "panel": {
+   "trans": [
+    "面板"
+   ]
+  },
+  "marketing": {
+   "trans": [
+    "市场营销",
+    "营销"
+   ]
   }
  },
  "en-plus": {
@@ -15829,7 +15840,11 @@
     "发推文",
     "（鸟）啾啾叫"
    ],
-   "def": "a short message posted on Twitter (X)"
+   "def": "a short message posted on Twitter (X)",
+   "idtrans": [
+    "cuitan",
+    "kicauan"
+   ]
   },
   "underlying": {
    "trans": [
@@ -16329,7 +16344,11 @@
    ]
   },
   "bastard": {
-   "def": "an insulting word for an unpleasant man"
+   "def": "an insulting word for an unpleasant man",
+   "trans": [
+    "混蛋",
+    "私生子"
+   ]
   },
   "dislike": {
    "idtrans": [
@@ -16461,6 +16480,11 @@
    "idtrans": [
     "bertanya-tanya",
     "ragu"
+   ],
+   "trans": [
+    "质疑",
+    "询问",
+    "怀疑的"
    ]
   },
   "loser": {
@@ -16654,6 +16678,78 @@
     "稠密的",
     "密集的",
     "浓密的"
+   ]
+  },
+  "alien": {
+   "trans": [
+    "外星人",
+    "外国人",
+    "外侨"
+   ]
+  },
+  "reflected": {
+   "idtrans": [
+    "terpantul",
+    "dipantulkan"
+   ]
+  },
+  "wee": {
+   "trans": [
+    "很小的"
+   ]
+  },
+  "subway": {
+   "idtrans": [
+    "kereta bawah tanah"
+   ]
+  },
+  "ranch": {
+   "idtrans": [
+    "peternakan",
+    "ladang ternak"
+   ]
+  },
+  "celebration": {
+   "idtrans": [
+    "perayaan",
+    "pesta"
+   ]
+  },
+  "grain": {
+   "trans": [
+    "谷物",
+    "颗粒"
+   ]
+  },
+  "consultation": {
+   "idtrans": [
+    "konsultasi",
+    "perundingan"
+   ]
+  },
+  "donor": {
+   "idtrans": [
+    "donor",
+    "pendonor",
+    "penyumbang"
+   ]
+  },
+  "carriage": {
+   "idtrans": [
+    "kereta kuda",
+    "bendi"
+   ]
+  },
+  "refuge": {
+   "trans": [
+    "避难所",
+    "庇护",
+    "避难"
+   ]
+  },
+  "cod": {
+   "idtrans": [
+    "ikan kod"
    ]
   }
  },
@@ -25906,7 +26002,10 @@
     "客串",
     "浮雕宝石"
    ],
-   "def": "a short appearance in a film or play by a famous actor"
+   "def": "a short appearance in a film or play by a famous actor",
+   "idtrans": [
+    "kameo"
+   ]
   },
   "fabrication": {
    "idtrans": [
@@ -26497,6 +26596,9 @@
   "coupe": {
    "trans": [
     "双门轿车"
+   ],
+   "idtrans": [
+    "kupe"
    ]
   },
   "malice": {
@@ -26616,6 +26718,10 @@
    "trans": [
     "小牛（calf 复数）",
     "小腿肚"
+   ],
+   "idtrans": [
+    "anak sapi",
+    "betis"
    ]
   },
   "hinge": {
@@ -27312,6 +27418,9 @@
    "trans": [
     "组织的",
     "组织上的"
+   ],
+   "idtrans": [
+    "keorganisasian"
    ]
   },
   "palsy": {
@@ -28746,7 +28855,11 @@
     "cekung",
     "tenggelam"
    ],
-   "def": "having sunk to the bottom of the sea; lower than the area around it"
+   "def": "having sunk to the bottom of the sea; lower than the area around it",
+   "trans": [
+    "沉没的",
+    "凹陷的"
+   ]
   },
   "alum": {
    "idtrans": [
@@ -28919,6 +29032,10 @@
   "watercolor": {
    "idtrans": [
     "cat air"
+   ],
+   "trans": [
+    "水彩",
+    "水彩画"
    ]
   },
   "armory": {
@@ -29172,6 +29289,9 @@
   "calibrated": {
    "idtrans": [
     "terkalibrasi"
+   ],
+   "trans": [
+    "校准的"
    ]
   },
   "deregulation": {
@@ -29688,6 +29808,11 @@
    "trans": [
     "零",
     "无"
+   ],
+   "idtrans": [
+    "nol",
+    "nihil",
+    "kosong"
    ]
   },
   "slab": {
@@ -29966,7 +30091,10 @@
     "水晶般的",
     "清澈透明的"
    ],
-   "def": "made of crystals; very clear"
+   "def": "made of crystals; very clear",
+   "idtrans": [
+    "kristalin"
+   ]
   },
   "liberate": {
    "def": "to set free"
@@ -30448,6 +30576,88 @@
    "trans": [
     "本能的",
     "内脏的"
+   ]
+  },
+  "virtuous": {
+   "idtrans": [
+    "berbudi luhur",
+    "bajik"
+   ]
+  },
+  "diversify": {
+   "idtrans": [
+    "menganekaragamkan",
+    "mendiversifikasi"
+   ]
+  },
+  "mania": {
+   "idtrans": [
+    "mania",
+    "kegilaan",
+    "obsesi"
+   ]
+  },
+  "overflow": {
+   "idtrans": [
+    "meluap",
+    "melimpah"
+   ]
+  },
+  "ultraviolet": {
+   "idtrans": [
+    "ultraviolet",
+    "ultraungu"
+   ]
+  },
+  "assorted": {
+   "trans": [
+    "各种各样的",
+    "什锦的"
+   ]
+  },
+  "revolve": {
+   "idtrans": [
+    "berputar"
+   ]
+  },
+  "sobriety": {
+   "trans": [
+    "清醒"
+   ]
+  },
+  "aeroplane": {
+   "idtrans": [
+    "pesawat terbang",
+    "pesawat"
+   ]
+  },
+  "amplify": {
+   "idtrans": [
+    "memperkuat",
+    "memperbesar"
+   ]
+  },
+  "masonry": {
+   "idtrans": [
+    "pasangan batu"
+   ]
+  },
+  "eyeliner": {
+   "idtrans": [
+    "celak",
+    "pensil mata"
+   ]
+  },
+  "offside": {
+   "trans": [
+    "越位",
+    "越位的"
+   ]
+  },
+  "sitter": {
+   "trans": [
+    "临时保姆",
+    "模特"
    ]
   }
  },
@@ -36180,6 +36390,23 @@
    "idtrans": [
     "penikaman",
     "menikam"
+   ]
+  },
+  "dominating": {
+   "trans": [
+    "支配的"
+   ]
+  },
+  "snail": {
+   "idtrans": [
+    "siput",
+    "keong"
+   ]
+  },
+  "vivid": {
+   "trans": [
+    "生动的",
+    "鲜明的"
    ]
   }
  },
