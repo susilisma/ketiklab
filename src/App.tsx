@@ -572,7 +572,10 @@ export default function Home() {
     if (typed !== "" || wrongFlash || view !== "learn" || chapterFinished || !input.current || isComposing.current) return;
     // only the letters the new word starts with: the rest was typed before the word was on
     // screen, and dropping it, as before, grades nothing — a carried key never writes a lapse
-    const folded = foldTypography(c), want = targetWord.toLowerCase();
+    // a space typed between two words is the boundary, not the next word's first letter:
+    // left in, it stopped the comparison at once and the whole carry was dropped, so the
+    // letters that followed the window were graded as the start of the word and filed a lapse
+    const folded = foldTypography(c).replace(/^ +/, ""), want = targetWord.toLowerCase();
     let n = 0;
     while (n < folded.length && n < want.length && folded[n].toLowerCase() === want[n]) n++;
     if (!n) return;
