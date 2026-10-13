@@ -66,7 +66,7 @@
   "file": "en-plus.json",
   "coverage": {
    "zh": 2129,
-   "id": 2089,
+   "id": 2092,
    "en": 0,
    "def": 2129
   }
@@ -102,7 +102,7 @@
   "file": "en-academic.json",
   "coverage": {
    "zh": 2439,
-   "id": 2291,
+   "id": 2295,
    "en": 0,
    "def": 2439
   }
