@@ -41,6 +41,10 @@ function humanError(e: unknown, l: Lang): string {
     return T("连不上服务器，检查一下网络再试。",
              "Tidak bisa terhubung ke server. Cek koneksimu.",
              "Could not reach the server. Check your connection.", l);
+  if (m.includes("sync timed out"))
+    return T("同步没有响应，请稍后再试。",
+             "Sinkronisasi tidak merespons. Coba lagi nanti.",
+             "The sync did not respond. Try again later.", l);
   if (m.includes("cloud read failed"))
     return T("暂时读不到云端记录，没有改动任何数据，请稍后再试。",
              "Data cloud belum bisa dibaca. Tidak ada yang diubah — coba lagi nanti.",
@@ -93,6 +97,18 @@ function linkError(code: string, l: Lang): string {
     ? T("这个链接已失效或过期，请重新申请一封。", "Tautan ini sudah kedaluwarsa. Minta yang baru.", "That link has expired. Request a new one.", l)
     : T("这个链接无效，请重新申请一封。", "Tautan ini tidak valid. Minta yang baru.", "That link is not valid. Request a new one.", l);
 }
+
+// A sync request that never returns (a proxy that swallows the connection, a half-open
+// socket) used to leave every button of the card disabled with no word: 15 s is the limit,
+// and the three sync buttons say what they are doing in the meantime, as 退出登录 does
+const SYNC_WAIT_MS = 15000;
+function withinSyncWait<T>(p: Promise<T>): Promise<T> {
+  return new Promise<T>((resolve, reject) => {
+    const t = setTimeout(() => reject(new Error("sync timed out")), SYNC_WAIT_MS);
+    p.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
+  });
+}
+const syncingText = (l: Lang) => T("同步中…", "Menyinkronkan…", "Syncing…", l);
 
 export function Account({ uiLang, name, onName }: {
   uiLang: Lang;
@@ -260,10 +276,10 @@ export function Account({ uiLang, name, onName }: {
   async function pushNow() {
     if (!session) return;
     const uid = session.user.id;
-    setErr(""); setMsg(""); setBusy(true);
+    setErr(""); setMsg(syncingText(uiLang)); setBusy(true);
     try {
       const linked = linkedUid();
-      if (linked && linked !== uid) { setForeign(true); setLinkOnly(!sessionTyped(uid)); return; }
+      if (linked && linked !== uid) { setForeign(true); setLinkOnly(!sessionTyped(uid)); setMsg(""); return; }
       // the account's own name wins, as it does on a typed sign-in: a session from a
       // link used to rename the account after whoever last used this device (the blob
       // pushed here carries it too, ahead of App's write-back of the name to storage)
@@ -271,14 +287,14 @@ export function Account({ uiLang, name, onName }: {
       // it); the click that blurred it used to push the stale profile name and snap the
       // field, the header and storage back to it.
       const own = linked === uid ? name.trim() : profName;
-      const { cloudHasMore } = await pushProgress(uid, own ? { ...collectLocal(), "ketiklab-name": own } : collectLocal());
+      const { cloudHasMore } = await withinSyncWait(pushProgress(uid, own ? { ...collectLocal(), "ketiklab-name": own } : collectLocal()));
       if (own) { onName(own); setProfName(own); }
-      else if (name.trim()) await saveName(uid, name.trim());
+      else if (name.trim()) await withinSyncWait(saveName(uid, name.trim()));
       linkDevice(uid); setLinkOnly(false);
       setCloudNewer(cloudHasMore);
       setSyncedAt(stamp());
       setMsg(T("已同步。", "Tersinkron.", "Synced.", uiLang));
-    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+    } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
     finally { setBusy(false); }
   }
 
@@ -286,21 +302,21 @@ export function Account({ uiLang, name, onName }: {
   // in-memory copy of every synced key straight back over the merged values.
   async function pullNow() {
     if (!session) return;
-    setErr(""); setMsg(""); setBusy(true);
+    setErr(""); setMsg(syncingText(uiLang)); setBusy(true);
     try {
       const before = collectLocal();
-      const { merged } = await pushProgress(session.user.id, before);
+      const { merged } = await withinSyncWait(pushProgress(session.user.id, before));
       // same as linkThisDevice: a word typed during the push is on this device but not in
       // `merged`, so the merge is redone over what localStorage holds now before it is applied
       applyMerged(merged, before, true); noteAfterReload("merged"); window.location.reload();
-    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); setBusy(false); }
+    } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); setBusy(false); }
   }
 
   async function chooseLink(how: "merge" | "replace") {
     if (!session) return;
-    setErr(""); setMsg(""); setBusy(true);
+    setErr(""); setMsg(syncingText(uiLang)); setBusy(true);
     try {
-      const done = await linkThisDevice(session.user.id, how, profName);
+      const done = await withinSyncWait(linkThisDevice(session.user.id, how, profName));
       if (done === "reloading") return;
       // no reload on this path, so the header would keep the previous user's name
       onName(profName);
@@ -311,7 +327,7 @@ export function Account({ uiLang, name, onName }: {
             "Data di perangkat ini sudah diunggah ke akunmu.",
             "This device's progress has been uploaded to your account.", uiLang)
         : T("已同步。", "Tersinkron.", "Synced.", uiLang));
-    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+    } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
     finally { setBusy(false); }
   }
 
