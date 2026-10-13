@@ -83,7 +83,10 @@ let fromLink = (() => { try { return location.hash.includes("access_token="); } 
 const LINK_SEEN = "ketiklab-link-seen";
 const linkTag = (h: string) => { try { return (new URLSearchParams(h.slice(1)).get("access_token") || "").slice(-24); } catch { return ""; } };
 const thisLink = fromLink ? linkTag(location.hash) : "";
-if (fromLink) ss.set(LINK_SEEN, thisLink);
+// every link this tab has used, not only the last: with two emailed links opened in the same
+// tab, Back onto the first one's entry signed in with its tokens once more
+const seenLinks = () => ss.get(LINK_SEEN).split(",").filter(Boolean);
+if (fromLink && thisLink && !seenLinks().includes(thisLink)) ss.set(LINK_SEEN, [...seenLinks(), thisLink].join(","));
 // A session that came out of the URL was not typed in here: anyone can put their own
 // tokens in a link and send it round. Nothing on this device is joined to such a
 // session until the learner presses 立即同步 (Account checks this before linking).
@@ -477,7 +480,7 @@ try {
   window.addEventListener("hashchange", () => {
     if (!/^#(access_token=|error)/.test(location.hash)) return;
     // Back onto the entry of the link already used here: drop the tokens from the URL and keep going back
-    if (linkTag(location.hash) && linkTag(location.hash) === ss.get(LINK_SEEN)) { tidyUrl(); history.back(); return; }
+    if (linkTag(location.hash) && seenLinks().includes(linkTag(location.hash))) { tidyUrl(); history.back(); return; }
     location.reload();
   });
 } catch { /* no window: nothing to guard */ }
