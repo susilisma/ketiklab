@@ -476,7 +476,7 @@ select.meaning-pick{border:1.5px solid color-mix(in srgb,var(--purple) 45%,var(-
 .reading-heading{display:block}.reading-heading p{display:none}.reading-filters{margin-top:12px;overflow-x:auto}.reading-filters button{flex:1;white-space:nowrap}.reading-library-title{display:none}.reading-library{padding:10px}.reading-input-wrap textarea{text-align:left}.target-line{text-align:left}.reader-top,.passage-preview,.line-practice,.reader-footer{padding-left:16px;padding-right:16px}
 .reading-input-wrap{flex-wrap:wrap;gap:5px}.reading-input-wrap textarea{flex:1 1 100%}.reading-input-wrap button{flex:1}
 .review-summary{grid-template-columns:1fr 1fr}.review-summary .metric:last-child{grid-column:1/-1}
-.mistake-list>button{grid-template-columns:32px minmax(0,1fr);gap:2px 12px}.mistake-list>button span{grid-row:1/3}.mistake-list>button b,.mistake-list>button em{grid-column:2}.mistake-list>button em{white-space:normal}.mistake-list>button i{display:none}
+.mistake-list>button{grid-template-columns:32px minmax(0,1fr);gap:2px 12px}.mistake-list>button span{grid-row:1/3}.mistake-list>button b,.mistake-list>button em{grid-column:2}.mistake-list>button b,.mistake-list>button em{white-space:normal;overflow-wrap:anywhere}.mistake-list>button i{display:none}
 .rule-table td:last-child{white-space:nowrap}
 }
 /* touch targets: pointer:coarse is about the input device, the width gate covers phones that misreport it */
