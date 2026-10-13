@@ -796,7 +796,9 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
 
-  useEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; slipOn.current = ""; }, [index]);
+  // before paint, not after: a wrong key that lands between the new word's render and a
+  // passive effect was reset away, and the next wrong key on that word wrote a second lapse
+  useLayoutEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; slipOn.current = ""; }, [index]);
   useEffect(() => { try { localStorage.setItem("ketiklab-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
   // the class on <html> gives the body the dark background too (the rubber-band area
   // above and below the app on phones), and index.html sets it before the app mounts
