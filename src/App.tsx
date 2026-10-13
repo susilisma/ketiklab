@@ -1618,6 +1618,10 @@ export default function Home() {
     const norm = (x: string) => practiceLang === "zh" ? x : x.toLowerCase();
     const expected = norm(targetWord);
     const current = norm(clean);
+    // a SPACE as the first key of a word is the between-words gesture (the veil treats it
+    // so, and the pinyin box never sees one): graded as a letter it was a wrong first key,
+    // and the flash that followed swallowed the right letters typed after it
+    if (typed.length === 0 && clean === " " && expected[0] !== " ") { if (input.current) input.current.value = ""; return; }
     if (!overlong && expected.startsWith(current)) {
       if (clean.length > typed.length) keyClick();
       setTyped(clean);
