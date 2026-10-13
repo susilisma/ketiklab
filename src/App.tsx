@@ -1270,9 +1270,11 @@ export default function Home() {
     id: uiLang === "zh" ? "印尼语篇目" : uiLang === "id" ? "Bacaan Indonesia" : "Indonesian readings",
     en: uiLang === "zh" ? "英文篇目" : uiLang === "id" ? "Bacaan Inggris" : "English readings",
   };
-  const readingGroups: { label: string; items: ReadingPiece[] }[] = readingLang === "all"
-    ? (["zh", "id", "en"] as const).map(lg => ({ label: readingLangName[lg], items: filteredReadings.filter(pc => pc.lang === lg) })).filter(g => g.items.length)
-    : (() => { const m = new Map<string, ReadingPiece[]>(); filteredReadings.forEach(pc => { if (!m.has(pc.genre)) m.set(pc.genre, []); m.get(pc.genre)!.push(pc); }); return [...m.entries()].map(([label, items]) => ({ label, items })); })();
+  // the open group is remembered by a stable id, not its label: the label is translated,
+  // so switching the interface language used to fold every group
+  const readingGroups: { id: string; label: string; items: ReadingPiece[] }[] = readingLang === "all"
+    ? (["zh", "id", "en"] as const).map(lg => ({ id: `lang:${lg}`, label: readingLangName[lg], items: filteredReadings.filter(pc => pc.lang === lg) })).filter(g => g.items.length)
+    : (() => { const m = new Map<string, ReadingPiece[]>(); filteredReadings.forEach(pc => { if (!m.has(pc.genre)) m.set(pc.genre, []); m.get(pc.genre)!.push(pc); }); return [...m.entries()].map(([label, items]) => ({ id: `genre:${label}`, label, items })); })();
   const readingTarget = reading.lines[readingLine] || "";
   // the texts keep their typographic marks (summer’s day, Dickinson's dashes); a keyboard
   // types ' " -, so the line is graded with both sides folded — 24 of the 47 English pieces
@@ -2012,7 +2014,7 @@ export default function Home() {
     setReadingLang(code);
     // the piece in hand stays, with its group open, while the filter still holds it: every
     // filter click used to jump to the first piece and drop the lines already typed
-    if (code === "all" || reading.lang === code) { setOpenReadingGroup(code === "all" ? readingLangName[reading.lang] : reading.genre); return; }
+    if (code === "all" || reading.lang === code) { setOpenReadingGroup(code === "all" ? `lang:${reading.lang}` : `genre:${reading.genre}`); return; }
     setOpenReadingGroup(null);
     const first = readings.find(pc => pc.lang === code);
     if (first && first.id !== readingId) chooseReading(first.id);
@@ -2210,9 +2212,9 @@ export default function Home() {
             <div className="reading-library-title"><b>{t.classics}</b><span>{readings.filter(piece => readingLang === "all" || piece.lang === readingLang).length} {t.pieces}</span></div>
             <div className="reading-list">
               {readingGroups.map(group => {
-                const open = openReadingGroup === group.label;
-                return <div className={open ? "reading-group open" : "reading-group"} key={group.label}>
-                  <button type="button" className="reading-group-head" aria-expanded={open} onClick={() => setOpenReadingGroup(open ? null : group.label)}>
+                const open = openReadingGroup === group.id;
+                return <div className={open ? "reading-group open" : "reading-group"} key={group.id}>
+                  <button type="button" className="reading-group-head" aria-expanded={open} onClick={() => setOpenReadingGroup(open ? null : group.id)}>
                     <span>{group.label}</span><em>{group.items.length}<i className="reading-chevron">▾</i></em>
                   </button>
                   {open && <div className="reading-group-items">
