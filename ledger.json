@@ -951,8 +951,8 @@
    "priority": "P2",
    "status": "needs-owner",
    "commit": "",
-   "reason": "重建会整体重生成 4 个词库，输出可能随上游词网/词频包变化，建议主人手动 dispatch 并抽查",
-   "date": "2026-09-16"
+   "reason": "10-14 D 复核：en-* 现仅 50 条定义恰在 120 字符截断（en-core 15/plus 13/upper 11/academic 11），zh-* 5 条；账上「385」为旧计数",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "chapters-max-merge-never-regresses",
@@ -1653,8 +1653,8 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "导入是「替换」还是「按 updatedAt 合并」属 SRS 行迁移/语义，由主人定",
-   "date": "2026-09-21"
+   "reason": "10-14 F3 t4 复验仍在（本机 s5 r9 被文件 s3 r4 覆盖）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "zh-pinyin-dead-nonpinyin-keys",
@@ -3316,10 +3316,10 @@
    "fingerprint": "trio-page-lists-id-words-cta-learns-zh",
    "title": "/zh/lib/trio/ 列印尼词而 CTA /?ui=zh 打开学中文；/id/ /en/ 主题页只是碰巧对上 zh 默认（build-seo-pages.py:347）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-12 F2/F5：CTA 已带 learn=，首访正确；回访设备落到保存的词典（同 topic-page-cta-lands-on-saved-dictionary）",
-   "date": "2026-10-12"
+   "status": "fixed",
+   "commit": "d45623d",
+   "reason": "10-14 F2 复验：/zh/lib/trio/ CTA /?ui=zh&learn=id 首访打开印尼语主题词（nav_check S9c）；回访设备落到保存词典属 topic-page-cta-lands-on-saved-dictionary",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "sw-activate-discards-first-open-download",
@@ -3777,8 +3777,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 发现",
-   "date": "2026-10-05"
+   "reason": "10-14 F2 复验：id 臂已改 Absen，en 臂仍 None",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "password-min-hardcoded-6",
@@ -3993,8 +3993,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 10-06 polish｜10-07 F2 再复现：initialUi 不读 ketiklab-langs.ui，回访首帧闪一下 ｜ 10-08 F2 再复现：连无 ketiklab-ui 的对照也闪 en→id，initialUi 不读 ketiklab-langs.ui",
-   "date": "2026-10-07"
+   "reason": "10-14 F2-1/V1：initialUi 先读 ketiklab-langs.ui 的修法已验证（见 first-frame-ui-language-flash），根因（链接仍改写 ketiklab-ui）未动",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "berth-def-inconsistent",
@@ -4209,8 +4209,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-13 F3-3/V3：裸汉字词典键（一些）同样在复习后列两次，见 bare-hanzi-dict-key-never-prefixed；拉丁裸键归属仍待主人",
-   "date": "2026-10-13"
+   "reason": "10-14 F3/V1 复验仍在（achieve + id:trio:achieve 并列 mencapai）；裸汉字部分已随 439f2a8 修；拉丁裸键归属待主人",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "seo-page-inline-link-targets",
@@ -4353,8 +4353,8 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F1 发现、V1 核实事实；属 TAB 偷看是否计错的主人决定，两处应统一",
-   "date": "2026-10-08"
+   "reason": "10-14 F3 t2 复验仍在（TAB 市场 → s-1 l1 + 错词本）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "reading-filters-768-wrap",
@@ -4524,8 +4524,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-13 L/V3 复验仍在（id/en 标签 210/184px）；V3：320 zh 在任何列表都截断属同类",
-   "date": "2026-10-13"
+   "reason": "10-14 L 复验仍在（375 id/en 194/169px、320 全部）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "library-word-grid-56k-tall",
@@ -5127,8 +5127,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-13 L 复验仍在（1440×900 hanzi 档 zh/id/en 2px，共 4 格），状态不变",
-   "date": "2026-10-13"
+   "reason": "10-14 L 复验仍在（6 格）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "dict-def-stale-after-trans-pin",
@@ -5233,37 +5233,37 @@
    "fingerprint": "learn-param-forgotten-after-dialog-close",
    "title": "?learn= 在首访对话框被 ✕ 关闭后即遗忘（?ui= 与 ?step= 都被记住）：/?ui=zh&learn=id 关对话框后刷新回到学中文",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2-2 发现，V1 复现并验证修法：ENTRY 记 ketiklab-learn，lang 初值 ENTRY.learn ?? rememberedLearn() ?? \"zh\"；保存过的 ketiklab-langs 仍优先（V1 S2 验证）；今日 12 项上限已满",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "d8ba563",
+   "reason": "10-14 ENTRY 记 ketiklab-learn；关对话框后刷新仍学 id；已保存的 ketiklab-langs 仍优先（脚本 PASS）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "reading-group-open-by-translated-label",
    "title": "阅读列表展开的分组按翻译后的标签记忆，切换界面语言后全部折叠",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2-4 发现，V1 复现并验证修法：分组用稳定 id（lg / genre）；今日上限已满",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "0e94fb7",
+   "reason": "10-14 分组稳定 id lang:/genre:；storage 事件切 ui 后分组仍展开（修前 FAIL 修后 PASS）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "sync-buttons-no-timeout-no-busy-text",
    "title": "立即同步/合并到本机/合并进这个账号 无忙碌文案也无时限：请求永不返回时整卡按钮灰死无提示（退出登录已有 5s 与文案）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F4-3 发现，V1 复现并验证修法：三处 await 包 15s Promise.race + 「同步中…」文案 + humanError timeout 文案；晚到的 pull 结果已在 await 之后被丢弃；今日上限已满",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "bfc995b",
+   "reason": "10-14 三处 await 包 15 s race + 同步中… 文案 + 超时三语提示；tsc/build 通过",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "second-link-back-resigns-in-once",
    "title": "同一标签页先后打开两封登录链接后，Back 回到第一封的条目会再登录一次（LINK_SEEN 只记最后一个 tag）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F4-4 发现，V1 复现并验证修法：LINK_SEEN 记逗号分隔的全部 tag，hashchange 判 includes；今日上限已满",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "7bd95df",
+   "reason": "10-14 LINK_SEEN 记全部 tag（逗号分隔），hashchange 判 includes；两封链接后 sessionStorage 含两 tag",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "link-failed-silent-no-retry",
@@ -5278,37 +5278,37 @@
    "fingerprint": "slip-reset-passive-effect-double-lapse",
    "title": "每词 slip 记账（hadWrong/lapseRecorded/slipOn）由被动 effect 重置，落在新词绘制与 effect 之间的错键被遗忘，下一个错键再写一次 lapse（同词 reps/lapses 双计）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F3-2 发现，V3 确定性复现（MutationObserver 微任务内派发错键 6/6 双计；真实 45 ms 连打 2/10）并验证修法：App.tsx:799 的 useEffect 改 useLayoutEffect（修后 0/10，计数/跳过/finish 卡与修前一致）；今日上限已满，明日第一项",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "10f72b0",
+   "reason": "10-14 useLayoutEffect；MutationObserver 复现脚本修前 6/6 双计，修后 0/6",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "bare-hanzi-dict-key-never-prefixed",
    "title": "裸汉字错词本键若不是主题词首义（如 一些，2,330/3,213 个词典词头）迁移不加 zh: 前缀，复习再错一次后列两次",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F3-3 发现，V3 复现（zh/en/id 三种学习者）并验证修法：planKeyMoves ZH_RENAMES 循环后 for held 中纯汉字无冒号键 moves.set(k,\"zh:\"+k)；renameRecords 合并（一些 2/0 + zh:一些 5/1 → 7/1）、豁免与主题词映射不变、屏蔽 zh 库时键不动；注意已标 v3 的设备会跳过（需升 v4，未测）；明日处理，须带种子数据过无头浏览器",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "439f2a8",
+   "reason": "10-14 planKeyMoves 为无冒号纯汉字键补 zh:，标记升 v4（后又改为 v4.<renames 数>，见 8a1091e）；种子数据无头浏览器 zh/id/en 三种学习者：一些→zh:一些、合并 5/5/1 行、豁免 id:air 不动",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "mistake-list-long-headword-ellipsis",
    "title": "手机 错词本 长词头（electronic vehicle administration service）被省略号截断，按钮无 title",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "L2 发现（375 id/zh/en，b 317>265）；修法：≤640 .mistake-list>button b{white-space:normal;overflow-wrap:anywhere}；未经校验者复验",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "006c2b3",
+   "reason": "10-14 ≤640 b 换行；L 矩阵复验 gone（6 格）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "header-title-ellipsized-375-en-id",
    "title": "375 顶栏标题 en/id 被截（Business & W… · 614、Hidup di Indones… · 399、Mode pengulan… · 1），计数保留",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "L3 发现（header-actions 200px 占满）；修法：≤640 .language select{max-width:80px} 或 Start 按钮去箭头；未经校验者复验",
-   "date": "2026-10-13"
+   "status": "fixed",
+   "commit": "97ce0bd",
+   "reason": "10-14 标题允许两行 line-clamp；320/360/375/412 × zh/id/en × 4 列表 48 格全部在 56px 头部内；L 矩阵复验 gone（20 格）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "readings-cta-first-visit-language",
@@ -5325,8 +5325,8 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "D 发现（integrity 4h' INFO）；内容取舍属主人；今日 D1 8 行 + D2 29 行中两方同意的 23 行已改（e10c0f1、dbb9d32）",
-   "date": "2026-10-13"
+   "reason": "10-14 G 复验仍在（aeroplane kapal terbang 今日随 8c566db 去掉，余 15 行待主人）",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "toefl-buck-ascii-bracket",
@@ -5334,8 +5334,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "D-4 发现；VG-A 对格式不确定，按规则未改；入候选",
-   "date": "2026-10-13"
+   "reason": "10-14 D 复验仍在；VG 未判格式，未改",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "zh-dicts-wrong-sense-rows-fresh-scan",
@@ -5343,8 +5343,8 @@
    "priority": "P2",
    "status": "deferred",
    "commit": "",
-   "reason": "G-C 发现；今日两方同意的 62 行已改（e10c0f1）；建议明日 G 对 zh-core 全量 1200 行扫描 + 盲校",
-   "date": "2026-10-13"
+   "reason": "10-14 G 通读 zh-core 1,200 行，三位盲校者复判，938 字段/630 行已改（ffa30bd）；zh-plus 1,000 行与 zh-upper 1,013 行明日同法扫描",
+   "date": "2026-10-14"
   },
   {
    "fingerprint": "wrong-words-json-in-finder-D-file-attribution",
@@ -5354,6 +5354,141 @@
    "commit": "",
    "reason": "不是数据问题：行存在于 zh-core/zh-plus/zh-upper，已按实际位置处理",
    "date": "2026-10-13"
+  },
+  {
+   "fingerprint": "zh-renames-key-stays-due-practice-inert",
+   "title": "zh-renames 命名的汉字键在已标记设备上永远到期（复习写新行 zh:trio:straight，旧行 zh:直走 留着），错词本 练习→ 无反应",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "8a1091e",
+   "reason": "F3-1 发现，V1 复现并验证：jumpToKey 走 ZH_RENAMES 回落；标记改为 v4.<renames 数>；V1 脚本对本构建：练习打开 笔直的 19/20，v3.1 → v4.113 行合并、徽标归零；残留：renames 条目原地替换而数量不变时不重跑（可改为内容戳）",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "link-signin-inherits-stale-recovery",
+   "title": "先开重置密码链接不处理，再开登录链接：新会话显示「新密码」表单且跳过自动同步（ketiklab-recovery 只在保存/登出时清）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "4016bd8",
+   "reason": "F4-4 发现，V1 复现并验证（auth-js 2.116 恢复链接只发 PASSWORD_RECOVERY，表单不受影响）；V1 脚本对本构建：第二封链接无表单、rec=null、上次同步出现；真恢复链接表单仍在",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "latin-space-in-done-window-drops-carry",
+   "title": "拉丁词之间在 320 ms 完成窗口内打的空格使带入整体被丢，窗口后的字母被判成下一词的首字母：闪红、lapse、错词本、框空（hello thank 45/90 ms 连打；混合收藏 jihui␣ingin tahu 同）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "1a9e047",
+   "reason": "F1-1 发现，V2 复现（en/id × strict/soft × 45/90 ms × 三档默写 × 混合列表 × 每词重复）并验证 .replace(/^ +/, \"\")；V2 套件对本构建 16/16、8/8、9/9、8/8 CLEAN",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "word-initial-space-graded-as-letter",
+   "title": "窗口外以空格作为拉丁词第一键被判为错首字母：蜂鸣、闪红、lapse、错词本，350 ms 闪烁吞掉后面打对的字母",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "759854c",
+   "reason": "F1-2 发现，V2 复现并验证 handleType 一行守卫（框恰为一个空格且未打字则清空不判）；回归集 28/28 PASS（词中空格仍错、短语空格仍需、全空格不推进、遮罩 SPACE 仍开始、认读 SPACE 仍前进、soft 退格到空不受影响）；副作用：被丢的空格仍触发一次自动发音、自动回退下无蜂鸣",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "first-frame-ui-language-flash",
+   "title": "对话框保存的界面语言只在被动 effect 里恢复：每次加载首帧加载屏、<html lang>、标题先用浏览器/旧链接语言约 15–40 ms",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2-1 发现，V1 复现并验证修法：initialUi 先读 readLangs(ketiklab-langs).ui（11 例无回归）；今日 12 项上限已满",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "settings-language-detail-dangling",
+   "title": "设置页「语言设置」详情行 en/id 以悬空介词结尾（… + Show meanings in / … + Arti ditampilkan dalam）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F2-2 发现，V1 验证修法 detail={MODAL_T[uiLang].subtitle}；上限已满（一行改动，明日首批）",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "restore-records-string-step-dropped",
+   "title": "导入备份时 step/dueAt 为数字字符串的行被静默丢弃（reps/lapses/updatedAt 却会被 num() 强转）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F3-2 发现，V1 复现并验证修法：restoreRecords 先强转再过滤；上限已满",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "dead-link-banner-stays-after-typed-signin",
+   "title": "失效链接横幅在随后输入密码登录成功后仍留在已登录卡片上（urlErr 从不清）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4-1 发现，V1 复现；查找者修法（uid 变化时清）会在共享电脑场景隐藏横幅，V1 改为 submit() signIn 成功后 setUrlErr(\"\") 并验证；上限已满",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "dead-link-hash-lost-with-signout-mark",
+   "title": "带未完成退出标记时失效链接的 hash 被 SIGNED_OUT 的 tidyUrl 去掉：「刷新重试」无可重试",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4-2 发现，V1 复现并验证修法：keepHash 模块标记，SIGNED_IN/PASSWORD_RECOVERY 清；上限已满",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "forgot-password-double-tap-two-requests",
+   "title": "「忘记密码？」双击发两次请求，同时显示已发送与限流两条",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4-3 发现，V1 复现；查找者修法让按钮用一次后失效，V1 改为 finally 释放 ref 并验证；上限已满",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "first-link-reload-mid-practice",
+   "title": "未绑定设备首次链接登录后离开面板继续打字，几秒后 restore 的 reload 把人拉回账户页，半个词与计时丢失",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F4-5 发现（s5 脚本复现）；修法（面板卸载时推迟 apply+reload）未实现未验证",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "x-default-hreflang-non-reciprocal",
+   "title": "36 个词库/主题/阅读生成页的 x-default 指向根页而根页不回链（非互惠 hreflang）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "F5-1 发现，V1 复现并验证：子页 x-default 指向本组 zh 页，落地组与根保持 /；查找者原 sitemap 规则会破坏落地组，V1 已修正；上限已满",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "actions-pinned-to-major-tags",
+   "title": "5 个工作流 17 处 uses: 全部钉在可变的 @v5/@v6 大版本标签而非提交 SHA，且无 dependabot",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "F5-2 发现；SHA 在沙箱内无法解析（API 只开本仓库），且改动触及部署链，由主人定",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "idsyllables-57-ai-au-ks-rows",
+   "title": "57 个多音节印尼词头无 idSyllables（pakaian、audit、ekspor、klausul、kepulauan…），全是生成器会错分的 ai/au/ks 形",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "D-1 发现；手写 KBBI 分法或改 _syllabify 规则，与 idsyllables-monosyllables-and-loanwords 同属分音规则取舍",
+   "date": "2026-10-14"
+  },
+  {
+   "fingerprint": "words-thermal-zh-first-sense-collides",
+   "title": "words.json thermal 首义 热 两方同意应为 热的，但 热的 已是 hot 的首义",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-14 VG-C；首义唯一规则下未改；可改为 热的；热学的 以外的措辞，由主人定",
+   "date": "2026-10-14"
   }
  ]
 }
