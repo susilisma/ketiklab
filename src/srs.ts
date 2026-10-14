@@ -163,7 +163,11 @@ export async function restoreRecords(records: ReviewRecord[]): Promise<void> {
   // a keyed row must name a language the app has: "fr:achieve" from a hand-edited backup
   // used to come back due and crash the review that tried to render it
   const knownLang = (en: string) => !keyed(en) || /^(zh|id|en):/.test(en);
-  const clean = records.filter((r) => r && typeof r.en === "string" && knownLang(r.en) && Number.isFinite(r.dueAt) && Number.isFinite(r.step))
+  // dueAt and step are read through the same coercion as the other numbers: a backup whose
+  // rows carry them as numeric strings (a spreadsheet round-trip) used to be dropped in silence
+  const clean = records.filter((r) => r && typeof r.en === "string" && knownLang(r.en))
+    .map((r) => ({ ...r, dueAt: num(r.dueAt, NaN), step: num(r.step, NaN) }))
+    .filter((r) => Number.isFinite(r.dueAt) && Number.isFinite(r.step))
     .map((r) => ({ ...r, step: Math.max(-1, Math.min(INTERVALS.length - 1, Math.trunc(r.step))), reps: num(r.reps, 0), lapses: num(r.lapses, 0), updatedAt: num(r.updatedAt, r.dueAt), lastResult: r.lastResult === "wrong" ? "wrong" as const : "correct" as const }))
     // a backup from before keys carried a language: hanzi keys are Chinese for sure
     .map((r) => (!keyed(r.en) && HANZI.test(r.en) ? { ...r, en: "zh:" + r.en } : r));
