@@ -243,6 +243,10 @@ export function Account({ uiLang, name, onName }: {
         }
       } else {
         await signIn(addr, password);
+        // the dead-link notice is about the link, not about this account: it stayed on the
+        // signed-in card after a password sign-in that followed it. (Not on a uid change: on a
+        // shared computer the link's failure is still news to whoever signs in next.)
+        setUrlErr("");
       }
       setPassword("");
     } catch (e2: unknown) {
