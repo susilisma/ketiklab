@@ -98,12 +98,18 @@ export function sessionTyped(uid: string) { try { return localStorage.getItem(TY
 // set by signOut() before its push, cleared by the SIGNED_OUT that ends it (see below)
 const OUT_KEY = "ketiklab-signing-out";
 function markTyped(uid: string | undefined) { try { if (uid) localStorage.setItem(TYPED_KEY, uid); } catch { /* ignore */ } }
+// a dead link's hash stays for 刷新重试: the SIGNED_OUT that finishes a pending sign-out (the
+// shared-computer case) used to tidy it away, and the reload had nothing to retry. Over once a
+// link or a typed sign-in gets a session, which tidies the URL as before
+let keepHash = false;
 function tidyUrl() {
+  if (keepHash) return;
   try { if (/#(access_token|error)|#$/.test(location.href)) history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ }
 }
 supabase.auth.onAuthStateChange((event, s) => {
   session = s;
   if (event === "PASSWORD_RECOVERY") { recovery = true; ss.set(RECOVERY_KEY, "1"); }
+  if (event === "SIGNED_IN" || event === "PASSWORD_RECOVERY") keepHash = false;
   // a sign-out from another tab ends a password recovery too, or the form stayed up
   // for the next, ordinary sign-in and the sync effect kept returning early
   if (event === "SIGNED_OUT") { finishRecovery(); try { localStorage.removeItem(TYPED_KEY); localStorage.removeItem(OUT_KEY); } catch { /* ignore */ } }
@@ -117,7 +123,7 @@ supabase.auth.onAuthStateChange((event, s) => {
   // the one a sign-out never finished) and reports nothing. Said on the account page; the hash stays so a
   // reload retries the link; a sign-out still pending is finished now
   if (event === "INITIAL_SESSION" && fromLink && (!s || s.access_token.slice(-24) !== thisLink)) {
-    fromLink = false; urlError = "link_failed"; wantAccount();
+    fromLink = false; urlError = "link_failed"; keepHash = true; wantAccount();
     try { if (localStorage.getItem(OUT_KEY)) void supabase.auth.signOut().catch(() => { /* offline: the mark stays */ }); } catch { /* ignore */ }
     return;
   }
