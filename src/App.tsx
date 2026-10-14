@@ -1618,7 +1618,9 @@ export default function Home() {
     const kept = practiceLang === "zh" ? raw.replace(/[^㐀-鿿]/g, "") : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "");
     // an IME commits a whole candidate at once: 实现了 picked for 实现 is a different word, not
     // extra keystrokes, and cutting it to the target's length graded it correct
-    const overlong = practiceLang === "zh" && kept.length > targetWord.length;
+    // and a Latin paste or autocorrect that puts in a longer word at once ("achievement" for achieve):
+    // a single key past the end is still ignored, as soft mode types past a red letter
+    const overlong = (practiceLang === "zh" ? kept.length : kept.replace(/ +$/, "").length) > targetWord.length && (practiceLang === "zh" || kept.length - typed.length > 1);
     const clean = kept.slice(0, targetWord.length);
     if (typed.length === 0 && clean.length > 0 && autoSpokenWord.current !== targetKey && !holdSpeech) {
       autoSpokenWord.current = targetKey;
