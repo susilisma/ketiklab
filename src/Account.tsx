@@ -139,6 +139,7 @@ export function Account({ uiLang, name, onName }: {
   const [note, setNote] = useState<SyncNote>("");
   const [urlErr, setUrlErr] = useState("");
   const lastUid = useRef<string | undefined>(undefined);
+  const forgetting = useRef(false);
   // the "last synced" time in the interface language, not the browser's locale
   const stamp = () => new Date().toLocaleTimeString(uiLang === "zh" ? "zh-CN" : uiLang === "id" ? "id-ID" : "en-US");
 
@@ -257,13 +258,17 @@ export function Account({ uiLang, name, onName }: {
   }
 
   async function forgot() {
+    // one request at a time: a double tap sent two and showed "sent" and "rate limited" together
+    if (forgetting.current) return;
+    forgetting.current = true;
     setErr(""); setMsg("");
-    if (!email.trim()) { setErr(T("先填邮箱。", "Isi email dulu.", "Enter your email first.", uiLang)); return; }
-    const addr = email.trim();
     try {
+      if (!email.trim()) { setErr(T("先填邮箱。", "Isi email dulu.", "Enter your email first.", uiLang)); return; }
+      const addr = email.trim();
       await resetPassword(addr);
       setMsg(T(`重置链接已发到 ${addr}。`, `Tautan reset sudah dikirim ke ${addr}.`, `A reset link went to ${addr}.`, uiLang));
     } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+    finally { forgetting.current = false; }
   }
 
   async function setNewPassword(e: React.FormEvent) {
