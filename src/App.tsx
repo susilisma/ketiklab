@@ -441,6 +441,8 @@ export default function Home() {
   // set the moment a word is graded, cleared when its advance timer fires: keys
   // that land in that window must not grade the same word again or skip it
   const finishing = useRef(false);
+  // when the last skip happened: a second ENTER inside the same 320 ms window is the same gesture
+  const skippedAt = useRef(0);
   // letters typed inside the 320 ms "done" window after a word: they belong to the next word
   // and used to be wiped with the box, so the key after them was graded against the new word's
   // first letter — every word typed without a pause at the boundary came out as a miss
@@ -1550,6 +1552,10 @@ export default function Home() {
   function wordDone() { return !wrongFlash && typed.length > 0 && (practiceLang === "zh" ? typed === targetWord : typed.toLowerCase() === foldTypography(targetWord).toLowerCase()); }
   function skipWord() {
     if (finishing.current || wordDone()) return;
+    // a skip gets the same 320 ms window as a pass: a second ENTER 40–300 ms on (a double tap,
+    // a bounce) skipped the next word unseen and filed its lapse and 错词本 entry
+    if (performance.now() - skippedAt.current < 320) return;
+    skippedAt.current = performance.now();
     if (!lapseRecorded.current && slipOn.current !== wordId) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
     resetWordRun();
     // the skip is the word's verdict and its lapse is written: a later run of the same word
