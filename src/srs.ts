@@ -159,7 +159,8 @@ export async function getAllRecords(): Promise<ReviewRecord[]> {
 export async function restoreRecords(records: ReviewRecord[]): Promise<void> {
   // finite numbers only: a NaN dueAt is never due and never counted, and a string
   // reps would be concatenated on the next answer ("31" after "3" + 1)
-  const num = (v: unknown, fallback: number) => (Number.isFinite(Number(v)) && v !== null && v !== "" ? Number(v) : fallback);
+  // a number, or a string that spells one: Number() would also turn " ", true and [] into 0 or 1
+  const num = (v: unknown, fallback: number) => ((typeof v === "number" || (typeof v === "string" && v.trim() !== "")) && Number.isFinite(Number(v)) ? Number(v) : fallback);
   // a keyed row must name a language the app has: "fr:achieve" from a hand-edited backup
   // used to come back due and crash the review that tried to render it
   const knownLang = (en: string) => !keyed(en) || /^(zh|id|en):/.test(en);
