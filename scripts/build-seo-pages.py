@@ -150,10 +150,18 @@ def strip_hreflang(h):
     return re.sub(r'\n[ \t]*<link rel="alternate" hreflang="[^"]*" href="[^"]*" />', "", h)
 
 
+def x_default(zh_path):
+    """The x-default of a page set: the root for the root and the landing pages, whose set the
+    root belongs to; the set's own Chinese page everywhere else. The root used to be every
+    set's x-default while it linked back to none of them, so no library, topic or readings
+    set was reciprocal and search engines could discard the whole annotation."""
+    return "/" if zh_path in ("/", "/zh/") else zh_path
+
+
 def hreflang_links(path_for):
-    """path_for(lang) -> URL path; x-default points at the root."""
+    """path_for(lang) -> URL path; x-default per x_default()."""
     out = [f'    <link rel="alternate" hreflang="{HTML_LANG[l]}" href="{SITE}{path_for(l)}" />' for l in LANGS]
-    out.append(f'    <link rel="alternate" hreflang="x-default" href="{SITE}/" />')
+    out.append(f'    <link rel="alternate" hreflang="x-default" href="{SITE}{x_default(path_for("zh"))}" />')
     return "\n".join(out)
 
 
@@ -402,7 +410,7 @@ def sitemap(groups):
             out.append(f"    <loc>{SITE}{path}</loc>")
             for l2, p2 in alts.items():
                 out.append(f'    <xhtml:link rel="alternate" hreflang="{HTML_LANG[l2]}" href="{SITE}{p2}" />')
-            out.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE}/" />')
+            out.append(f'    <xhtml:link rel="alternate" hreflang="x-default" href="{SITE}{x_default(alts["zh"])}" />')
             out.append("  </url>")
     out.append("</urlset>")
     return "\n".join(out) + "\n"
