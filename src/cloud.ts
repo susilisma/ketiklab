@@ -169,7 +169,7 @@ export async function signOut() {
   // so an outage does not hold the sign-out; offline, the data stays here as before.
   const uid = session?.user.id;
   if (uid && linkedUid() === uid) {
-    try { await Promise.race([pushProgress(uid), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
+    try { await Promise.race([pushProgress(uid, undefined, false), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
   }
   try { await supabase.auth.signOut(); } catch { /* ignore */ }
 }
@@ -248,7 +248,10 @@ export function setProgressNormalizer(f: ((b: ProgressBlob) => Promise<ProgressB
 // one bounded wait per page, not per call: a push and a link each normalise two copies, and
 // with no normaliser ever coming (the words failed to load) they waited 8 s twice
 let bounded: Promise<void> | null = null;
-async function normalized(b: ProgressBlob): Promise<ProgressBlob> {
+async function normalized(b: ProgressBlob, wait = true): Promise<ProgressBlob> {
+  // a sign-out's push has a 5 s bound of its own, shorter than this 8 s wait: signing out before
+  // the words had loaded timed the push out and the last minute's progress was never written
+  if (!normalizer && !wait) return b;
   if (!normalizer) await (bounded ??= Promise.race([normalizerWait, new Promise<void>(r => setTimeout(r, 8000))]));
   if (!normalizer) return b;
   try { return await normalizer(b); } catch { return b; }
@@ -406,13 +409,13 @@ let lastPushed = "";
 /** Read the cloud copy, merge this device into it, write it back if that changed
  *  anything. Reports whether the cloud holds progress this device does not.
  *  Throws when either request fails; nothing is written after a failed read. */
-export async function pushProgress(userId: string, own?: ProgressBlob) {
+export async function pushProgress(userId: string, own?: ProgressBlob, wait = true) {
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
-  const cloud = await normalized(r.data ?? {});
+  const cloud = await normalized(r.data ?? {}, wait);
   // this device's copy goes through the same decision, read after the wait above: while its
   // own migration still waits for a dictionary, the old shape would otherwise be pushed
-  const local = await normalized(own ?? collectLocal());
+  const local = await normalized(own ?? collectLocal(), wait);
   const merged = mergeProgress(cloud, local);
   if (!sameBlob(merged, cloud) || !sameBlob(cloud, r.data ?? {})) await saveProgress(userId, merged);
   lastPushed = canon(local);
