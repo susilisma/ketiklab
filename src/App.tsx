@@ -168,7 +168,10 @@ const ENTRY: { ui: Lang | null; learn: Lang | null; lib: string | null; step: Zh
 const COARSE = (() => { try { return matchMedia("(hover: none) and (pointer: coarse)").matches; } catch { return false; } })();
 // the interface language before any choice: the link's, else the one a link opened earlier, else the browser's when it is one of ours
 const rememberedUi = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-ui"); return isLang(u) ? u : null; } catch { return null; } };
-const initialUi = (): Lang => ENTRY.ui ?? rememberedUi() ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
+// the choice saved in the dialog comes first, as the restore effect will decide a frame later: read only
+// there, the loading screen, <html lang> and the title spent the first frame in the link's or the browser's language
+const savedUi = (): Lang | null => { try { const s = localStorage.getItem("ketiklab-langs"); return s ? readLangs(s).ui : null; } catch { return null; } };
+const initialUi = (): Lang => savedUi() ?? ENTRY.ui ?? rememberedUi() ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
 // the learning language before any choice: the link's, else the one a link opened earlier (a saved ketiklab-langs still wins in the restore effect)
 const rememberedLearn = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-learn"); return isLang(u) ? u : null; } catch { return null; } };
 // the document's own title and language as served (index.html is Chinese; /en/ and /id/ carry
