@@ -3537,7 +3537,8 @@
    "idtrans": [
     "upah",
     "gaji"
-   ]
+   ],
+   "def": "money paid for work, usually hourly or weekly"
   },
   "salary": {
    "trans": [
@@ -3545,7 +3546,8 @@
    ],
    "idtrans": [
     "gaji"
-   ]
+   ],
+   "def": "a fixed regular payment for work, usually monthly"
   },
   "electricity": {
    "idtrans": [
@@ -8909,7 +8911,8 @@
     "撤回",
     "提款",
     "戒断"
-   ]
+   ],
+   "def": "the act of withdrawing money, troops or a statement"
   },
   "audit": {
    "trans": [
@@ -9534,6 +9537,10 @@
    "trans": [
     "至关重要的",
     "决定性的"
+   ],
+   "idtrans": [
+    "sangat penting",
+    "krusial"
    ]
   },
   "dual": {
@@ -11793,7 +11800,11 @@
     "芦苇",
     "簧片"
    ],
-   "def": "a tall plant like grass that grows in or near water"
+   "def": "a tall plant like grass that grows in or near water",
+   "idtrans": [
+    "buluh",
+    "gelagah"
+   ]
   },
   "specialized": {
    "trans": [
@@ -13623,7 +13634,11 @@
     "pancaran",
     "berpendar"
    ],
-   "def": "a soft steady light"
+   "def": "a soft steady light",
+   "trans": [
+    "发光",
+    "光辉"
+   ]
   },
   "humanitarian": {
    "trans": [
@@ -16751,6 +16766,12 @@
    "idtrans": [
     "ikan kod"
    ]
+  },
+  "curve": {
+   "idtrans": [
+    "kurva",
+    "lengkungan"
+   ]
   }
  },
  "en-academic": {
@@ -18682,7 +18703,8 @@
    ],
    "idtrans": [
     "pemaaf"
-   ]
+   ],
+   "def": "willing to forgive others; not harsh about mistakes"
   },
   "icing": {
    "trans": [
@@ -19939,7 +19961,8 @@
    ],
    "idtrans": [
     "tidak konvensional"
-   ]
+   ],
+   "def": "not following what is usual or conventional"
   },
   "voodoo": {
    "trans": [
@@ -21103,7 +21126,8 @@
     "suvenir",
     "cendera mata",
     "kenang-kenangan"
-   ]
+   ],
+   "def": "an object kept as a reminder of a place or event"
   },
   "steamer": {
    "trans": [
@@ -22020,7 +22044,11 @@
     "驴叫",
     "嘶叫"
    ],
-   "def": "the loud harsh cry of a donkey; to make this sound"
+   "def": "the loud harsh cry of a donkey; to make this sound",
+   "idtrans": [
+    "ringkikan keledai",
+    "meringkik"
+   ]
   },
   "cancelling": {
    "idtrans": [
@@ -24930,7 +24958,8 @@
    "trans": [
     "迷彩",
     "伪装"
-   ]
+   ],
+   "def": "camouflage; clothing or a pattern of green, brown and tan patches that helps someone blend in"
   },
   "cyclic": {
    "trans": [
@@ -25162,6 +25191,9 @@
    "trans": [
     "商品推销",
     "商品化"
+   ],
+   "idtrans": [
+    "penjualan barang dagangan"
    ]
   },
   "overseen": {
@@ -25883,6 +25915,9 @@
   "lucifer": {
    "idtrans": [
     "korek api"
+   ],
+   "trans": [
+    "路西法"
    ]
   },
   "fungi": {
@@ -26616,6 +26651,9 @@
    "trans": [
     "迷幻的",
     "五光十色的"
+   ],
+   "idtrans": [
+    "psikedelik"
    ]
   },
   "socioeconomic": {
@@ -27227,7 +27265,8 @@
    "idtrans": [
     "iri",
     "dengki"
-   ]
+   ],
+   "def": "feeling or showing envy"
   },
   "familial": {
    "trans": [
@@ -28232,6 +28271,10 @@
   "sow": {
    "idtrans": [
     "babi betina"
+   ],
+   "trans": [
+    "播种",
+    "母猪"
    ]
   },
   "validated": {
@@ -29493,7 +29536,10 @@
    ]
   },
   "riff": {
-   "def": "a short repeated phrase in popular music or jazz"
+   "def": "a short repeated phrase in popular music or jazz",
+   "trans": [
+    "重复乐句"
+   ]
   },
   "judas": {
    "trans": [
@@ -30658,6 +30704,50 @@
    "trans": [
     "临时保姆",
     "模特"
+   ]
+  },
+  "throwback": {
+   "trans": [
+    "返祖现象",
+    "怀旧之物"
+   ]
+  },
+  "bagged": {
+   "trans": [
+    "装袋",
+    "捕获"
+   ]
+  },
+  "rapping": {
+   "trans": [
+    "说唱",
+    "轻敲"
+   ]
+  },
+  "philharmonic": {
+   "idtrans": [
+    "filharmonik"
+   ]
+  },
+  "cohort": {
+   "idtrans": [
+    "kohort"
+   ]
+  },
+  "castor": {
+   "trans": [
+    "蓖麻",
+    "脚轮"
+   ]
+  },
+  "marquee": {
+   "trans": [
+    "大帐篷"
+   ]
+  },
+  "hefty": {
+   "trans": [
+    "重的"
    ]
   }
  },
@@ -36791,6 +36881,18 @@
     "merebut",
     "menyambar",
     "merampas"
+   ]
+  },
+  "crucial": {
+   "idtrans": [
+    "sangat penting",
+    "krusial"
+   ]
+  },
+  "curve": {
+   "idtrans": [
+    "kurva",
+    "lengkungan"
    ]
   }
  }

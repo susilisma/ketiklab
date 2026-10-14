@@ -2005,6 +2005,9 @@
    "berkaitan",
    "berhubungan",
    "mengenai"
+  ],
+  "trans": [
+   "relevant"
   ]
  },
  "委员会": {
@@ -2785,6 +2788,10 @@
    "agen",
    "perwakilan",
    "mewakili"
+  ],
+  "trans": [
+   "agent",
+   "act on behalf of"
   ]
  },
  "判断": {
@@ -2974,6 +2981,11 @@
   "idtrans": [
    "peraturan",
    "ketentuan"
+  ],
+  "trans": [
+   "regulations",
+   "ordinance",
+   "rules"
   ]
  },
  "植物": {
@@ -3913,6 +3925,9 @@
   "idtrans": [
    "mencintai",
    "kecintaan"
+  ],
+  "trans": [
+   "love ardently"
   ]
  },
  "不准": {
@@ -3926,6 +3941,10 @@
    "mulai mengerjakan",
    "turun tangan",
    "memukul"
+  ],
+  "trans": [
+   "get to work",
+   "hit"
   ]
  },
  "动机": {
@@ -5138,6 +5157,10 @@
   "idtrans": [
    "kaya",
    "makmur"
+  ],
+  "trans": [
+   "wealthy",
+   "prosperous"
   ]
  },
  "推测": {
@@ -5155,6 +5178,10 @@
   "idtrans": [
    "menguntungkan",
    "bermanfaat bagi"
+  ],
+  "trans": [
+   "be beneficial to",
+   "favor"
   ]
  },
  "来临": {
@@ -5281,6 +5308,10 @@
   "idtrans": [
    "menukar",
    "penukaran"
+  ],
+  "trans": [
+   "exchange",
+   "convert"
   ]
  },
  "勇士": {
@@ -5353,6 +5384,11 @@
   "idtrans": [
    "waktu yang lama",
    "lama"
+  ],
+  "trans": [
+   "a long time",
+   "long period",
+   "prolonged"
   ]
  },
  "动荡": {
@@ -5439,6 +5475,10 @@
    "pilihan",
    "terpilih",
    "seleksi"
+  ],
+  "trans": [
+   "carefully select",
+   "handpicked"
   ]
  },
  "保密": {
@@ -6090,6 +6130,10 @@
    "nada bicara",
    "nada",
    "intonasi"
+  ],
+  "trans": [
+   "tone",
+   "tone of voice"
   ]
  },
  "不适": {
@@ -6342,6 +6386,10 @@
    "berpegang teguh",
    "mempertahankan",
    "bertahan"
+  ],
+  "trans": [
+   "hold fast to",
+   "stick to"
   ]
  },
  "小屋": {
@@ -6395,6 +6443,10 @@
   "idtrans": [
    "dewan perwakilan rakyat",
    "majelis rendah"
+  ],
+  "trans": [
+   "House of Representatives",
+   "lower house"
   ]
  },
  "体积": {
@@ -6555,6 +6607,10 @@
   "trans": [
    "summarize",
    "summary"
+  ],
+  "idtrans": [
+   "ringkasan",
+   "kesimpulan"
   ]
  },
  "全体": {
@@ -6692,6 +6748,11 @@
   "trans": [
    "later period",
    "post-production"
+  ],
+  "idtrans": [
+   "tahap akhir",
+   "periode akhir",
+   "pascaproduksi"
   ]
  },
  "匿名": {
@@ -6806,6 +6867,11 @@
   "trans": [
    "enumerate",
    "list"
+  ],
+  "idtrans": [
+   "menyebutkan satu per satu",
+   "mendaftar",
+   "merinci"
   ]
  },
  "反感": {
@@ -10056,6 +10122,74 @@
    "berselingkuh",
    "perselingkuhan",
    "main serong"
+  ]
+ },
+ "证件": {
+  "idtrans": [
+   "kartu identitas",
+   "surat keterangan"
+  ],
+  "trans": [
+   "ID document",
+   "credentials"
+  ]
+ },
+ "比较": {
+  "trans": [
+   "compare",
+   "comparison",
+   "relatively"
+  ],
+  "idtrans": [
+   "membandingkan",
+   "perbandingan"
+  ]
+ },
+ "一段": {
+  "trans": [
+   "a section",
+   "a paragraph"
+  ],
+  "idtrans": [
+   "satu bagian"
+  ]
+ },
+ "所有人": {
+  "trans": [
+   "everyone",
+   "owner"
+  ],
+  "idtrans": [
+   "semua orang",
+   "pemilik"
+  ]
+ },
+ "奴隶": {
+  "idtrans": [
+   "budak",
+   "hamba sahaya"
+  ]
+ },
+ "农场": {
+  "idtrans": [
+   "perkebunan",
+   "ladang"
+  ]
+ },
+ "受理": {
+  "trans": [
+   "accept",
+   "handle"
+  ],
+  "idtrans": [
+   "menerima"
+  ]
+ },
+ "值得": {
+  "trans": [
+   "be worth",
+   "deserve",
+   "worthwhile"
   ]
  }
 }
