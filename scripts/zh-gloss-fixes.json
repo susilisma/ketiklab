@@ -561,6 +561,11 @@
   "trans": [
    "illustrious",
    "prominent"
+  ],
+  "idtrans": [
+   "terkemuka",
+   "termasyhur",
+   "ternama"
   ]
  },
  "最高点": {
@@ -568,12 +573,22 @@
    "puncak",
    "titik tertinggi",
    "mercu"
-  ]
+  ],
+  "trans": [
+   "highest point",
+   "peak"
+  ],
+  "def": "the highest point; the peak"
  },
  "歪曲": {
   "trans": [
    "distort",
    "twist"
+  ],
+  "idtrans": [
+   "memutarbalikkan",
+   "mendistorsi",
+   "menyelewengkan"
   ]
  },
  "年鉴": {
@@ -620,8 +635,16 @@
  },
  "条子": {
   "idtrans": [
+   "secarik kertas",
+   "catatan kecil",
    "polisi"
-  ]
+  ],
+  "trans": [
+   "slip of paper",
+   "note",
+   "cop"
+  ],
+  "def": "a short note written on a slip of paper; (slang) a police officer"
  },
  "回绝": {
   "idtrans": [
@@ -639,6 +662,11 @@
   "trans": [
    "stove",
    "furnace"
+  ],
+  "idtrans": [
+   "tungku",
+   "kompor",
+   "perapian"
   ]
  },
  "柑橘": {
@@ -658,7 +686,11 @@
   "trans": [
    "gain"
   ],
-  "def": "an increase; (electronics) amplification gain"
+  "def": "an increase; (electronics) amplification gain",
+  "idtrans": [
+   "penguatan",
+   "gain"
+  ]
  },
  "校验": {
   "trans": [
@@ -676,7 +708,13 @@
    "gloomy",
    "overcast",
    "sombre"
-  ]
+  ],
+  "idtrans": [
+   "mendung",
+   "muram",
+   "suram"
+  ],
+  "def": "gloomy and overcast, of the sky or of a face"
  },
  "意志力": {
   "trans": [
@@ -688,7 +726,11 @@
    "retell",
    "restate"
   ],
-  "def": "to retell or restate in one's own words"
+  "def": "to retell or restate in one's own words",
+  "idtrans": [
+   "menceritakan kembali",
+   "mengulang"
+  ]
  },
  "处方药": {
   "idtrans": [
@@ -726,17 +768,31 @@
    "toilet umum",
    "wc umum",
    "kakus"
-  ]
+  ],
+  "trans": [
+   "public toilet",
+   "public restroom"
+  ],
+  "def": "a toilet open to the public"
  },
  "帐目": {
   "trans": [
    "accounts",
    "account entries"
+  ],
+  "idtrans": [
+   "pembukuan",
+   "catatan keuangan"
   ]
  },
  "法律界": {
   "trans": [
    "legal profession"
+  ],
+  "idtrans": [
+   "kalangan hukum",
+   "dunia hukum",
+   "profesi hukum"
   ]
  },
  "皮靴": {
@@ -747,6 +803,11 @@
  "势均力敌": {
   "trans": [
    "evenly matched"
+  ],
+  "idtrans": [
+   "seimbang",
+   "sama kuat",
+   "berimbang"
   ]
  },
  "现在": {
@@ -918,7 +979,8 @@
   "idtrans": [
    "hasil melimpah",
    "panen melimpah"
-  ]
+  ],
+  "def": "a high yield; a bumper harvest"
  },
  "要价": {
   "trans": [
@@ -1229,7 +1291,8 @@
   "idtrans": [
    "campuran",
    "mencampur"
-  ]
+  ],
+  "def": "to mix in; (colloquial) to meddle or get involved"
  },
  "检查员": {
   "idtrans": [
@@ -1427,12 +1490,20 @@
  "痢疾": {
   "idtrans": [
    "disentri"
-  ]
+  ],
+  "trans": [
+   "dysentery"
+  ],
+  "def": "dysentery; an intestinal infection causing severe diarrhoea with blood"
  },
  "医务室": {
   "idtrans": [
    "klinik",
    "ruang kesehatan"
+  ],
+  "trans": [
+   "clinic",
+   "infirmary"
   ]
  },
  "暗指": {
@@ -1546,7 +1617,10 @@
   "def": "wind around something and hold it fast"
  },
  "母牛": {
-  "def": "a mature female of domestic cattle"
+  "def": "a mature female of domestic cattle",
+  "idtrans": [
+   "sapi betina"
+  ]
  },
  "企图": {
   "trans": [
@@ -1830,6 +1904,10 @@
  "电路板": {
   "idtrans": [
    "papan sirkuit"
+  ],
+  "trans": [
+   "circuit board",
+   "printed circuit board"
   ]
  },
  "发病率": {
@@ -1911,7 +1989,8 @@
  "紧急情况": {
   "idtrans": [
    "darurat"
-  ]
+  ],
+  "def": "an emergency; an urgent and dangerous situation"
  },
  "礼物": {
   "idtrans": [
@@ -10191,5 +10270,4088 @@
    "deserve",
    "worthwhile"
   ]
+ },
+ "出价": {
+  "idtrans": [
+   "menawar",
+   "mengajukan harga"
+  ]
+ },
+ "前导": {
+  "trans": [
+   "lead the way",
+   "precede"
+  ],
+  "def": "to go in front and lead the way; preceding or leading (e.g. an escort vehicle)"
+ },
+ "加冕": {
+  "idtrans": [
+   "menobatkan",
+   "penobatan",
+   "memahkotai"
+  ],
+  "def": "to crown a monarch; coronation"
+ },
+ "勘察": {
+  "trans": [
+   "survey",
+   "reconnoitre"
+  ],
+  "idtrans": [
+   "menyurvei"
+  ],
+  "def": "to survey or investigate terrain or a site on the spot"
+ },
+ "反向": {
+  "idtrans": [
+   "berlawanan arah",
+   "kebalikan"
+  ],
+  "def": "in the opposite or reverse direction"
+ },
+ "哮喘": {
+  "idtrans": [
+   "asma",
+   "bengek"
+  ]
+ },
+ "征用": {
+  "trans": [
+   "requisition",
+   "expropriate",
+   "commandeer"
+  ],
+  "idtrans": [
+   "menyita",
+   "mengambil alih",
+   "merekuisisi"
+  ],
+  "def": "to requisition or expropriate property or land for public or official use"
+ },
+ "拘留所": {
+  "idtrans": [
+   "rumah tahanan",
+   "tempat penahanan"
+  ],
+  "def": "a facility where people are held in short-term detention"
+ },
+ "污蔑": {
+  "trans": [
+   "slander",
+   "smear",
+   "vilify"
+  ],
+  "idtrans": [
+   "memfitnah"
+  ],
+  "def": "to slander or smear someone with false accusations"
+ },
+ "赛跑": {
+  "trans": [
+   "race",
+   "running race",
+   "foot race"
+  ],
+  "idtrans": [
+   "lomba lari",
+   "balap lari"
+  ],
+  "def": "a running race; to race on foot"
+ },
+ "运载火箭": {
+  "trans": [
+   "launch vehicle",
+   "carrier rocket"
+  ],
+  "idtrans": [
+   "roket peluncur",
+   "wahana peluncur"
+  ],
+  "def": "a rocket used to carry a satellite or spacecraft into space"
+ },
+ "预兆": {
+  "idtrans": [
+   "pertanda",
+   "firasat"
+  ]
+ },
+ "下雪": {
+  "idtrans": [
+   "turun salju",
+   "bersalju"
+  ],
+  "def": "to snow; for snow to fall"
+ },
+ "充气": {
+  "idtrans": [
+   "memompa",
+   "mengisi angin"
+  ]
+ },
+ "军事行动": {
+  "trans": [
+   "military operation",
+   "military action"
+  ],
+  "idtrans": [
+   "operasi militer",
+   "aksi militer"
+  ],
+  "def": "a military operation or campaign"
+ },
+ "冰冻": {
+  "trans": [
+   "freeze",
+   "frozen"
+  ],
+  "idtrans": [
+   "membeku",
+   "beku",
+   "membekukan"
+  ],
+  "def": "to freeze; frozen solid"
+ },
+ "冲撞": {
+  "idtrans": [
+   "menabrak"
+  ]
+ },
+ "判决书": {
+  "idtrans": [
+   "putusan pengadilan",
+   "surat putusan"
+  ]
+ },
+ "打捞": {
+  "def": "to retrieve or salvage something from under water"
+ },
+ "枷锁": {
+  "idtrans": [
+   "belenggu",
+   "rantai"
+  ]
+ },
+ "流淌": {
+  "trans": [
+   "flow",
+   "run",
+   "stream"
+  ],
+  "idtrans": [
+   "mengalir"
+  ],
+  "def": "to flow (of a liquid)"
+ },
+ "继续下去": {
+  "trans": [
+   "continue",
+   "go on",
+   "carry on"
+  ],
+  "idtrans": [
+   "melanjutkan",
+   "terus berlanjut",
+   "meneruskan"
+  ],
+  "def": "to continue or keep going"
+ },
+ "赌注": {
+  "trans": [
+   "stake",
+   "bet",
+   "wager"
+  ],
+  "def": "money or something of value wagered in a bet; stakes"
+ },
+ "伏击": {
+  "idtrans": [
+   "penyergapan",
+   "menyergap",
+   "serangan mendadak"
+  ]
+ },
+ "做错": {
+  "trans": [
+   "do wrong",
+   "make a mistake"
+  ],
+  "idtrans": [
+   "berbuat salah"
+  ],
+  "def": "to do something wrong; to make a mistake"
+ },
+ "固守": {
+  "trans": [
+   "hold fast to",
+   "defend stubbornly",
+   "cling to"
+  ],
+  "idtrans": [
+   "mempertahankan",
+   "berpegang teguh",
+   "bertahan"
+  ],
+  "def": "to defend firmly or stick stubbornly to a position or belief"
+ },
+ "坚定不移": {
+  "trans": [
+   "unswerving",
+   "steadfast",
+   "unwavering"
+  ],
+  "idtrans": [
+   "teguh"
+  ],
+  "def": "firm and unwavering in belief or resolve"
+ },
+ "塞满": {
+  "trans": [
+   "stuff full",
+   "cram",
+   "pack"
+  ],
+  "idtrans": [
+   "menjejali",
+   "memenuhi"
+  ]
+ },
+ "格子": {
+  "trans": [
+   "grid"
+  ],
+  "def": "a pattern of squares formed by crossing lines; a grid or check"
+ },
+ "省略": {
+  "idtrans": [
+   "penghilangan"
+  ],
+  "def": "to leave out or omit; omission"
+ },
+ "算术": {
+  "idtrans": [
+   "aritmetika",
+   "ilmu hitung"
+  ]
+ },
+ "谦卑": {
+  "trans": [
+   "humble",
+   "humility",
+   "modest"
+  ],
+  "idtrans": [
+   "rendah hati"
+  ],
+  "def": "humble and modest; humility"
+ },
+ "体育运动": {
+  "def": "physical sports and athletic activities"
+ },
+ "凝视": {
+  "idtrans": [
+   "menatap"
+  ]
+ },
+ "夜色": {
+  "def": "the scenery or darkness of the night"
+ },
+ "收容所": {
+  "idtrans": [
+   "tempat penampungan",
+   "panti",
+   "rumah penampungan"
+  ]
+ },
+ "格调": {
+  "trans": [
+   "style",
+   "tone",
+   "taste"
+  ],
+  "idtrans": [
+   "gaya",
+   "corak",
+   "selera"
+  ],
+  "def": "the style or tone of a work of art; a person's artistic taste"
+ },
+ "残害": {
+  "trans": [
+   "cruelly injure",
+   "slaughter"
+  ],
+  "idtrans": [
+   "menganiaya",
+   "membantai",
+   "mencederai dengan kejam"
+  ],
+  "def": "to injure or kill cruelly"
+ },
+ "触角": {
+  "idtrans": [
+   "antena",
+   "sungut"
+  ]
+ },
+ "过活": {
+  "trans": [
+   "make a living",
+   "live",
+   "get by"
+  ],
+  "idtrans": [
+   "mencari nafkah",
+   "hidup"
+  ],
+  "def": "to live or make a living; to get by"
+ },
+ "银币": {
+  "trans": [
+   "silver coin"
+  ],
+  "idtrans": [
+   "uang perak",
+   "koin perak"
+  ]
+ },
+ "复印": {
+  "idtrans": [
+   "memfotokopi",
+   "fotokopi"
+  ]
+ },
+ "成群": {
+  "trans": [
+   "in groups",
+   "in flocks"
+  ]
+ },
+ "新陈代谢": {
+  "trans": [
+   "metabolism"
+  ],
+  "idtrans": [
+   "metabolisme"
+  ],
+  "def": "metabolism; the chemical processes of a living body; replacement of the old by the new"
+ },
+ "无所事事": {
+  "trans": [
+   "idle",
+   "have nothing to do"
+  ],
+  "idtrans": [
+   "menganggur",
+   "bermalas-malasan",
+   "tidak ada kerjaan"
+  ],
+  "def": "to have nothing to do; to idle about"
+ },
+ "习惯于": {
+  "trans": [
+   "be used to",
+   "be accustomed to"
+  ],
+  "idtrans": [
+   "terbiasa dengan",
+   "membiasakan diri"
+  ],
+  "def": "to be used or accustomed to something"
+ },
+ "休克": {
+  "idtrans": [
+   "syok",
+   "renjatan"
+  ]
+ },
+ "喷雾": {
+  "def": "a fine spray or mist of liquid; to spray"
+ },
+ "宴请": {
+  "trans": [
+   "host a banquet for",
+   "invite to a feast"
+  ],
+  "idtrans": [
+   "menjamu",
+   "mengundang makan"
+  ],
+  "def": "to entertain someone with a banquet or dinner"
+ },
+ "手镯": {
+  "idtrans": [
+   "gelang",
+   "gelang tangan"
+  ]
+ },
+ "消退": {
+  "trans": [
+   "fade",
+   "subside",
+   "recede"
+  ],
+  "idtrans": [
+   "surut",
+   "memudar",
+   "mereda"
+  ],
+  "def": "to fade away or subside"
+ },
+ "深思熟虑": {
+  "idtrans": [
+   "pertimbangan matang"
+  ]
+ },
+ "压榨": {
+  "trans": [
+   "press",
+   "squeeze",
+   "exploit"
+  ],
+  "idtrans": [
+   "memeras",
+   "mengeksploitasi"
+  ],
+  "def": "to press or squeeze out (juice, oil); to exploit people"
+ },
+ "发展史": {
+  "trans": [
+   "history of development",
+   "developmental history"
+  ],
+  "idtrans": [
+   "sejarah perkembangan"
+  ],
+  "def": "the history of how something developed"
+ },
+ "大修": {
+  "idtrans": [
+   "perbaikan besar",
+   "turun mesin"
+  ]
+ },
+ "巡游": {
+  "def": "to tour or cruise around; to parade"
+ },
+ "录音带": {
+  "trans": [
+   "audio tape",
+   "cassette tape"
+  ],
+  "idtrans": [
+   "kaset",
+   "pita rekaman"
+  ]
+ },
+ "手柄": {
+  "idtrans": [
+   "gagang",
+   "pegangan"
+  ]
+ },
+ "绵羊": {
+  "idtrans": [
+   "domba",
+   "biri-biri"
+  ]
+ },
+ "贫血": {
+  "idtrans": [
+   "anemia",
+   "kurang darah"
+  ],
+  "def": "anemia; a deficiency of red blood cells or haemoglobin"
+ },
+ "音符": {
+  "idtrans": [
+   "not"
+  ]
+ },
+ "一大批": {
+  "idtrans": [
+   "sejumlah besar",
+   "banyak sekali"
+  ],
+  "def": "a large number or batch of something"
+ },
+ "乞求": {
+  "idtrans": [
+   "memohon",
+   "mengemis"
+  ]
+ },
+ "仇人": {
+  "def": "a personal enemy; someone one hates"
+ },
+ "停机": {
+  "trans": [
+   "shut down"
+  ],
+  "idtrans": [
+   "berhenti beroperasi",
+   "mematikan mesin"
+  ]
+ },
+ "共振": {
+  "idtrans": [
+   "resonansi"
+  ]
+ },
+ "冲走": {
+  "trans": [
+   "wash away",
+   "sweep away"
+  ],
+  "idtrans": [
+   "menghanyutkan"
+  ]
+ },
+ "嘲弄": {
+  "trans": [
+   "mock",
+   "ridicule",
+   "make fun of"
+  ],
+  "idtrans": [
+   "mengejek",
+   "mencemooh",
+   "mengolok-olok"
+  ],
+  "def": "to mock or ridicule"
+ },
+ "河马": {
+  "idtrans": [
+   "kuda nil"
+  ]
+ },
+ "光束": {
+  "idtrans": [
+   "berkas cahaya",
+   "sinar",
+   "sorot cahaya"
+  ]
+ },
+ "口令": {
+  "idtrans": [
+   "kata sandi",
+   "aba-aba"
+  ]
+ },
+ "开动": {
+  "trans": [
+   "start",
+   "set in motion"
+  ],
+  "idtrans": [
+   "menghidupkan",
+   "menjalankan",
+   "menggerakkan"
+  ],
+  "def": "to start up a machine or vehicle; to set in motion"
+ },
+ "抽搐": {
+  "idtrans": [
+   "kejang",
+   "berkedut"
+  ]
+ },
+ "游戏规则": {
+  "trans": [
+   "rules of the game"
+  ],
+  "idtrans": [
+   "aturan permainan",
+   "aturan main"
+  ],
+  "def": "the rules of a game; (figuratively) the accepted rules of a field"
+ },
+ "超速": {
+  "trans": [
+   "speeding",
+   "exceed the speed limit"
+  ],
+  "idtrans": [
+   "mengebut",
+   "melebihi batas kecepatan"
+  ]
+ },
+ "人生观": {
+  "trans": [
+   "outlook on life",
+   "view of life",
+   "philosophy of life"
+  ],
+  "idtrans": [
+   "pandangan hidup",
+   "falsafah hidup"
+  ],
+  "def": "a person's outlook on life"
+ },
+ "冒烟": {
+  "idtrans": [
+   "berasap",
+   "mengeluarkan asap"
+  ],
+  "def": "to give off smoke"
+ },
+ "务农": {
+  "idtrans": [
+   "bertani"
+  ]
+ },
+ "包厢": {
+  "trans": [
+   "private room",
+   "box",
+   "compartment"
+  ],
+  "def": "a private box in a theatre; a private room in a restaurant or karaoke; a train compartment"
+ },
+ "吸尘器": {
+  "idtrans": [
+   "penyedot debu"
+  ]
+ },
+ "咖啡厅": {
+  "idtrans": [
+   "kafe",
+   "kedai kopi"
+  ]
+ },
+ "库房": {
+  "trans": [
+   "storeroom",
+   "warehouse",
+   "storehouse"
+  ],
+  "idtrans": [
+   "gudang"
+  ],
+  "def": "a room or building for storing goods; a warehouse"
+ },
+ "度量": {
+  "trans": [
+   "tolerance",
+   "magnanimity",
+   "measure"
+  ],
+  "idtrans": [
+   "kelapangan dada",
+   "toleransi",
+   "ukuran"
+  ],
+  "def": "a person's capacity to tolerate others; magnanimity; also measurement"
+ },
+ "慌乱": {
+  "trans": [
+   "flustered",
+   "panicky",
+   "in a flurry"
+  ],
+  "idtrans": [
+   "panik",
+   "gugup"
+  ],
+  "def": "flustered and confused; in a panic"
+ },
+ "批评家": {
+  "idtrans": [
+   "kritikus",
+   "pengkritik"
+  ]
+ },
+ "潜逃": {
+  "idtrans": [
+   "melarikan diri",
+   "kabur"
+  ]
+ },
+ "红茶": {
+  "trans": [
+   "black tea"
+  ],
+  "idtrans": [
+   "teh hitam"
+  ],
+  "def": "black tea; fully oxidised tea"
+ },
+ "音调": {
+  "trans": [
+   "tone",
+   "pitch",
+   "intonation"
+  ],
+  "def": "the pitch or tone of a sound or voice"
+ },
+ "仿制": {
+  "trans": [
+   "copy",
+   "imitate"
+  ],
+  "idtrans": [
+   "meniru",
+   "membuat tiruan"
+  ],
+  "def": "to make a copy or imitation of something"
+ },
+ "伦理学": {
+  "idtrans": [
+   "etika",
+   "ilmu etika"
+  ]
+ },
+ "凶杀": {
+  "idtrans": [
+   "pembunuhan"
+  ]
+ },
+ "初选": {
+  "idtrans": [
+   "pemilihan pendahuluan",
+   "seleksi awal"
+  ]
+ },
+ "喝彩": {
+  "idtrans": [
+   "bersorak"
+  ]
+ },
+ "局限性": {
+  "idtrans": [
+   "keterbatasan",
+   "batasan"
+  ]
+ },
+ "独身": {
+  "trans": [
+   "single",
+   "unmarried"
+  ],
+  "def": "single and unmarried; living unmarried"
+ },
+ "联接": {
+  "def": "to connect or join together; a connection"
+ },
+ "认领": {
+  "trans": [
+   "claim",
+   "adopt"
+  ],
+  "idtrans": [
+   "mengklaim",
+   "mengakui sebagai milik",
+   "mengadopsi"
+  ],
+  "def": "to claim something as one's own, e.g. lost property; to adopt a child"
+ },
+ "跳板": {
+  "trans": [
+   "springboard",
+   "diving board"
+  ],
+  "idtrans": [
+   "papan loncat",
+   "batu loncatan",
+   "papan lompat"
+  ],
+  "def": "a springboard or diving board; (figuratively) a stepping stone"
+ },
+ "上船": {
+  "idtrans": [
+   "naik kapal",
+   "menaiki kapal"
+  ]
+ },
+ "不道德": {
+  "trans": [
+   "immoral",
+   "unethical"
+  ],
+  "idtrans": [
+   "tidak bermoral",
+   "tidak etis"
+  ],
+  "def": "immoral; against moral principles"
+ },
+ "兵营": {
+  "trans": [
+   "barracks",
+   "military camp"
+  ],
+  "idtrans": [
+   "barak",
+   "tangsi",
+   "asrama tentara"
+  ]
+ },
+ "商船": {
+  "trans": [
+   "merchant ship"
+  ],
+  "idtrans": [
+   "kapal dagang",
+   "kapal niaga"
+  ],
+  "def": "a ship used for trade or carrying cargo"
+ },
+ "小猪": {
+  "idtrans": [
+   "anak babi"
+  ]
+ },
+ "张口": {
+  "trans": [
+   "open one's mouth",
+   "gape"
+  ],
+  "idtrans": [
+   "membuka mulut",
+   "menganga"
+  ],
+  "def": "to open the mouth, e.g. to speak or eat"
+ },
+ "摘录": {
+  "idtrans": [
+   "kutipan",
+   "petikan"
+  ]
+ },
+ "买进": {
+  "trans": [
+   "buy in",
+   "purchase",
+   "buy"
+  ],
+  "idtrans": [
+   "membeli",
+   "memborong"
+  ],
+  "def": "to buy or purchase goods or shares"
+ },
+ "侥幸": {
+  "idtrans": [
+   "kebetulan beruntung",
+   "untung-untungan",
+   "mujur"
+  ]
+ },
+ "偷懒": {
+  "idtrans": [
+   "bermalas-malasan",
+   "malas-malasan",
+   "mangkir"
+  ],
+  "def": "to be lazy; to shirk work"
+ },
+ "出汗": {
+  "trans": [
+   "sweat",
+   "perspire"
+  ]
+ },
+ "分层": {
+  "def": "divided into layers or levels; stratification"
+ },
+ "剧变": {
+  "idtrans": [
+   "perubahan drastis",
+   "pergolakan"
+  ],
+  "def": "a sudden drastic change"
+ },
+ "发牢骚": {
+  "idtrans": [
+   "mengeluh",
+   "menggerutu",
+   "mengomel"
+  ]
+ },
+ "古物": {
+  "idtrans": [
+   "barang antik",
+   "benda kuno"
+  ],
+  "def": "an antique; an ancient object"
+ },
+ "名望": {
+  "trans": [
+   "fame",
+   "prestige"
+  ],
+  "idtrans": [
+   "nama baik",
+   "reputasi",
+   "kemasyhuran"
+  ],
+  "def": "fame and good reputation"
+ },
+ "小费": {
+  "trans": [
+   "tip",
+   "gratuity"
+  ],
+  "idtrans": [
+   "tip",
+   "uang tip",
+   "persen"
+  ],
+  "def": "a tip; a small gift of money for service"
+ },
+ "幻象": {
+  "trans": [
+   "illusion",
+   "phantom",
+   "mirage"
+  ],
+  "idtrans": [
+   "ilusi",
+   "khayalan"
+  ],
+  "def": "an illusion or phantom image"
+ },
+ "游历": {
+  "def": "to travel around sightseeing"
+ },
+ "萤火虫": {
+  "idtrans": [
+   "kunang-kunang"
+  ]
+ },
+ "难民营": {
+  "trans": [
+   "refugee camp"
+  ],
+  "idtrans": [
+   "kamp pengungsi",
+   "kamp pengungsian"
+  ]
+ },
+ "下葬": {
+  "idtrans": [
+   "menguburkan",
+   "memakamkan",
+   "mengebumikan"
+  ]
+ },
+ "天佑": {
+  "idtrans": [
+   "berkat tuhan",
+   "lindungan tuhan"
+  ]
+ },
+ "奋起": {
+  "idtrans": [
+   "bangkit"
+  ]
+ },
+ "微波炉": {
+  "idtrans": [
+   "microwave",
+   "oven microwave"
+  ]
+ },
+ "快照": {
+  "trans": [
+   "snapshot"
+  ],
+  "idtrans": [
+   "foto kilat",
+   "jepretan"
+  ],
+  "def": "a snapshot; a quick informal photo; (computing) a copy of a system's state at a moment"
+ },
+ "憎恶": {
+  "idtrans": [
+   "membenci",
+   "muak"
+  ]
+ },
+ "托盘": {
+  "idtrans": [
+   "nampan",
+   "baki",
+   "talam"
+  ]
+ },
+ "水牛": {
+  "idtrans": [
+   "kerbau"
+  ]
+ },
+ "滚开": {
+  "idtrans": [
+   "pergi sana",
+   "enyah",
+   "minggat"
+  ]
+ },
+ "致词": {
+  "trans": [
+   "give a speech",
+   "deliver an address"
+  ],
+  "def": "to give a speech or address at an occasion"
+ },
+ "衰变": {
+  "idtrans": [
+   "peluruhan",
+   "peluruhan radioaktif"
+  ]
+ },
+ "举证": {
+  "idtrans": [
+   "mengajukan bukti",
+   "membuktikan",
+   "memberikan bukti"
+  ]
+ },
+ "分立": {
+  "def": "to stand apart as separate entities; separation; (electronics) discrete"
+ },
+ "加速度": {
+  "idtrans": [
+   "percepatan"
+  ]
+ },
+ "平分": {
+  "trans": [
+   "divide equally",
+   "split evenly"
+  ],
+  "idtrans": [
+   "membagi rata",
+   "membagi sama rata"
+  ],
+  "def": "to divide or share equally; also a tie"
+ },
+ "拼凑": {
+  "idtrans": [
+   "merangkai"
+  ]
+ },
+ "污泥": {
+  "idtrans": [
+   "lumpur",
+   "endapan lumpur"
+  ]
+ },
+ "珍爱": {
+  "idtrans": [
+   "menyayangi",
+   "menghargai",
+   "mencintai"
+  ]
+ },
+ "红心": {
+  "idtrans": [
+   "hati merah",
+   "kartu hati"
+  ]
+ },
+ "腐化": {
+  "idtrans": [
+   "korup"
+  ],
+  "def": "to become corrupt or morally degenerate"
+ },
+ "里拉": {
+  "def": "the lira, the currency of Turkey and formerly of Italy"
+ },
+ "伯母": {
+  "def": "the wife of one's father's elder brother; aunt"
+ },
+ "作祟": {
+  "idtrans": [
+   "menghantui",
+   "mengganggu",
+   "membuat ulah"
+  ],
+  "def": "(of ghosts or bad influences) to cause trouble; to be at work behind the scenes"
+ },
+ "信守": {
+  "trans": [
+   "abide by",
+   "keep"
+  ],
+  "idtrans": [
+   "menepati",
+   "memegang teguh",
+   "mematuhi"
+  ],
+  "def": "to keep faithfully a promise or agreement"
+ },
+ "俯冲": {
+  "idtrans": [
+   "menukik",
+   "terjun menukik"
+  ]
+ },
+ "偿付": {
+  "trans": [
+   "pay",
+   "repay"
+  ],
+  "idtrans": [
+   "membayar",
+   "melunasi"
+  ]
+ },
+ "删掉": {
+  "trans": [
+   "delete",
+   "remove",
+   "cut out"
+  ],
+  "idtrans": [
+   "menghapus",
+   "membuang"
+  ],
+  "def": "to delete or cut out"
+ },
+ "喧哗": {
+  "trans": [
+   "uproar"
+  ]
+ },
+ "天平": {
+  "idtrans": [
+   "timbangan",
+   "neraca"
+  ]
+ },
+ "奔腾": {
+  "def": "to gallop; to surge forward (of horses, rivers)"
+ },
+ "安逸": {
+  "idtrans": [
+   "nyaman",
+   "tenteram",
+   "santai"
+  ],
+  "def": "comfortable and easy (of life); at ease"
+ },
+ "定金": {
+  "idtrans": [
+   "uang muka",
+   "panjar",
+   "deposit"
+  ]
+ },
+ "毛皮": {
+  "trans": [
+   "fur",
+   "pelt"
+  ],
+  "idtrans": [
+   "bulu binatang",
+   "kulit berbulu"
+  ]
+ },
+ "溜冰": {
+  "idtrans": [
+   "bermain seluncur es",
+   "berseluncur",
+   "main sepatu roda"
+  ]
+ },
+ "设计图": {
+  "idtrans": [
+   "gambar rancangan",
+   "gambar desain",
+   "cetak biru"
+  ]
+ },
+ "亚麻": {
+  "trans": [
+   "flax",
+   "linen"
+  ],
+  "idtrans": [
+   "linen",
+   "rami"
+  ],
+  "def": "flax, a plant whose fibre is woven into linen; linen"
+ },
+ "俘获": {
+  "def": "to capture or take prisoner; to seize"
+ },
+ "入会": {
+  "idtrans": [
+   "menjadi anggota",
+   "bergabung",
+   "masuk perkumpulan"
+  ],
+  "def": "to join a society or association as a member"
+ },
+ "冗长": {
+  "trans": [
+   "lengthy",
+   "long-winded"
+  ],
+  "idtrans": [
+   "bertele-tele",
+   "berkepanjangan",
+   "panjang lebar"
+  ],
+  "def": "tediously long; long-winded"
+ },
+ "划船": {
+  "trans": [
+   "row a boat",
+   "rowing",
+   "boating"
+  ],
+  "idtrans": [
+   "mendayung",
+   "berperahu"
+  ],
+  "def": "to row a boat"
+ },
+ "奉承": {
+  "trans": [
+   "flatter",
+   "fawn on",
+   "toady"
+  ],
+  "idtrans": [
+   "menjilat",
+   "menyanjung",
+   "membujuk"
+  ],
+  "def": "to flatter or fawn on someone"
+ },
+ "招手": {
+  "idtrans": [
+   "melambaikan tangan",
+   "melambai"
+  ]
+ },
+ "豆类": {
+  "idtrans": [
+   "kacang-kacangan",
+   "polong-polongan"
+  ]
+ },
+ "赞颂": {
+  "trans": [
+   "praise",
+   "extol"
+  ],
+  "idtrans": [
+   "memuji",
+   "menyanjung"
+  ],
+  "def": "to praise or extol highly"
+ },
+ "分清": {
+  "trans": [
+   "distinguish",
+   "tell apart"
+  ],
+  "idtrans": [
+   "membedakan",
+   "memilah"
+  ],
+  "def": "to distinguish clearly between things"
+ },
+ "刻薄": {
+  "trans": [
+   "harsh",
+   "mean",
+   "caustic"
+  ],
+  "def": "unkind and caustic in speech or treatment; mean"
+ },
+ "回旋": {
+  "idtrans": [
+   "berputar-putar",
+   "bermanuver"
+  ],
+  "def": "to circle or wheel around; room to manoeuvre"
+ },
+ "妨害": {
+  "trans": [
+   "impair",
+   "harm"
+  ],
+  "idtrans": [
+   "merugikan",
+   "mengganggu",
+   "membahayakan"
+  ],
+  "def": "to impair or do harm to health, order etc."
+ },
+ "慈善机构": {
+  "idtrans": [
+   "lembaga amal",
+   "badan amal"
+  ]
+ },
+ "招待所": {
+  "def": "a guesthouse run by an organisation for visitors"
+ },
+ "拦阻": {
+  "def": "to block or obstruct; to stop someone from passing"
+ },
+ "灼伤": {
+  "idtrans": [
+   "luka bakar",
+   "lecur"
+  ]
+ },
+ "生锈": {
+  "idtrans": [
+   "berkarat"
+  ],
+  "def": "to rust; to become rusty"
+ },
+ "石板": {
+  "idtrans": [
+   "lempengan batu",
+   "batu tulis",
+   "batu sabak"
+  ],
+  "def": "a flat slab of stone; a slate"
+ },
+ "周旋": {
+  "trans": [
+   "deal with",
+   "contend with"
+  ],
+  "def": "to deal or contend with someone; to mix socially"
+ },
+ "外层": {
+  "trans": [
+   "outer layer",
+   "outer"
+  ],
+  "idtrans": [
+   "lapisan luar"
+  ],
+  "def": "the outer layer of something"
+ },
+ "小径": {
+  "idtrans": [
+   "jalan setapak",
+   "lorong"
+  ]
+ },
+ "忧郁症": {
+  "idtrans": [
+   "depresi",
+   "melankolia"
+  ]
+ },
+ "排泄": {
+  "trans": [
+   "excrete",
+   "excretion",
+   "discharge"
+  ],
+  "idtrans": [
+   "mengeluarkan kotoran",
+   "ekskresi",
+   "buang air"
+  ],
+  "def": "to excrete waste from the body"
+ },
+ "洁白": {
+  "trans": [
+   "pure white"
+  ],
+  "idtrans": [
+   "putih bersih",
+   "putih suci"
+  ],
+  "def": "pure white and spotless"
+ },
+ "滑冰": {
+  "trans": [
+   "ice skating",
+   "skate"
+  ],
+  "idtrans": [
+   "seluncur es",
+   "bermain seluncur es"
+  ],
+  "def": "to skate on ice; ice skating"
+ },
+ "漂泊": {
+  "trans": [
+   "drift",
+   "wander",
+   "lead a vagrant life"
+  ],
+  "def": "to drift from place to place; to lead a wandering life"
+ },
+ "芬芳": {
+  "idtrans": [
+   "harum",
+   "wangi",
+   "semerbak"
+  ]
+ },
+ "凶恶": {
+  "trans": [
+   "fierce",
+   "ferocious",
+   "vicious"
+  ],
+  "idtrans": [
+   "bengis",
+   "ganas",
+   "buas"
+  ],
+  "def": "fierce and vicious; ferocious"
+ },
+ "副官": {
+  "idtrans": [
+   "ajudan"
+  ]
+ },
+ "流行音乐": {
+  "trans": [
+   "pop music",
+   "popular music"
+  ],
+  "idtrans": [
+   "musik pop"
+  ]
+ },
+ "船头": {
+  "idtrans": [
+   "haluan",
+   "haluan kapal"
+  ]
+ },
+ "乘务员": {
+  "idtrans": [
+   "pramugari",
+   "pramugara",
+   "awak kabin"
+  ]
+ },
+ "书桌": {
+  "idtrans": [
+   "meja tulis",
+   "meja belajar"
+  ]
+ },
+ "侵扰": {
+  "trans": [
+   "harass"
+  ],
+  "idtrans": [
+   "mengganggu",
+   "mengusik",
+   "menyerbu"
+  ],
+  "def": "to invade and harass; to intrude and disturb"
+ },
+ "凌乱": {
+  "idtrans": [
+   "berantakan",
+   "kacau",
+   "acak-acakan"
+  ]
+ },
+ "扣子": {
+  "trans": [
+   "button"
+  ],
+  "def": "a button on clothing; a knot"
+ },
+ "清偿": {
+  "trans": [
+   "pay off",
+   "settle"
+  ],
+  "idtrans": [
+   "melunasi",
+   "membayar lunas"
+  ],
+  "def": "to pay off a debt in full"
+ },
+ "人寿保险": {
+  "trans": [
+   "life insurance"
+  ],
+  "idtrans": [
+   "asuransi jiwa"
+  ],
+  "def": "insurance that pays out on the death of the insured person"
+ },
+ "偷听": {
+  "idtrans": [
+   "menguping",
+   "mencuri dengar"
+  ]
+ },
+ "分摊": {
+  "idtrans": [
+   "membagi rata",
+   "menanggung bersama"
+  ]
+ },
+ "分界线": {
+  "idtrans": [
+   "garis batas",
+   "garis pemisah"
+  ]
+ },
+ "卖弄": {
+  "trans": [
+   "show off",
+   "flaunt",
+   "parade"
+  ],
+  "idtrans": [
+   "memamerkan",
+   "pamer",
+   "menyombongkan"
+  ],
+  "def": "to show off or flaunt one's skill or knowledge"
+ },
+ "守恒": {
+  "idtrans": [
+   "kekekalan"
+  ]
+ },
+ "底座": {
+  "trans": [
+   "base",
+   "pedestal",
+   "stand"
+  ],
+  "idtrans": [
+   "alas",
+   "dudukan"
+  ],
+  "def": "the base or pedestal on which something stands"
+ },
+ "照看": {
+  "trans": [
+   "look after",
+   "take care of",
+   "keep an eye on"
+  ],
+  "def": "to look after or take care of someone or something"
+ },
+ "熔化": {
+  "trans": [
+   "melt",
+   "fuse"
+  ]
+ },
+ "硫磺": {
+  "trans": [
+   "sulphur",
+   "sulfur",
+   "brimstone"
+  ],
+  "def": "sulphur, a yellow non-metallic element"
+ },
+ "花边": {
+  "trans": [
+   "lace",
+   "decorative border"
+  ],
+  "idtrans": [
+   "renda"
+  ],
+  "def": "lace or a decorative border; (in 花边新闻) gossip news"
+ },
+ "劫掠": {
+  "trans": [
+   "plunder",
+   "loot",
+   "pillage"
+  ],
+  "idtrans": [
+   "menjarah",
+   "merampok",
+   "merampas"
+  ],
+  "def": "to plunder or loot"
+ },
+ "化装": {
+  "trans": [
+   "make up",
+   "disguise oneself"
+  ],
+  "idtrans": [
+   "merias",
+   "berdandan",
+   "menyamar"
+  ],
+  "def": "to put on makeup or costume, e.g. for a performance; to disguise oneself"
+ },
+ "弹壳": {
+  "trans": [
+   "cartridge case",
+   "shell casing"
+  ],
+  "idtrans": [
+   "selongsong peluru"
+  ]
+ },
+ "推卸": {
+  "trans": [
+   "shirk"
+  ]
+ },
+ "杂文": {
+  "idtrans": [
+   "esai",
+   "karangan"
+  ]
+ },
+ "黑猩猩": {
+  "idtrans": [
+   "simpanse"
+  ]
+ },
+ "亏欠": {
+  "idtrans": [
+   "berutang",
+   "kekurangan"
+  ]
+ },
+ "交还": {
+  "trans": [
+   "return",
+   "give back",
+   "hand back"
+  ],
+  "idtrans": [
+   "mengembalikan",
+   "menyerahkan kembali"
+  ]
+ },
+ "前部": {
+  "trans": [
+   "front part",
+   "front"
+  ],
+  "idtrans": [
+   "bagian depan"
+  ],
+  "def": "the front part of something"
+ },
+ "受雇": {
+  "idtrans": [
+   "dipekerjakan",
+   "bekerja pada"
+  ]
+ },
+ "推敲": {
+  "idtrans": [
+   "menimbang-nimbang"
+  ]
+ },
+ "烧光": {
+  "idtrans": [
+   "terbakar habis",
+   "habis terbakar",
+   "membakar habis"
+  ],
+  "def": "to burn up completely; to be burnt to nothing"
+ },
+ "兵工厂": {
+  "idtrans": [
+   "pabrik senjata",
+   "gudang senjata",
+   "arsenal"
+  ]
+ },
+ "卷发": {
+  "trans": [
+   "curly hair",
+   "curls"
+  ],
+  "idtrans": [
+   "rambut keriting",
+   "rambut ikal"
+  ],
+  "def": "curly or wavy hair; curls"
+ },
+ "原野": {
+  "trans": [
+   "open country",
+   "wilderness"
+  ],
+  "def": "open country; wide uncultivated plains"
+ },
+ "合流": {
+  "idtrans": [
+   "pertemuan arus",
+   "bergabung"
+  ]
+ },
+ "售货员": {
+  "idtrans": [
+   "pramuniaga",
+   "penjaga toko"
+  ]
+ },
+ "大灾难": {
+  "idtrans": [
+   "bencana besar",
+   "malapetaka"
+  ]
+ },
+ "截取": {
+  "idtrans": [
+   "mencegat",
+   "memotong"
+  ]
+ },
+ "搭车": {
+  "trans": [
+   "hitch a ride",
+   "take a bus"
+  ]
+ },
+ "末尾": {
+  "idtrans": [
+   "akhir",
+   "bagian akhir",
+   "ujung"
+  ]
+ },
+ "枯萎": {
+  "trans": [
+   "wither",
+   "wilt",
+   "shrivel"
+  ],
+  "idtrans": [
+   "layu"
+  ],
+  "def": "to wither or wilt, of plants"
+ },
+ "气囊": {
+  "trans": [
+   "airbag",
+   "air sac",
+   "gasbag"
+  ],
+  "idtrans": [
+   "kantong udara",
+   "airbag"
+  ],
+  "def": "an airbag in a car; an air sac or gas bag"
+ },
+ "滑落": {
+  "idtrans": [
+   "merosot",
+   "tergelincir",
+   "meluncur jatuh"
+  ],
+  "def": "to slide or slip down"
+ },
+ "车费": {
+  "idtrans": [
+   "ongkos",
+   "ongkos perjalanan"
+  ]
+ },
+ "陪审员": {
+  "trans": [
+   "juror",
+   "jury member"
+  ],
+  "idtrans": [
+   "anggota juri",
+   "juri"
+  ],
+  "def": "a member of a jury"
+ },
+ "不合时宜": {
+  "trans": [
+   "untimely",
+   "out of keeping with the times"
+  ],
+  "idtrans": [
+   "tidak sesuai zaman",
+   "tidak pada tempatnya",
+   "ketinggalan zaman"
+  ],
+  "def": "not suited to the time or occasion; out of date"
+ },
+ "刀片": {
+  "idtrans": [
+   "mata pisau",
+   "silet"
+  ]
+ },
+ "加法": {
+  "idtrans": [
+   "penjumlahan",
+   "penambahan"
+  ]
+ },
+ "坡度": {
+  "trans": [
+   "gradient",
+   "slope",
+   "incline"
+  ],
+  "idtrans": [
+   "kemiringan",
+   "gradien"
+  ]
+ },
+ "暂住": {
+  "trans": [
+   "stay temporarily"
+  ],
+  "idtrans": [
+   "tinggal sementara"
+  ],
+  "def": "to live somewhere temporarily"
+ },
+ "发狂": {
+  "trans": [
+   "go mad",
+   "go crazy",
+   "be frantic"
+  ]
+ },
+ "灵巧": {
+  "idtrans": [
+   "cekatan",
+   "tangkas",
+   "terampil"
+  ]
+ },
+ "禁食": {
+  "trans": [
+   "fast",
+   "fasting"
+  ],
+  "idtrans": [
+   "berpuasa",
+   "puasa"
+  ],
+  "def": "to fast; to abstain from eating"
+ },
+ "街角": {
+  "idtrans": [
+   "sudut jalan",
+   "pojok jalan"
+  ]
+ },
+ "费率": {
+  "idtrans": [
+   "tarif",
+   "tingkat biaya"
+  ]
+ },
+ "逆行": {
+  "idtrans": [
+   "melawan arus"
+  ],
+  "def": "to go in the wrong direction against the flow of traffic; retrograde"
+ },
+ "铁丝": {
+  "idtrans": [
+   "kawat",
+   "kawat besi"
+  ]
+ },
+ "不及格": {
+  "idtrans": [
+   "tidak lulus",
+   "gagal"
+  ]
+ },
+ "会堂": {
+  "idtrans": [
+   "aula"
+  ]
+ },
+ "删去": {
+  "idtrans": [
+   "menghapus",
+   "mencoret",
+   "membuang"
+  ]
+ },
+ "扭动": {
+  "idtrans": [
+   "menggeliat",
+   "meliuk"
+  ]
+ },
+ "灵敏度": {
+  "idtrans": [
+   "sensitivitas",
+   "kepekaan"
+  ],
+  "def": "the sensitivity of an instrument or sensor; responsiveness"
+ },
+ "球门": {
+  "idtrans": [
+   "gawang"
+  ]
+ },
+ "粉笔": {
+  "idtrans": [
+   "kapur tulis"
+  ]
+ },
+ "诱骗": {
+  "trans": [
+   "lure",
+   "trick"
+  ]
+ },
+ "一千年": {
+  "def": "a period of a thousand years"
+ },
+ "吼叫": {
+  "trans": [
+   "roar",
+   "howl",
+   "bellow"
+  ],
+  "idtrans": [
+   "mengaum",
+   "meraung"
+  ],
+  "def": "to roar or howl, of animals or an angry person"
+ },
+ "舱门": {
+  "idtrans": [
+   "pintu kabin",
+   "pintu pesawat",
+   "palka"
+  ]
+ },
+ "蜻蜓": {
+  "idtrans": [
+   "capung"
+  ]
+ },
+ "轻信": {
+  "idtrans": [
+   "mudah percaya",
+   "lekas percaya"
+  ]
+ },
+ "保险箱": {
+  "trans": [
+   "safe",
+   "strongbox"
+  ],
+  "idtrans": [
+   "brankas",
+   "peti besi"
+  ],
+  "def": "a safe or strongbox for valuables"
+ },
+ "保险费": {
+  "idtrans": [
+   "premi",
+   "premi asuransi"
+  ]
+ },
+ "共犯": {
+  "trans": [
+   "accomplice",
+   "accessory"
+  ],
+  "idtrans": [
+   "kaki tangan",
+   "komplotan"
+  ],
+  "def": "an accomplice in a crime"
+ },
+ "减慢": {
+  "trans": [
+   "slow down",
+   "decelerate"
+  ],
+  "idtrans": [
+   "memperlambat",
+   "melambat"
+  ]
+ },
+ "引人注意": {
+  "trans": [
+   "attract attention",
+   "eye-catching",
+   "noticeable"
+  ],
+  "idtrans": [
+   "menarik perhatian",
+   "mencolok"
+  ]
+ },
+ "援救": {
+  "idtrans": [
+   "menyelamatkan",
+   "menolong"
+  ],
+  "def": "to rescue; to save from danger"
+ },
+ "有机体": {
+  "idtrans": [
+   "organisme",
+   "makhluk hidup"
+  ]
+ },
+ "会诊": {
+  "idtrans": [
+   "konsultasi medis bersama",
+   "konsultasi dokter"
+  ],
+  "def": "a consultation of several doctors on a patient's case"
+ },
+ "好运气": {
+  "trans": [
+   "good luck",
+   "good fortune"
+  ],
+  "idtrans": [
+   "keberuntungan",
+   "nasib baik",
+   "untung"
+  ],
+  "def": "good luck; good fortune"
+ },
+ "弹跳": {
+  "idtrans": [
+   "memantul",
+   "melompat"
+  ]
+ },
+ "永存": {
+  "idtrans": [
+   "abadi",
+   "kekal"
+  ],
+  "def": "to exist or last forever"
+ },
+ "种植园": {
+  "trans": [
+   "plantation"
+  ],
+  "idtrans": [
+   "perkebunan"
+  ],
+  "def": "a large estate growing a cash crop; a plantation"
+ },
+ "典当": {
+  "idtrans": [
+   "menggadaikan",
+   "gadai"
+  ]
+ },
+ "姑息": {
+  "idtrans": [
+   "membiarkan",
+   "memanjakan",
+   "bersikap lunak"
+  ]
+ },
+ "实数": {
+  "trans": [
+   "real number"
+  ],
+  "idtrans": [
+   "bilangan real"
+  ],
+  "def": "a real number, rational or irrational"
+ },
+ "披肩": {
+  "idtrans": [
+   "selendang",
+   "syal"
+  ]
+ },
+ "时间段": {
+  "idtrans": [
+   "rentang waktu",
+   "periode",
+   "kurun waktu"
+  ],
+  "def": "a period or interval of time"
+ },
+ "植物油": {
+  "trans": [
+   "vegetable oil"
+  ],
+  "idtrans": [
+   "minyak nabati",
+   "minyak sayur"
+  ]
+ },
+ "殷勤": {
+  "trans": [
+   "attentive",
+   "hospitable",
+   "solicitous"
+  ],
+  "idtrans": [
+   "ramah",
+   "penuh perhatian"
+  ],
+  "def": "eagerly attentive and hospitable; solicitous"
+ },
+ "浆果": {
+  "idtrans": [
+   "beri",
+   "buah beri"
+  ]
+ },
+ "受孕": {
+  "trans": [
+   "conceive",
+   "become pregnant",
+   "conception"
+  ],
+  "def": "to conceive; to become pregnant"
+ },
+ "急迫": {
+  "trans": [
+   "urgent",
+   "pressing",
+   "imperative"
+  ],
+  "idtrans": [
+   "mendesak",
+   "genting"
+  ],
+  "def": "urgent and pressing"
+ },
+ "换乘": {
+  "idtrans": [
+   "berganti kendaraan",
+   "transit",
+   "pindah jalur"
+  ]
+ },
+ "信义": {
+  "trans": [
+   "good faith",
+   "trustworthiness"
+  ],
+  "idtrans": [
+   "itikad baik"
+  ],
+  "def": "faithfulness and keeping one's word; good faith"
+ },
+ "后部": {
+  "idtrans": [
+   "bagian belakang",
+   "belakang"
+  ],
+  "def": "the rear or back part of something"
+ },
+ "惯常": {
+  "trans": [
+   "usual",
+   "habitual",
+   "customary"
+  ],
+  "idtrans": [
+   "biasa",
+   "lazim",
+   "kebiasaan"
+  ],
+  "def": "usual or habitual"
+ },
+ "珍品": {
+  "trans": [
+   "treasure",
+   "precious item",
+   "rarity"
+  ],
+  "idtrans": [
+   "barang berharga",
+   "benda langka"
+  ],
+  "def": "a precious or rare item; a treasure"
+ },
+ "荒原": {
+  "idtrans": [
+   "tanah tandus",
+   "padang belantara",
+   "gurun"
+  ]
+ },
+ "乳液": {
+  "trans": [
+   "lotion",
+   "emulsion"
+  ],
+  "idtrans": [
+   "losion",
+   "emulsi"
+  ],
+  "def": "a lotion or emulsion for the skin; (chemistry) an emulsion; latex"
+ },
+ "兽性": {
+  "idtrans": [
+   "sifat kebinatangan",
+   "kebuasan"
+  ],
+  "def": "animal nature; brutish, savage instincts"
+ },
+ "军事力量": {
+  "trans": [
+   "military power",
+   "military strength",
+   "armed forces"
+  ],
+  "idtrans": [
+   "kekuatan militer",
+   "angkatan bersenjata"
+  ],
+  "def": "military strength or power"
+ },
+ "凹陷": {
+  "trans": [
+   "sunken",
+   "depression"
+  ]
+ },
+ "同源": {
+  "trans": [
+   "of the same origin",
+   "homologous",
+   "cognate"
+  ],
+  "idtrans": [
+   "seasal",
+   "homolog"
+  ],
+  "def": "having the same origin; homologous; cognate"
+ },
+ "同盟国": {
+  "idtrans": [
+   "negara sekutu",
+   "sekutu"
+  ],
+  "def": "an allied country; the Allies"
+ },
+ "天窗": {
+  "trans": [
+   "skylight",
+   "sunroof"
+  ],
+  "idtrans": [
+   "jendela atap",
+   "sunroof"
+  ],
+  "def": "a window in a roof; a car sunroof"
+ },
+ "水肿": {
+  "idtrans": [
+   "edema",
+   "sembap",
+   "bengkak air"
+  ]
+ },
+ "蛋壳": {
+  "idtrans": [
+   "kulit telur",
+   "cangkang telur"
+  ]
+ },
+ "角质": {
+  "trans": [
+   "keratin",
+   "horny tissue",
+   "cuticle"
+  ],
+  "idtrans": [
+   "keratin",
+   "zat tanduk"
+  ]
+ },
+ "邮差": {
+  "trans": [
+   "postman",
+   "mail carrier",
+   "mailman"
+  ],
+  "idtrans": [
+   "tukang pos",
+   "pengantar surat"
+  ]
+ },
+ "驾驶室": {
+  "trans": [
+   "driver's cab",
+   "cockpit"
+  ],
+  "idtrans": [
+   "kabin pengemudi",
+   "ruang kemudi",
+   "kokpit"
+  ]
+ },
+ "乘积": {
+  "idtrans": [
+   "hasil kali"
+  ]
+ },
+ "俸禄": {
+  "idtrans": [
+   "gaji pejabat",
+   "tunjangan",
+   "gaji"
+  ],
+  "def": "the salary paid to an official in imperial times"
+ },
+ "器皿": {
+  "idtrans": [
+   "wadah",
+   "bejana"
+  ]
+ },
+ "围裙": {
+  "idtrans": [
+   "celemek"
+  ]
+ },
+ "太阳光": {
+  "idtrans": [
+   "sinar matahari",
+   "cahaya matahari"
+  ]
+ },
+ "小球": {
+  "idtrans": [
+   "bola kecil",
+   "butiran"
+  ]
+ },
+ "拖拉": {
+  "trans": [
+   "procrastinate",
+   "dilatory"
+  ],
+  "idtrans": [
+   "menunda-nunda"
+  ],
+  "def": "slow and dilatory; to procrastinate"
+ },
+ "探查": {
+  "idtrans": [
+   "menyelidiki",
+   "memeriksa",
+   "menjajaki"
+  ]
+ },
+ "绞死": {
+  "idtrans": [
+   "menggantung sampai mati",
+   "mencekik mati"
+  ]
+ },
+ "钻头": {
+  "trans": [
+   "drill bit"
+  ],
+  "idtrans": [
+   "mata bor"
+  ]
+ },
+ "中空": {
+  "trans": [
+   "hollow"
+  ],
+  "def": "hollow; empty inside"
+ },
+ "干枯": {
+  "idtrans": [
+   "kering",
+   "layu"
+  ]
+ },
+ "底子": {
+  "def": "a foundation or grounding, e.g. in a skill; a base coat; a rough draft"
+ },
+ "拍子": {
+  "trans": [
+   "beat",
+   "time",
+   "racket"
+  ],
+  "idtrans": [
+   "ketukan",
+   "raket"
+  ],
+  "def": "the beat or time of music; a bat or racket"
+ },
+ "排便": {
+  "trans": [
+   "defecate",
+   "bowel movement"
+  ],
+  "idtrans": [
+   "buang air besar",
+   "berak"
+  ],
+  "def": "to defecate; having a bowel movement"
+ },
+ "校准": {
+  "idtrans": [
+   "mengalibrasi",
+   "kalibrasi",
+   "menera"
+  ]
+ },
+ "桥墩": {
+  "idtrans": [
+   "pilar jembatan",
+   "tiang jembatan"
+  ]
+ },
+ "瓦砾": {
+  "idtrans": [
+   "puing",
+   "reruntuhan",
+   "puing-puing"
+  ]
+ },
+ "供热": {
+  "trans": [
+   "heating",
+   "heat supply"
+  ],
+  "def": "the supply of heating to buildings"
+ },
+ "参股": {
+  "idtrans": [
+   "memiliki saham",
+   "menanam saham",
+   "ikut bersaham"
+  ],
+  "def": "to hold or buy shares in a company"
+ },
+ "打翻": {
+  "idtrans": [
+   "menjatuhkan",
+   "membalikkan",
+   "menumpahkan"
+  ]
+ },
+ "扩音器": {
+  "trans": [
+   "loudspeaker",
+   "megaphone",
+   "amplifier"
+  ],
+  "idtrans": [
+   "pengeras suara",
+   "megafon"
+  ],
+  "def": "a loudspeaker or megaphone that amplifies sound"
+ },
+ "短袖": {
+  "idtrans": [
+   "lengan pendek",
+   "baju lengan pendek"
+  ],
+  "def": "short sleeves; a short-sleeved top"
+ },
+ "翱翔": {
+  "trans": [
+   "soar",
+   "hover"
+  ],
+  "def": "to soar or hover in the sky"
+ },
+ "佯装": {
+  "trans": [
+   "pretend",
+   "feign"
+  ],
+  "idtrans": [
+   "berpura-pura",
+   "pura-pura"
+  ],
+  "def": "to pretend or feign"
+ },
+ "占上风": {
+  "idtrans": [
+   "unggul",
+   "mendominasi"
+  ]
+ },
+ "反光": {
+  "trans": [
+   "reflect light",
+   "reflection",
+   "reflective"
+  ],
+  "idtrans": [
+   "memantulkan cahaya",
+   "pantulan cahaya"
+  ],
+  "def": "to reflect light; the reflection of light"
+ },
+ "失真": {
+  "idtrans": [
+   "distorsi",
+   "penyimpangan"
+  ],
+  "def": "distortion of a signal, sound or image; loss of fidelity"
+ },
+ "烟头": {
+  "idtrans": [
+   "puntung rokok",
+   "puntung"
+  ]
+ },
+ "净利": {
+  "trans": [
+   "net profit"
+  ],
+  "idtrans": [
+   "laba bersih",
+   "keuntungan bersih"
+  ]
+ },
+ "变老": {
+  "idtrans": [
+   "menjadi tua",
+   "menua"
+  ]
+ },
+ "呼啸": {
+  "trans": [
+   "whistle",
+   "howl"
+  ],
+  "idtrans": [
+   "mendesing",
+   "menderu",
+   "bersiul"
+  ],
+  "def": "to whistle or howl, of wind; to whizz past"
+ },
+ "执行者": {
+  "idtrans": [
+   "pelaksana",
+   "eksekutor"
+  ],
+  "def": "a person who carries out or enforces something"
+ },
+ "换位": {
+  "trans": [
+   "swap positions",
+   "transpose"
+  ],
+  "idtrans": [
+   "bertukar posisi",
+   "transposisi",
+   "bertukar tempat"
+  ],
+  "def": "to exchange positions; transposition; to put oneself in another's shoes"
+ },
+ "猫眼": {
+  "trans": [
+   "peephole",
+   "cat's eye"
+  ],
+  "idtrans": [
+   "lubang intip",
+   "mata kucing"
+  ]
+ },
+ "信以为真": {
+  "idtrans": [
+   "menganggap benar",
+   "percaya begitu saja"
+  ]
+ },
+ "战列舰": {
+  "idtrans": [
+   "kapal perang",
+   "kapal tempur"
+  ]
+ },
+ "神经质": {
+  "idtrans": [
+   "neurotik",
+   "gugup"
+  ]
+ },
+ "一大笔钱": {
+  "trans": [
+   "a large sum of money",
+   "a fortune"
+  ],
+  "idtrans": [
+   "sejumlah besar uang",
+   "uang banyak"
+  ]
+ },
+ "上推": {
+  "trans": [
+   "push up",
+   "push upward"
+  ],
+  "idtrans": [
+   "mendorong ke atas"
+  ],
+  "def": "to push something upward"
+ },
+ "冲刷": {
+  "idtrans": [
+   "mengikis"
+  ]
+ },
+ "出丑": {
+  "trans": [
+   "make a fool of oneself",
+   "lose face",
+   "be disgraced"
+  ],
+  "idtrans": [
+   "mempermalukan diri",
+   "menanggung malu"
+  ],
+  "def": "to make a fool of oneself in public; to lose face"
+ },
+ "半途而废": {
+  "trans": [
+   "give up halfway",
+   "leave unfinished"
+  ],
+  "idtrans": [
+   "berhenti di tengah jalan",
+   "menyerah di tengah jalan"
+  ],
+  "def": "to give up halfway through; to leave something unfinished"
+ },
+ "激进分子": {
+  "def": "a person with radical political views; an extremist"
+ },
+ "狂喜": {
+  "idtrans": [
+   "kegirangan luar biasa",
+   "ekstase"
+  ]
+ },
+ "蜷缩": {
+  "trans": [
+   "curl up",
+   "huddle up",
+   "cower"
+  ],
+  "idtrans": [
+   "meringkuk",
+   "menggulung diri"
+  ],
+  "def": "to curl up one's body; to huddle"
+ },
+ "黄铜": {
+  "idtrans": [
+   "kuningan",
+   "loyang"
+  ]
+ },
+ "公转": {
+  "trans": [
+   "revolution",
+   "orbit"
+  ],
+  "idtrans": [
+   "revolusi",
+   "peredaran mengelilingi"
+  ],
+  "def": "the revolution of a celestial body around another body"
+ },
+ "出风头": {
+  "idtrans": [
+   "pamer",
+   "cari perhatian",
+   "menonjolkan diri"
+  ]
+ },
+ "删节": {
+  "idtrans": [
+   "meringkas",
+   "menyingkat"
+  ],
+  "def": "to cut or abridge a text"
+ },
+ "刺穿": {
+  "idtrans": [
+   "menusuk",
+   "menembus"
+  ],
+  "def": "to pierce or puncture through"
+ },
+ "工具箱": {
+  "trans": [
+   "toolbox"
+  ],
+  "idtrans": [
+   "kotak perkakas",
+   "kotak alat"
+  ]
+ },
+ "拷打": {
+  "trans": [
+   "torture"
+  ],
+  "idtrans": [
+   "menyiksa",
+   "memukuli"
+  ],
+  "def": "to beat or torture someone, e.g. to extract a confession"
+ },
+ "海参": {
+  "trans": [
+   "sea cucumber"
+  ]
+ },
+ "书库": {
+  "trans": [
+   "book stacks"
+  ],
+  "idtrans": [
+   "gudang buku",
+   "ruang penyimpanan buku"
+  ],
+  "def": "a storeroom for books; the stacks of a library"
+ },
+ "刑事犯罪": {
+  "idtrans": [
+   "tindak pidana"
+  ]
+ },
+ "上溯": {
+  "def": "to trace back to an earlier time or source; to go upstream"
+ },
+ "孤注一掷": {
+  "trans": [
+   "stake everything on one throw"
+  ],
+  "idtrans": [
+   "mempertaruhkan segalanya",
+   "bertaruh habis-habisan",
+   "nekat"
+  ],
+  "def": "to risk everything on a single venture"
+ },
+ "安家": {
+  "trans": [
+   "settle down",
+   "set up a home"
+  ],
+  "idtrans": [
+   "menetap",
+   "berumah tangga",
+   "membangun rumah tangga"
+  ],
+  "def": "to settle down and make one's home somewhere"
+ },
+ "弄脏": {
+  "idtrans": [
+   "mengotori",
+   "menodai"
+  ],
+  "def": "to make something dirty"
+ },
+ "花盆": {
+  "idtrans": [
+   "pot bunga",
+   "pot"
+  ]
+ },
+ "门铃": {
+  "idtrans": [
+   "bel pintu",
+   "bel"
+  ]
+ },
+ "饰物": {
+  "idtrans": [
+   "perhiasan",
+   "aksesori",
+   "hiasan"
+  ]
+ },
+ "充分利用": {
+  "idtrans": [
+   "memanfaatkan sepenuhnya"
+  ]
+ },
+ "册子": {
+  "trans": [
+   "booklet",
+   "pamphlet"
+  ],
+  "idtrans": [
+   "buklet",
+   "buku kecil"
+  ],
+  "def": "a booklet or small book"
+ },
+ "刺探": {
+  "idtrans": [
+   "memata-matai",
+   "menyelidiki diam-diam",
+   "mengintai"
+  ]
+ },
+ "干草": {
+  "idtrans": [
+   "rumput kering"
+  ]
+ },
+ "偷运": {
+  "idtrans": [
+   "menyelundupkan"
+  ]
+ },
+ "奇袭": {
+  "trans": [
+   "surprise attack",
+   "raid"
+  ],
+  "idtrans": [
+   "serangan mendadak",
+   "serangan kejutan"
+  ]
+ },
+ "广播网": {
+  "idtrans": [
+   "jaringan siaran",
+   "jaringan radio"
+  ]
+ },
+ "引退": {
+  "idtrans": [
+   "mengundurkan diri",
+   "pensiun"
+  ],
+  "def": "to retire from office; to step down"
+ },
+ "手提包": {
+  "idtrans": [
+   "tas tangan",
+   "tas jinjing"
+  ]
+ },
+ "管风琴": {
+  "idtrans": [
+   "orgel",
+   "organ pipa"
+  ]
+ },
+ "亲兄弟": {
+  "idtrans": [
+   "saudara kandung laki-laki",
+   "kakak-beradik kandung"
+  ]
+ },
+ "作呕": {
+  "idtrans": [
+   "mual",
+   "merasa mual"
+  ]
+ },
+ "凉亭": {
+  "trans": [
+   "pavilion",
+   "gazebo",
+   "kiosk"
+  ],
+  "idtrans": [
+   "gazebo"
+  ],
+  "def": "an open pavilion or gazebo for resting in the shade"
+ },
+ "割舍": {
+  "trans": [
+   "give up",
+   "part with"
+  ],
+  "idtrans": [
+   "merelakan",
+   "melepaskan",
+   "mengikhlaskan"
+  ],
+  "def": "to give up or part with something one is attached to"
+ },
+ "滑翔": {
+  "trans": [
+   "glide",
+   "gliding"
+  ]
+ },
+ "直射": {
+  "idtrans": [
+   "menyinari langsung",
+   "sinar langsung",
+   "tembakan langsung"
+  ],
+  "def": "(of light) to shine directly on; (of guns) direct fire"
+ },
+ "竖琴": {
+  "idtrans": [
+   "harpa"
+  ]
+ },
+ "亏本": {
+  "trans": [
+   "lose money",
+   "run at a loss"
+  ]
+ },
+ "充血": {
+  "idtrans": [
+   "hiperemia",
+   "kongesti"
+  ]
+ },
+ "上菜": {
+  "idtrans": [
+   "menyajikan makanan",
+   "menghidangkan"
+  ]
+ },
+ "交易会": {
+  "idtrans": [
+   "pameran dagang"
+  ]
+ },
+ "养殖业": {
+  "trans": [
+   "animal husbandry",
+   "aquaculture"
+  ],
+  "idtrans": [
+   "peternakan",
+   "budi daya",
+   "perikanan budi daya"
+  ],
+  "def": "the farming of animals or fish; the livestock and aquaculture industry"
+ },
+ "山水画": {
+  "idtrans": [
+   "lukisan pemandangan",
+   "lukisan lanskap"
+  ]
+ },
+ "空腹": {
+  "trans": [
+   "empty stomach",
+   "on an empty stomach"
+  ],
+  "idtrans": [
+   "perut kosong",
+   "dalam keadaan perut kosong"
+  ],
+  "def": "an empty stomach; on an empty stomach"
+ },
+ "保护费": {
+  "idtrans": [
+   "uang perlindungan",
+   "uang keamanan"
+  ]
+ },
+ "拱形": {
+  "idtrans": [
+   "lengkung",
+   "berbentuk lengkung"
+  ]
+ },
+ "擦伤": {
+  "trans": [
+   "abrasion",
+   "graze",
+   "scrape"
+  ],
+  "idtrans": [
+   "lecet",
+   "luka lecet",
+   "luka gores"
+  ],
+  "def": "a graze or abrasion of the skin; to scrape"
+ },
+ "肩带": {
+  "idtrans": [
+   "tali bahu",
+   "tali pundak"
+  ]
+ },
+ "路基": {
+  "trans": [
+   "roadbed",
+   "subgrade"
+  ],
+  "idtrans": [
+   "badan jalan",
+   "dasar jalan",
+   "fondasi jalan"
+  ]
+ },
+ "低气压": {
+  "idtrans": [
+   "tekanan rendah",
+   "tekanan udara rendah"
+  ]
+ },
+ "勤勉": {
+  "trans": [
+   "diligent",
+   "industrious"
+  ],
+  "idtrans": [
+   "rajin",
+   "tekun",
+   "giat"
+  ],
+  "def": "diligent and hardworking"
+ },
+ "屠宰场": {
+  "idtrans": [
+   "rumah potong hewan",
+   "rumah jagal",
+   "pejagalan"
+  ]
+ },
+ "溃烂": {
+  "trans": [
+   "fester",
+   "ulcerate",
+   "suppurate"
+  ],
+  "idtrans": [
+   "bernanah",
+   "membusuk",
+   "borok"
+  ],
+  "def": "to fester and ulcerate, of a wound"
+ },
+ "腐坏": {
+  "idtrans": [
+   "membusuk",
+   "busuk",
+   "rusak"
+  ]
+ },
+ "包住": {
+  "trans": [
+   "wrap up",
+   "envelop"
+  ],
+  "idtrans": [
+   "membungkus",
+   "menyelubungi",
+   "membalut"
+  ],
+  "def": "to wrap something up completely"
+ },
+ "古代人": {
+  "idtrans": [
+   "orang zaman dahulu",
+   "orang kuno"
+  ]
+ },
+ "合奏": {
+  "def": "to play music together as an ensemble"
+ },
+ "呼气": {
+  "idtrans": [
+   "mengembuskan napas",
+   "ekspirasi"
+  ]
+ },
+ "坐垫": {
+  "idtrans": [
+   "bantal duduk",
+   "alas duduk"
+  ]
+ },
+ "承兑": {
+  "idtrans": [
+   "mengaksep"
+  ]
+ },
+ "洼地": {
+  "idtrans": [
+   "cekungan",
+   "tanah rendah",
+   "lekukan tanah"
+  ],
+  "def": "low-lying land; a depression in the ground"
+ },
+ "申辩": {
+  "idtrans": [
+   "membela diri",
+   "berdalih",
+   "mengajukan pembelaan"
+  ]
+ },
+ "电风扇": {
+  "idtrans": [
+   "kipas angin"
+  ]
+ },
+ "螺栓": {
+  "idtrans": [
+   "baut"
+  ]
+ },
+ "中继站": {
+  "trans": [
+   "relay station"
+  ],
+  "idtrans": [
+   "stasiun relai",
+   "stasiun pemancar ulang"
+  ],
+  "def": "a relay station that receives and retransmits signals"
+ },
+ "保释金": {
+  "idtrans": [
+   "uang jaminan",
+   "jaminan"
+  ]
+ },
+ "做广告": {
+  "idtrans": [
+   "beriklan",
+   "memasang iklan",
+   "mengiklankan"
+  ]
+ },
+ "垃圾箱": {
+  "idtrans": [
+   "tempat sampah",
+   "tong sampah"
+  ]
+ },
+ "基本原理": {
+  "idtrans": [
+   "prinsip dasar"
+  ]
+ },
+ "径流": {
+  "trans": [
+   "runoff",
+   "surface runoff"
+  ],
+  "idtrans": [
+   "limpasan",
+   "aliran permukaan"
+  ],
+  "def": "water that flows over the land surface into rivers; runoff"
+ },
+ "戏水": {
+  "idtrans": [
+   "bermain air"
+  ]
+ },
+ "挑出": {
+  "idtrans": [
+   "memilih",
+   "menyortir",
+   "mengeluarkan"
+  ]
+ },
+ "沉溺": {
+  "idtrans": [
+   "tenggelam dalam",
+   "kecanduan",
+   "terlena"
+  ]
+ },
+ "湍流": {
+  "idtrans": [
+   "turbulensi",
+   "aliran turbulen"
+  ]
+ },
+ "胃炎": {
+  "idtrans": [
+   "gastritis",
+   "radang lambung"
+  ]
+ },
+ "财务管理": {
+  "trans": [
+   "financial management"
+  ],
+  "idtrans": [
+   "manajemen keuangan",
+   "pengelolaan keuangan"
+  ],
+  "def": "the management of an organisation's finances"
+ },
+ "侍候": {
+  "idtrans": [
+   "melayani",
+   "mengurus",
+   "merawat"
+  ]
+ },
+ "侍应": {
+  "def": "to wait on customers; to serve at table"
+ },
+ "封条": {
+  "idtrans": [
+   "segel",
+   "kertas segel",
+   "pita segel"
+  ],
+  "def": "a strip of paper pasted across a door or container as a seal"
+ },
+ "开矿": {
+  "idtrans": [
+   "menambang",
+   "pertambangan",
+   "membuka tambang"
+  ],
+  "def": "to open a mine; to mine ore"
+ },
+ "比得上": {
+  "idtrans": [
+   "menyamai",
+   "sebanding dengan"
+  ]
+ },
+ "身份证明": {
+  "idtrans": [
+   "bukti identitas",
+   "tanda pengenal"
+  ]
+ },
+ "重压": {
+  "idtrans": [
+   "tekanan berat",
+   "beban berat"
+  ]
+ },
+ "香炉": {
+  "idtrans": [
+   "pedupaan",
+   "tempat dupa"
+  ]
+ },
+ "付清": {
+  "idtrans": [
+   "melunasi",
+   "membayar lunas"
+  ]
+ },
+ "呈交": {
+  "trans": [
+   "submit",
+   "present",
+   "hand in"
+  ],
+  "idtrans": [
+   "menyerahkan",
+   "mengajukan",
+   "menyampaikan"
+  ]
+ },
+ "幽暗": {
+  "trans": [
+   "dim",
+   "gloomy",
+   "dusky"
+  ],
+  "idtrans": [
+   "remang-remang",
+   "redup",
+   "suram"
+  ],
+  "def": "dim and gloomy, of light or a place"
+ },
+ "服兵役": {
+  "trans": [
+   "do military service",
+   "serve in the army"
+  ],
+  "idtrans": [
+   "menjalani wajib militer"
+  ]
+ },
+ "柏油": {
+  "idtrans": [
+   "aspal",
+   "ter"
+  ]
+ },
+ "水汽": {
+  "idtrans": [
+   "uap air"
+  ]
+ },
+ "蝴蝶结": {
+  "idtrans": [
+   "pita kupu-kupu",
+   "simpul pita"
+  ]
+ },
+ "售票员": {
+  "idtrans": [
+   "penjual tiket",
+   "kondektur"
+  ]
+ },
+ "奇想": {
+  "idtrans": [
+   "gagasan aneh",
+   "khayalan",
+   "angan-angan"
+  ],
+  "def": "a fanciful or whimsical idea"
+ },
+ "拒绝接受": {
+  "trans": [
+   "refuse to accept",
+   "reject"
+  ],
+  "idtrans": [
+   "menolak"
+  ],
+  "def": "to refuse to accept something"
+ },
+ "果肉": {
+  "idtrans": [
+   "daging buah"
+  ]
+ },
+ "焚化炉": {
+  "idtrans": [
+   "insinerator",
+   "tungku pembakar sampah"
+  ]
+ },
+ "百货商店": {
+  "trans": [
+   "department store"
+  ],
+  "idtrans": [
+   "toko serba ada"
+  ],
+  "def": "a large shop selling many kinds of goods in departments"
+ },
+ "到处跑": {
+  "trans": [
+   "run around",
+   "run about everywhere"
+  ],
+  "idtrans": [
+   "berlari ke sana kemari",
+   "berkeliaran"
+  ]
+ },
+ "灰白色": {
+  "trans": [
+   "greyish white",
+   "pale grey",
+   "ashen"
+  ],
+  "idtrans": [
+   "putih keabu-abuan"
+  ],
+  "def": "a greyish white colour"
+ },
+ "茶树": {
+  "trans": [
+   "tea plant"
+  ],
+  "idtrans": [
+   "pohon teh",
+   "tanaman teh"
+  ]
+ },
+ "驯养": {
+  "idtrans": [
+   "menjinakkan",
+   "memelihara"
+  ]
+ },
+ "弹夹": {
+  "idtrans": [
+   "magasin",
+   "klip peluru"
+  ]
+ },
+ "掩蔽": {
+  "trans": [
+   "screen",
+   "shelter",
+   "cover"
+  ],
+  "def": "to screen or shelter from view or harm; to cover"
+ },
+ "断路器": {
+  "trans": [
+   "circuit breaker"
+  ],
+  "idtrans": [
+   "pemutus sirkuit",
+   "pemutus arus"
+  ]
+ },
+ "枝条": {
+  "idtrans": [
+   "ranting",
+   "dahan",
+   "cabang"
+  ]
+ },
+ "略过": {
+  "def": "to skip or pass over something"
+ },
+ "反义词": {
+  "idtrans": [
+   "antonim",
+   "lawan kata"
+  ]
+ },
+ "头饰": {
+  "idtrans": [
+   "hiasan kepala",
+   "perhiasan kepala"
+  ]
+ },
+ "手舞足蹈": {
+  "trans": [
+   "dance for joy"
+  ],
+  "def": "to dance and wave one's arms with joy"
+ },
+ "牦牛": {
+  "trans": [
+   "yak"
+  ],
+  "idtrans": [
+   "yak",
+   "sapi yak"
+  ],
+  "def": "the yak, a long-haired bovine of the Tibetan plateau"
+ },
+ "铁饼": {
+  "idtrans": [
+   "cakram",
+   "lempar cakram"
+  ]
+ },
+ "反超": {
+  "idtrans": [
+   "menyalip",
+   "berbalik unggul",
+   "membalikkan keadaan"
+  ]
+ },
+ "排水管": {
+  "idtrans": [
+   "pipa pembuangan",
+   "pipa saluran air",
+   "talang"
+  ]
+ },
+ "钩子": {
+  "trans": [
+   "hook"
+  ],
+  "idtrans": [
+   "kait",
+   "pengait"
+  ],
+  "def": "a hook"
+ },
+ "疑云": {
+  "trans": [
+   "cloud of suspicion",
+   "doubts",
+   "misgivings"
+  ]
+ },
+ "势力范围": {
+  "trans": [
+   "sphere of influence"
+  ],
+  "idtrans": [
+   "lingkup pengaruh",
+   "wilayah pengaruh"
+  ]
+ },
+ "成功人士": {
+  "idtrans": [
+   "orang sukses",
+   "orang yang berhasil"
+  ]
+ },
+ "海象": {
+  "trans": [
+   "walrus"
+  ]
+ },
+ "炼金术": {
+  "idtrans": [
+   "alkimia"
+  ]
+ },
+ "表面积": {
+  "trans": [
+   "surface area"
+  ],
+  "idtrans": [
+   "luas permukaan"
+  ]
+ },
+ "军火库": {
+  "trans": [
+   "arsenal",
+   "ammunition depot"
+  ],
+  "idtrans": [
+   "gudang senjata",
+   "gudang amunisi"
+  ]
+ },
+ "合得来": {
+  "trans": [
+   "get along well",
+   "be compatible",
+   "hit it off"
+  ],
+  "idtrans": [
+   "cocok",
+   "akur"
+  ],
+  "def": "to get along well with each other"
+ },
+ "商业中心": {
+  "idtrans": [
+   "pusat bisnis",
+   "pusat perdagangan",
+   "pusat perbelanjaan"
+  ]
+ },
+ "彬彬有礼": {
+  "idtrans": [
+   "sopan santun",
+   "santun",
+   "beradab"
+  ]
+ },
+ "柱头": {
+  "idtrans": [
+   "kepala putik",
+   "kepala tiang"
+  ]
+ },
+ "添加物": {
+  "trans": [
+   "additive"
+  ],
+  "idtrans": [
+   "bahan tambahan",
+   "zat aditif",
+   "aditif"
+  ],
+  "def": "an additive; a substance added to something"
+ },
+ "先决条件": {
+  "idtrans": [
+   "prasyarat",
+   "syarat mutlak"
+  ]
+ },
+ "单杠": {
+  "trans": [
+   "horizontal bar"
+  ]
+ },
+ "实验品": {
+  "idtrans": [
+   "bahan percobaan",
+   "kelinci percobaan"
+  ]
+ },
+ "打折扣": {
+  "idtrans": [
+   "memberi diskon"
+  ]
+ },
+ "抽打": {
+  "idtrans": [
+   "mencambuk",
+   "melecut"
+  ]
+ },
+ "料想": {
+  "idtrans": [
+   "menduga",
+   "memperkirakan"
+  ]
+ },
+ "剪报": {
+  "idtrans": [
+   "guntingan koran",
+   "kliping"
+  ]
+ },
+ "变慢": {
+  "idtrans": [
+   "melambat",
+   "menjadi lambat"
+  ]
+ },
+ "征募": {
+  "trans": [
+   "recruit",
+   "enlist",
+   "conscript"
+  ],
+  "idtrans": [
+   "merekrut",
+   "mengerahkan"
+  ],
+  "def": "to recruit or enlist soldiers or workers"
+ },
+ "悸动": {
+  "idtrans": [
+   "berdebar"
+  ]
+ },
+ "权杖": {
+  "idtrans": [
+   "tongkat kerajaan"
+  ]
+ },
+ "脚部": {
+  "trans": [
+   "foot"
+  ],
+  "def": "the foot or foot area of the body"
+ },
+ "弄堂": {
+  "idtrans": [
+   "gang",
+   "lorong"
+  ]
+ },
+ "怀表": {
+  "trans": [
+   "pocket watch"
+  ],
+  "idtrans": [
+   "arloji saku",
+   "jam saku"
+  ]
+ },
+ "整队": {
+  "trans": [
+   "line up",
+   "fall in",
+   "form ranks"
+  ],
+  "idtrans": [
+   "berbaris",
+   "membentuk barisan"
+  ]
+ },
+ "星号": {
+  "idtrans": [
+   "tanda bintang",
+   "asterisk"
+  ]
+ },
+ "白吃": {
+  "trans": [
+   "eat for free",
+   "freeload",
+   "eat without paying"
+  ],
+  "idtrans": [
+   "makan gratis",
+   "menumpang makan"
+  ],
+  "def": "to eat without paying; to freeload"
+ },
+ "超短裙": {
+  "idtrans": [
+   "rok mini"
+  ]
+ },
+ "遗赠": {
+  "trans": [
+   "bequeath",
+   "bequest",
+   "legacy"
+  ],
+  "idtrans": [
+   "mewariskan",
+   "hibah wasiat",
+   "warisan"
+  ],
+  "def": "to leave property to someone by will; a bequest"
+ },
+ "声名狼藉": {
+  "idtrans": [
+   "bereputasi buruk"
+  ]
+ },
+ "抵押品": {
+  "idtrans": [
+   "jaminan",
+   "agunan"
+  ]
+ },
+ "流苏": {
+  "idtrans": [
+   "rumbai",
+   "jumbai"
+  ]
+ },
+ "粘连": {
+  "idtrans": [
+   "adhesi",
+   "perlekatan",
+   "melekat"
+  ]
+ },
+ "芳草": {
+  "trans": [
+   "fragrant grass"
+  ],
+  "idtrans": [
+   "rumput harum"
+  ],
+  "def": "fragrant grass or plants (literary)"
+ },
+ "钳子": {
+  "trans": [
+   "pliers",
+   "pincers",
+   "tongs"
+  ],
+  "idtrans": [
+   "tang",
+   "penjepit",
+   "catut"
+  ],
+  "def": "pliers or pincers"
+ },
+ "救济金": {
+  "idtrans": [
+   "dana bantuan",
+   "santunan"
+  ],
+  "def": "money given as relief to people in need"
+ },
+ "自告奋勇": {
+  "idtrans": [
+   "menawarkan diri",
+   "mengajukan diri"
+  ]
+ },
+ "工作台": {
+  "idtrans": [
+   "meja kerja",
+   "bangku kerja"
+  ]
+ },
+ "称许": {
+  "idtrans": [
+   "memuji",
+   "menyanjung"
+  ]
+ },
+ "专心致志": {
+  "def": "to devote oneself wholeheartedly; fully concentrated"
+ },
+ "丧服": {
+  "trans": [
+   "mourning dress",
+   "mourning clothes"
+  ],
+  "idtrans": [
+   "pakaian berkabung",
+   "baju duka"
+  ]
+ },
+ "中心点": {
+  "trans": [
+   "central point",
+   "focal point"
+  ],
+  "idtrans": [
+   "titik pusat",
+   "titik tengah"
+  ],
+  "def": "the central point; the centre"
+ },
+ "自然语言": {
+  "trans": [
+   "natural language"
+  ],
+  "idtrans": [
+   "bahasa alami"
+  ]
+ },
+ "一刻钟": {
+  "idtrans": [
+   "seperempat jam",
+   "lima belas menit"
+  ]
+ },
+ "半身像": {
+  "idtrans": [
+   "patung dada"
+  ]
+ },
+ "毁谤": {
+  "trans": [
+   "slander",
+   "defame",
+   "libel"
+  ],
+  "idtrans": [
+   "memfitnah",
+   "mencemarkan nama baik",
+   "fitnah"
+  ],
+  "def": "to slander or defame someone"
+ },
+ "焦虑不安": {
+  "trans": [
+   "anxious"
+  ],
+  "idtrans": [
+   "cemas",
+   "gelisah",
+   "resah"
+  ],
+  "def": "anxious and restless"
+ },
+ "熨斗": {
+  "idtrans": [
+   "setrika"
+  ]
+ },
+ "第一百": {
+  "idtrans": [
+   "keseratus",
+   "yang keseratus"
+  ]
+ },
+ "团队精神": {
+  "trans": [
+   "team spirit",
+   "teamwork"
+  ],
+  "idtrans": [
+   "semangat tim",
+   "kerja sama tim"
+  ]
+ },
+ "容光焕发": {
+  "idtrans": [
+   "berseri-seri"
+  ]
+ },
+ "染发剂": {
+  "trans": [
+   "hair dye"
+  ],
+  "idtrans": [
+   "pewarna rambut",
+   "cat rambut"
+  ],
+  "def": "a product used to dye hair"
+ },
+ "流亡者": {
+  "trans": [
+   "exile",
+   "emigre"
+  ],
+  "idtrans": [
+   "orang buangan",
+   "eksil"
+  ]
+ },
+ "诱捕": {
+  "idtrans": [
+   "menjebak",
+   "memerangkap"
+  ]
+ },
+ "风景画": {
+  "idtrans": [
+   "lukisan pemandangan"
+  ]
+ },
+ "义演": {
+  "trans": [
+   "benefit performance"
+  ],
+  "idtrans": [
+   "pertunjukan amal",
+   "pentas amal"
+  ]
+ },
+ "佃农": {
+  "trans": [
+   "tenant farmer",
+   "sharecropper"
+  ],
+  "idtrans": [
+   "petani penggarap",
+   "petani penyewa"
+  ],
+  "def": "a farmer who rents land from a landlord; a tenant farmer"
+ },
+ "保险单": {
+  "idtrans": [
+   "polis asuransi"
+  ]
+ },
+ "加宽": {
+  "idtrans": [
+   "melebarkan",
+   "pelebaran"
+  ]
+ },
+ "叙说": {
+  "idtrans": [
+   "menceritakan",
+   "menuturkan",
+   "mengisahkan"
+  ]
+ },
+ "奸情": {
+  "idtrans": [
+   "perselingkuhan",
+   "perzinaan",
+   "hubungan gelap"
+  ]
+ },
+ "工蚁": {
+  "trans": [
+   "worker ant"
+  ],
+  "idtrans": [
+   "semut pekerja"
+  ]
+ },
+ "巴尼": {
+  "idtrans": [
+   "ban"
+  ]
+ },
+ "果蝇": {
+  "trans": [
+   "fruit fly",
+   "drosophila"
+  ],
+  "idtrans": [
+   "lalat buah"
+  ]
+ },
+ "传送带": {
+  "idtrans": [
+   "ban berjalan",
+   "sabuk konveyor"
+  ]
+ },
+ "大气压": {
+  "trans": [
+   "atmospheric pressure"
+  ],
+  "idtrans": [
+   "tekanan atmosfer",
+   "tekanan udara"
+  ]
+ },
+ "归罪": {
+  "idtrans": [
+   "menyalahkan"
+  ]
+ },
+ "虚度": {
+  "trans": [
+   "waste",
+   "idle away",
+   "fritter away"
+  ],
+  "idtrans": [
+   "menyia-nyiakan waktu",
+   "membuang-buang waktu"
+  ],
+  "def": "to waste time; to let time slip by idly"
+ },
+ "轻罪": {
+  "idtrans": [
+   "pelanggaran ringan",
+   "tindak pidana ringan"
+  ]
+ },
+ "不动": {
+  "trans": [
+   "motionless",
+   "not move"
+  ],
+  "idtrans": [
+   "tidak bergerak",
+   "diam"
+  ]
+ },
+ "岁入": {
+  "trans": [
+   "annual revenue"
+  ],
+  "idtrans": [
+   "pendapatan tahunan",
+   "penerimaan tahunan"
+  ],
+  "def": "annual revenue or income, especially of a government"
+ },
+ "抓取": {
+  "idtrans": [
+   "mengambil",
+   "merebut"
+  ]
+ },
+ "深红色": {
+  "trans": [
+   "deep red",
+   "crimson",
+   "dark red"
+  ],
+  "idtrans": [
+   "merah tua",
+   "merah pekat"
+  ],
+  "def": "a deep red colour; crimson"
+ },
+ "登岸": {
+  "idtrans": [
+   "mendarat",
+   "naik ke darat",
+   "turun ke pantai"
+  ]
+ },
+ "除法": {
+  "idtrans": [
+   "pembagian"
+  ]
+ },
+ "挡板": {
+  "trans": [
+   "baffle plate"
+  ],
+  "def": "a plate or board that blocks or deflects; a baffle or guard"
  }
 }
