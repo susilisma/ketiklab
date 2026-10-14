@@ -1489,13 +1489,17 @@ export default function Home() {
       // unstarred inside the done window: the pass is counted, but its chapter tally waits in the
       // advance timer, which resetWordRun cancels (the finish card ran one short); and the timer's
       // move would have stepped over the word that slides into this slot
-      if (finishing.current) { const wasWrong = hadWrong.current || slipOn.current === wordId; setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId]))); }
+      // (only on the last repetition in loop mode, as finishWord counts: on an earlier one the
+      // word is not done yet and the timer was going to repeat it, not to move on)
+      if (finishing.current && loopIx + 1 >= loopTimes) { const wasWrong = hadWrong.current || slipOn.current === wordId; setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId]))); }
       // the next favourite slides into this slot: nothing typed so far belongs to it
       setTyped(""); resetWordRun(); autoSpokenWord.current = null;
       // the slot was the chapter's last: nothing slides in, and wrapping to word 1 ran the
       // whole list a second time (4 words counted for 2 favourites)
       const slot = index % Math.max(learnItems.length, 1), left = Math.min(20, remaining.length - chapterSafe * 20);
-      if (remaining.length && slot >= left) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
+      // (only when something of this chapter was answered: an untouched chapter emptied this way has no
+      // card to show, and the wrap to word 1 counts nothing twice)
+      if (remaining.length && slot >= left && (chDone > 0 || finishing.current)) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
     }
     // an empty favourites list would fall back to the ladder while still labelled 我的收藏
     if (!remaining.length) { sourceReq.current++; setSource("trio"); persistSource("trio"); }
