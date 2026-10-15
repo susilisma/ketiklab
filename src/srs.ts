@@ -37,15 +37,35 @@ class KetikDB extends Dexie {
       const bare = (await table.toArray()).filter((r) => !keyed(r.en) && HANZI.test(r.en));
       for (const r of bare) {
         const en = "zh:" + r.en;
+        // a "zh:" twin is merged, as renameRecords merges: the newer of the two used to be
+        // kept whole and the other deleted, with its answers (reps 17, lapses 2) lost
         const other = await table.get(en);
         await table.delete(r.en);
-        if (!other || other.updatedAt < r.updatedAt) await table.put({ ...r, en });
+        await table.put(merged(r, other, en));
       }
     });
   }
 }
 
 const db = new KetikDB();
+
+// one row for a word that had two: the further-on rung leads, except that the more recent of
+// two answers wins when it was wrong (a lapse recorded yesterday is not undone by a rung
+// climbed last week), and both histories are kept so neither answer is lost
+function merged(old: ReviewRecord, target: ReviewRecord | undefined, to: string): ReviewRecord {
+  const recent = !target || old.updatedAt >= target.updatedAt ? old : target;
+  const lead = recent.lastResult === "wrong" ? recent
+    : target && (target.step > old.step || (target.step === old.step && target.updatedAt >= old.updatedAt)) ? target : old;
+  return {
+    en: to,
+    step: lead.step,
+    dueAt: lead.dueAt,
+    reps: old.reps + (target?.reps ?? 0),
+    lapses: old.lapses + (target?.lapses ?? 0),
+    lastResult: lead.lastResult,
+    updatedAt: Math.max(old.updatedAt, target?.updatedAt ?? 0),
+  };
+}
 
 export async function recordReview(en: string, correct: boolean, now = Date.now(), inherit?: string): Promise<void> {
   await db.transaction("rw", db.reviews, async () => {
@@ -130,21 +150,7 @@ export async function renameRecords(pairs: [string, string][]): Promise<number> 
       const old = await db.reviews.get(from);
       if (!old) continue;
       const target = await db.reviews.get(to);
-      // the further-on ladder leads; both histories are kept so neither answer is lost
-      // the further-on rung leads, except that the more recent of two answers wins when
-      // it was wrong: a lapse recorded yesterday is not undone by a rung climbed last week
-      const recent = !target || old.updatedAt >= target.updatedAt ? old : target;
-      const lead = recent.lastResult === "wrong" ? recent
-        : target && (target.step > old.step || (target.step === old.step && target.updatedAt >= old.updatedAt)) ? target : old;
-      await db.reviews.put({
-        en: to,
-        step: lead.step,
-        dueAt: lead.dueAt,
-        reps: old.reps + (target?.reps ?? 0),
-        lapses: old.lapses + (target?.lapses ?? 0),
-        lastResult: lead.lastResult,
-        updatedAt: Math.max(old.updatedAt, target?.updatedAt ?? 0),
-      });
+      await db.reviews.put(merged(old, target, to));
       await db.reviews.delete(from);
       moved++;
     }
