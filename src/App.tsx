@@ -1607,9 +1607,12 @@ export default function Home() {
   }
   function handleType(raw: string) {
     if (finishing.current || wordDone()) {
-      // the box still shows the finished word; what follows it is the start of the next one
+      // the box still shows the finished word; what follows it is the start of the next one.
+      // An IME commit too: the next word committed inside the window used to be dropped and had
+      // to be typed again (a composition still open here is left alone: it is graded, through
+      // staleLen, when it ends)
       const n = targetWord.length;
-      if (practiceLang !== "zh" && !isComposing.current && raw.length > n && foldTypography(raw.slice(0, n)).toLowerCase() === foldTypography(targetWord).toLowerCase()) {
+      if (!isComposing.current && raw.length > n && foldTypography(raw.slice(0, n)).toLowerCase() === foldTypography(targetWord).toLowerCase()) {
         carry.current += raw.slice(n);
         if (input.current) input.current.value = raw.slice(0, n);
       }
