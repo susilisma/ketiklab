@@ -16240,6 +16240,10 @@
     "残骸",
     "失事船只",
     "破坏"
+   ],
+   "idtrans": [
+    "bangkai kapal",
+    "reruntuhan"
    ]
   },
   "distress": {
@@ -16441,6 +16445,10 @@
    "idtrans": [
     "terklasifikasi",
     "digolongkan"
+   ],
+   "trans": [
+    "分类的",
+    "机密的"
    ]
   },
   "warrant": {
@@ -16771,6 +16779,17 @@
    "idtrans": [
     "kurva",
     "lengkungan"
+   ]
+  },
+  "mint": {
+   "idtrans": [
+    "daun mint"
+   ]
+  },
+  "derby": {
+   "idtrans": [
+    "derbi",
+    "topi derby"
    ]
   }
  },
@@ -18892,6 +18911,10 @@
    "trans": [
     "激励的",
     "励志的"
+   ],
+   "idtrans": [
+    "motivasional",
+    "yang memotivasi"
    ]
   },
   "revise": {
@@ -19969,7 +19992,10 @@
     "伏都教",
     "巫毒"
    ],
-   "def": "a religion practised in Haiti and parts of Africa involving magic and spirits"
+   "def": "a religion practised in Haiti and parts of Africa involving magic and spirits",
+   "idtrans": [
+    "vudu"
+   ]
   },
   "adultery": {
    "idtrans": [
@@ -21697,7 +21723,11 @@
     "乳脂软糖",
     "含糊其辞"
    ],
-   "def": "a soft sweet made from sugar, butter and milk"
+   "def": "a soft sweet made from sugar, butter and milk",
+   "idtrans": [
+    "permen fudge",
+    "mengelak"
+   ]
   },
   "grossly": {
    "trans": [
@@ -25579,7 +25609,8 @@
    "idtrans": [
     "rintangan",
     "gawang"
-   ]
+   ],
+   "def": "an obstacle or difficulty to be overcome; a barrier jumped in a race"
   },
   "vitality": {
    "idtrans": [
@@ -25661,6 +25692,10 @@
    "trans": [
     "可扣除的",
     "免赔额"
+   ],
+   "idtrans": [
+    "dapat dikurangkan",
+    "risiko sendiri"
    ]
   },
   "sensual": {
@@ -27514,6 +27549,9 @@
   "dystopian": {
    "trans": [
     "反乌托邦的"
+   ],
+   "idtrans": [
+    "distopia"
    ]
   },
   "excelled": {
@@ -30312,6 +30350,11 @@
    "idtrans": [
     "palsu",
     "pemalsuan"
+   ],
+   "trans": [
+    "伪造的",
+    "假冒的",
+    "赝品"
    ]
   },
   "horseback": {
@@ -30732,6 +30775,9 @@
   "cohort": {
    "idtrans": [
     "kohort"
+   ],
+   "trans": [
+    "同期群"
    ]
   },
   "castor": {
@@ -30748,6 +30794,57 @@
   "hefty": {
    "trans": [
     "重的"
+   ]
+  },
+  "terrier": {
+   "trans": [
+    "㹴犬",
+    "梗犬"
+   ]
+  },
+  "centrist": {
+   "idtrans": [
+    "moderat"
+   ]
+  },
+  "roach": {
+   "idtrans": [
+    "kecoak",
+    "lipas"
+   ]
+  },
+  "rumble": {
+   "idtrans": [
+    "bergemuruh",
+    "berderam"
+   ]
+  },
+  "firewall": {
+   "idtrans": [
+    "tembok api"
+   ]
+  },
+  "bender": {
+   "trans": [
+    "狂饮作乐",
+    "酗酒",
+    "弯管器"
+   ]
+  },
+  "dun": {
+   "trans": [
+    "暗褐色的",
+    "催债"
+   ]
+  },
+  "shiva": {
+   "idtrans": [
+    "masa berkabung tujuh hari"
+   ]
+  },
+  "bonnet": {
+   "idtrans": [
+    "topi bonet"
    ]
   }
  },
@@ -36893,6 +36990,11 @@
    "idtrans": [
     "kurva",
     "lengkungan"
+   ]
+  },
+  "mint": {
+   "idtrans": [
+    "daun mint"
    ]
   }
  }
