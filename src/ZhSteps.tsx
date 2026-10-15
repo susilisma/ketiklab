@@ -243,7 +243,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
 
   if (step === "choose") {
     return <div className="zh-step">
-      <div className="zh-options">
+      {/* the choices are hanzi whatever the interface language: a screen reader reads them as Chinese */}
+      <div className="zh-options" lang="zh-CN">
         {options.map(o => <button
           key={o}
           className={picked === o ? (o === word ? "ok" : "no") : ""}

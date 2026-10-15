@@ -23,7 +23,7 @@ type WordFilter = "all" | WordCategory;
 type ReviewRef = { key: string; w: Word; lang: Lang } | { key: string; d: DictInfo; e: DictEntry };
 type MeaningPrefs = Partial<Record<Lang, MeaningLang>>;
 // a line the extra-meanings setting stacks under the main meaning
-type ExtraMeaning = { text: string; label: string; kind: "gloss" | "def" | "example" };
+type ExtraMeaning = { text: string; label: string; kind: "gloss" | "def" | "example"; lang: Lang };
 type ExtraMeanings = "none" | "def" | "all";
 
 const DATA = import.meta.env.BASE_URL + "data/";
@@ -115,6 +115,9 @@ function browserTag(): string {
   try { const tag = (navigator.language || "").slice(0, 2).toLowerCase(); return tag === "in" ? "id" : tag; } catch { return ""; }
 }
 const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
+// the lang attribute for text in one of our languages: a screen reader otherwise reads the
+// Chinese word, the Indonesian meaning and the English reading in the interface language's voice
+const htmlLang = (l: Lang) => l === "zh" ? "zh-CN" : l;
 // A practice key is "<lang>:<headword>" for a dictionary entry and "<lang>:trio:<en>" for
 // a topic word, so the Indonesian word air (water) and the topic word air → udara cannot
 // share one ladder, one star and one 错词本 entry. The English headword is the stable half
@@ -1038,15 +1041,15 @@ export default function Home() {
   };
   const extrasFor = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "example">): ExtraMeaning[] => {
     if (extraMeanings === "none") return [];
-    const def: ExtraMeaning[] = it.def ? [{ text: it.def, label: TX("英文释义", "Definisi Inggris", "English definition", uiLang), kind: "def" }] : [];
+    const def: ExtraMeaning[] = it.def ? [{ text: it.def, label: TX("英文释义", "Definisi Inggris", "English definition", uiLang), kind: "def", lang: "en" }] : [];
     // a definition already on the main line is not repeated under it
     const r = resolveMeaning(it), main = r?.lang;
     if (extraMeanings === "def") return it.lang === "en" && !r?.def ? def : [];
-    const glosses = LANGS.flatMap((l): ExtraMeaning[] => { const s = it.glosses?.[l]; return l !== main && s ? [{ text: s, label: LANGUAGE_META[l].label, kind: "gloss" }] : []; });
+    const glosses = LANGS.flatMap((l): ExtraMeaning[] => { const s = it.glosses?.[l]; return l !== main && s ? [{ text: s, label: LANGUAGE_META[l].label, kind: "gloss", lang: l }] : []; });
     // a zh library's def often repeats its English trans word for word
     const same = (s?: string) => (s || "").trim().toLowerCase() === (it.def || "").trim().toLowerCase();
     // a favourite saved before glosses existed kept the dictionary def in example
-    const example: ExtraMeaning[] = it.glosses && it.example ? [{ text: it.example, label: EXAMPLE_LABEL[uiLang][it.lang], kind: "example" }] : [];
+    const example: ExtraMeaning[] = it.glosses && it.example ? [{ text: it.example, label: EXAMPLE_LABEL[uiLang][it.lang], kind: "example", lang: it.lang }] : [];
     return [...glosses, ...(r?.def || LANGS.some(l => same(it.glosses?.[l])) ? [] : def), ...example];
   };
   // A list with nothing at all in the chosen language says which languages it has instead
@@ -1066,15 +1069,19 @@ export default function Home() {
   // note when the chosen language has none, or nothing for "none" and for no choice yet
   // A line that is really the English definition (an idtrans gap) carries its label, as the
   // practice card does: unlabelled, it read as one more Indonesian or Chinese gloss.
-  const listMeaning = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "meaning" | "dictId">): { text: string; note: boolean; label?: string } => {
+  // lang: the language the line is written in (the English definition is English whatever
+  // language it is labelled in); a legacy favourite's snapshot has none to name
+  type MeaningLine = { text: string; note: boolean; label?: string; lang?: Lang };
+  const listMeaning = (it: Pick<PracticeItem, "lang" | "glosses" | "def" | "meaning" | "dictId">): MeaningLine => {
     const r = resolveMeaning(it);
-    if (r) return { text: r.text, note: false, label: r.def ? r.label : undefined };
+    if (r) return { text: r.text, note: false, label: r.def ? r.label : undefined, lang: r.def ? "en" : r.lang };
     if (!it.glosses) return { text: it.meaning, note: false };
     const ml = meaningFor(it.lang);
-    return ml && ml !== "none" ? { text: missingNote(it, ml), note: true } : { text: "", note: false };
+    return ml && ml !== "none" ? { text: missingNote(it, ml), note: true, lang: ml } : { text: "", note: false };
   };
   const defTag = (label?: string) => label ? <i className="meaning-def">{label} · </i> : null;
-  const meaningCell = (m: { text: string; note: boolean; label?: string }) => m.note ? <small className="meaning-missing">{m.text}</small> : <b>{defTag(m.label)}{m.text}</b>;
+  const langAttr = (l?: Lang) => l ? htmlLang(l) : undefined;
+  const meaningCell = (m: MeaningLine) => m.note ? <small className="meaning-missing" lang={langAttr(m.lang)}>{m.text}</small> : <b>{defTag(m.label)}<span lang={langAttr(m.lang)}>{m.text}</span></b>;
   // what this learner gets from a list, from the manifest counts; a row without them keeps the old note
   const coverageNote = (d: DictInfo) => {
     const cov = d.coverage, ml = meaningFor(d.lang);
@@ -1324,16 +1331,16 @@ export default function Home() {
   // stored a zh dictionary mistake as the bare headword (现在), and read as the learning language
   // it was named by nothing for a learner of English or Indonesian and retired by 开始复习
   const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [/^[\u3400-\u9fff]+$/.test(id) ? "zh" : lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
-  type KeyInfo = { text: string; meaning: string; note: boolean; label?: string; legacy?: boolean };
+  type KeyInfo = { text: string; lang: Lang; meaning: string; meaningLang?: Lang; note: boolean; label?: string; legacy?: boolean };
   function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
-    const trioInfo = (w: Word): KeyInfo => { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), meaning: m.text, note: m.note, label: m.label }; };
+    const trioInfo = (w: Word): KeyInfo => { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), lang: lg, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label }; };
     const w = trioOf(key);
     if (w) return trioInfo(w);
     for (const d of dicts) {
       if (d.lang !== lg) continue;
       const e = dictCache.current.get(d.id)?.find(x => x.name === key);
-      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { text: e.name, meaning: m.text, note: m.note, label: m.label }; }
+      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { text: e.name, lang: lg, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label }; }
     }
     // written before topic words had their own namespace: the bare English headword, which
     // a dictionary of this language may hold too — that is why the dictionaries went first
@@ -1353,7 +1360,7 @@ export default function Home() {
     if (meaning.toLowerCase().includes(q)) return 4;          // in meaning only
     return 5;
   };
-  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; note: boolean; label?: string; lang: Lang; dictName?: string; rank: number }[] = [];
+  const globalResults: { src: string; key: string; text: string; sub: string; meaning: string; meaningLang?: Lang; note: boolean; label?: string; lang: Lang; dictName?: string; rank: number }[] = [];
   let globalTotal = 0;
   if (globalSearch && gq) {
     // a hit matches on the headword or on any of its meanings (idtrans too, so Indonesian
@@ -1362,7 +1369,7 @@ export default function Home() {
       const text = wordValue(w, lang), hay = `${w.en} ${w.id} ${w.zh}`;
       if (!hay.toLowerCase().includes(gq)) continue;
       const m = listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" });
-      globalResults.push({ src: "trio", key: TRIO + w.en, text, sub: trioItem(w, lang).sub, meaning: m.text, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
+      globalResults.push({ src: "trio", key: TRIO + w.en, text, sub: trioItem(w, lang).sub, meaning: m.text, meaningLang: m.lang, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
     }
     for (const d of dicts) {
       const data = allDicts[d.id]; if (!data) continue;
@@ -1372,7 +1379,7 @@ export default function Home() {
         const m = listMeaning({ lang: d.lang, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id });
         // the pronunciation line as the practice card prints it: usphone is pinyin in a zh list,
         // and an Indonesian list has none, so "/xiàn zài/" and an empty line were both wrong
-        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: dictItem(d, e).sub, meaning: m.text, note: m.note, label: m.label, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
+        globalResults.push({ src: d.id, key: e.name, text: e.name, sub: dictItem(d, e).sub, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label, lang: d.lang, dictName: dictName(d), rank: rankMatch(e.name, hay, gq) });
       }
     }
     globalResults.sort((a, b) => a.rank - b.rank || a.text.length - b.text.length);
@@ -2157,7 +2164,7 @@ export default function Home() {
           {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
             <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
                onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
-          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
+          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} lang={htmlLang(practiceLang)} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
               the <wbr> after it is the only break opportunity: without one, overflow-wrap:anywhere
               splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
           {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined}>{item.sub}</p>}
@@ -2167,16 +2174,16 @@ export default function Home() {
               // a favourite saved before glosses existed has its text, with no language to name
               : !itemMeaning && (item.glosses || !item.meaning)
                 ? (itemMeaningLang
-                  ? (missOther && meaningPeek ? <><span className="meaning-missing">{missNote}</span><span><small>{LANGUAGE_META[missOther].label}</small>{item.glosses?.[missOther]}</span></>
+                  ? (missOther && meaningPeek ? <><span className="meaning-missing" lang={htmlLang(itemMeaningLang)}>{missNote}</span><span lang={htmlLang(missOther)}><small>{LANGUAGE_META[missOther].label}</small>{item.glosses?.[missOther]}</span></>
                     : missOther ? peekButton(`${missNote} · ${TX(`点一下看${LANG_NAME.zh[missOther]}释义`, `ketuk untuk arti ${LANG_NAME.id[missOther]}`, `tap for the ${LANG_NAME.en[missOther]} meaning`, uiLang)}`)
-                    : <span className="meaning-missing">{missNote}</span>)
+                    : <span className="meaning-missing" lang={htmlLang(itemMeaningLang)}>{missNote}</span>)
                   // the dialog sets the current learning language; a review word from another one picks in place
                   : item.lang === lang ? <button type="button" className="meaning-pick" onClick={e => { e.stopPropagation(); setShowLangSetup(true); }}>{TX("选择释义语言", "Pilih bahasa arti", "Choose a meaning language", uiLang)}</button>
                   : <select className="meaning-pick" value="" aria-label={TX("释义语言", "Bahasa arti", "Meaning language", uiLang)} onClick={e => e.stopPropagation()} onChange={e => changeMeaning(e.target.value as MeaningLang, item.lang)}><option value="" disabled>{TX("选择释义语言", "Pilih bahasa arti", "Choose a meaning language", uiLang)}</option>{LANG_CARDS.filter(c => c.code !== item.lang).map(c => <option key={c.code} value={c.code}>{c.name}</option>)}<option value="none">{TX("不显示释义", "Tanpa arti", "No meaning", uiLang)}</option></select>)
               : meaningHidden ? peekButton(peekLabel)
-              : itemMeaning ? <span><small>{itemMeaning.label}</small>{itemMeaning.text}</span>
+              : itemMeaning ? <span lang={htmlLang(itemMeaning.lang)}><small>{itemMeaning.label}</small>{itemMeaning.def ? <span lang="en">{itemMeaning.text}</span> : itemMeaning.text}</span>
               : <span>{item.meaning}</span>}
-            {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small>{x.text}</span>)}
+            {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small><span lang={htmlLang(x.lang)}>{x.text}</span></span>)}
           </div>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
             {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} disabled={!!reviewKeys && st.id === "read"} onClick={() => { if (finishing.current) return; setZhStep(st.id); setTyped(""); resetWordRun(); }}>
@@ -2210,7 +2217,7 @@ export default function Home() {
           <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
-          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
+          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b lang={langAttr(info?.lang)}>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined} lang={langAttr(info?.meaningLang)}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
             {/* after a review: practise its missed words again or leave it; the chapter buttons belong to a chapter */}
             {!reviewKeys && <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>}
@@ -2252,11 +2259,11 @@ export default function Home() {
               : (!gq
                   ? <div className="empty"><b>🌐</b><h3>{uiLang === "zh" ? "输入关键词，在全部词库中搜索" : uiLang === "id" ? "Ketik untuk mencari di semua kamus" : "Type to search across all libraries"}</h3><p>{TX(`主题词汇 + ${searchable.length} 个考试词库，共 ${globalCount} 词`, `Kosakata Tematik + ${searchable.length} kamus ujian · ${globalCount} kata`, `Words by Topic + ${searchable.length} ${enOne(searchable.length, "exam library", "exam libraries")} · ${globalCount} words`, uiLang)}</p></div>
                   : (globalResults.length
-                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => { if (r.src !== "trio") { gotoDictWord(r.src, r.key); return; } const w = trioOf(r.key); if (w) gotoTrioWord(w); }}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note, label: r.label })}</div></button>)}</div>
+                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => { if (r.src !== "trio") { gotoDictWord(r.src, r.key); return; } const w = trioOf(r.key); if (w) gotoTrioWord(w); }}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3 lang={htmlLang(r.lang)}>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note, label: r.label, lang: r.meaningLang })}</div></button>)}</div>
                       : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
           : dictInfo
-          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3>{it.text}</h3><p>{it.sub}</p><em>{dictName(dictInfo)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>
-          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3>{wordValue(w, lang)}</h3><p>{trioItem(w, lang).sub}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
+          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${dictInfo.lang}`} key={`${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3 lang={htmlLang(dictInfo.lang)}>{it.text}</h3><p>{it.sub}</p><em>{dictName(dictInfo)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>
+          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3 lang={htmlLang(lang)}>{wordValue(w, lang)}</h3><p>{trioItem(w, lang).sub}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
         <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p><a href={DATA + "SOURCES.md"} target="_blank" rel="noreferrer">Open English WordNet · Chinese Open Wordnet · Wordnet Bahasa · wordfreq · CMUdict · pypinyin</a></p><span>{uiLang === "zh" ? "各词库的具体来源与授权见上方链接；其中托福词表取自第三方备考材料，未获再分发授权。" : uiLang === "id" ? "Sumber dan lisensi tiap kamus ada di tautan di atas; daftar TOEFL berasal dari materi pihak ketiga tanpa izin distribusi." : "Per-library sources and licences are linked above; the TOEFL list comes from third-party material with no redistribution licence."}</span></div>
       </Panel>}
 
@@ -2266,7 +2273,7 @@ export default function Home() {
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
         {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
             clean run with no missed word, have no entry here but are still due above */}
-        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined}>{defTag(x.info.label)}{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>)
+        <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b lang={htmlLang(x.info.lang)}>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined} lang={langAttr(x.info.meaningLang)}>{defTag(x.info.label)}{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>)
           : srs.due || mistakes.length ? <div className="empty"><b>◎</b><h3>{TX("错词本里没有可显示的词", "Belum ada yang bisa ditampilkan di sini", "Nothing to list here", uiLang)}</h3><p>{srs.due ? TX(`有 ${srs.due} 个词到期，点上方「开始复习」。`, `${srs.due} kata perlu diulang — tekan “Mulai mengulang” di atas.`, `${srs.due} ${srs.due === 1 ? "word is" : "words are"} due: press “Start review” above.`, uiLang) : TX("错过的词在别的词库里，打开那个词库后会显示。", "Kata yang salah ada di daftar lain; buka daftar itu untuk melihatnya.", "The missed words belong to another list; open it to see them here.", uiLang)}</p></div>
           : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
@@ -2292,7 +2299,7 @@ export default function Home() {
                   {open && <div className="reading-group-items">
                     {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
                       <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
-                      <div><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
+                      <div lang={htmlLang(piece.lang)}><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
                     </button>)}
                   </div>}
                 </div>;
@@ -2302,17 +2309,17 @@ export default function Home() {
 
           <article className="typing-reader">
             <div className="reader-top">
-              <div><span>{reading.genre} · {reading.era}</span><h2>{reading.title}</h2><p>{reading.author}</p></div>
+              <div lang={htmlLang(reading.lang)}><span>{reading.genre} · {reading.era}</span><h2>{reading.title}</h2><p>{reading.author}</p></div>
               <button onClick={() => speak(reading.lines.join(" "), reading.lang === "zh" ? "zh-CN" : reading.lang === "id" ? "id-ID" : "en-US")} aria-label={t.readAll}>▶ <span>{t.read}</span></button>
             </div>
 
             {!readingDone ? <>
-              <div className="passage-preview">
+              <div className="passage-preview" lang={htmlLang(reading.lang)}>
                 {reading.lines.map((line, i) => <p key={`${reading.id}-${i}`} className={i < readingLine ? "complete" : i === readingLine ? "current" : "waiting"}>{i < readingLine ? <span>✓</span> : <span>{String(i + 1).padStart(2,"0")}</span>}{line}</p>)}
               </div>
               <div className="line-practice">
                 <div className="line-meta"><span>{uiLang === "zh" ? `第 ${readingLine + 1} / ${reading.lines.length} 句` : `${t.lineLabel} ${readingLine + 1} / ${reading.lines.length}`}</span><b>{readingAccuracy}% {t.accuracy}</b></div>
-                <div className={`target-line ${reading.lang}`}>
+                <div className={`target-line ${reading.lang}`} lang={htmlLang(reading.lang)}>
                   {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTypedF[i] === readingTargetF[i] ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character}</span>)}
                 </div>
                 <div className="reading-input-wrap">
@@ -2322,7 +2329,7 @@ export default function Home() {
                 {readingTyped && !readingLineDone && <p className="typing-help">{t.typingHelp}</p>}
               </div>
             </> : <div className="reading-complete">
-              <span>✓</span><small>{t.completed}</small><h2>{reading.title}</h2><p>{reading.author === "KetikLab" ? TX("你刚刚完整地输入了一篇练习短文。", "Kamu baru saja mengetik satu teks latihan secara lengkap.", "You have typed an entire practice text.", uiLang) : t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
+              <span>✓</span><small>{t.completed}</small><h2 lang={htmlLang(reading.lang)}>{reading.title}</h2><p>{reading.author === "KetikLab" ? TX("你刚刚完整地输入了一篇练习短文。", "Kamu baru saja mengetik satu teks latihan secara lengkap.", "You have typed an entire practice text.", uiLang) : t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
             </div>}
 
             {/* the notes are written in Chinese for pieces in every language */}
