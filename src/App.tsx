@@ -1229,7 +1229,25 @@ export default function Home() {
   // 选汉字 distractors: hanzi only, and enough of them — a favourites list holds a
   // few zh words next to English and Indonesian ones
   const zhOwn = Array.from(new Set(learnItems.filter(i => i.lang === "zh").map(i => i.text)));
-  const zhPool = zhOwn.length >= 4 ? zhOwn : zhOwn.concat(ladderWords.concat(words).map(w => wordValue(w, "zh")).filter(z => z && !zhOwn.includes(z)).slice(0, 40));
+  // and of every length the list holds, at least four words (the answer and three of its own
+  // length): 票 alone among 19 two-character words was the one short option on its card, and
+  // its length gave it away (43 of the 2342 cards over the five category filters). A length
+  // with fewer than four words is filled from the rung's list first, then from all topic words
+  const zhPool = (() => {
+    const pool = zhOwn.slice(), have = new Set(pool), count = new Map<number, number>();
+    const lenOf = (z: string) => Array.from(z).length;
+    for (const z of pool) count.set(lenOf(z), (count.get(lenOf(z)) || 0) + 1);
+    const short = new Set(Array.from(count).filter(([, n]) => n < 4).map(([len]) => len));
+    for (const w of short.size ? ladderWords.concat(words) : []) {
+      if (!short.size) break;
+      const z = wordValue(w, "zh"), n = lenOf(z);
+      if (!z || have.has(z) || !short.has(n)) continue;
+      pool.push(z); have.add(z); count.set(n, (count.get(n) || 0) + 1);
+      if ((count.get(n) || 0) >= 4) short.delete(n);
+    }
+    // a list of one or two words whose length no topic word shares still gets its four options
+    return pool.length >= 4 ? pool : pool.concat(ladderWords.concat(words).map(w => wordValue(w, "zh")).filter(z => z && !have.has(z)).slice(0, 40));
+  })();
   const targetVoice = item.voice;
   const targetKey = `${source}:${item.key}`;
   const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
