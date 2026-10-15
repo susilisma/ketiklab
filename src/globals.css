@@ -294,8 +294,10 @@
 .app.focused .meanings{max-width:560px}
 .mode-sep{display:inline-block;width:1px;height:14px;background:var(--line);margin:0 6px}
 /* ---- softer "press any key" hint: no blur, word stays readable ---- */
+/* 14px, not 20: on the 输入法 rung the pill sits over the card's foot, and at 768x1024, 1440x900 and
+   1920x1080 its top edge lay 2px into the pinyin input box; 14px leaves a 4px gap (the short-laptop block below keeps its own 4px) */
 .type-veil{background:transparent;backdrop-filter:none;-webkit-backdrop-filter:none;
-  align-items:flex-end;justify-content:center;padding-bottom:20px}
+  align-items:flex-end;justify-content:center;padding-bottom:14px}
 .type-veil b{font-size:12px;font-weight:600;letter-spacing:.04em;color:var(--text);
   padding:7px 15px;border:1px solid var(--line);border-radius:999px;
   background:color-mix(in srgb,var(--surface) 90%,transparent);box-shadow:none;
