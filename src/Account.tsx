@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
   loadProfile, saveName, pushProgress, linkThisDevice, applyMerged, collectLocal, linkedUid, linkDevice,
-  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, type SyncNote,
+  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, type SyncNote,
 } from "./cloud";
 
 type Lang = "zh" | "id" | "en";
@@ -144,6 +144,8 @@ export function Account({ uiLang, name, onName }: {
   const stamp = () => new Date().toLocaleTimeString(uiLang === "zh" ? "zh-CN" : uiLang === "id" ? "id-ID" : "en-US");
 
   useEffect(() => {
+    // a first link that finished while the learner was practising: its restore (and reload) now
+    if (finishPendingRestore()) return;
     let alive = true;
     currentSession().then(s => { if (alive) { setSession(s); setReady(true); } });
     const { data } = supabase.auth.onAuthStateChange((e, s) => {
@@ -200,8 +202,8 @@ export function Account({ uiLang, name, onName }: {
           if (!alive) return;
           setCloudNewer(cloudHasMore);
         } else {
-          const done = await linkThisDevice(uid, "merge", prof?.name || "");
-          if (!alive || done === "reloading") return;
+          const done = await linkThisDevice(uid, "merge", prof?.name || "", () => alive);
+          if (!alive || done === "reloading" || done === "deferred") return;
           setMsg(done === "uploaded"
             ? T("这台设备上的学习记录已上传到你的账号。",
                 "Data di perangkat ini sudah diunggah ke akunmu.",

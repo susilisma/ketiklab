@@ -278,7 +278,7 @@ export function applyLocal(blob: ProgressBlob) {
 /** A merged copy written over what the device holds now: a word typed meanwhile is kept (the
  *  merge is redone), and so is a chapter moved meanwhile — a position is the device's own, so
  *  the copy read before the round trip must not put it back. */
-export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged, ownSettings = false) {
+export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged, ownSettings: boolean | "changed" = false) {
   const now = collectLocal();
   const out = mergeProgress(now, merged);
   const ch = mergeProgress(merged, now)["ketiklab-chapters"];
@@ -286,9 +286,11 @@ export function applyMerged(merged: ProgressBlob, before: ProgressBlob = merged,
   // 合并到本机 keeps the settings this device holds now: `merged` carries the copy pushed at the
   // start of the round trip, and a setting changed meanwhile (hide pronunciation, the loop
   // count) was put back to the snapshot. The first link still takes the account's settings.
+  // "changed": the account's settings still, except one the learner changed while a deferred first
+  // link waited for the next visit to the panel (minutes of practice, a language switched meanwhile)
   if (ownSettings) for (const k of SYNCED_KEYS) {
     if (PROGRESS_KEYS.includes(k) || k === "ketiklab-chapters") continue;
-    if (typeof now[k] === "string") out[k] = now[k];
+    if (typeof now[k] === "string" && (ownSettings === true || now[k] !== before[k])) out[k] = now[k];
   }
   // `merged` already holds this device's 错词本, cut to the cap together with the other device's:
   // re-merging the whole list put the words the cap had cut back on top and evicted the other
@@ -427,7 +429,18 @@ export async function pushProgress(userId: string, own?: ProgressBlob, wait = tr
  *  "replace" drops what another account left here. Whenever local data changes the
  *  page reloads, the same way importProgress does: App holds its own copy of every
  *  synced key in memory and would otherwise write the old values straight back. */
-export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName = ""): Promise<"uploaded" | "same" | "reloading"> {
+// A first link whose cloud row arrived after the learner had left the panel used to apply it and
+// reload at once: a few seconds into practising, the page came back on the account view with the
+// half-typed word and the clock gone. The restore now waits for the next visit to the panel.
+let pendingRestore: { uid: string; run: () => void } | null = null;
+/** Account calls this on mount: a restore deferred while the learner was practising runs now
+ *  (once, with its reload), still for the account that is signed in and linked here. */
+export function finishPendingRestore(): boolean {
+  const p = pendingRestore; pendingRestore = null;
+  if (!p || session?.user.id !== p.uid || linkedUid() !== p.uid) return false;
+  p.run(); return true;
+}
+export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
   const cloud = await normalized(r.data ?? {});
@@ -464,7 +477,9 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,
   // and writing `merged` alone erased it. The merge is cheap, so it is redone on what the
   // device holds now; merged stays on top, as before, for the settings it carries.
-  applyMerged(merged, raw); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload();
+  const restore = (own: false | "changed") => { applyMerged(merged, raw, own); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload(); };
+  if (!shown()) { pendingRestore = { uid: userId, run: () => restore("changed") }; return "deferred"; }
+  restore(false);
   return "reloading";
 }
 
