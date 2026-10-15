@@ -71,11 +71,12 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
   await db.transaction("rw", db.reviews, async () => {
     let existing = await db.reviews.get(en);
     // the same word under its old bare key: inherit its ladder position when this
-    // key has none yet, and drop the old row either way so it cannot stay due forever
+    // key has none yet, else merge it in as renameRecords would (deleted outright, the bare
+    // row's answers were lost), and drop the old row either way so it cannot stay due forever
     const i = en.indexOf(":");
     if (i >= 0) {
       const old = await db.reviews.get(en.slice(i + 1).replace(/^trio:/, ""));
-      if (old) { await db.reviews.delete(old.en); if (!existing) existing = { ...old, en }; }
+      if (old) { await db.reviews.delete(old.en); existing = existing ? merged(old, existing, en) : { ...old, en }; }
     }
     // a key an older build wrote for this very word, which another list may own too:
     // English topic words shared "en:achieve" with the English dictionaries before topic
