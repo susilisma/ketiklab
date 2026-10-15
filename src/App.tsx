@@ -594,6 +594,9 @@ export default function Home() {
     let n = 0;
     while (n < folded.length && n < want.length && folded[n].toLowerCase() === want[n]) n++;
     if (!n) return;
+    // an IME commit longer than the word (自信的了 for 自信的) is a different word, as handleType grades
+    // it outside the window: dropped here too (no lapse), unless the rest starts the next word
+    if (practiceLang === "zh" && n === want.length && folded.length > n && !(nextItem && nextItem.lang === "zh" && nextItem.text.startsWith(folded.slice(n)))) return;
     input.current.value = folded.slice(0, n);
     handleType(folded.slice(0, n));
     // the carried letters completed this word outright (yes, no): what follows them was typed
