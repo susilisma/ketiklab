@@ -1776,6 +1776,9 @@ export default function Home() {
   }
   function changeCategory(nextCategory: WordFilter) {
     sourceReq.current++; pendingIndex.current = null;
+    // a list chosen here is the answer to the "linked list does not exist" banner: it used to
+    // stay above the practice card through every later choice until its own button or a reload
+    setLinkedMissing(null);
     // choosing a list is leaving the 🌐 search: with it on, the tab lit up but the grid kept the search's empty state
     setGlobalSearch(false);
     // out of a review whose rung or language changed: the [sourceKey] effect sat the review
@@ -1809,6 +1812,7 @@ export default function Home() {
       if (req !== sourceReq.current) return;
     }
     pendingIndex.current = null;
+    setLinkedMissing(null);
     setDictWords(data);
     setSource(d.id);
     persistSource(d.id);
@@ -1820,6 +1824,7 @@ export default function Home() {
   }
   function selectFav() {
     sourceReq.current++; pendingIndex.current = null;
+    setLinkedMissing(null);
     setSource("fav"); persistSource("fav");
     setGlobalSearch(false);
     setReviewKeys(null); setIndex(0); freshListRun(); setTyped(""); resetWordRun();
@@ -1891,6 +1896,7 @@ export default function Home() {
     const gi = buildLadder(words, zhMap, lang, step, "all").list.findIndex(x => x.en === w.en);
     if (gi < 0) return;
     sourceReq.current++;
+    setLinkedMissing(null);
     const key = trioChapterKey("all", lang, step);
     if (source === "trio" && key === sourceKey) moveWithinList(gi);
     else { pendingIndex.current = gi % 20; slipOn.current = ""; writeChapter(key, Math.floor(gi / 20)); }
@@ -1906,6 +1912,7 @@ export default function Home() {
     if (!data) { try { data = await loadDict(d); dictCache.current.set(d.id, data); } catch { return; } }
     if (req !== sourceReq.current) return;
     const gi = data.findIndex(e => e.name === key); if (gi < 0) return;
+    setLinkedMissing(null);
     if (source === d.id) moveWithinList(gi);
     else { pendingIndex.current = gi % 20; slipOn.current = ""; writeChapter(d.id, Math.floor(gi / 20)); }
     setGlobalSearch(false);
@@ -1915,6 +1922,7 @@ export default function Home() {
   }
   function jumpToItem(ix: number) {
     sourceReq.current++;
+    setLinkedMissing(null);
     moveWithinList(Math.max(0, ix));
     setReviewKeys(null); setTyped(""); resetWordRun();
     autoSpokenWord.current = null; setView("learn");
@@ -2048,6 +2056,7 @@ export default function Home() {
     const gi = buildLadder(words, zhMap, lg, step, cat).list.findIndex(x => x.en === w.en);
     if (gi < 0) return;
     sourceReq.current++;
+    setLinkedMissing(null);
     const key = trioChapterKey(cat, lg, step);
     if (source === "trio" && key === sourceKey) moveWithinList(gi);
     else {
