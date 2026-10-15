@@ -248,7 +248,7 @@ export function setProgressNormalizer(f: ((b: ProgressBlob) => Promise<ProgressB
 // one bounded wait per page, not per call: a push and a link each normalise two copies, and
 // with no normaliser ever coming (the words failed to load) they waited 8 s twice
 let bounded: Promise<void> | null = null;
-async function normalized(b: ProgressBlob, wait = true): Promise<ProgressBlob> {
+async function renamed(b: ProgressBlob, wait = true): Promise<ProgressBlob> {
   // a sign-out's push has a 5 s bound of its own, shorter than this 8 s wait: signing out before
   // the words had loaded timed the push out and the last minute's progress was never written
   if (!normalizer && !wait) return b;
@@ -256,6 +256,20 @@ async function normalized(b: ProgressBlob, wait = true): Promise<ProgressBlob> {
   if (!normalizer) return b;
   try { return await normalizer(b); } catch { return b; }
 }
+// 开始复习 retires a 错词本 key no dictionary resolves (App.tsx writes it here, device-local and
+// never synced): the cloud copy still held the key, every push wrote it back, 云端有更多 never
+// cleared and 合并到本机 brought the key home again. Both copies lose the retired keys after the
+// rename above (the cloud may hold the old shape of the key) and before they are compared or
+// merged, so the cloud row drops the key; a new miss of the word lifts it (App) and merges it in.
+const RETIRED_KEY = "ketiklab-retired";
+function dropRetired(b: ProgressBlob): ProgressBlob {
+  let retired: string[];
+  try { retired = strings(JSON.parse(localStorage.getItem(RETIRED_KEY) || "[]")); } catch { return b; }
+  if (!retired.length || typeof b["ketiklab-state"] !== "string") return b;
+  const s = record(b["ketiklab-state"]), m = strings(s.mistakes);
+  return m.some(k => retired.includes(k)) ? { ...b, "ketiklab-state": JSON.stringify({ ...s, mistakes: m.filter(k => !retired.includes(k)) }) } : b;
+}
+async function normalized(b: ProgressBlob, wait = true): Promise<ProgressBlob> { return dropRetired(await renamed(b, wait)); }
 
 export function collectLocal(): ProgressBlob {
   const out: ProgressBlob = {};

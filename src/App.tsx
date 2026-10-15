@@ -129,6 +129,13 @@ let migratingKeys = false;
 // a 错词本 key is "<key>" or "<lang>:<key>": one with another prefix (a hand-edited backup)
 // opened the word as wordValue(w, "fr"), blanked the page and saved learn "fr"
 const validMistakeKey = (k: unknown): k is string => typeof k === "string" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
+// 错词本 keys 开始复习 retired because no dictionary resolves them: device-local, read by cloud.ts
+// so a push drops them from the cloud copy too instead of bringing them back; a new miss lifts one
+const RETIRED_KEY = "ketiklab-retired";
+const readRetired = (): string[] => { try { const v: unknown = JSON.parse(localStorage.getItem(RETIRED_KEY) || "[]"); return Array.isArray(v) ? v.filter((k): k is string => typeof k === "string") : []; } catch { return []; } };
+const writeRetired = (keys: string[]) => { try { if (keys.length) localStorage.setItem(RETIRED_KEY, JSON.stringify(keys.slice(0, 200))); else localStorage.removeItem(RETIRED_KEY); } catch { /* ignore */ } };
+const retire = (keys: string[]) => writeRetired(Array.from(new Set([...keys, ...readRetired()])));
+const unretire = (key: string) => { const r = readRetired(); if (r.includes(key)) writeRetired(r.filter(k => k !== key)); };
 // The generated landing pages link into the app with ?ui=<lang>, ?lib=<id> and
 // ?view=articles. They are read once here and dropped from the address bar, so a
 // bookmark or a reload does not replay them; the values apply on the first render.
@@ -1463,6 +1470,7 @@ export default function Home() {
   // reset hadWrong and the word was then recorded as a clean pass (or not at all)
   function noteSlip() {
     hadWrong.current = true;
+    unretire(wordId);
     setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
     if (!lapseRecorded.current && slipOn.current !== wordId) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
     slipOn.current = wordId;
@@ -1596,6 +1604,7 @@ export default function Home() {
     // passes the [index] effect, and the stale slip graded a perfect answer as missed
     slipOn.current = "";
     setAttempts(n => n + 1);
+    unretire(wordId);
     setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
     setTyped("");
     advanceOrFinishChapter(true);
@@ -2024,6 +2033,7 @@ export default function Home() {
       keys = keys.filter(k => !gone.has(k));
       if (due.length) deleteRecords(report.unresolved).then(refreshSrs).catch(() => {});
       setMistakes(m => m.filter(k => !gone.has(k)));
+      retire(report.unresolved);
       if (!refs.length && due.length && mistakes.length) { keys = mistakes.filter(k => !gone.has(k)); refs = await resolveReviewRefs(keys); }
     }
     // the total is set after the retirement, or the banner kept printing "4 / 5" for a
