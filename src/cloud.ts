@@ -411,10 +411,11 @@ function canonical(b: ProgressBlob): ProgressBlob {
   }
   // the favourites too: the same stars in another order (each device puts its newest first)
   // compared as different progress, and two devices starring in turns rewrote the cloud on
-  // every push — no banner and nothing lost, but a write a minute apiece for nothing
-  if (typeof c["ketiklab-fav"] === "string") {
-    c["ketiklab-fav"] = JSON.stringify(list(c["ketiklab-fav"]).slice().sort((a, b) => favId(a) < favId(b) ? -1 : favId(a) > favId(b) ? 1 : 0));
-  }
+  // every push — no banner and nothing lost, but a write a minute apiece for nothing. Compared
+  // by lang:key alone: the same star carrying another gloss text (a meaning corrected between
+  // two devices' visits) is the same progress, where comparing the bodies made the two devices
+  // put their own copy into the cloud by turns on every push
+  if (typeof c["ketiklab-fav"] === "string") c["ketiklab-fav"] = JSON.stringify(list(c["ketiklab-fav"]).map(favId).sort());
   return c;
 }
 const canon = (b: ProgressBlob) => JSON.stringify(canonical(b));
