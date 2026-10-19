@@ -356,6 +356,9 @@ function turns(a: string[], b: string[]): string[] {
   return out;
 }
 
+/** What makes a favourite the same star on every device: its language and key, not its gloss text. */
+const favId = (f: unknown) => `${(f as { lang?: unknown })?.lang}:${(f as { key?: unknown })?.key}`;
+
 export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressBlob {
   const out: ProgressBlob = {};
   for (const k of SYNCED_KEYS) {
@@ -382,13 +385,13 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       for (const d of Object.keys({ ...x, ...y }).sort()) m[d] = count(typeof y[d] === "number" ? y[d] : x[d]);
       out[k] = JSON.stringify(m);
     } else if (k === "ketiklab-fav") {
-      const seen = new Set<string>(), m: unknown[] = [];
-      for (const f of [...list(b), ...list(a)]) {
-        if (!f || typeof f !== "object") continue;
-        const id = `${(f as { lang?: unknown }).lang}:${(f as { key?: unknown }).key}`;
-        if (!seen.has(id)) { seen.add(id); m.push(f); }
-      }
-      out[k] = JSON.stringify(m.slice(0, 500));
+      // in turns, like the 错词本: appending one list to the other let a device at the 500 cap
+      // cut the other device's newest star on every push (the two took turns rewriting the
+      // cloud, and neither showed 云端有更多). For a star both hold, the side on top keeps its body.
+      const rows = new Map<string, unknown>();
+      const ids = (v: unknown) => list(v).filter(f => !!f && typeof f === "object").map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
+      const x = ids(b), y = ids(a);
+      out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
     } else {
       out[k] = typeof b === "string" ? b : a;
     }
@@ -410,7 +413,6 @@ function canonical(b: ProgressBlob): ProgressBlob {
   // compared as different progress, and two devices starring in turns rewrote the cloud on
   // every push — no banner and nothing lost, but a write a minute apiece for nothing
   if (typeof c["ketiklab-fav"] === "string") {
-    const favId = (f: unknown) => `${(f as { lang?: unknown })?.lang}:${(f as { key?: unknown })?.key}`;
     c["ketiklab-fav"] = JSON.stringify(list(c["ketiklab-fav"]).slice().sort((a, b) => favId(a) < favId(b) ? -1 : favId(a) > favId(b) ? 1 : 0));
   }
   return c;
