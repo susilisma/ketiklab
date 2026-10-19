@@ -1719,7 +1719,12 @@ export default function Home() {
     raw = foldTypography(raw);
     // Never let the buffer grow past the target: extra keystrokes are simply
     // ignored, the way every other typing trainer behaves.
-    const kept = practiceLang === "zh" ? raw.replace(/[^㐀-鿿]/g, "") : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "");
+    let kept = practiceLang === "zh" ? raw.replace(/[^㐀-鿿]/g, "") : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "");
+    // after a second slip the box keeps the right prefix (实 of 实现), and an IME then commits the
+    // whole word again behind it (实实现): graded as an over-long commit, it flashed red on every
+    // try until the learner deleted the prefix or committed only the rest — a whole-word commit
+    // behind the kept prefix is the word itself
+    if (practiceLang === "zh" && typed.length > 0 && kept.length > targetWord.length && kept.startsWith(typed) && kept.slice(typed.length) === targetWord) kept = targetWord;
     // an IME commits a whole candidate at once: 实现了 picked for 实现 is a different word, not
     // extra keystrokes, and cutting it to the target's length graded it correct
     // and a Latin paste or autocorrect that puts in a longer word at once ("achievement" for achieve):
