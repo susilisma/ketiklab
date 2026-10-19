@@ -1585,7 +1585,22 @@ export default function Home() {
       // that slid into the slot was shown half-typed, or an index past the chapter's end wrapped
       // to word 1 and the words already answered were counted a second time
       const at = remaining.findIndex(f => `${f.lang}:${f.key}` === wordId);
-      if (at >= 0 && Math.floor(at / 20) === chapterSafe) { if (at - chapterSafe * 20 !== index % Math.max(learnItems.length, 1)) setIndex(at - chapterSafe * 20); return; }
+      if (at >= 0 && Math.floor(at / 20) === chapterSafe) {
+        const slot = at - chapterSafe * 20;
+        // inside the done window the word is finished and its advance timer still holds the old
+        // index: the move is taken over here, or the timer stepped from the stale slot and the
+        // card wrapped back to a word already answered
+        if (finishing.current && loopIx + 1 >= loopTimes) {
+          const wasWrong = hadWrong.current || slipOn.current === wordId;
+          setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
+          setTyped(""); resetWordRun(); autoSpokenWord.current = null;
+          const left = Math.min(20, remaining.length - chapterSafe * 20);
+          if (slot + 1 >= left) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
+          else setIndex(slot + 1);
+          return;
+        }
+        if (slot !== index % Math.max(learnItems.length, 1)) setIndex(slot); return;
+      }
       // unstarred inside the done window: the pass is counted, but its chapter tally waits in the
       // advance timer, which resetWordRun cancels (the finish card ran one short); and the timer's
       // move would have stepped over the word that slides into this slot
