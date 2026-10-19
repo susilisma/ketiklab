@@ -283,6 +283,11 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         grade(e.target.value);
       }}
       onKeyDown={e => {
+        // a key that reaches the box while an IME is composing (isComposing, or the "Process" key
+        // with code 229 that Chromium sends in its place) belongs to the IME: a learner who left
+        // a Chinese input method on had the ENTER that committed a candidate skip the word with a
+        // lapse, and TAB reveal the answer and count a miss
+        if (e.nativeEvent.isComposing || e.key === "Process" || e.keyCode === 229) return;
         // Shift+TAB and Escape leave the box, so the page stays reachable by keyboard
         if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
         if (e.key === "Escape") box.current?.blur();
