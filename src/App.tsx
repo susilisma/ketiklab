@@ -473,6 +473,8 @@ export default function Home() {
   // Escape or Shift+TAB left the input on purpose: a timer that fires within its window
   // (the 320 ms advance, the loop repeat, the 350 ms rollback) must not pull the focus back
   const leftByKey = useRef(false);
+  // the storage listener (mounted once) reaches this render's favListChanged through it
+  const favListChangedRef = useRef<(remaining: PracticeItem[]) => void>(() => {}); favListChangedRef.current = favListChanged;
   const flashToken = useRef(0);
   const [sessionWords, setSessionWords] = useState(0);
   const cancelFlash = () => { flashToken.current++; setWrongFlash(false); };
@@ -704,13 +706,10 @@ export default function Home() {
         else if (e.key === "ketiklab-fav") {
           const favs = cleanFavorites(JSON.parse(e.newValue));
           setFavorites(favs);
-          // the other tab changed the list under the word being typed: as in toggleFav, the word that
-          // slides into this slot starts clean (a review session keeps its own list), and an emptied
-          // list stops being labelled 我的收藏 over the topic words
-          if (sourceRef.current === "fav") {
-            if (!reviewRef.current) { setTyped(""); resetWordRun(); autoSpokenWord.current = null; }
-            if (!favs.length) { sourceReq.current++; setSource("trio"); persistSource("trio"); }
-          }
+          // the other tab changed the list under the word being typed: the same handling as an
+          // unstar here (the word keeps its place or the next one slides in clean, a chapter whose
+          // last slot emptied finishes, an emptied list stops being labelled 我的收藏)
+          favListChangedRef.current(favs);
         }
         else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
         // the languages too: this tab's next writeLangs (a meaning pick, a learning-language change)
@@ -1574,8 +1573,19 @@ export default function Home() {
     if (!isFav) { setFavorites(list => [{ key: item.key, text: item.text, sub: item.sub, meaning: item.meaning, example: item.example, voice: item.voice, lang: item.lang, dict: item.dict, dictId: item.dictId, glosses: item.glosses, def: item.def }, ...list].slice(0, 500)); return; }
     const remaining = favorites.filter(f => `${f.lang}:${f.key}` !== wordId);
     setFavorites(remaining);
+    favListChanged(remaining);
+  }
+  // the favourites list changed under the word on the card: unstarred here, or starred / unstarred
+  // in another tab (the storage listener calls this through a ref, so it sees this render's word)
+  function favListChanged(remaining: PracticeItem[]) {
     if (source !== "fav") return;
     if (!reviewKeys) {
+      // the word is still listed, moved by the words another tab added or removed before it: the
+      // card follows it, letters typed so far included — the index used to stay put, so the word
+      // that slid into the slot was shown half-typed, or an index past the chapter's end wrapped
+      // to word 1 and the words already answered were counted a second time
+      const at = remaining.findIndex(f => `${f.lang}:${f.key}` === wordId);
+      if (at >= 0 && Math.floor(at / 20) === chapterSafe) { if (at - chapterSafe * 20 !== index % Math.max(learnItems.length, 1)) setIndex(at - chapterSafe * 20); return; }
       // unstarred inside the done window: the pass is counted, but its chapter tally waits in the
       // advance timer, which resetWordRun cancels (the finish card ran one short); and the timer's
       // move would have stepped over the word that slides into this slot
