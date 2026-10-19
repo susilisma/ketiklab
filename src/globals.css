@@ -521,3 +521,5 @@ html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .
 
 /* a phone keyboard leaves the 44px reading box one line tall for a line that wraps to three */
 @media(max-width:640px){.reading-input-wrap textarea{height:auto;min-height:70px;overflow:auto}}
+/* print: the fixed sidebar and the sticky header were repeated on every sheet of a 27-page Word Lists printout and the content sat 220px to the right; on paper there is nothing to navigate */
+@media print{.sidebar,.main>header{display:none}.main{margin-left:0;padding-bottom:0;transition:none}}
