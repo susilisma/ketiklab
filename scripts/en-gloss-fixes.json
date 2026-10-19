@@ -29629,7 +29629,10 @@
     "二十一点",
     "短棍"
    ],
-   "def": "a card game in which players try to reach 21 points"
+   "def": "a card game in which players try to reach 21 points",
+   "idtrans": [
+    "blackjack"
+   ]
   },
   "twisting": {
    "trans": [
@@ -36995,6 +36998,12 @@
   "mint": {
    "idtrans": [
     "daun mint"
+   ]
+  },
+  "buck": {
+   "trans": [
+    "美元",
+    "雄鹿"
    ]
   }
  }
