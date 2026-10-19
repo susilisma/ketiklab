@@ -158,10 +158,14 @@ const ENTRY: { ui: Lang | null; learn: Lang | null; lib: string | null; step: Zh
     // remembered on this device: the address no longer carries it, so a reload, the forward
     // button or the installed app's start page kept the link's language only once the dialog
     // was saved — closed instead, they came back in the browser's language
-    if (entryUi) try { localStorage.setItem("ketiklab-ui", entryUi); } catch { /* ignore */ }
+    // ...and only until the dialog is saved: once ketiklab-langs holds the learner's own
+    // choice a link's language is for this visit (the restore effect lets the saved choice
+    // win), so a return visit through /?ui=en must not overwrite what the device remembers
+    const chosen = (() => { try { return !!localStorage.getItem("ketiklab-langs"); } catch { return false; } })();
+    if (entryUi && !chosen) try { localStorage.setItem("ketiklab-ui", entryUi); } catch { /* ignore */ }
     // the learning language a link named is remembered the same way: closed instead of
     // saved, the dialog left /?ui=zh&learn=id learning Chinese again on the next load
-    if (isLang(learn)) try { localStorage.setItem("ketiklab-learn", learn); } catch { /* ignore */ }
+    if (isLang(learn) && !chosen) try { localStorage.setItem("ketiklab-learn", learn); } catch { /* ignore */ }
     // ?learn= and ?step= let one link open the language and the rung a post is about: a post
     // about typing pinyin landed its readers on the rung that has nothing to type, and every
     // visitor arrived set to learn Chinese whichever landing page they came from
