@@ -208,6 +208,10 @@ export async function loadProgress(userId: string): Promise<{ ok: true; data: Pr
 }
 
 export async function saveProgress(userId: string, data: ProgressBlob) {
+  // a push that outlives the sign-out (the panel's mount push, signOut's own push past its 5 s
+  // bound) reached here with no session and went out as the anonymous key, which the row policy
+  // rejects: refused here instead, before anything is sent
+  if (session?.user.id !== userId) throw new Error("not signed in as this account");
   const { error } = await supabase.from("progress").upsert({ user_id: userId, data }, { onConflict: "user_id" });
   if (error) throw new Error(error.message);
 }
