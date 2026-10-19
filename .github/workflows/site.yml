@@ -15,7 +15,8 @@ on:
     inputs:
       count:
         description: "Words to promote on this manual run (large = flush the whole queue)"
-        default: "999"
+        type: number
+        default: 999
 
 permissions:
   contents: write
@@ -45,7 +46,9 @@ jobs:
     env:
       # Only a manual run pins a fixed count. Scheduled runs leave this empty and
       # release by elapsed time, because GitHub delivers cron events irregularly.
-      WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.count || '' }}
+      # format(): a number input of 0 is falsy in an expression and would fall through
+      # to '' (the hourly rate) instead of being refused by promote.mjs
+      WORDS_PER_RUN: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.count) || '' }}
     steps:
       - uses: actions/checkout@v5
         if: github.event_name != 'push'

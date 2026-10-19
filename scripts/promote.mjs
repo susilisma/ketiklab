@@ -35,8 +35,15 @@ const DRY_RUN = process.argv.includes("--dry-run");
 const WORDS_PER_HOUR = Number(process.env.WORDS_PER_HOUR || 12);
 const READING_EVERY_HOURS = Number(process.env.READING_EVERY_HOURS || 6);
 const MAX_CATCHUP_HOURS = Number(process.env.MAX_CATCHUP_HOURS || 24);
-// present only on manual dispatch: take exactly this many, ignoring elapsed time
+// present only on manual dispatch: take exactly this many, ignoring elapsed time.
+// Anything but a whole number of at least 1 is a typo in the dispatch form ("all",
+// "", "0"): Number() made it NaN, the plan took 0 words, the run reported changed=false
+// and redeployed the unchanged site in silence. It is refused instead.
 const FIXED_COUNT = process.env.WORDS_PER_RUN ? Number(process.env.WORDS_PER_RUN) : null;
+if (FIXED_COUNT !== null && !(Number.isInteger(FIXED_COUNT) && FIXED_COUNT >= 1)) {
+  console.error(`promote: WORDS_PER_RUN must be a whole number of at least 1, got ${JSON.stringify(process.env.WORDS_PER_RUN)}`);
+  process.exit(1);
+}
 
 /** Decide how much to release. Pure — no I/O, so it can be reasoned about alone. */
 function plan({
