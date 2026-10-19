@@ -4847,6 +4847,124 @@
     "市场营销",
     "营销"
    ]
+  },
+  "played": {
+   "trans": [
+    "玩",
+    "打",
+    "参加"
+   ]
+  },
+  "choice": {
+   "trans": [
+    "选择",
+    "精选",
+    "上等"
+   ]
+  },
+  "loss": {
+   "trans": [
+    "损失",
+    "丧失",
+    "失去"
+   ]
+  },
+  "version": {
+   "trans": [
+    "版本",
+    "说法",
+    "译本"
+   ]
+  },
+  "ass": {
+   "trans": [
+    "驴",
+    "蠢货",
+    "屁股"
+   ]
+  },
+  "focus": {
+   "trans": [
+    "焦点",
+    "重点",
+    "集中"
+   ]
+  },
+  "favorite": {
+   "trans": [
+    "最喜欢的",
+    "最爱",
+    "宠儿"
+   ]
+  },
+  "activity": {
+   "trans": [
+    "活动",
+    "活跃",
+    "行动"
+   ]
+  },
+  "grade": {
+   "trans": [
+    "等级",
+    "年级",
+    "分数"
+   ]
+  },
+  "parent": {
+   "trans": [
+    "父母",
+    "家长",
+    "父亲或母亲"
+   ]
+  },
+  "presidential": {
+   "trans": [
+    "总统的",
+    "总统制的"
+   ]
+  },
+  "walker": {
+   "trans": [
+    "步行者",
+    "助行器",
+    "行人"
+   ]
+  },
+  "nowhere": {
+   "trans": [
+    "无处",
+    "哪儿也不",
+    "没有地方"
+   ]
+  },
+  "mill": {
+   "idtrans": [
+    "pabrik",
+    "penggilingan",
+    "kilang"
+   ]
+  },
+  "children": {
+   "idtrans": [
+    "anak-anak",
+    "anak",
+    "kanak-kanak"
+   ]
+  },
+  "aircraft": {
+   "idtrans": [
+    "pesawat terbang",
+    "pesawat udara",
+    "pesawat"
+   ]
+  },
+  "basic": {
+   "idtrans": [
+    "dasar",
+    "pokok",
+    "mendasar"
+   ]
   }
  },
  "en-plus": {
@@ -10759,6 +10877,11 @@
    "idtrans": [
     "tingkat",
     "lapisan"
+   ],
+   "trans": [
+    "层级",
+    "等级",
+    "层"
    ]
   },
   "vocal": {
@@ -15586,6 +15709,11 @@
   "feminism": {
    "idtrans": [
     "feminisme"
+   ],
+   "trans": [
+    "女权主义",
+    "女性主义",
+    "女权运动"
    ]
   },
   "fixing": {
@@ -15829,6 +15957,11 @@
     "kekasih",
     "tercinta",
     "yang dicintai"
+   ],
+   "trans": [
+    "心爱的",
+    "挚爱",
+    "爱人"
    ]
   },
   "decrease": {
@@ -16461,6 +16594,11 @@
    "idtrans": [
     "bersertifikat",
     "tersertifikasi"
+   ],
+   "trans": [
+    "经认证的",
+    "持证的",
+    "合格的"
    ]
   },
   "invasion": {
@@ -16790,6 +16928,47 @@
    "idtrans": [
     "derbi",
     "topi derby"
+   ]
+  },
+  "tribute": {
+   "trans": [
+    "致敬",
+    "颂词",
+    "贡品"
+   ]
+  },
+  "ore": {
+   "trans": [
+    "矿石",
+    "矿砂"
+   ]
+  },
+  "darling": {
+   "trans": [
+    "亲爱的",
+    "宝贝",
+    "心肝"
+   ]
+  },
+  "aging": {
+   "trans": [
+    "老化",
+    "衰老",
+    "老龄化"
+   ]
+  },
+  "colleague": {
+   "trans": [
+    "同事",
+    "同僚",
+    "同行"
+   ]
+  },
+  "clash": {
+   "trans": [
+    "冲突",
+    "碰撞",
+    "争执"
    ]
   }
  },
@@ -19886,6 +20065,11 @@
     "sayang",
     "kekasih",
     "tersayang"
+   ],
+   "trans": [
+    "最亲爱的",
+    "亲爱的",
+    "心肝"
    ]
   },
   "drawers": {
@@ -23267,6 +23451,10 @@
   "hypnosis": {
    "idtrans": [
     "hipnosis"
+   ],
+   "trans": [
+    "催眠",
+    "催眠状态"
    ]
   },
   "infiltrate": {
@@ -23794,6 +23982,11 @@
    "idtrans": [
     "kerang",
     "remis"
+   ],
+   "trans": [
+    "蛤蜊",
+    "蛤",
+    "蚌"
    ]
   },
   "convection": {
@@ -26387,7 +26580,12 @@
     "orang kejam",
     "binatang buas"
    ],
-   "def": "a cruel, violent person"
+   "def": "a cruel, violent person",
+   "trans": [
+    "野兽",
+    "畜生",
+    "残暴的人"
+   ]
   },
   "divert": {
    "idtrans": [
@@ -27692,6 +27890,11 @@
   "wiener": {
    "idtrans": [
     "sosis"
+   ],
+   "trans": [
+    "维也纳香肠",
+    "法兰克福香肠",
+    "热狗肠"
    ]
   },
   "budgetary": {
@@ -28191,6 +28394,11 @@
   "newcomer": {
    "idtrans": [
     "pendatang baru"
+   ],
+   "trans": [
+    "新来者",
+    "新人",
+    "新手"
    ]
   },
   "silicone": {
@@ -30848,6 +31056,47 @@
   "bonnet": {
    "idtrans": [
     "topi bonet"
+   ]
+  },
+  "madras": {
+   "trans": [
+    "马德拉斯棉布",
+    "马德拉斯",
+    "马德拉斯布"
+   ]
+  },
+  "pelvic": {
+   "trans": [
+    "骨盆的",
+    "盆腔的"
+   ]
+  },
+  "welch": {
+   "trans": [
+    "赖账",
+    "食言",
+    "赖赌债"
+   ]
+  },
+  "soften": {
+   "trans": [
+    "软化",
+    "变软",
+    "使柔和"
+   ]
+  },
+  "firsthand": {
+   "trans": [
+    "第一手的",
+    "直接的",
+    "亲身"
+   ]
+  },
+  "insolvency": {
+   "trans": [
+    "破产",
+    "无力偿债",
+    "资不抵债"
    ]
   }
  },
@@ -36598,6 +36847,90 @@
     "生动的",
     "鲜明的"
    ]
+  },
+  "disco": {
+   "trans": [
+    "迪斯科",
+    "迪厅",
+    "的士高"
+   ]
+  },
+  "vegetarian": {
+   "trans": [
+    "素食者",
+    "素食主义者",
+    "素食的"
+   ]
+  },
+  "bum": {
+   "trans": [
+    "流浪汉",
+    "屁股",
+    "劣质的"
+   ]
+  },
+  "confrontation": {
+   "trans": [
+    "对抗",
+    "对峙",
+    "冲突"
+   ]
+  },
+  "pedestrian": {
+   "trans": [
+    "行人",
+    "步行者",
+    "平淡无奇的"
+   ]
+  },
+  "timed": {
+   "trans": [
+    "定时的",
+    "计时的",
+    "限时的"
+   ]
+  },
+  "hostility": {
+   "trans": [
+    "敌意",
+    "敌对",
+    "仇恨"
+   ]
+  },
+  "referral": {
+   "trans": [
+    "转介",
+    "推荐",
+    "转诊"
+   ]
+  },
+  "cheesy": {
+   "trans": [
+    "俗气的",
+    "低劣的",
+    "廉价的"
+   ]
+  },
+  "flyer": {
+   "trans": [
+    "传单",
+    "宣传单",
+    "飞行员"
+   ]
+  },
+  "mastery": {
+   "trans": [
+    "精通",
+    "掌握",
+    "熟练"
+   ]
+  },
+  "dialect": {
+   "trans": [
+    "方言",
+    "土话",
+    "土语"
+   ]
   }
  },
  "en-toefl": {
@@ -37004,6 +37337,15 @@
    "trans": [
     "美元",
     "雄鹿"
+   ]
+  }
+ },
+ "en-business": {
+  "foreclosure": {
+   "trans": [
+    "止赎",
+    "丧失抵押品赎回权",
+    "取消赎回权"
    ]
   }
  }
