@@ -815,20 +815,65 @@ export default function Home() {
     try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
   };
   const savedChapter = (key: string) => Math.max(0, Math.floor(Number(readChapters()[key])) || 0);
+  // the word within the chapter, kept per list in its own key (ketiklab-position, this device
+  // only): the chapter came back after a reload but the learner was put on its first word
+  // again, 04/20 → 01/20, and the words already passed came round once more
+  const readPositions = (): Record<string, unknown> => {
+    try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-position") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
+  };
+  const savedPosition = (key: string) => Math.min(19, Math.max(0, Math.floor(Number(readPositions()[key])) || 0));
+  // the restore below sets the index from storage; the write effect after it must not first
+  // store the index of the render that preceded the restore (0 on load, 0 after a list change)
+  const skipPositionWrite = useRef(false);
+  // the list as rendered, for the effect above: activeItems itself is derived further down
+  const activeItemsRef = useRef<PracticeItem[]>([]);
+  const clampPosition = useRef(false);
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
     // a review session is its own list: picking another rung or learning language
     // changes the key but not the words, so the session keeps its place and its tally
     if (reviewKeys) return;
-    setChapter(savedChapter(sourceKey));
+    const ch = savedChapter(sourceKey);
+    setChapter(ch);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
+    skipPositionWrite.current = true;
     if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; }
-    else setIndex(0);
+    else {
+      // a list that lost words since the position was saved: its last word, not a wrap-round;
+      // a list still on its way (words.json, a dictionary file) is clamped when it arrives
+      const inChapter = activeItemsRef.current.slice(ch * 20, ch * 20 + 20).length;
+      clampPosition.current = !inChapter;
+      setIndex(inChapter ? Math.min(savedPosition(sourceKey), inChapter - 1) : savedPosition(sourceKey));
+    }
     setTyped("");
     resetWordRun();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sourceKey]);
+  // remember the word the learner is on; a finished chapter starts over on the next visit,
+  // as it did before, instead of landing on its last word with the summary card gone
+  useEffect(() => {
+    if (skipPositionWrite.current) { skipPositionWrite.current = false; return; }
+    if (reviewKeys) return;
+    try {
+      const m = readPositions();
+      const pos = chapterFinished ? 0 : index % 20;
+      if (m[sourceKey] === pos) return;
+      m[sourceKey] = pos;
+      localStorage.setItem("ketiklab-position", JSON.stringify(m));
+    } catch { /* ignore */ }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [index, sourceKey, chapterFinished]);
+  // the restored position meets its list only now (words.json, a dictionary file or the
+  // favourites arrived after the [sourceKey] effect): past the chapter's end, its last word
+  useEffect(() => {
+    if (!clampPosition.current || reviewKeys) return;
+    const n = activeItemsRef.current.slice(chapter * 20, chapter * 20 + 20).length;
+    if (!n) return;
+    clampPosition.current = false;
+    if (index >= n) setIndex(n - 1);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [words, dictWords, favorites, zhMap, chapter]);
 
   // before paint, not after: a wrong key that lands between the new word's render and a
   // passive effect was reset away, and the next wrong key on that word wrote a second lapse
@@ -1172,6 +1217,7 @@ export default function Home() {
   const libMatches = dictInfo
     ? activeItems.filter(it => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).length
     : filtered.length;
+  activeItemsRef.current = activeItems;
   const chapterCount = Math.max(1, Math.ceil(activeItems.length / 20));
   const chapterSafe = Math.min(chapter, chapterCount - 1);
   const chapterItems = activeItems.slice(chapterSafe * 20, chapterSafe * 20 + 20);
@@ -2062,17 +2108,17 @@ export default function Home() {
     setView("learn"); setRunning(true);
     setTimeout(() => input.current?.focus(), 40);
   }
-  // the chapter restarts at word 1, so its tally and clock restart with it. The rung or
-  // learning language may have changed during the review (开始复习 itself moves 认读 up to
-  // 打拼音): the list now current opens at its own saved chapter, not at the one the
-  // review started from — which 下一章 then wrote over the real position
+  // the chapter's tally and clock restart. The rung or learning language may have changed
+  // during the review (开始复习 itself moves 认读 up to 打拼音): the list now current opens at
+  // its own saved chapter and word, not at the one the review started from — which 下一章
+  // then wrote over the real position
   function exitReview() {
     setReviewKeys(null); setReviewDueTotal(0);
     setChapter(savedChapter(sourceKey));
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
     chapterStart.current = secondsRef.current;
-    // same as startReview: the slip noted inside the review must not grade word 1 of the list
-    setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
+    // same as startReview: the slip noted inside the review must not grade the list's word
+    setIndex(savedPosition(sourceKey)); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
   }
   function practiceWord(w: Word, lg: Lang = lang) {
     setReviewKeys(null);
