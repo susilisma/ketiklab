@@ -1226,6 +1226,11 @@ export default function Home() {
   const chapterItems = activeItems.slice(chapterSafe * 20, chapterSafe * 20 + 20);
   const learnItems = (reviewItems && reviewItems.length) ? reviewItems : (chapterItems.length ? chapterItems : activeItems);
   const item = learnItems[index % Math.max(learnItems.length, 1)] || learnItems[0];
+  // 认读 only shows the word and schedules nothing, so a review held on that rung would never
+  // clear a single due word: inside a review it is practised one rung up, as 打拼音, while the
+  // rung the learner chose stays theirs (开始复习 used to write 打拼音 to ketiklab-zh-step, even
+  // for a review without a single Chinese word, and 退出复习 left it there)
+  const rung: ZhStep = reviewKeys && zhStep === "read" ? "pinyin" : zhStep;
   const practiceLang: Lang = (item && item.lang) || lang;
   // one identity for favourites, the 错词本 and the SRS row: the Indonesian "air"
   // and the English "air" are different words and must not share progress
@@ -1251,7 +1256,7 @@ export default function Home() {
   const itemMeaning = resolveMeaning(item);
   // 选汉字 hides the hanzi and asks for it: the Chinese example sentence contains that very
   // word, so on that rung it is not shown (the other extra lines carry no hanzi to give away)
-  const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && zhStep === "choose" && x.kind === "example"));
+  const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && rung === "choose" && x.kind === "example"));
   // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
   // the plain pinyin any item is graded against at 打拼音 (empty when it has none): the next
@@ -1274,11 +1279,11 @@ export default function Home() {
   const zhToneText = zhToned(zhMap, targetWord) || trioRow?.pinyin || savedPy;
   const plainPy = plainPyOf(item);
   // a word with no pinyin at all cannot be passed at 打拼音, so that rung types it through the IME
-  const zhLadder = practiceLang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPy);
+  const zhLadder = practiceLang === "zh" && rung !== "hanzi" && (rung !== "pinyin" || !!plainPy);
   veiledRef.current = !typingFocus && !zhLadder;
   // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
   // screen. The peek is TAB held in the App input, or a tap — 打拼音 owns TAB for its pinyin.
-  const meaningHidden = meaningVisibility === "hidden" && dictation === "off" && !(zhLadder && zhStep === "read") && !reveal && !meaningPeek;
+  const meaningHidden = meaningVisibility === "hidden" && dictation === "off" && !(zhLadder && rung === "read") && !reveal && !meaningPeek;
   // extra lines are a second cue: in dictation they wait for TAB like the letters — but the
   // ladder rungs have no dictation (letterVisible ignores it there) and no TAB to reveal
   const extrasShown = (dictation === "off" || reveal || zhLadder) && !meaningHidden;
@@ -1294,7 +1299,7 @@ export default function Home() {
   // line, and the word is not read aloud on its own either until CTRL+SPACE or TAB
   // a word on a zh rung is not under dictation, so its speech is never held; the rule is per
   // item because a mixed list (favourites) moves between languages from one word to the next
-  const holdsSpeech = (it: PracticeItem) => hidePron && dictation === "all" && !(it.lang === "zh" && zhStep !== "hanzi" && (zhStep !== "pinyin" || !!plainPyOf(it)));
+  const holdsSpeech = (it: PracticeItem) => hidePron && dictation === "all" && !(it.lang === "zh" && rung !== "hanzi" && (rung !== "pinyin" || !!plainPyOf(it)));
   const holdSpeech = holdsSpeech(item);
   // the Indonesian line "Bahasa Indonesia · men·ca·pai" is the spelling with dots: under any
   // dictation it is masked with the letters, or every id dictation mode showed the answer
@@ -1545,7 +1550,7 @@ export default function Home() {
     // lapse, logged by noteSlip the moment it happens (this is the fallback); a clean
     // answer counts once the loop is done. 认读 only shows the word, so it is not a
     // recall and schedules none.
-    const recognizeOnly = practiceLang === "zh" && zhStep === "read";
+    const recognizeOnly = practiceLang === "zh" && rung === "read";
     if (!cleanRun && !lapseRecorded.current && !slipped) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
     else if (lastRep && cleanRun && !recognizeOnly) recordReview(wordId, true, undefined, legacyId).then(refreshSrs).catch(() => {});
     if (lastRep) { setAttempts(n => n + 1); if (cleanRun) setCorrect(n => n + 1); setSessionWords(n => n + 1); bumpToday(); }
@@ -2128,9 +2133,6 @@ export default function Home() {
     setReviewDueTotal(due.length ? Math.max(0, srs.due - (report.complete ? report.unresolved.length : 0)) : 0);
     if (!refs.length) return;
     sourceReq.current++;
-    // 认读 only shows the word and schedules nothing, so a review held on that rung
-    // would never clear a single due word; it starts one rung up
-    if (zhStep === "read") setZhStep("pinyin");
     setReviewRefs(refs);
     // the keys the resolved items keep: two keys for one word were counted as "1 / 2" otherwise
     setReviewKeys(refs.map(r => r.key));
@@ -2143,7 +2145,7 @@ export default function Home() {
     setTimeout(() => input.current?.focus(), 40);
   }
   // the chapter's tally and clock restart. The rung or learning language may have changed
-  // during the review (开始复习 itself moves 认读 up to 打拼音): the list now current opens at
+  // during the review (a rung button clicked there): the list now current opens at
   // its own saved chapter and word, not at the one the review started from — which 下一章
   // then wrote over the real position
   function exitReview() {
@@ -2258,10 +2260,10 @@ export default function Home() {
           </button>}
           <button className={isFav ? "fav-btn on" : "fav-btn"} onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label={isFav ? TX("取消收藏", "Hapus dari favorit", "Remove from favorites", uiLang) : TX("收藏", "Tambah ke favorit", "Add to favorites", uiLang)}>{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
-          {practiceLang === "zh" && (zhStep === "read" || zhStep === "choose") &&
-            <p className={zhStep === "choose" ? "zh-annot solo" : "zh-annot"}
+          {practiceLang === "zh" && (rung === "read" || rung === "choose") &&
+            <p className={rung === "choose" ? "zh-annot solo" : "zh-annot"}
                onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
-          {!(practiceLang === "zh" && zhStep === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} lang={htmlLang(practiceLang)} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
+          {!(practiceLang === "zh" && rung === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} lang={htmlLang(practiceLang)} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
               the <wbr> after it is the only break opportunity: without one, overflow-wrap:anywhere
               splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
           {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined}>{item.sub}</p>}
@@ -2283,13 +2285,13 @@ export default function Home() {
             {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small><span lang={htmlLang(x.lang)}>{x.text}</span></span>)}
           </div>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
-            {ZH_STEPS.map(st => <button key={st.id} className={zhStep === st.id ? "on" : ""} disabled={!!reviewKeys && st.id === "read"} onClick={() => { if (finishing.current) return; setZhStep(st.id); setTyped(""); resetWordRun(); }}>
+            {ZH_STEPS.map(st => <button key={st.id} className={rung === st.id ? "on" : ""} disabled={!!reviewKeys && st.id === "read"} onClick={() => { if (finishing.current) return; setZhStep(st.id); setTyped(""); resetWordRun(); }}>
               <i>{st.num}</i>{uiLang === "zh" ? st.zh : uiLang === "id" ? st.idn : st.en}
             </button>)}
           </div>}
           {zhLadder ? <ZhSteps
             key={`${wordId}:${loopIx}`}
-            step={zhStep}
+            step={rung}
             word={targetWord}
             plain={plainPy}
             pool={zhPool}
@@ -2308,7 +2310,7 @@ export default function Home() {
         </div>
         {/* 选汉字 draws its distractors from the neighbouring words: printing them here gave one away */}
         {/* nor under dictation: the next word, printed in full, was the answer one word early */}
-        {!(practiceLang === "zh" && zhStep === "choose") && !(dictation !== "off" && !zhLadder) && <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>}
+        {!(practiceLang === "zh" && rung === "choose") && !(dictation !== "off" && !zhLadder) && <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>}
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
           <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
