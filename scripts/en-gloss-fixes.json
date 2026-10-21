@@ -4986,6 +4986,33 @@
     "cawan",
     "piala"
    ]
+  },
+  "kept": {
+   "trans": [
+    "保持",
+    "保留",
+    "维持"
+   ]
+  },
+  "maintain": {
+   "trans": [
+    "维持",
+    "保持",
+    "保养"
+   ]
+  },
+  "adventure": {
+   "trans": [
+    "冒险",
+    "奇遇",
+    "冒险经历"
+   ]
+  },
+  "android": {
+   "trans": [
+    "人形机器人",
+    "仿生人"
+   ]
   }
  },
  "en-plus": {
@@ -17000,6 +17027,13 @@
     "碰撞",
     "争执"
    ]
+  },
+  "warfare": {
+   "trans": [
+    "战争",
+    "战事",
+    "作战"
+   ]
   }
  },
  "en-academic": {
@@ -26672,6 +26706,10 @@
   "candidacy": {
    "idtrans": [
     "pencalonan"
+   ],
+   "trans": [
+    "候选资格",
+    "候选人身份"
    ]
   },
   "indices": {
@@ -28480,6 +28518,10 @@
   "multicultural": {
    "idtrans": [
     "multikultural"
+   ],
+   "trans": [
+    "多元文化的",
+    "多种文化的"
    ]
   },
   "negligible": {
@@ -31142,6 +31184,11 @@
    "idtrans": [
     "kulit suede",
     "suede"
+   ]
+  },
+  "hogg": {
+   "trans": [
+    "一岁羊"
    ]
   }
  },
@@ -34671,6 +34718,11 @@
    "idtrans": [
     "modifikasi",
     "perubahan"
+   ],
+   "trans": [
+    "修改",
+    "修正",
+    "变更"
    ]
   },
   "neighbouring": {
@@ -37009,6 +37061,27 @@
     "membual",
     "membanggakan"
    ]
+  },
+  "arcade": {
+   "trans": [
+    "拱廊",
+    "游戏厅",
+    "拱廊街"
+   ]
+  },
+  "paradox": {
+   "trans": [
+    "悖论",
+    "矛盾",
+    "似是而非的话"
+   ]
+  },
+  "loft": {
+   "trans": [
+    "阁楼",
+    "顶楼",
+    "阁楼公寓"
+   ]
   }
  },
  "en-toefl": {
@@ -37415,6 +37488,58 @@
    "trans": [
     "美元",
     "雄鹿"
+   ]
+  },
+  "regiment": {
+   "trans": [
+    "n. 团",
+    "大量"
+   ]
+  },
+  "hunter-gatherer": {
+   "trans": [
+    "n. 狩猎采集者"
+   ]
+  },
+  "glamor": {
+   "trans": [
+    "n. 魅力, 迷人的美"
+   ]
+  },
+  "detritus": {
+   "trans": [
+    "n. 碎屑, 岩屑",
+    "残骸"
+   ]
+  },
+  "tissue": {
+   "trans": [
+    "n. 组织",
+    "薄纸",
+    "面巾纸"
+   ]
+  },
+  "encounter": {
+   "trans": [
+    "v. 遭遇, 偶遇, 邂逅"
+   ]
+  },
+  "sometime": {
+   "trans": [
+    "adv. 某个时候",
+    "adj. 曾经的"
+   ]
+  },
+  "plume": {
+   "trans": [
+    "n. 羽毛",
+    "(烟尘、火焰的) 一股"
+   ]
+  },
+  "cannibal": {
+   "trans": [
+    "n. 食人者",
+    "同类相食的动物"
    ]
   }
  },
