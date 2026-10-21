@@ -45,8 +45,41 @@ ARPA2IPA = {
 }
 CMU = cmudict.dict()
 
+# CMUdict is American: a British spelling (flavour, analyse, programmes, litre, modelled, ageing,
+# aeroplane …) has no entry, and 50 cards printed "American English" with no transcription. The
+# pronunciation is the same word, so it is looked up under the American spelling instead (only
+# pairs said alike: maths and spelt keep their own sounds and stay without a transcription).
+US_SPELLING = {"aeroplane": "airplane", "ageing": "aging", "jewellery": "jewelry",
+               "offence": "offense", "defence": "defense", "licence": "license", "pretence": "pretense",
+               "programme": "program", "programmes": "programs", "tyre": "tire",
+               "cheque": "check", "grey": "gray", "mould": "mold", "plough": "plow", "sceptical": "skeptical",
+               "storey": "story", "whisky": "whiskey", "pyjamas": "pajamas", "kerb": "curb", "draught": "draft"}
+US_RULES = [(re.compile(r"our(s|ful|able|ite|ing|ed|ism|ist|al|ally|less)?$"), r"or\1"),      # flavour, colourful, favourable, behavioural
+            (re.compile(r"isation(s|al)?$"), r"ization\1"),                                  # civilisation, organisational
+            (re.compile(r"is(e|es|ed|ing|er|ers)$"), r"iz\1"),                                 # organise, specialised, minimise, utilised
+            (re.compile(r"ys(e|es|ed|ing)$"), r"yz\1"),                                        # analyse, paralysed
+            (re.compile(r"(t|b)re(s)?$"), r"\1er\2"),                                          # litre, calibre, centre, theatre
+            (re.compile(r"ll(ed|ing|er|ers)$"), r"l\1"),                                        # modelled, counselling, traveller
+            (re.compile(r"ogue(s)?$"), r"og\1")]                                               # catalogue, dialogue
+
+def us_spellings(word):
+    """American spellings to try for a word CMUdict does not list, most likely first."""
+    out = []
+    if word in US_SPELLING:
+        out.append(US_SPELLING[word])
+    for rx, rep in US_RULES:
+        alt = rx.sub(rep, word)
+        if alt != word and alt not in out:
+            out.append(alt)
+    return out
+
 def ipa(word):
     prons = CMU.get(word)
+    if not prons:
+        for alt in us_spellings(word):
+            prons = CMU.get(alt)
+            if prons:
+                break
     if not prons:
         return ""
     out, stressed = [], False
