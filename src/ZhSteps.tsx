@@ -116,9 +116,11 @@ type Props = {
   onSkip: () => void;
   onMiss: () => void;
   onSpeak: () => void;
+  // Escape left the pinyin box on purpose: the App pauses the clock, as it does for its own box
+  onLeave: () => void;
 };
 
-export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak }: Props) {
+export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave }: Props) {
   const [typed, setTyped] = useState("");
   const [wrong, setWrong] = useState(0);
   const [peek, setPeek] = useState(false);
@@ -290,7 +292,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         if (e.nativeEvent.isComposing || e.key === "Process" || e.keyCode === 229) return;
         // Shift+TAB and Escape leave the box, so the page stays reachable by keyboard
         if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
-        if (e.key === "Escape") box.current?.blur();
+        // leaving the box is a pause: with running left true the header kept saying FOCUS MODE
+        // and the clock went on counting seconds the learner was not typing
+        if (e.key === "Escape") { onLeave(); box.current?.blur(); }
         if (e.key === "Enter") { e.preventDefault(); if (!e.repeat) onSkip(); }
       }}
       // the box centres its text, so a click (or a tap) back into it put the caret before or inside
