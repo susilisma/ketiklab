@@ -389,7 +389,11 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // cut the other device's newest star on every push (the two took turns rewriting the
       // cloud, and neither showed 云端有更多). For a star both hold, the side on top keeps its body.
       const rows = new Map<string, unknown>();
-      const ids = (v: unknown) => list(v).filter(f => !!f && typeof f === "object").map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
+      // an item with no lang or key is no star: the device drops it on read (cleanFavorites), but
+      // the merge carried it into the cloud row — as "undefined:undefined" — and every later
+      // merge kept it, one of the 500 slots gone for good
+      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && typeof (f as { lang?: unknown }).lang === "string" && typeof (f as { key?: unknown }).key === "string";
+      const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
       out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
     } else {
