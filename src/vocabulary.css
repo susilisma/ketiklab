@@ -1,4 +1,8 @@
 .category-tabs{display:flex;gap:8px;margin:-10px 0 16px;overflow-x:auto;scrollbar-width:thin;padding:4px 1px}
+/* a scrolled bar fades the edge that hides more tabs; without it 全部分类 was cut to "narian 1633" on a phone with nothing to say the row scrolls */
+.category-tabs.fade-l{-webkit-mask-image:linear-gradient(to right,transparent,#000 32px);mask-image:linear-gradient(to right,transparent,#000 32px)}
+.category-tabs.fade-r{-webkit-mask-image:linear-gradient(to right,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(to right,#000 calc(100% - 32px),transparent)}
+.category-tabs.fade-l.fade-r{-webkit-mask-image:linear-gradient(to right,transparent,#000 32px,#000 calc(100% - 32px),transparent);mask-image:linear-gradient(to right,transparent,#000 32px,#000 calc(100% - 32px),transparent)}
 .category-tabs button{display:flex;align-items:center;gap:8px;white-space:nowrap;border:1px solid var(--line);background:var(--surface);color:var(--muted);border-radius:999px;padding:9px 13px;font-size:12px}
 .category-tabs button.active{border-color:var(--purple);background:var(--purple-soft);color:var(--purple);font-weight:800}
 .category-tabs small{display:grid;place-items:center;min-width:20px;height:20px;padding:0 5px;border-radius:999px;background:var(--bg);font-size:12px}

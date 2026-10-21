@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
@@ -400,15 +400,30 @@ export default function Home() {
   reviewRef.current = reviewKeys;
   // 320–330 px: the English "Chapter 1 / 31" cannot share the session row with the timer
   // and two 40 px buttons, so the option says "Ch." there (the select shrinks instead of the timer)
-  // the category bar scrolls sideways on a phone: the current tab is centred when the library
-  // opens or the category changes, or 学习与政策 sat 280 px past the right edge on every visit
+  // the category bar scrolls sideways on a phone: when the library opens or the category changes
+  // the current tab is brought into view with 24px to spare (学习与政策 sat 280 px past the right
+  // edge on every visit; centring it instead scrolled 全部分类 out of sight under a bar that gave
+  // no sign of being scrollable), and the bar fades the edge that hides more tabs
   const categoryTabs = useRef<HTMLDivElement>(null);
+  const fadeCategoryTabs = useCallback(() => {
+    const bar = categoryTabs.current;
+    if (!bar) return;
+    bar.classList.toggle("fade-l", bar.scrollLeft > 1);
+    bar.classList.toggle("fade-r", bar.scrollLeft + bar.clientWidth < bar.scrollWidth - 1);
+  }, []);
   useEffect(() => {
     if (view !== "library") return;
     const bar = categoryTabs.current, cur = bar?.querySelector<HTMLElement>("button.active");
-    if (!bar || !cur || bar.scrollWidth <= bar.clientWidth) return;
-    bar.scrollLeft = Math.max(0, cur.offsetLeft - bar.offsetLeft - (bar.clientWidth - cur.offsetWidth) / 2);
-  }, [view, category, source]);
+    if (!bar) return;
+    if (cur && bar.scrollWidth > bar.clientWidth) {
+      const left = cur.offsetLeft - bar.offsetLeft, right = left + cur.offsetWidth, margin = 24;
+      if (left - margin < bar.scrollLeft) bar.scrollLeft = Math.max(0, left - margin);
+      else if (right + margin > bar.scrollLeft + bar.clientWidth) bar.scrollLeft = right + margin - bar.clientWidth;
+    }
+    fadeCategoryTabs();
+    window.addEventListener("resize", fadeCategoryTabs);
+    return () => window.removeEventListener("resize", fadeCategoryTabs);
+  }, [view, category, source, fadeCategoryTabs]);
   const [narrowRow, setNarrowRow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 430px)").matches);
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
@@ -2373,7 +2388,7 @@ export default function Home() {
 
       {view === "library" && <Panel title={t.library} eyebrow={EYEBROW.library[uiLang]}>
         <div className="library-section-title"><b>{TX("KetikLab 主题词汇", "Kosakata Tematik KetikLab", "KetikLab Words by Topic", uiLang)}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
-        <div className="category-tabs" ref={categoryTabs}>
+        <div className="category-tabs" ref={categoryTabs} onScroll={fadeCategoryTabs}>
           {CATEGORIES.map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
         </div>
         {dictsError && <div className="review-banner"><span>⚠ {TX("考试词库加载失败", "Kamus ujian gagal dimuat", "Exam libraries failed to load", uiLang)}</span><button onClick={loadManifest}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
