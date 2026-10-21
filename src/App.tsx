@@ -1849,10 +1849,18 @@ export default function Home() {
   // brings back the one chosen for it instead of overwriting it
   function changeLanguage(nextLanguage: Lang) {
     setLang(nextLanguage);
+    // a dictionary of another language cannot be practised in the one just chosen: the card
+    // kept showing its English words under the new language, and so did every later visit, since
+    // the saved source outlives the choice. Back to the topic words, as the library page does
+    // (a review session is its own list and keeps its place, as with a rung change)
+    if (!reviewKeys && dictInfo && dictInfo.lang !== nextLanguage) {
+      sourceReq.current++; pendingIndex.current = null;
+      setLinkedMissing(null); setDictLoadError(null); setGlobalSearch(false);
+      setSource("trio"); persistSource("trio");
+    }
     // en and id share a chapter key, so the [sourceKey] effect does not start the new list's
     // run: the finish card of the English chapter stayed up over the Indonesian list
-    // (a review session is its own list and keeps its place, as with a rung change;
-    // an open dictionary is one list whatever the language, so its chapter is kept)
+    // (a dictionary of the new language is one list whatever the language, so its chapter is kept)
     if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
     setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
