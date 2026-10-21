@@ -654,9 +654,11 @@ export default function Home() {
             if (linked) persistSource(d.id);
             setDictWords(data);
             setSource(d.id);
-          // the list this visit or the saved source asked for is not there: say so (the banner
-          // below and on the library page), instead of quietly practising the topic words
-          }).catch(() => { if (mounted.current) setDictsError(true); });
+          // the file of this one list could not be fetched: the banner names it and its retry
+          // fetches it again (selectDict); it used to be reported as the whole set of exam
+          // libraries failing, with a retry that re-read the manifest, and the topic words were
+          // practised in silence under a dictionary title
+          }).catch(() => { if (mounted.current && !sourceReq.current) setDictLoadError(d); });
         }
       } catch { /* ignore */ }
     }).catch(() => { if (mounted.current) setDictsError(true); });
@@ -1890,7 +1892,8 @@ export default function Home() {
     sourceReq.current++; pendingIndex.current = null;
     // a list chosen here is the answer to the "linked list does not exist" banner: it used to
     // stay above the practice card through every later choice until its own button or a reload
-    setLinkedMissing(null);
+    // (and to the "this dictionary failed to load" one, now that the practice card shows it)
+    setLinkedMissing(null); setDictLoadError(null);
     // choosing a list is leaving the 🌐 search: with it on, the tab lit up but the grid kept the search's empty state
     setGlobalSearch(false);
     // out of a review whose rung or language changed: the [sourceKey] effect sat the review
@@ -1936,7 +1939,7 @@ export default function Home() {
   }
   function selectFav() {
     sourceReq.current++; pendingIndex.current = null;
-    setLinkedMissing(null);
+    setLinkedMissing(null); setDictLoadError(null);
     setSource("fav"); persistSource("fav");
     setGlobalSearch(false);
     setReviewKeys(null); setIndex(0); freshListRun(); setTyped(""); resetWordRun();
@@ -2241,6 +2244,7 @@ export default function Home() {
 
       {view === "learn" && <section className="learn-view">
         {dictsError && <div className="review-banner"><span>⚠ {TX("考试词库加载失败", "Kamus ujian gagal dimuat", "Exam libraries failed to load", uiLang)}</span><button onClick={loadManifest}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
+        {dictLoadError && <div className="review-banner"><span>⚠ {TX(`${dictName(dictLoadError)} 加载失败`, `${dictName(dictLoadError)} gagal dimuat`, `${dictName(dictLoadError)} failed to load`, uiLang)}</span><button onClick={() => selectDict(dictLoadError)}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
         {linkedMissing && <div className="review-banner"><span>⚠ {TX(`链接的词库不存在：${linkedMissing}`, `Daftar kata di tautan tidak ada: ${linkedMissing}`, `The linked word list does not exist: ${linkedMissing}`, uiLang)}</span><button onClick={() => { setLinkedMissing(null); setView("library"); }}>{t.library}</button></div>}
         {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${Math.max(reviewKeys.length, reviewDueTotal) > reviewItems.length ? ` / ${Math.max(reviewKeys.length, reviewDueTotal)}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata yang perlu diulang di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
         <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : COARSE ? (narrowRow ? TX("点击开始", "Ketuk untuk mulai", "Tap to start", uiLang) : TX("点击卡片开始", "Ketuk kartu untuk mulai", "Tap the card to start", uiLang)) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{narrowRow ? `${ci + 1} / ${chapterCount}` : uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
