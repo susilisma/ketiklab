@@ -394,7 +394,7 @@ export function Account({ uiLang, name, onName }: {
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
           <input value={shownName} maxLength={24} readOnly={untrustedView} onChange={e => { if (!untrustedView) onName(e.target.value); }}
-            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
+            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id && name.trim() !== profName) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
