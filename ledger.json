@@ -1021,10 +1021,10 @@
    "fingerprint": "lang-select-inert-with-dictionary",
    "title": "打开词典或收藏时顶栏学习语言 select 只改 lang 不换词表，卡片仍出英文词（App.tsx changeLanguage）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "3 行：dictInfo.lang !== next 时回到主题词 ｜ 10-16 F2 复验仍在",
-   "date": "2026-10-16"
+   "status": "fixed",
+   "commit": "85aafff",
+   "reason": "3 行：dictInfo.lang !== next 时回到主题词 ｜ 10-16 F2 复验仍在 ｜ 10-21 已修：F2：dictInfo.lang !== next 时回主题词并持久化 trio；V1：en-core + 选中文 → 实现 zh-CN、source trio、刷新保持；zh-core + 中文不变；收藏不变。残留见新 P3 lang-select-other-tab-keeps-dictionary / lang-change-during-dict-restore-race；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "settings-selects-no-accessible-name",
@@ -1669,10 +1669,10 @@
    "fingerprint": "review-start-rewrites-saved-rung",
    "title": "开始复习永久把 ketiklab-zh-step 从 read 改为 pinyin，即使复习里没有中文词；退出复习不恢复",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "复习内用局部 step 或在 exitReview 恢复；F4 10-01 复核仍在 ｜ 10-16 F3 复验仍在（App.tsx:1996）",
-   "date": "2026-10-16"
+   "status": "fixed",
+   "commit": "8293b48",
+   "reason": "复习内用局部 step 或在 exitReview 恢复；F4 10-01 复核仍在 ｜ 10-16 F3 复验仍在（App.tsx:1996） ｜ 10-21 已修：F3：复习用局部 rung（zhStep===\"read\" 时为 pinyin），startReview 不再 setZhStep；V1：仅英语到期词复习前后 step 仍 read；中文到期词用打拼音框、行 0→1、退出后 1认读；旧形数据迁移两建一致；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "mistake-click-changes-learning-language",
@@ -2623,10 +2623,10 @@
    "fingerprint": "settings-test-sound-detail-wrong-language",
    "title": "设置页「发音 · 中文 · 0.8×」但 测试发音 用当前词的语音（英语 en-US, rate .82）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "标签取自 practiceLang / item.voice，或用固定样例词；0.82 改 0.8 ｜ 10-16 F2 复验仍在；修法同 settings 行：LANGUAGE_META[settingsLang] 或当前词语言 ｜ 10-20 F2 已实现并验证（标签取 practiceLang，0.82 → 0.8；wt/f2 9f1e2ff）；受上限未合入",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "89dd80c",
+   "reason": "标签取自 practiceLang / item.voice，或用固定样例词；0.82 改 0.8 ｜ 10-16 F2 复验仍在；修法同 settings 行：LANGUAGE_META[settingsLang] 或当前词语言 ｜ 10-20 F2 已实现并验证（标签取 practiceLang，0.82 → 0.8；wt/f2 9f1e2ff）；受上限未合入 ｜ 10-21 已修：F2：标签取 LANGUAGE_META[practiceLang]，rate .82→.8；V1：en-core 打开时「English · 0.8×」、utterance rate 0.80；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "seo-lib-meta-descriptions-too-short",
@@ -4171,10 +4171,10 @@
    "fingerprint": "missing-saved-list-banner-says-linked",
    "title": "保存的词库下架后横幅说「链接的词库不存在」（App.tsx:557 复用 linkedMissing）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2 复现 ketiklab-source=en-gone；修法给保存情形单独文案 ｜ 10-08 F2 再复现 ｜ 10-16 F2 复验仍在（App.tsx:620） ｜ 10-20 F2 已实现并验证（linkedMissing = {id, saved}，保存情形三语「上次练习的词库已下架」；wt/f2 03fbb99）；受上限未合入",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "6ee4dfa",
+   "reason": "F2 复现 ketiklab-source=en-gone；修法给保存情形单独文案 ｜ 10-08 F2 再复现 ｜ 10-16 F2 复验仍在（App.tsx:620） ｜ 10-20 F2 已实现并验证（linkedMissing = {id, saved}，保存情形三语「上次练习的词库已下架」；wt/f2 03fbb99）；受上限未合入 ｜ 10-21 已修：F2：linkedMissing={id,saved}，保存情形三语「上次练习的词库已下架」；V1：en-gone 三语文案正确，?lib=en-nope 仍为「链接的词库不存在」；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "id-terminology-kamus-ujian",
@@ -4981,10 +4981,10 @@
    "fingerprint": "escape-done-window-carried-word-refocuses",
    "title": "完成窗口内按 Escape 后带入的字母打完下一词，finishWord setRunning(true) 回到焦点模式（8b77c02 去掉的状态）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "VA：F1 的守卫会让阶梯档时钟不再启动；已验证的替代：carry effect 在 pausedByButton/leftByKey 时早退（App.tsx ~559），带入字母丢弃 ｜ 10-15 F1 复验仍在；替代修法（carry effect 在 pausedByButton/leftByKey 早退）已验证，带入字母丢弃；上限已满 ｜ 10-16 F1 已实现并验证（carry effect 在 pausedByButton/leftByKey 早退，finishWord 不动；补丁 scratch F1/patches/0002，分支 f1-fixes 0d918ed）；受 12 项上限未合入，明日最先合入 ｜ 10-20 F1 已重做并验证（carry effect 在 pausedByButton/leftByKey 早退；wt/f1 d5b4588，c-escape-window.cjs）；受 12 项上限未合入，明日最先合入",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "7fb0e87",
+   "reason": "VA：F1 的守卫会让阶梯档时钟不再启动；已验证的替代：carry effect 在 pausedByButton/leftByKey 时早退（App.tsx ~559），带入字母丢弃 ｜ 10-15 F1 复验仍在；替代修法（carry effect 在 pausedByButton/leftByKey 早退）已验证，带入字母丢弃；上限已满 ｜ 10-16 F1 已实现并验证（carry effect 在 pausedByButton/leftByKey 早退，finishWord 不动；补丁 scratch F1/patches/0002，分支 f1-fixes 0d918ed）；受 12 项上限未合入，明日最先合入 ｜ 10-20 F1 已重做并验证（carry effect 在 pausedByButton/leftByKey 早退；wt/f1 d5b4588，c-escape-window.cjs）；受 12 项上限未合入，明日最先合入 ｜ 10-21 已修：F1 重做（carry effect 在 pausedByButton/leftByKey 早退，带入字母丢弃）；V1 在合并建 :4301 复验：窗口内 Escape 后卡片停在 no 18/20、0 字母、correct 1（基线 today 19/20 焦点模式 correct 2）；回归集与探针集与基线字节相同；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "ime-commit-in-done-window-dropped",
@@ -5008,10 +5008,10 @@
    "fingerprint": "single-dict-fail-generic-banner",
    "title": "一个词库文件取不到时横幅只说「考试词库加载失败」不点名、重试无效",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "VA 验证：App.tsx:615 setDictLoadError(d)，学习页也显示具名横幅 ｜ 10-16 F2 复验仍在（en-business 500 → \"考试词库加载失败\"，静默练主题词） ｜ 10-20 F2 已实现并验证（失败的保存 / 链接词库 setDictLoadError，学习页具名横幅，重试 = selectDict；wt/f2 d380f6a）；受上限未合入",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "164dda5",
+   "reason": "VA 验证：App.tsx:615 setDictLoadError(d)，学习页也显示具名横幅 ｜ 10-16 F2 复验仍在（en-business 500 → \"考试词库加载失败\"，静默练主题词） ｜ 10-20 F2 已实现并验证（失败的保存 / 链接词库 setDictLoadError，学习页具名横幅，重试 = selectDict；wt/f2 d380f6a）；受上限未合入 ｜ 10-21 已修：F2：失败的保存/链接词库 setDictLoadError(id)，学习页具名横幅，重试 = selectDict；V1：en-business 500 → 「商务英语 加载失败」，重试打开列表 account / 347。残留：换学习语言后横幅与 source 仍在（新 P3 dict-fail-banner-survives-language-change）；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "settings-meaning-row-edits-learning-lang",
@@ -5530,10 +5530,10 @@
    "fingerprint": "reading-position-lost-on-reload",
    "title": "阅读中的篇目与行位置刷新后丢失（练习词位置与章节会恢复）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-15 F2-2 发现 ｜ 10-16 F2 复验仍在（鹿柴 2/4 → Sonnet 18 1/4）",
-   "date": "2026-10-16"
+   "status": "fixed",
+   "commit": "ce6f3f9",
+   "reason": "10-15 F2-2 发现 ｜ 10-16 F2 复验仍在（鹿柴 2/4 → Sonnet 18 1/4） ｜ 10-21 已修：F2：新设备本地键 ketiklab-reading {id,line}（不同步不备份）；V1：鹿柴 第 2/4 句刷新后恢复、✓ 保留、垃圾值容忍；13 项导航回归集除新键外与基线相同；旧形数据种子通过；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "site-yml-flush-count-non-numeric",
@@ -5701,10 +5701,10 @@
    "fingerprint": "pinyin-box-escape-keeps-focus-mode",
    "title": "打拼音框按 Escape 只 blur，仍在焦点模式、时钟继续走（ZhSteps.tsx:287）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-16 F1 发现复现（B38）；修法约 4 行：onLeave prop 调用 leftByKey + setRunning(false) ｜ 10-20 F1 已实现并验证（ZhSteps onLeave prop → leftByKey + setRunning(false)；wt/f1 81c22fc）；受上限未合入",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "c1157e8",
+   "reason": "10-16 F1 发现复现（B38）；修法约 4 行：onLeave prop 调用 leftByKey + setRunning(false) ｜ 10-20 F1 已实现并验证（ZhSteps onLeave prop → leftByKey + setRunning(false)；wt/f1 81c22fc）；受上限未合入 ｜ 10-21 已修：F1 重做（ZhSteps onLeave → leftByKey + setRunning(false)）；V1：Escape 后离开焦点模式、时钟停在 00:02、复习内同样生效且 step 不变。残留：之后首键不恢复焦点模式直到本词通过（新 P3 pinyin-box-resume-after-escape-stays-paused-until-pass）；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "pinyin-box-enter-tab-during-ime-composition",
@@ -5837,9 +5837,9 @@
    "title": "21+ 个收藏在第 2 章时另一标签页移除靠前词，当前词移到第 1 章 → 学习者被送回第 1 章第 1 词，已打字母清空（favListChanged 只跟随本章内的移动）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "10-20 V1 发现，两建相同；修法：当前词换章时 setChapter(Math.floor(at/20)) 并跟随索引",
-   "date": "2026-10-20"
+   "commit": "4426089 (wt/f1)",
+   "reason": "10-20 V1 发现，两建相同；修法：当前词换章时 setChapter(Math.floor(at/20)) 并跟随索引 ｜ 10-21 F1 已实现并验证（当前词换章时 setChapter + 跟随索引，字母保留；removeFirst/addFrontOnLast/窗口内三场景）；受 12 项上限未合入，补丁存于 maintenance-log patches/2026-10-21/",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "fav-other-tab-change-inside-window-stale-timer",
@@ -5854,46 +5854,46 @@
    "fingerprint": "library-tabs-open-scrolled-first-tab-cut",
    "title": "词库页类别标签行打开时已滚到 scrollLeft 233（活动标签居中），第一个标签被切成「narian 1633」且无滚动提示（App.tsx:402 scrollIntoView）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-20 L 发现（375 三语明暗 6 格）；修法：scrollIntoView inline:'nearest' 和/或 .category-tabs 两端 mask-image 渐隐",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "4c3c39a",
+   "reason": "10-20 L 发现（375 三语明暗 6 格）；修法：scrollIntoView inline:'nearest' 和/或 .category-tabs 两端 mask-image 渐隐 ｜ 10-21 已修：F5：只在活动标签不可见时滚最少距离（+24px 余量），两端 mask-image 渐隐 fade-l/fade-r；V2：首类活动时 scrollLeft 0 仅 fade-r；末尾标签聚焦/点击滚到底仅 fade-l；默认类 business 时滚 46/163/167（基线 138/239/233）且两端渐隐。默认类下第一个标签仍在屏外（设计：活动标签必须可见，渐隐提示）；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "metric-value-misaligned-id",
    "title": "id 界面 Hari berturut-turut 三行时 1 hari 比其它值高 7.2px（375/320 学习页所有档）；768×1024 横向 .metric 两行标签值高 9px；错词本页 375 id 两卡值高 9px",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-20 L 测量 23 格（含 10-16 L-3）；修法：@media(max-width:640px) .metrics .metric{justify-content:flex-start}；横向 .metric>div{align-self:flex-start}；或主人改短文案 Hari beruntun",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "946a9ff",
+   "reason": "10-20 L 测量 23 格（含 10-16 L-3）；修法：@media(max-width:640px) .metrics .metric{justify-content:flex-start}；横向 .metric>div{align-self:flex-start}；或主人改短文案 Hari beruntun ｜ 10-21 已修：F5：.metric align-items:flex-start，手机列 center + justify flex-start；V2：320/375/768/1024/1440 × 三语 × 明暗值顶差 0.0px，错词本两行 0；副作用：≥641 色条 <i> 顶对齐（高 4–5px，与值顶齐），V2 判为一致的外观变化；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "dialog-focus-ring-on-unselected-card",
    "title": "首访对话框 id/en 时自动焦点落在第 1 张 中文 卡并画出焦点环，而选中的是另一张卡",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-20 L 测量（dialog id/en 2 格；10-16 L-2）；修法：ref={ui === c.code ? first : undefined}（App.tsx:2412）或焦点放标题 / 关闭按钮",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "7db3d4f",
+   "reason": "10-20 L 测量（dialog id/en 2 格；10-16 L-2）；修法：ref={ui === c.code ? first : undefined}（App.tsx:2412）或焦点放标题 / 关闭按钮 ｜ 10-21 已修：F2：ref 按 initialUi 落在已选卡；V1 与 L：/、?ui=id、?ui=en 焦点都在已选卡，Tab 40 次不出对话框；L 矩阵该残留 2→0 格；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "account-sync-after-other-tab-signout-english-message",
    "title": "另一标签页退出后本页 立即同步 的 POST 被新守卫拒绝，登录表单上显示英文 not signed in as this account（基线显示 PostgREST 原文）",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "10-20 F4 TRACE-ONLY（s7 3 s 窗口未触发）；与 postgrest-errors-raw 同类，修法：Account.tsx 把该错误映射为三语文案",
-   "date": "2026-10-20"
+   "commit": "021d1da (wt/f4)",
+   "reason": "10-20 F4 TRACE-ONLY（s7 3 s 窗口未触发）；与 postgrest-errors-raw 同类，修法：Account.tsx 把该错误映射为三语文案 ｜ 10-21 F4 复现（另一页退出且其推送遇 503）并映射三语文案；受上限未合入，补丁存于 patches/2026-10-21/",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "account-name-upsert-on-every-blur",
    "title": "Account.tsx:391 显示名每次 blur 都 upsert，即使未改",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "10-20 F4 TRACE-ONLY；修法：与上次保存值比较",
-   "date": "2026-10-20"
+   "commit": "fc6eff2 (wt/f4)",
+   "reason": "10-20 F4 TRACE-ONLY；修法：与上次保存值比较 ｜ 10-21 F4 已实现（name.trim() !== profName 才写）；基线 3 次 blur 3 次 upsert → 0；受上限未合入，补丁存于 patches/2026-10-21/",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "entry-step-ignored-once-langs-saved",
@@ -5936,9 +5936,9 @@
    "title": "50 行 en-* usphone 为空（analyse / flavour / programmes 等英式拼写 CMUdict 无），卡片只印 American English 无音标",
    "priority": "P3",
    "status": "deferred",
-   "commit": "",
-   "reason": "10-20 D INFO；修法：build-en-dicts.py 对英式拼写回落到美式拼写取音标",
-   "date": "2026-10-20"
+   "commit": "221d92e (wt/f5)",
+   "reason": "10-20 D INFO；修法：build-en-dicts.py 对英式拼写回落到美式拼写取音标 ｜ 10-21 F5 已实现（US_SPELLING 表 + 后缀规则，CMUdict 无词才回落）；50 行中 23 行下次重建可得音标，27 行为缩写/俚语；受上限未合入（只影响下次重建），补丁存于 patches/2026-10-21/",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "zh-choose-second-wrong-pick-no-skip",
@@ -5953,19 +5953,100 @@
    "fingerprint": "chapter-select-two-digit-chapter-clipped-320",
    "title": "320/360 px 当前章为两位数时（\"10 / 31\"…\"31 / 31\" 需 87–90px）章节 select 76px 仍切掉尾数",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-20 V2 发现（基线 64px 同样切）；修法：≤360 max-width 约 92px（标签余 52px，需核对 id 四行）或缩短 option 文案",
-   "date": "2026-10-20"
+   "status": "fixed",
+   "commit": "abc539d, 5d3213d",
+   "reason": "10-20 V2 发现（基线 64px 同样切）；修法：≤360 max-width 约 92px（标签余 52px，需核对 id 四行）或缩短 option 文案 ｜ 10-21 已修：F5：≤360 appearance:none 自绘箭头、窄宽选项文案去空格；V2 反驳：90px 上限让 320 id「Ketuk untuk mulai」四行被切 → 复核修正 5d3213d 改 86px；V2 102 格复跑 0 FAIL（\"194/194\" 62.4px 在 64px 内，id 标签 3 行 58px），L 195/195；已合入 main 5d3213d（Build check #86 0 注解，Build and deploy #820 成功）",
+   "date": "2026-10-21"
   },
   {
    "fingerprint": "fav-merge-keeps-keyless-objects",
    "title": "mergeProgress 收藏合并让无 key 的对象通过（设备端 cleanFavorites 会丢弃），云端行可带垃圾项",
    "priority": "P3",
    "status": "deferred",
+   "commit": "8dc54f8 (wt/f4)",
+   "reason": "10-20 V2 观察，两建相同，无报错；修法：ids() 过滤无 lang/key 的项 ｜ 10-21 F4 找到真实路径（words.json 不可达、规范化器未注册、后台 autoPush 合并原始副本 → 云端 3 个垃圾项）并修（只接受 lang/key 为字符串的项）；受上限未合入，补丁存于 patches/2026-10-21/",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "lang-select-other-tab-keeps-dictionary",
+   "title": "另一标签页改学习语言后，本页 storage 监听只 setLang：英语词典仍开着、select 显示中文、source 仍 en-core（App.tsx ~731）",
+   "priority": "P3",
+   "status": "deferred",
    "commit": "",
-   "reason": "10-20 V2 观察，两建相同，无报错；修法：ids() 过滤无 lang/key 的项",
-   "date": "2026-10-20"
+   "reason": "10-21 F2 复现（audit.cjs A）；修法：ketiklab-langs storage 分支里 learn 变化且 sourceRef 为不同语言词典时 setSource(\"trio\")",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "lang-change-during-dict-restore-race",
+   "title": "保存的词典文件仍在加载时改学习语言，文件到达后在中文下打开英语列表（两建相同）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-21 F2 复现（audit.cjs C，en-core.json 延迟 1.5 s）；修法：loadManifest 恢复 .then 中 d.lang !== langRef.current 时跳过 setSource 并持久化 trio，或 changeLanguage 时 bump sourceReq",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "dict-fail-banner-survives-language-change",
+   "title": "词库文件取不到（dictInfo 为空）时改学习语言，具名横幅与 ketiklab-source 仍在，重试在中文下打开英语列表",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-21 V1 发现（与上一条同族，基线为通用横幅同样行为）；修法：changeLanguage 时保存/失败的 source 在 manifest 中且 lang !== next → 清 dictLoadError、setSource(\"trio\")",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "name-change-not-mirrored-to-other-tab",
+   "title": "标签页 A 改显示名后 B 的侧栏/账户卡直到刷新仍是旧名（storage 监听不含 ketiklab-name；推送读到的是新名，不丢数据）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-21 F4 TRACE-ONLY；修法：App.tsx storage 分支加 e.key === \"ketiklab-name\" → setProfileName(e.newValue)",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "synced-message-on-signin-form",
+   "title": "另一页退出且云端已与本机一致时，本页同步结束在登录表单下方印「已同步。」",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-21 F4 观察；无害；修法：同步结束时 session 已失效则不印成功文案",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "pinyin-box-resume-after-escape-stays-paused-until-pass",
+   "title": "打拼音框 Escape 暂停后（c1157e8），下一键打进框里但头部仍「按任意键开始」、时钟停到本词通过（en/id 框首键即回焦点模式）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-21 V1 发现；修法（F1）：框 onFocus/首键的 onResume prop 清 leftByKey 并 setRunning(true)",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "reading-key-written-before-reading-opened",
+   "title": "ketiklab-reading 在 readings 到达时即写入（首篇、行 0），从未打开阅读的学习者也有此键",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-21 V1 观察；无害；修法：只在阅读视图打开过之后写",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "han-only-rule-blocks-p-value-t-test",
+   "title": "words.json #719 p-value 概率值、#759 t-test 均值检验：两位盲读者一致判错且替换一致（p值 / t检验），但 zh 字段只允许汉字与 ；",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-21 R2/R3 一致；需主人决定：放宽 zh 字符规则允许拉丁字母，或改词头/释义为纯汉字（如 显著性概率值）",
+   "date": "2026-10-21"
+  },
+  {
+   "fingerprint": "heart-hati-vs-cardiac-jantung",
+   "title": "words.json #1982 heart · hati（解剖义应为 jantung）但 #2719 cardiac 已占 jantung；需两行同改（cardiac → kardiak）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-21 D + R4 均判 heart·hati 错且提 jantung；R2 UNSURE；apply-gloss 因唯一性拒绝；需主人决定",
+   "date": "2026-10-21"
   }
  ]
 }

@@ -1,0 +1,41 @@
+From 021d1da97afbe19a5f490b6cd9bd745318d7fee9 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 21:54:17 +0000
+Subject: [PATCH] fix(account): a sync refused because the account was signed
+ out in another tab is reported in the learner's language
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+dbcb396 made saveProgress refuse a write once the session is gone, so a 立即同步 whose
+cloud read was still in flight when another tab signed out stops before sending anything.
+Its error was the guard's own English — "not signed in as this account" — printed on the
+sign-in form in every interface language, while every other sync outcome speaks the
+learner's language. humanError now maps it to three-language copy that also says the
+progress is still on this device and a new sign-in will sync it.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/Account.tsx | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/src/Account.tsx b/src/Account.tsx
+index 20f767e..25e8d40 100644
+--- a/src/Account.tsx
++++ b/src/Account.tsx
+@@ -45,6 +45,12 @@ function humanError(e: unknown, l: Lang): string {
+     return T("同步没有响应，请稍后再试。",
+              "Sinkronisasi tidak merespons. Coba lagi nanti.",
+              "The sync did not respond. Try again later.", l);
++  // saveProgress refuses a write once the session is gone (another tab signed out while this
++  // one was syncing): the wording was the guard's own English, printed on the sign-in form
++  if (m.includes("not signed in as this account"))
++    return T("这次没有同步：账号已在别处退出登录。记录仍在这台设备上，重新登录后再同步。",
++             "Tidak jadi disinkronkan: akun sudah keluar di tempat lain. Datamu masih di perangkat ini — masuk lagi untuk menyinkronkan.",
++             "Not synced: the account was signed out elsewhere. Your progress is still on this device — sign in again to sync.", l);
+   if (m.includes("cloud read failed"))
+     return T("暂时读不到云端记录，没有改动任何数据，请稍后再试。",
+              "Data cloud belum bisa dibaca. Tidak ada yang diubah — coba lagi nanti.",
+-- 
+2.43.0
+

@@ -1,0 +1,42 @@
+From 8dc54f8b0d44ff4b6b287b9e106c2c8ef9b107e6 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 21:57:11 +0000
+Subject: [PATCH] fix(cloud): an item without lang and key is not a favourite
+ and no longer survives a merge
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+mergeProgress kept any object in a favourites list, so an item with no lang or key (a cloud
+row written by an older client, a hand-edited backup) was merged under the id
+"undefined:undefined" and written back on every push. The device drops such items on read
+(cleanFavorites) and the key normaliser drops them too, but the normaliser is absent when the
+words never loaded (内容加载失败): the background push after the bounded wait then merged the
+raw copies, and three junk items stayed in the cloud row, each holding one of the 500 slots.
+Only items whose lang and key are strings take part in the merge now.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/cloud.ts | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/cloud.ts b/src/cloud.ts
+index 585554d..d6965da 100644
+--- a/src/cloud.ts
++++ b/src/cloud.ts
+@@ -389,7 +389,11 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
+       // cut the other device's newest star on every push (the two took turns rewriting the
+       // cloud, and neither showed 云端有更多). For a star both hold, the side on top keeps its body.
+       const rows = new Map<string, unknown>();
+-      const ids = (v: unknown) => list(v).filter(f => !!f && typeof f === "object").map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
++      // an item with no lang or key is no star: the device drops it on read (cleanFavorites), but
++      // the merge carried it into the cloud row — as "undefined:undefined" — and every later
++      // merge kept it, one of the 500 slots gone for good
++      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && typeof (f as { lang?: unknown }).lang === "string" && typeof (f as { key?: unknown }).key === "string";
++      const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
+       const x = ids(b), y = ids(a);
+       out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
+     } else {
+-- 
+2.43.0
+

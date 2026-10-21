@@ -1,0 +1,65 @@
+From 44260894e7759fb58a0fb73d237fd56430ccae3f Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 21:56:39 +0000
+Subject: [PATCH] fix(favourites): a star added or removed in another tab that
+ moves the word across a chapter boundary takes the card with it
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+favListChanged followed the word only while it stayed in the chapter on the card. With 22
+favourites and the learner on chapter 2 word 1, a favourite unstarred in another tab moved
+that word to chapter 1 slot 20: it was treated as gone, the next favourite slid in over the
+letters typed (yesterday 'ye' → morning 01/1); a star added in the other tab while the learner
+was on chapter 1 word 20 moved the word into chapter 2 and the card showed the word that slid
+into slot 20 instead (tomorrow 'to' → today, letters cleared). The card now moves to the word's
+new chapter (stored as a chapter change) and keeps the letters; inside the done window the
+takeover counts the pass in that chapter as it did within one. In-chapter moves, unstarring here,
+an emptied last slot and an emptied list are unchanged.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/App.tsx | 16 ++++++++++++----
+ 1 file changed, 12 insertions(+), 4 deletions(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index c87cfb7..28dcfe8 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -1589,8 +1589,16 @@ export default function Home() {
+       // that slid into the slot was shown half-typed, or an index past the chapter's end wrapped
+       // to word 1 and the words already answered were counted a second time
+       const at = remaining.findIndex(f => `${f.lang}:${f.key}` === wordId);
+-      if (at >= 0 && Math.floor(at / 20) === chapterSafe) {
+-        const slot = at - chapterSafe * 20;
++      if (at >= 0) {
++        // the words removed before it took the word across a chapter boundary (chapter 2's first
++        // favourite, an earlier one unstarred in another tab): the card follows it into that chapter
++        // too — it used to be treated as gone, and the next favourite slid in over the letters typed
++        const ch = Math.floor(at / 20);
++        if (ch !== chapterSafe) {
++          setChapter(ch);
++          try { const m = readChapters(); m[sourceKey] = ch; localStorage.setItem("ketiklab-chapters", JSON.stringify(m)); } catch { /* ignore */ }
++        }
++        const slot = at - ch * 20;
+         // inside the done window the word is finished and its advance timer still holds the old
+         // index: the move is taken over here, or the timer stepped from the stale slot and the
+         // card wrapped back to a word already answered
+@@ -1598,12 +1606,12 @@ export default function Home() {
+           const wasWrong = hadWrong.current || slipOn.current === wordId;
+           setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
+           setTyped(""); resetWordRun(); autoSpokenWord.current = null;
+-          const left = Math.min(20, remaining.length - chapterSafe * 20);
++          const left = Math.min(20, remaining.length - ch * 20);
+           if (slot + 1 >= left) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
+           else setIndex(slot + 1);
+           return;
+         }
+-        if (slot !== index % Math.max(learnItems.length, 1)) setIndex(slot); return;
++        if (ch !== chapterSafe || slot !== index % Math.max(learnItems.length, 1)) setIndex(slot); return;
+       }
+       // unstarred inside the done window: the pass is counted, but its chapter tally waits in the
+       // advance timer, which resetWordRun cancels (the finish card ran one short); and the timer's
+-- 
+2.43.0
+

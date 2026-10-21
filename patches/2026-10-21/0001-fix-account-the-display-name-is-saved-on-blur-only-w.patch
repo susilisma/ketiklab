@@ -1,0 +1,36 @@
+From fc6eff2b48db0a66dd0e1817948fd453ab72e447 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Wed, 21 Oct 2026 21:57:10 +0000
+Subject: [PATCH] fix(account): the display name is saved on blur only when it
+ changed
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Every blur of the name field upserted the profile row, including the blur that a click on
+立即同步 or anywhere else on the card causes with the name untouched: three taps around the
+card were three identical writes. profName already holds the last value loaded or saved, so
+the blur writes only when the trimmed field differs from it; a real edit, and an edit back to
+the earlier name, still write once each.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/Account.tsx | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/Account.tsx b/src/Account.tsx
+index 25e8d40..a14677c 100644
+--- a/src/Account.tsx
++++ b/src/Account.tsx
+@@ -394,7 +394,7 @@ export function Account({ uiLang, name, onName }: {
+         <label className="acct-field">
+           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
+           <input value={shownName} maxLength={24} readOnly={untrustedView} onChange={e => { if (!untrustedView) onName(e.target.value); }}
+-            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
++            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id && name.trim() !== profName) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
+             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
+         </label>
+ 
+-- 
+2.43.0
+
