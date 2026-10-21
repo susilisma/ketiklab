@@ -591,6 +591,10 @@ export default function Home() {
     if (!c || finishing.current) return;
     carry.current = "";
     if (typed !== "" || wrongFlash || view !== "learn" || chapterFinished || !input.current || isComposing.current) return;
+    // Escape or the pause button inside the done window: the learner stopped, and the letters
+    // typed before that are dropped — typed in, they were graded on a paused card and, when they
+    // completed the word ("no" after yes), finishWord put the page back in focus mode behind the veil
+    if (pausedByButton.current || leftByKey.current) return;
     // only the letters the new word starts with: the rest was typed before the word was on
     // screen, and dropping it, as before, grades nothing — a carried key never writes a lapse
     // a space typed between two words is the boundary, not the next word's first letter:
