@@ -45,6 +45,12 @@ function humanError(e: unknown, l: Lang): string {
     return T("同步没有响应，请稍后再试。",
              "Sinkronisasi tidak merespons. Coba lagi nanti.",
              "The sync did not respond. Try again later.", l);
+  // saveProgress refuses a write once the session is gone (another tab signed out while this
+  // one was syncing): the wording was the guard's own English, printed on the sign-in form
+  if (m.includes("not signed in as this account"))
+    return T("这次没有同步：账号已在别处退出登录。记录仍在这台设备上，重新登录后再同步。",
+             "Tidak jadi disinkronkan: akun sudah keluar di tempat lain. Datamu masih di perangkat ini — masuk lagi untuk menyinkronkan.",
+             "Not synced: the account was signed out elsewhere. Your progress is still on this device — sign in again to sync.", l);
   if (m.includes("cloud read failed"))
     return T("暂时读不到云端记录，没有改动任何数据，请稍后再试。",
              "Data cloud belum bisa dibaca. Tidak ada yang diubah — coba lagi nanti.",
