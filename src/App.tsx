@@ -2488,7 +2488,9 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
   const def: MeaningLang | null = picked && picked !== learn ? picked : defByLearn[learn] ?? defaultDef(ui, learn, browserTag());
   const mt = MODAL_T[ui];
   const first = useRef<HTMLButtonElement>(null);
-  // a dialog takes the focus with it, or keys keep landing on the practice card behind it
+  // a dialog takes the focus with it, or keys keep landing on the practice card behind it: on
+  // the card already selected, so the focus ring and the 已选 mark sit on the same card (the
+  // ring used to be drawn on 中文 while an Indonesian or English visit had its own card chosen)
   useEffect(() => { first.current?.focus(); }, []);
   // Escape closes it wherever the focus is: a click on the backdrop leaves the focus on <body>, outside this element
   useEffect(() => {
@@ -2505,7 +2507,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
         <h3>🖥 {mt.ui}</h3>
         <p>{mt.uiDesc}</p>
         <div className="lang-cards">
-          {LANG_CARDS.map((c, i) => <button key={c.code} ref={i === 0 ? first : undefined} className={ui === c.code ? "lang-card active" : "lang-card"} onClick={() => setUi(c.code)}>
+          {LANG_CARDS.map(c => <button key={c.code} ref={c.code === initialUi ? first : undefined} className={ui === c.code ? "lang-card active" : "lang-card"} onClick={() => setUi(c.code)}>
             <b>{c.name}</b><small>{c.uiDesc}</small>{ui === c.code && <span>{mt.selected}</span>}
           </button>)}
         </div>
