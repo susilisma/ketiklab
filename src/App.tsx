@@ -324,7 +324,9 @@ export default function Home() {
   // a library card whose file could not be fetched (offline, 5xx): named in a banner with a retry
   const [dictLoadError, setDictLoadError] = useState<DictInfo | null>(null);
   // a ?lib= id the manifest does not list (a retired list, a mistyped link): named instead of ignored
-  const [linkedMissing, setLinkedMissing] = useState<string | null>(null);
+  // the list that could not be opened: `saved` when it is the one remembered from the last
+  // visit (gone from the manifest), else the one a ?lib= link named
+  const [linkedMissing, setLinkedMissing] = useState<{ id: string; saved: boolean } | null>(null);
   const [chapter, setChapter] = useState(0);
   const [chapterFinished, setChapterFinished] = useState(false);
   const [chDone, setChDone] = useState(0);
@@ -635,12 +637,13 @@ export default function Home() {
         // not a manifest row, so it was reported as a list that does not exist
         const linkedTrio = ENTRY.lib === "trio" && !sourceReq.current;
         if (linkedTrio) { persistSource("trio"); setSource("trio"); }
-        if (ENTRY.lib && !linked && !linkedTrio && !sourceReq.current) setLinkedMissing(ENTRY.lib.slice(0, 40));
+        if (ENTRY.lib && !linked && !linkedTrio && !sourceReq.current) setLinkedMissing({ id: ENTRY.lib.slice(0, 40), saved: false });
         const savedSource = linkedTrio ? "trio" : localStorage.getItem("ketiklab-source");
         const d = linked || (savedSource && m.find(x => x.id === savedSource));
-        // a saved list the manifest no longer carries is named like an unknown ?lib= id, instead of
-        // opening the topic words in silence with the stale id kept for the next visit
-        if (!d && savedSource && savedSource !== "trio" && savedSource !== "fav" && !sourceReq.current) { if (!ENTRY.lib) setLinkedMissing(savedSource.slice(0, 40)); persistSource("trio"); }
+        // a saved list the manifest no longer carries is named too, in its own words (it was called
+        // "the linked list", which this visit never followed), instead of opening the topic words
+        // in silence with the stale id kept for the next visit
+        if (!d && savedSource && savedSource !== "trio" && savedSource !== "fav" && !sourceReq.current) { if (!ENTRY.lib) setLinkedMissing({ id: savedSource.slice(0, 40), saved: true }); persistSource("trio"); }
         if (d && !sourceReq.current) {
           // a first visit from that page is a visit to learn that list's language
           if (linked && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
@@ -2245,7 +2248,9 @@ export default function Home() {
       {view === "learn" && <section className="learn-view">
         {dictsError && <div className="review-banner"><span>⚠ {TX("考试词库加载失败", "Kamus ujian gagal dimuat", "Exam libraries failed to load", uiLang)}</span><button onClick={loadManifest}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
         {dictLoadError && <div className="review-banner"><span>⚠ {TX(`${dictName(dictLoadError)} 加载失败`, `${dictName(dictLoadError)} gagal dimuat`, `${dictName(dictLoadError)} failed to load`, uiLang)}</span><button onClick={() => selectDict(dictLoadError)}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
-        {linkedMissing && <div className="review-banner"><span>⚠ {TX(`链接的词库不存在：${linkedMissing}`, `Daftar kata di tautan tidak ada: ${linkedMissing}`, `The linked word list does not exist: ${linkedMissing}`, uiLang)}</span><button onClick={() => { setLinkedMissing(null); setView("library"); }}>{t.library}</button></div>}
+        {linkedMissing && <div className="review-banner"><span>⚠ {linkedMissing.saved
+          ? TX(`上次练习的词库已下架：${linkedMissing.id}`, `Daftar kata yang terakhir dilatih sudah tidak tersedia: ${linkedMissing.id}`, `The word list you last practised is no longer available: ${linkedMissing.id}`, uiLang)
+          : TX(`链接的词库不存在：${linkedMissing.id}`, `Daftar kata di tautan tidak ada: ${linkedMissing.id}`, `The linked word list does not exist: ${linkedMissing.id}`, uiLang)}</span><button onClick={() => { setLinkedMissing(null); setView("library"); }}>{t.library}</button></div>}
         {reviewKeys && <div className="review-banner"><span>◎ {reviewItems && reviewItems.length ? `${t.reviewing} · ${reviewItems.length}${Math.max(reviewKeys.length, reviewDueTotal) > reviewItems.length ? ` / ${Math.max(reviewKeys.length, reviewDueTotal)}` : ""}` : TX("本列表没有到期的复习词", "Tidak ada kata yang perlu diulang di daftar ini", "Nothing due in this list", uiLang)}</span><button onClick={exitReview}>{t.exitReview}</button></div>}
         <div className="session-meta"><span><i className="live" />{running ? TX("专注模式", "MODE FOKUS", "FOCUS MODE", uiLang) : COARSE ? (narrowRow ? TX("点击开始", "Ketuk untuk mulai", "Tap to start", uiLang) : TX("点击卡片开始", "Ketuk kartu untuk mulai", "Tap the card to start", uiLang)) : t.keyboard}</span>{!reviewKeys && <span className="chapter-nav"><button onClick={() => setChapterTo(chapterSafe - 1)} disabled={chapterSafe === 0} aria-label={TX("上一章", "Bab sebelumnya", "Previous chapter", uiLang)}>‹</button><select className="chapter-select" value={chapterSafe} onChange={e => setChapterTo(Number(e.target.value))} aria-label={TX("跳到某一章", "Lompat ke bab", "Jump to chapter", uiLang)}>{Array.from({ length: chapterCount }, (_, ci) => <option key={ci} value={ci}>{narrowRow ? `${ci + 1} / ${chapterCount}` : uiLang === "zh" ? `第 ${ci + 1} / ${chapterCount} 章` : uiLang === "id" ? `Bab ${ci + 1} / ${chapterCount}` : `Chapter ${ci + 1} / ${chapterCount}`}</option>)}</select><button onClick={() => setChapterTo(chapterSafe + 1)} disabled={chapterSafe >= chapterCount - 1} aria-label={TX("下一章", "Bab berikutnya", "Next chapter", uiLang)}>›</button></span>}<b>{String(Math.floor(seconds/60)).padStart(2,"0")}:{String(seconds%60).padStart(2,"0")}</b></div>
         <div className="mode-row">{!zhLadder && <span className="mode-group"><span>{uiLang === "zh" ? "默写" : uiLang === "id" ? "Dikte" : "Dictation"}</span>{([["off", uiLang === "zh" ? "关" : uiLang === "id" ? "Mati" : "Off"], ["all", uiLang === "zh" ? "全隐藏" : uiLang === "id" ? "Semua" : "Hide all"], ["vowel", uiLang === "zh" ? "隐元音" : uiLang === "id" ? "Vokal" : "Vowels"], ["random", uiLang === "zh" ? "随机" : uiLang === "id" ? "Acak" : "Random"]] as ["off" | "all" | "vowel" | "random", string][]).map(([mode, label]) => <button key={mode} className={dictation === mode ? "active" : ""} onClick={() => { setDictation(mode); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{dictation !== "off" && <em>{uiLang === "zh" ? "TAB 显示答案" : uiLang === "id" ? "TAB lihat jawaban" : "TAB to peek"}</em>}</span>}{!zhLadder && <span className="mode-sep" />}<span className="mode-group"><span>{uiLang === "zh" ? "纠错" : uiLang === "id" ? "Koreksi" : "Correction"}</span>{([["strict", TX("自动回退", "Mundur otomatis", "Auto rollback", uiLang)], ["soft", uiLang === "zh" ? "退格改错" : uiLang === "id" ? "Backspace" : "Backspace"]] as ["strict" | "soft", string][]).map(([mode, label]) => <button key={mode} className={inputMode === mode ? "active" : ""} onClick={() => { setInputMode(mode); setTyped(""); cancelFlash(); setTimeout(() => input.current?.focus(), 20); }}>{label}</button>)}{inputMode === "soft" && <em>{uiLang === "zh" ? "打错不清空，按退格改" : uiLang === "id" ? "Salah? tekan Backspace" : "Backspace to fix"}</em>}</span></div>
