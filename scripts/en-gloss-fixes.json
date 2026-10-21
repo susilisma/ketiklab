@@ -4965,6 +4965,27 @@
     "pokok",
     "mendasar"
    ]
+  },
+  "player": {
+   "trans": [
+    "选手",
+    "玩家",
+    "球员"
+   ]
+  },
+  "amazon": {
+   "trans": [
+    "亚马逊女战士",
+    "女战士",
+    "亚马逊"
+   ]
+  },
+  "cup": {
+   "idtrans": [
+    "cangkir",
+    "cawan",
+    "piala"
+   ]
   }
  },
  "en-plus": {
@@ -13567,6 +13588,11 @@
    "idtrans": [
     "mengesankan",
     "membuat terkesan"
+   ],
+   "trans": [
+    "打动",
+    "使印象深刻",
+    "使钦佩"
    ]
   },
   "jar": {
@@ -15336,6 +15362,10 @@
   "freshman": {
    "idtrans": [
     "mahasiswa baru"
+   ],
+   "trans": [
+    "新生",
+    "大一新生"
    ]
   },
   "irrelevant": {
@@ -25579,7 +25609,11 @@
    "trans": [
     "一英镑"
    ],
-   "def": "(British informal) a pound in money"
+   "def": "(British informal) a pound in money",
+   "idtrans": [
+    "pound",
+    "pound sterling"
+   ]
   },
   "staunch": {
    "trans": [
@@ -30518,6 +30552,11 @@
    "idtrans": [
     "diler",
     "agen penjualan"
+   ],
+   "trans": [
+    "经销商",
+    "特许经销商",
+    "经销店"
    ]
   },
   "intrusion": {
@@ -31097,6 +31136,12 @@
     "破产",
     "无力偿债",
     "资不抵债"
+   ]
+  },
+  "suede": {
+   "idtrans": [
+    "kulit suede",
+    "suede"
    ]
   }
  },
@@ -34978,6 +35023,11 @@
    "idtrans": [
     "kekasih",
     "sayang"
+   ],
+   "trans": [
+    "心上人",
+    "恋人",
+    "甜心"
    ]
   },
   "sweetie": {
@@ -36931,6 +36981,34 @@
     "土话",
     "土语"
    ]
+  },
+  "notch": {
+   "trans": [
+    "刻痕",
+    "凹口",
+    "等级"
+   ]
+  },
+  "offender": {
+   "trans": [
+    "罪犯",
+    "违法者",
+    "冒犯者"
+   ]
+  },
+  "mediocre": {
+   "trans": [
+    "平庸的",
+    "普通的",
+    "二流的"
+   ]
+  },
+  "boast": {
+   "idtrans": [
+    "menyombongkan diri",
+    "membual",
+    "membanggakan"
+   ]
   }
  },
  "en-toefl": {
@@ -37346,6 +37424,12 @@
     "止赎",
     "丧失抵押品赎回权",
     "取消赎回权"
+   ]
+  },
+  "policy": {
+   "idtrans": [
+    "kebijakan",
+    "polis"
    ]
   }
  }

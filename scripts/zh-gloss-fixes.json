@@ -7480,7 +7480,8 @@
   "idtrans": [
    "meremehkan",
    "menaksir terlalu rendah"
-  ]
+  ],
+  "def": "to estimate something as lower or less important than it really is"
  },
  "头衔": {
   "idtrans": [
@@ -11003,6 +11004,11 @@
  "冲撞": {
   "idtrans": [
    "menabrak"
+  ],
+  "trans": [
+   "collide",
+   "bump into",
+   "offend"
   ]
  },
  "判决书": {
@@ -14839,7 +14845,12 @@
    "berbalik unggul",
    "membalikkan keadaan"
   ],
-  "def": "to overtake and take the lead after being behind"
+  "def": "to overtake and take the lead after being behind",
+  "trans": [
+   "overtake",
+   "come from behind to lead",
+   "turn the tables"
+  ]
  },
  "排水管": {
   "idtrans": [
@@ -15222,6 +15233,11 @@
   "idtrans": [
    "sepenuh hati",
    "berkonsentrasi penuh"
+  ],
+  "trans": [
+   "single-minded",
+   "wholeheartedly devoted",
+   "fully concentrated"
   ]
  },
  "丧服": {
@@ -15934,6 +15950,11 @@
   "trans": [
    "wrestling",
    "fall down"
+  ],
+  "idtrans": [
+   "terjatuh",
+   "gulat",
+   "bergulat"
   ]
  },
  "潜伏": {
@@ -16326,6 +16347,11 @@
   "trans": [
    "harbor",
    "cherish"
+  ],
+  "idtrans": [
+   "menyimpan",
+   "memendam",
+   "memiliki"
   ]
  },
  "攀登": {
@@ -16479,7 +16505,10 @@
   "trans": [
    "Kos"
   ],
-  "def": "transliteration of Kos or Coase"
+  "def": "transliteration of Kos or Coase",
+  "idtrans": [
+   "coase"
+  ]
  },
  "发怒": {
   "trans": [
@@ -16543,6 +16572,10 @@
   "trans": [
    "look on",
    "be a bystander"
+  ],
+  "idtrans": [
+   "menonton",
+   "menjadi penonton"
   ]
  },
  "仓促": {
@@ -16691,7 +16724,12 @@
   "idtrans": [
    "sepenuh mulut"
   ],
-  "def": "with the whole mouth: full of ; readily"
+  "def": "with the whole mouth: full of ; readily",
+  "trans": [
+   "nothing but",
+   "full of",
+   "readily"
+  ]
  },
  "蓝宝石": {
   "idtrans": [
@@ -16871,6 +16909,11 @@
    "study in depth",
    "research thoroughly",
    "delve into"
+  ],
+  "idtrans": [
+   "mendalami",
+   "meneliti secara mendalam",
+   "mengkaji"
   ]
  },
  "不屈不挠": {
@@ -17046,7 +17089,12 @@
   ]
  },
  "绒毛": {
-  "def": "fine soft hair or fluff; down; villi"
+  "def": "fine soft hair or fluff; down; villi",
+  "trans": [
+   "down",
+   "fine hair",
+   "fluff"
+  ]
  },
  "编年史": {
   "idtrans": [
@@ -17072,7 +17120,11 @@
   ]
  },
  "堂兄": {
-  "def": "an older male cousin on the father's side who shares one's surname"
+  "def": "an older male cousin on the father's side who shares one's surname",
+  "idtrans": [
+   "sepupu",
+   "kakak sepupu laki-laki"
+  ]
  },
  "仇敌": {
   "idtrans": [
@@ -17465,7 +17517,11 @@
   "idtrans": [
    "mengalir tanpa henti"
   ],
-  "def": "flowing past in an endless stream"
+  "def": "flowing past in an endless stream",
+  "trans": [
+   "flow in an endless stream",
+   "never-ending stream"
+  ]
  },
  "沟槽": {
   "idtrans": [
@@ -17641,6 +17697,33 @@
    "bend the knee",
    "kneel",
    "submit"
+  ]
+ },
+ "公馆": {
+  "idtrans": [
+   "kediaman",
+   "rumah besar",
+   "wisma"
+  ]
+ },
+ "细看": {
+  "idtrans": [
+   "mencermati",
+   "mengamati dengan cermat",
+   "memeriksa"
+  ]
+ },
+ "间歇": {
+  "trans": [
+   "intermission",
+   "pause",
+   "interval"
+  ]
+ },
+ "一场": {
+  "idtrans": [
+   "satu pertandingan",
+   "satu pertunjukan"
   ]
  }
 }
