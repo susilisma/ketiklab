@@ -684,8 +684,13 @@ export default function Home() {
       setReadings(r);
       // open on a reading in the language being learned: r[0] is the English Sonnet 18, which every
       // learner of Chinese or Indonesian got from the sidebar and from /zh/readings and /id/readings.
-      // langRef, not lang: this effect runs once, before the saved learning language is restored
-      if (r.length) setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id);
+      // langRef, not lang: this effect runs once, before the saved learning language is restored.
+      // The piece and the line the learner was on come first (ketiklab-reading, this device only):
+      // a reload used to put 鹿柴 2/4 back to the first piece of the language at its first line
+      const saved = readSavedReading();
+      const kept = saved && r.find(pc => pc.id === saved.id);
+      if (kept) { setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); }
+      else if (r.length) setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id);
     }).catch(() => { if (alive) setDataError(true); });
     loadManifest();
     { const sp = initSoundPref(); setSoundProfileState(sp.profile); }
@@ -830,6 +835,14 @@ export default function Home() {
     try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-position") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
   };
   const savedPosition = (key: string) => Math.min(19, Math.max(0, Math.floor(Number(readPositions()[key])) || 0));
+  const readSavedReading = (): { id: string; line: number } | null => {
+    try {
+      const p: unknown = JSON.parse(localStorage.getItem("ketiklab-reading") || "null");
+      if (!p || typeof p !== "object" || Array.isArray(p)) return null;
+      const { id, line } = p as { id?: unknown; line?: unknown };
+      return typeof id === "string" && id ? { id, line: Math.max(0, Math.floor(Number(line)) || 0) } : null;
+    } catch { return null; }
+  };
   // the restore below sets the index from storage; the write effect after it must not first
   // store the index of the render that preceded the restore (0 on load, 0 after a list change)
   const skipPositionWrite = useRef(false);
@@ -872,6 +885,13 @@ export default function Home() {
     } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [index, sourceKey, chapterFinished]);
+  // the reading and the line in hand; a finished piece starts over on the next visit, as a
+  // finished chapter does. Nothing is written before the readings have arrived and the saved
+  // piece has been restored, or the empty first render would wipe it
+  useEffect(() => {
+    if (!readingId) return;
+    try { localStorage.setItem("ketiklab-reading", JSON.stringify({ id: readingId, line: readingDone ? 0 : readingLine })); } catch { /* ignore */ }
+  }, [readingId, readingLine, readingDone]);
   // the restored position meets its list only now (words.json, a dictionary file or the
   // favourites arrived after the [sourceKey] effect): past the chapter's end, its last word
   useEffect(() => {
