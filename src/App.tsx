@@ -742,6 +742,9 @@ export default function Home() {
           // last slot emptied finishes, an emptied list stops being labelled 我的收藏)
           favListChangedRef.current(favs);
         }
+        // the display name too: renamed on the account page of another tab, this tab's sidebar and
+        // account card kept the old name until a reload (the push read storage, so nothing was lost)
+        else if (e.key === "ketiklab-name") setProfileName(e.newValue);
         else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
         // the languages too: this tab's next writeLangs (a meaning pick, a learning-language change)
         // carried its own copy of all three fields, and wrote the other tab's fresh choice back
