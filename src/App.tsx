@@ -676,8 +676,10 @@ export default function Home() {
         // once the manifest is here); the saved list is forgotten as that change forgets it
         if (d && !sourceReq.current && langPicked.current && d.lang !== langRef.current) persistSource("trio");
         else if (d && !sourceReq.current) {
-          // a first visit from that page is a visit to learn that list's language
-          if (linked && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
+          // a first visit from that page is a visit to learn that list's language — and so is the
+          // return visit of a learner who closed the dialog on it: the English list came back with
+          // the select and the dialog on 中文 (a ?learn= link still names its own language)
+          if ((linked || !ENTRY.learn) && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
           loadDict(d).then((data: DictEntry[]) => {
             if (!mounted.current) return;
             dictCache.current.set(d.id, data);
