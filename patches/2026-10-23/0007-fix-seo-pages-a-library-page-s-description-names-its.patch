@@ -1,0 +1,43 @@
+From bdb2f60ba172b01519a07a3e1de4dc3953f25882 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 22 Oct 2026 21:58:56 +0000
+Subject: [PATCH 7/7] fix(seo-pages): a library page's description names its
+ size and meaning column
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+lib_page() used "<name>: <description>" as the meta and og description, which for 25 of the
+30 library pages was 12–46 characters ("Core English: Zipf frequency 4.3–9.0", "托福必考词:
+托福备考词表") — too short for a result snippet and saying nothing a reader wants to know
+before opening the page. It now reads "<name> — <n> words. <description>. <coverage
+sentence>", three facts the page already prints in its lead (the count, the description and
+which meaning column it shows), punctuated with 。 on the Chinese pages. Fresh build: the
+English and Indonesian pages are 98–168 characters, the Chinese ones 34–47 characters of
+Chinese; the topic and readings pages keep their own descriptions.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ scripts/build-seo-pages.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/build-seo-pages.py b/scripts/build-seo-pages.py
+index 97542f8..5de911f 100644
+--- a/scripts/build-seo-pages.py
++++ b/scripts/build-seo-pages.py
+@@ -358,7 +358,11 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
+         f'<div class="wrap"><table><thead><tr>' + "".join(f"<th>{esc(c)}</th>" for c in cols) + f"</tr></thead>\n<tbody>\n{rows}\n</tbody></table></div>\n"
+     )
+     path = f"/{lang}/lib/{row['id']}/"
+-    return path, static_page(lang, title, f"{name}: {desc}", path, body, lambda l: f"/{l}/lib/{row['id']}/", lib_rows, n_readings)
++    # the description names the size and the meaning column too: "Core English: Zipf frequency 4.3–9.0" alone
++    # was 12–46 characters, too short for a result snippet and the same for every page of a library
++    stop = "。" if lang == "zh" else ". "
++    meta = f"{name} — {fmt('count', lang, n=num(n, lang))}{stop}{desc}{stop}{coverage}"
++    return path, static_page(lang, title, meta, path, body, lambda l: f"/{l}/lib/{row['id']}/", lib_rows, n_readings)
+ 
+ 
+ # the app reads the same file when a row carries no pinyin of its own (App.tsx zhToneText)
+-- 
+2.43.0
+

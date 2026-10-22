@@ -1,0 +1,41 @@
+From cb441172fe742e478e08d8482efd9f0e41897551 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 22 Oct 2026 22:03:38 +0000
+Subject: [PATCH 3/7] fix(restore): a saved list reopened before any language
+ choice sets the learning language to the list's
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+A first visit through ?lib=en-core sets the learning language to English, and the list is
+saved once it has loaded. A learner who closed the dialog instead of saving it came back
+to the English list restored under the default 中文: the header named Core English and the
+card showed its words while the select and the dialog's learning row said 中文. The restore
+now treats such a visit as the link did — the list's language is the learning language —
+whenever nothing has been chosen yet and no ?learn= link names another one.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/App.tsx | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 9972463..5d51dd7 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -676,8 +676,10 @@ export default function Home() {
+         // once the manifest is here); the saved list is forgotten as that change forgets it
+         if (d && !sourceReq.current && langPicked.current && d.lang !== langRef.current) persistSource("trio");
+         else if (d && !sourceReq.current) {
+-          // a first visit from that page is a visit to learn that list's language
+-          if (linked && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
++          // a first visit from that page is a visit to learn that list's language — and so is the
++          // return visit of a learner who closed the dialog on it: the English list came back with
++          // the select and the dialog on 中文 (a ?learn= link still names its own language)
++          if ((linked || !ENTRY.learn) && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
+           loadDict(d).then((data: DictEntry[]) => {
+             if (!mounted.current) return;
+             dictCache.current.set(d.id, data);
+-- 
+2.43.0
+

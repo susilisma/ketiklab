@@ -1,0 +1,44 @@
+From 7fbd838474ae618fd9d24192f63bc0600dc37e40 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 22 Oct 2026 21:57:31 +0000
+Subject: [PATCH 2/7] fix(reading): the piece and line in hand are remembered
+ only once the reading view has been opened
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ce6f3f9 writes ketiklab-reading {id, line} so a reload returns to the piece and the line the
+learner was on. It wrote as soon as the readings arrived, so every learner got the key with
+the language's first piece at line 0 whether or not they ever opened 阅读. The write now
+waits for the first visit to the reading view (or a ?view=articles entry); the restore is
+unchanged, and a learner who opened the view and left stays on the same piece and line.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/App.tsx | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 1bc24ec..9972463 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -937,10 +937,15 @@ export default function Home() {
+   // the reading and the line in hand; a finished piece starts over on the next visit, as a
+   // finished chapter does. Nothing is written before the readings have arrived and the saved
+   // piece has been restored, or the empty first render would wipe it
++  // ...and nothing before the reading view has been opened: the default piece was written for
++  // every learner the moment the readings arrived, reading or not
++  const readingSeen = useRef(ENTRY.articles);
+   useEffect(() => {
+     if (!readingId) return;
++    if (view === "articles") readingSeen.current = true;
++    if (!readingSeen.current) return;
+     try { localStorage.setItem("ketiklab-reading", JSON.stringify({ id: readingId, line: readingDone ? 0 : readingLine })); } catch { /* ignore */ }
+-  }, [readingId, readingLine, readingDone]);
++  }, [readingId, readingLine, readingDone, view]);
+   // the restored position meets its list only now (words.json, a dictionary file or the
+   // favourites arrived after the [sourceKey] effect): past the chapter's end, its last word
+   useEffect(() => {
+-- 
+2.43.0
+

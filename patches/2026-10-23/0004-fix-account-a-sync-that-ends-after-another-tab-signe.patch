@@ -1,0 +1,79 @@
+From 8dbcedbad01837f8e6a22490cc2f990d680c9666 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Thu, 22 Oct 2026 21:57:02 +0000
+Subject: [PATCH 4/7] =?UTF-8?q?fix(account):=20a=20sync=20that=20ends=20af?=
+ =?UTF-8?q?ter=20another=20tab=20signed=20out=20no=20longer=20prints=20?=
+ =?UTF-8?q?=E5=B7=B2=E5=90=8C=E6=AD=A5=20under=20the=20sign-in=20form?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+立即同步 pressed in tab A while tab B signs out: the sign-out resets the card (the effect that
+re-runs on the uid change clears msg and err), then A's pushProgress returns. When the cloud
+already matched this device nothing was written, so the signed-out guard never threw, and
+pushNow went on to re-link the device, set the name and print 已同步。/Tersinkron./Synced. —
+on the sign-in form, about an account that is no longer signed in. The same held for the
+merge/replace choice (chooseLink). cloud.ts now exports signedInAs(uid), the module's own
+view of the session, and both paths stop quietly when the account is gone by the time the
+round trip ends; a sync refused by the guard is still reported in the learner's language.
+
+Scenario: A on the account page, cloud equal to the device; A presses 立即同步 while the
+read is slow; B presses 退出登录 → A shows the sign-in form with "已同步。" under it (before)
+→ the form alone (after).
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/Account.tsx | 7 ++++++-
+ src/cloud.ts    | 4 ++++
+ 2 files changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/Account.tsx b/src/Account.tsx
+index a14677c..213c420 100644
+--- a/src/Account.tsx
++++ b/src/Account.tsx
+@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
+ import {
+   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
+   loadProfile, saveName, pushProgress, linkThisDevice, applyMerged, collectLocal, linkedUid, linkDevice,
+-  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, type SyncNote,
++  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, signedInAs, type SyncNote,
+ } from "./cloud";
+ 
+ type Lang = "zh" | "id" | "en";
+@@ -305,6 +305,10 @@ export function Account({ uiLang, name, onName }: {
+       // field, the header and storage back to it.
+       const own = linked === uid ? name.trim() : profName;
+       const { cloudHasMore } = await withinSyncWait(pushProgress(uid, own ? { ...collectLocal(), "ketiklab-name": own } : collectLocal()));
++      // signed out in another tab while the read was in flight: the cloud already matched, so the
++      // push wrote nothing and ended here — and printed 已同步 under the sign-in form (the effect
++      // that re-runs on the sign-out had already cleared the card's messages)
++      if (!signedInAs(uid)) { setMsg(""); return; }
+       if (own) { onName(own); setProfName(own); }
+       else if (name.trim()) await withinSyncWait(saveName(uid, name.trim()));
+       linkDevice(uid); setLinkOnly(false);
+@@ -335,6 +339,7 @@ export function Account({ uiLang, name, onName }: {
+     try {
+       const done = await withinSyncWait(linkThisDevice(session.user.id, how, profName));
+       if (done === "reloading") return;
++      if (!signedInAs(session.user.id)) { setMsg(""); return; }
+       // no reload on this path, so the header would keep the previous user's name
+       onName(profName);
+       setForeign(false);
+diff --git a/src/cloud.ts b/src/cloud.ts
+index d6965da..2eeb1fb 100644
+--- a/src/cloud.ts
++++ b/src/cloud.ts
+@@ -136,6 +136,10 @@ try {
+   if (localStorage.getItem(OUT_KEY) && !fromLink) void supabase.auth.signOut().catch(() => { /* offline: the mark stays and the next load tries again */ });
+ } catch { /* ignore */ }
+ 
++/** Whether this account is still the one signed in here: a sync that outlives a sign-out from
++ *  another tab must not report success, or link the device, over the sign-in form. */
++export function signedInAs(uid: string): boolean { return session?.user.id === uid; }
++
+ export async function currentSession(): Promise<Session | null> {
+   // offline with an expired token auth-js retries the refresh for ~25 s before answering; the panel shows what is
+   // known after 3 s, and onAuthStateChange (Account.tsx) delivers the session when the refresh later succeeds
+-- 
+2.43.0
+
