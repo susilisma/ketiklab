@@ -1149,7 +1149,8 @@
   "trans": [
    "trousers",
    "pants"
-  ]
+  ],
+  "def": "trousers; pants"
  },
  "犯人": {
   "idtrans": [
@@ -1907,7 +1908,8 @@
  "观察员": {
   "trans": [
    "observer"
-  ]
+  ],
+  "def": "an observer (at a meeting, election or event)"
  },
  "制作者": {
   "idtrans": [
@@ -2136,7 +2138,8 @@
    "establish",
    "set up",
    "found"
-  ]
+  ],
+  "def": "to establish; to set up; to found"
  },
  "有关": {
   "idtrans": [
@@ -2324,7 +2327,8 @@
   ],
   "trans": [
    "user"
-  ]
+  ],
+  "def": "a person who uses a product or service; user"
  },
  "分别": {
   "idtrans": [
@@ -2335,7 +2339,8 @@
    "respectively",
    "separately",
    "part"
-  ]
+  ],
+  "def": "respectively; separately; to part from each other"
  },
  "工程": {
   "idtrans": [
@@ -2367,7 +2372,8 @@
   "trans": [
    "function",
    "feature"
-  ]
+  ],
+  "def": "function; the role or purpose something serves"
  },
  "位于": {
   "idtrans": [
@@ -3117,7 +3123,8 @@
   ],
   "trans": [
    "general"
-  ]
+  ],
+  "def": "a general (military rank); (chess) to check"
  },
  "条例": {
   "idtrans": [
@@ -3850,7 +3857,8 @@
   ],
   "trans": [
    "money"
-  ]
+  ],
+  "def": "money"
  },
  "主导": {
   "idtrans": [
@@ -4204,7 +4212,8 @@
   ],
   "trans": [
    "painter"
-  ]
+  ],
+  "def": "a person who paints pictures; painter"
  },
  "迎接": {
   "idtrans": [
@@ -4361,7 +4370,8 @@
   "trans": [
    "posture",
    "pose"
-  ]
+  ],
+  "def": "posture; pose; the position of the body"
  },
  "考验": {
   "idtrans": [
@@ -4775,7 +4785,8 @@
   "trans": [
    "appraise",
    "authenticate"
-  ]
+  ],
+  "def": "to appraise or authenticate; an expert evaluation"
  },
  "上诉": {
   "idtrans": [
@@ -6378,7 +6389,8 @@
    "speculate",
    "speculation",
    "opportunistic"
-  ]
+  ],
+  "def": "to speculate (in a market); to seize a chance for profit; opportunistic"
  },
  "术语": {
   "idtrans": [
@@ -6918,7 +6930,8 @@
   "trans": [
    "president",
    "chairman"
-  ]
+  ],
+  "def": "the president or chairman of an association"
  },
  "浏览": {
   "trans": [
@@ -6954,7 +6967,8 @@
    "region",
    "area",
    "territory"
-  ]
+  ],
+  "def": "region; area; territory"
  },
  "天赋": {
   "trans": [
@@ -8621,7 +8635,8 @@
   "trans": [
    "aim at",
    "point at"
-  ]
+  ],
+  "def": "to aim at; to point at; to align with"
  },
  "敏锐": {
   "trans": [
@@ -17726,5 +17741,8 @@
    "satu pertandingan",
    "satu pertunjukan"
   ]
+ },
+ "破裂": {
+  "def": "to rupture; to break apart; (of talks or a relationship) to break down"
  }
 }
