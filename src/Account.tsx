@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
   loadProfile, saveName, pushProgress, linkThisDevice, applyMerged, collectLocal, linkedUid, linkDevice,
-  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, type SyncNote,
+  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, signedInAs, type SyncNote,
 } from "./cloud";
 
 type Lang = "zh" | "id" | "en";
@@ -305,6 +305,10 @@ export function Account({ uiLang, name, onName }: {
       // field, the header and storage back to it.
       const own = linked === uid ? name.trim() : profName;
       const { cloudHasMore } = await withinSyncWait(pushProgress(uid, own ? { ...collectLocal(), "ketiklab-name": own } : collectLocal()));
+      // signed out in another tab while the read was in flight: the cloud already matched, so the
+      // push wrote nothing and ended here — and printed 已同步 under the sign-in form (the effect
+      // that re-runs on the sign-out had already cleared the card's messages)
+      if (!signedInAs(uid)) { setMsg(""); return; }
       if (own) { onName(own); setProfName(own); }
       else if (name.trim()) await withinSyncWait(saveName(uid, name.trim()));
       linkDevice(uid); setLinkOnly(false);
@@ -335,6 +339,7 @@ export function Account({ uiLang, name, onName }: {
     try {
       const done = await withinSyncWait(linkThisDevice(session.user.id, how, profName));
       if (done === "reloading") return;
+      if (!signedInAs(session.user.id)) { setMsg(""); return; }
       // no reload on this path, so the header would keep the previous user's name
       onName(profName);
       setForeign(false);

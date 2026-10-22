@@ -136,6 +136,10 @@ try {
   if (localStorage.getItem(OUT_KEY) && !fromLink) void supabase.auth.signOut().catch(() => { /* offline: the mark stays and the next load tries again */ });
 } catch { /* ignore */ }
 
+/** Whether this account is still the one signed in here: a sync that outlives a sign-out from
+ *  another tab must not report success, or link the device, over the sign-in form. */
+export function signedInAs(uid: string): boolean { return session?.user.id === uid; }
+
 export async function currentSession(): Promise<Session | null> {
   // offline with an expired token auth-js retries the refresh for ~25 s before answering; the panel shows what is
   // known after 3 s, and onAuthStateChange (Account.tsx) delivers the session when the refresh later succeeds
