@@ -432,6 +432,8 @@ export default function Home() {
   }, []);
   // how many were due when the session started: the session takes REVIEW_CAP of them
   const [reviewDueTotal, setReviewDueTotal] = useState(0);
+  // 开始复习 found no word to serve because a dictionary holding due words could not be fetched
+  const [reviewLoadFailed, setReviewLoadFailed] = useState(false);
   const [reviewRefs, setReviewRefs] = useState<ReviewRef[]>([]);
   const input = useRef<HTMLInputElement>(null);
   // the window key handler is bound once per view; it reaches the current skipWord through this
@@ -2188,6 +2190,9 @@ export default function Home() {
     // the total is set after the retirement, or the banner kept printing "4 / 5" for a
     // session of four with the fifth key already retired
     setReviewDueTotal(due.length ? Math.max(0, srs.due - (report.complete ? report.unresolved.length : 0)) : 0);
+    // the due words live in a dictionary that could not be fetched: the button used to do
+    // nothing at all, and the empty state kept pointing back at it
+    setReviewLoadFailed(!refs.length && !report.complete);
     if (!refs.length) return;
     sourceReq.current++;
     setReviewRefs(refs);
@@ -2429,6 +2434,7 @@ export default function Home() {
 
       {view === "mistakes" && <Panel title={t.mistakes} eyebrow={EYEBROW.mistakes[uiLang]}>
         <div className="review-summary"><Metric value={srs.due} label={t.due} accent="violet"/><Metric value={srs.mastered} label={t.mastered} accent="mint"/><Metric value={srs.learning} label={t.learning} accent="amber"/></div>
+        {reviewLoadFailed && <div className="review-banner"><span>⚠ {TX("到期词所在的词库加载失败", "Daftar kata yang memuat kata ulangan gagal dimuat", "The word list holding the due words failed to load", uiLang)}</span><button onClick={startReview}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
         <div className="review-cta"><div><b>{t.reviewHint}</b><small>{srs.total} {uiLang === "zh" ? "个词在复习计划中" : uiLang === "id" ? "kata dalam jadwal" : `${enOne(srs.total, "word", "words")} in your review schedule`}</small></div><button className={(srs.due || mistakes.length) ? "ready" : ""} disabled={!srs.due && !mistakes.length} onClick={startReview}>{t.startReview}{srs.due ? ` · ${Math.min(srs.due, REVIEW_CAP)}${srs.due > REVIEW_CAP ? ` / ${srs.due}` : ""}` : ""}</button></div>
         {dueEntries.length > 0 && <div className="library-section-title" style={{marginTop:0}}><b>{TX("错词本", "Buku kesalahan", "Words you missed", uiLang)}</b><span>{dueEntries.length}</span></div>}
         {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
