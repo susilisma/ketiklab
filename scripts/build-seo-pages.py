@@ -258,6 +258,13 @@ def gloss_text(e, field, text_lang):
     return (v or "").strip()
 
 
+def lang_attr(text_lang, page_lang):
+    """lang="…" on a cell whose text is not in the page's language (a reader otherwise hears Chinese or
+    Indonesian words in the page's voice); "def" is the English definition, "pinyin" romanised Chinese."""
+    tl = {"def": "en", "pinyin": "zh-Latn-pinyin"}.get(text_lang, text_lang)
+    return "" if tl == page_lang else f' lang="{HTML_LANG.get(tl, tl)}"'
+
+
 def pct(k, n):
     """Rounded down so a partial coverage never reads as 100%."""
     p = k * 100 // max(n, 1)
@@ -278,7 +285,9 @@ def meaning_column(lang, row, entries):
         for f, tl in chain:
             text = gloss_text(e, f, tl)
             if text:
-                return esc(text) if f == head_field else f'<small class="tag">{esc(labels[tl])}</small> {esc(text)}'
+                la = lang_attr(tl, lang)
+                body = f"<span{la}>{esc(text)}</span>" if la else esc(text)
+                return body if f == head_field else f'<small class="tag">{esc(labels[tl])}</small> {body}'
         return f'<span class="none">{esc(fmt("missing", lang, label=header))}</span>'
 
     n = len(entries); left = entries; parts = []
@@ -339,7 +348,7 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
     pron = any(e.get("usphone") for e in entries)  # the Indonesian list has no pronunciation field
     cols = (T["cols"][lang] if pron else T["cols"][lang][:1]) + (header,)
     rows = "\n".join(
-        f'<tr><td class="w">{esc(e["name"])}</td>' + (f'<td class="p">{esc(e.get("usphone") or "")}</td>' if pron else "")
+        f'<tr><td class="w"{lang_attr(row["lang"], lang)}>{esc(e["name"])}</td>' + (f'<td class="p">{esc(e.get("usphone") or "")}</td>' if pron else "")
         + f"<td>{cell(e)}</td></tr>"
         for e in shown)
     body = (
@@ -363,9 +372,9 @@ def trio_page(lang, words, lib_rows, n_readings, zh_pinyin):
     cols = T["cols_trio"][lang]
     # one learning language per page, with the page language's meaning next to it: /zh/ Indonesian word, /id/ and /en/ Chinese
     rows = "\n".join(
-        f'<tr><td class="w">{esc(w["id"])}</td><td>{esc(w["zh"])}</td></tr>' if lang == "zh" else
+        f'<tr><td class="w" lang="id">{esc(w["id"])}</td><td>{esc(w["zh"])}</td></tr>' if lang == "zh" else
         # the practice word is the first sense; the pinyin belongs to it, not to the whole "实现；达到" field
-        f'<tr><td class="w">{esc(first_zh(w))}</td><td class="p">{esc(w.get("pinyin") or zh_pinyin.get(first_zh(w), "").split("|")[0])}</td><td>{esc(w[lang])}</td></tr>'
+        f'<tr><td class="w" lang="zh-CN">{esc(first_zh(w))}</td><td class="p" lang="zh-Latn-pinyin">{esc(w.get("pinyin") or zh_pinyin.get(first_zh(w), "").split("|")[0])}</td><td>{esc(w[lang])}</td></tr>'
         for w in shown)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
@@ -387,8 +396,8 @@ def readings_page(lang, readings, lib_rows):
     title = f"{name} — {fmt('pieces', lang, n=n)} | KetikLab"
     cols = T["cols_read"][lang]
     rows = "\n".join(
-        f'<tr><td class="w">{esc(r["title"])}</td><td>{esc(r.get("author") or "")}</td><td>{esc(str(r.get("era") or ""))}</td>'
-        f'<td>{esc(READ_LANG.get(r["lang"], r["lang"]))}</td><td>{esc((r.get("lines") or [""])[0])}</td></tr>'
+        f'<tr><td class="w"{lang_attr(r["lang"], lang)}>{esc(r["title"])}</td><td{lang_attr(r["lang"], lang)}>{esc(r.get("author") or "")}</td><td>{esc(str(r.get("era") or ""))}</td>'
+        f'<td>{esc(READ_LANG.get(r["lang"], r["lang"]))}</td><td{lang_attr(r["lang"], lang)}>{esc((r.get("lines") or [""])[0])}</td></tr>'
         for r in readings)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
