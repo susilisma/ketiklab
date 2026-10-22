@@ -118,9 +118,12 @@ type Props = {
   onSpeak: () => void;
   // Escape left the pinyin box on purpose: the App pauses the clock, as it does for its own box
   onLeave: () => void;
+  // a key typed into the pinyin box: the App starts (or resumes) the clock, as its own box
+  // does on its first key — after Escape the next key was graded on a card still "paused"
+  onResume: () => void;
 };
 
-export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave }: Props) {
+export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave, onResume }: Props) {
   const [typed, setTyped] = useState("");
   const [wrong, setWrong] = useState(0);
   const [peek, setPeek] = useState(false);
@@ -281,6 +284,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       inputMode="text"
       placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
       onChange={e => {
+        onResume();
         if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += e.target.value.slice(typed.length); return; }
         grade(e.target.value);
       }}
