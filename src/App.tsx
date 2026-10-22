@@ -676,9 +676,11 @@ export default function Home() {
           loadDict(d).then((data: DictEntry[]) => {
             if (!mounted.current) return;
             dictCache.current.set(d.id, data);
-            // the learner may have picked another list while this loaded; or changed the learning
+            // the learner may have picked another list while this loaded (a chapter button, a library
+            // card, a topic word: every choice bumps sourceReq): the list in hand is what the next visit
+            // reopens, not the saved one that was dropped here without a word; or changed the learning
             // language (the dialog, or changeLanguage before the manifest named this list's language)
-            if (sourceReq.current) return;
+            if (sourceReq.current) { persistSource(sourceRef.current); return; }
             if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return; }
             // remembered once it has loaded: a ?lib= that could not be fetched used to be
             // saved as the source, and every later visit fell back to the topic words in silence
@@ -689,7 +691,7 @@ export default function Home() {
           // fetches it again (selectDict); it used to be reported as the whole set of exam
           // libraries failing, with a retry that re-read the manifest, and the topic words were
           // practised in silence under a dictionary title
-          }).catch(() => { if (mounted.current && !sourceReq.current) setDictLoadError(d); });
+          }).catch(() => { if (!mounted.current) return; if (sourceReq.current) persistSource(sourceRef.current); else setDictLoadError(d); });
         }
       } catch { /* ignore */ }
     }).catch(() => { if (mounted.current) setDictsError(true); });
