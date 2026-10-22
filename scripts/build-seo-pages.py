@@ -59,6 +59,8 @@ T = {
         "en": "KetikLab: free, open-source typing and vocabulary practice. Learn Chinese, English or Indonesian, with meanings in the language you know best. There are {trio} words by topic (daily, study & policy, business, life in Indonesia), {nlibs} exam libraries with {exam} words ({total} across the site), and {classics} classic readings. Chinese is practised on a four-step ladder — read, type the pinyin, pick the character, type it with your IME — with the pinyin printed above the character; spaced repetition, a mistakes book, favourites, a learning calendar and cloud sync. Runs in the browser and installs on your phone.",
     },
     "open": {"zh": "打开练习", "id": "Buka latihan", "en": "Open the trainer"},
+    # the share image's alt text, in the page's language (copied from index.html it stayed Chinese on /id/ and /en/)
+    "og_alt": {"zh": "KetikLab — 拼音在汉字上方，释义用你选的语言", "id": "KetikLab — pinyin di atas hanzi, arti dalam bahasa pilihanmu", "en": "KetikLab — pinyin above the characters, meanings in the language you choose"},
     "libs": {"zh": "词库", "id": "Kamus", "en": "Libraries"},
     # the label counts all readings, two of which are KetikLab practice texts, so it does not say "classic"
     "readings": {"zh": "朗读", "id": "Bacaan", "en": "Readings"},
@@ -192,6 +194,7 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
     h = sub1(r'("url":\s*")[^"]*(")', lambda m: m.group(1) + url + m.group(2), h, "ld+json url")
     h = sub1(r'"inLanguage":\s*\[[^\]]*\]', f'"inLanguage": {json.dumps(HTML_LANG[lang])}', h, "ld+json inLanguage")
     h = sub1(r'("description":\s*")[^"]*(")', lambda m: m.group(1) + json.dumps(desc)[1:-1] + m.group(2), h, "ld+json description")
+    h = sub1(r'(<meta property="og:image:alt" content=")[^"]*(")', lambda m: m.group(1) + esc(T["og_alt"][lang], quote=True) + m.group(2), h, "og:image:alt")
     h = sub1(r'<meta property="og:locale" content="[^"]*" />', f'<meta property="og:locale" content="{OG_LOCALE[lang]}" />', h, "og:locale")
     others = [l for l in LANGS if l != lang]
     h = re.sub(r'\s*<meta property="og:locale:alternate" content="[^"]*" />', "", h)
