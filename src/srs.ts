@@ -60,10 +60,12 @@ function merged(old: ReviewRecord, target: ReviewRecord | undefined, to: string)
     en: to,
     step: lead.step,
     dueAt: lead.dueAt,
-    reps: old.reps + (target?.reps ?? 0),
-    lapses: old.lapses + (target?.lapses ?? 0),
+    // a row that never carried counts (written by hand, or by the version-1 schema before the
+    // app kept them) used to turn them into NaN here, which every later answer carried on
+    reps: (old.reps ?? 0) + (target?.reps ?? 0),
+    lapses: (old.lapses ?? 0) + (target?.lapses ?? 0),
     lastResult: lead.lastResult,
-    updatedAt: Math.max(old.updatedAt, target?.updatedAt ?? 0),
+    updatedAt: Math.max(old.updatedAt ?? 0, target?.updatedAt ?? 0),
   };
 }
 
