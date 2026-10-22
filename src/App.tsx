@@ -349,6 +349,11 @@ export default function Home() {
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
   const sourceRef = useRef(source); sourceRef.current = source;
+  const dictsRef = useRef(dicts); dictsRef.current = dicts;
+  const dictLoadErrorRef = useRef(dictLoadError); dictLoadErrorRef.current = dictLoadError;
+  // a learning language picked in this session (here, in the dialog or in another tab): the
+  // saved dictionary still on its way must not open under a language it is not for
+  const langPicked = useRef(false);
   // the topic words and the favourites change list with the learning language under one
   // chapter key; a dictionary is the same list in every language, so its chapter is kept
   const sharesChapterKey = (src: string) => src === "trio" || src === "fav";
@@ -661,14 +666,20 @@ export default function Home() {
         // "the linked list", which this visit never followed), instead of opening the topic words
         // in silence with the stale id kept for the next visit
         if (!d && savedSource && savedSource !== "trio" && savedSource !== "fav" && !sourceReq.current) { if (!ENTRY.lib) setLinkedMissing({ id: savedSource.slice(0, 40), saved: true }); persistSource("trio"); }
-        if (d && !sourceReq.current) {
+        // the learner changed the learning language while the manifest was on its way: the list saved
+        // for the old language is not restored under the new one (changeLanguage sees it off itself
+        // once the manifest is here); the saved list is forgotten as that change forgets it
+        if (d && !sourceReq.current && langPicked.current && d.lang !== langRef.current) persistSource("trio");
+        else if (d && !sourceReq.current) {
           // a first visit from that page is a visit to learn that list's language
           if (linked && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
           loadDict(d).then((data: DictEntry[]) => {
             if (!mounted.current) return;
             dictCache.current.set(d.id, data);
-            // the learner may have picked another list while this loaded
+            // the learner may have picked another list while this loaded; or changed the learning
+            // language (the dialog, or changeLanguage before the manifest named this list's language)
             if (sourceReq.current) return;
+            if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return; }
             // remembered once it has loaded: a ?lib= that could not be fetched used to be
             // saved as the source, and every later visit fell back to the topic words in silence
             if (linked) persistSource(d.id);
@@ -752,7 +763,15 @@ export default function Home() {
           const { ui, learn, byLearn } = readLangs(e.newValue);
           setUiLang(ui); setDefByLearn(byLearn);
           setShowLangSetup(open => open && !byLearn[learn] && !defaultDef(ui, learn, browserTag()));
-          if (learn !== langRef.current) { setLang(learn); if (!reviewRef.current && sharesChapterKey(sourceRef.current)) { setIndex(0); resetChapterRun(); } setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null); }
+          if (learn !== langRef.current) {
+            langPicked.current = true;
+            setLang(learn);
+            // the other tab left its dictionary of the old language for the topic words (changeLanguage):
+            // this tab kept its English words on the card under a select that said 中文
+            if (leaveForeignDict(learn)) { /* the [sourceKey] effect restores the topic chapter */ }
+            else if (!reviewRef.current && sharesChapterKey(sourceRef.current)) { setIndex(0); resetChapterRun(); }
+            setTyped(""); resetWordRun(); autoSpokenWord.current = null; setSpeakingWord(null);
+          }
         }
       } catch { /* a value this tab cannot read is left to the next write */ }
     };
@@ -1895,21 +1914,33 @@ export default function Home() {
   }
   // the meaning language lives in defByLearn per learning language, so switching back
   // brings back the one chosen for it instead of overwriting it
+  // a dictionary of another language cannot be practised in the language just chosen (here or in
+  // another tab): the card kept showing its English words under the new language, and so did every
+  // later visit, since the saved source outlives the choice. Back to the topic words, as the library
+  // page does. The dictionary may be the open one, the one whose file could not be fetched (its
+  // banner and retry opened the English list under 中文), or the saved one still on its way (it
+  // arrived a moment later and opened under the new language, and the reload kept it). A review
+  // session is its own list and keeps its place, as with a rung change. True when the list was left.
+  function leaveForeignDict(next: Lang): boolean {
+    if (reviewRef.current) return false;
+    const dicts = dictsRef.current, src = sourceRef.current;
+    const saved = (() => { try { return localStorage.getItem("ketiklab-source"); } catch { return null; } })();
+    const d = dicts.find(x => x.id === src) ?? dictLoadErrorRef.current ?? (sharesChapterKey(src) ? dicts.find(x => x.id === saved) : undefined);
+    if (!d || d.lang === next) return false;
+    sourceReq.current++; pendingIndex.current = null;
+    setLinkedMissing(null); setDictLoadError(null); setGlobalSearch(false);
+    setSource("trio"); persistSource("trio");
+    return true;
+  }
   function changeLanguage(nextLanguage: Lang) {
+    langPicked.current = true;
     setLang(nextLanguage);
-    // a dictionary of another language cannot be practised in the one just chosen: the card
-    // kept showing its English words under the new language, and so did every later visit, since
-    // the saved source outlives the choice. Back to the topic words, as the library page does
-    // (a review session is its own list and keeps its place, as with a rung change)
-    if (!reviewKeys && dictInfo && dictInfo.lang !== nextLanguage) {
-      sourceReq.current++; pendingIndex.current = null;
-      setLinkedMissing(null); setDictLoadError(null); setGlobalSearch(false);
-      setSource("trio"); persistSource("trio");
-    }
     // en and id share a chapter key, so the [sourceKey] effect does not start the new list's
     // run: the finish card of the English chapter stayed up over the Indonesian list
-    // (a dictionary of the new language is one list whatever the language, so its chapter is kept)
-    if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
+    // (a dictionary of the new language is one list whatever the language, so its chapter is kept;
+    // a dictionary of another language is left for the topic words, whose chapter the effect restores)
+    if (leaveForeignDict(nextLanguage)) { /* handled above */ }
+    else if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
     setTyped(""); resetWordRun();
     autoSpokenWord.current = null;
     setSpeakingWord(null);
@@ -1924,8 +1955,11 @@ export default function Home() {
     setUiLang(ui);
     setDefByLearn(byLearn);
     if (learn !== lang) {
+      langPicked.current = true;
       setLang(learn);
-      if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
+      // the list opened by a ?lib= link or saved earlier stays only when it is of the language chosen
+      if (leaveForeignDict(learn)) { /* the [sourceKey] effect restores the topic chapter */ }
+      else if (!reviewKeys && sharesChapterKey(source)) { setIndex(0); resetChapterRun(); }
       setTyped(""); resetWordRun();
       autoSpokenWord.current = null;
       setSpeakingWord(null);
