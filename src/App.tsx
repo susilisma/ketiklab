@@ -497,6 +497,11 @@ export default function Home() {
   // Escape or Shift+TAB left the input on purpose: a timer that fires within its window
   // (the 320 ms advance, the loop repeat, the 350 ms rollback) must not pull the focus back
   const leftByKey = useRef(false);
+  // a saved dictionary whose file arrived while a topic word was being typed: applied when the
+  // card moves on (advanceOrFinishChapter), dropped once another list has been chosen
+  const lateDict = useRef<(() => void) | null>(null);
+  // letters on the card (the App box, the 打拼音 box) or the done window still open
+  const cardTouched = () => typedRef.current !== "" || finishing.current || !!document.querySelector<HTMLInputElement>(".zh-typebox")?.value;
   // the storage listener (mounted once) reaches this render's favListChanged through it
   const favListChangedRef = useRef<(remaining: PracticeItem[]) => void>(() => {}); favListChangedRef.current = favListChanged;
   const flashToken = useRef(0);
@@ -684,9 +689,12 @@ export default function Home() {
             if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return; }
             // remembered once it has loaded: a ?lib= that could not be fetched used to be
             // saved as the source, and every later visit fell back to the topic words in silence
-            if (linked) persistSource(d.id);
-            setDictWords(data);
-            setSource(d.id);
+            const apply = () => { if (linked) persistSource(d.id); setDictWords(data); setSource(d.id); };
+            // the file came after words.json and the learner is already typing a topic word: the
+            // list used to be swapped under the card there and then, the half-typed word replaced
+            // and its letters wiped. The dictionary takes over at the next word boundary instead
+            if (cardTouched()) { lateDict.current = () => { if (d.lang === langRef.current) apply(); }; return; }
+            apply();
           // the file of this one list could not be fetched: the banner names it and its retry
           // fetches it again (selectDict); it used to be reported as the whole set of exam
           // libraries failing, with a retry that re-read the manifest, and the topic words were
@@ -1569,6 +1577,9 @@ export default function Home() {
     setDayCounts(m => ({ ...m, [todayStr(0)]: (m[todayStr(0)] || 0) + 1 }));
   }
   function advanceOrFinishChapter(wasWrong: boolean) {
+    // the saved dictionary held back while this word was typed opens now, at the boundary,
+    // unless a list was chosen in the meantime (the [sourceKey] effect places its word)
+    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { open(); return; } }
     // a review session keeps its own tally: exitReview clears it, so the summary
     // after 退出复习 never counts words from other lists
     setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
