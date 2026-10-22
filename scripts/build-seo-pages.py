@@ -358,7 +358,11 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
         f'<div class="wrap"><table><thead><tr>' + "".join(f"<th>{esc(c)}</th>" for c in cols) + f"</tr></thead>\n<tbody>\n{rows}\n</tbody></table></div>\n"
     )
     path = f"/{lang}/lib/{row['id']}/"
-    return path, static_page(lang, title, f"{name}: {desc}", path, body, lambda l: f"/{l}/lib/{row['id']}/", lib_rows, n_readings)
+    # the description names the size and the meaning column too: "Core English: Zipf frequency 4.3–9.0" alone
+    # was 12–46 characters, too short for a result snippet and the same for every page of a library
+    stop = "。" if lang == "zh" else ". "
+    meta = f"{name} — {fmt('count', lang, n=num(n, lang))}{stop}{desc}{stop}{coverage}"
+    return path, static_page(lang, title, meta, path, body, lambda l: f"/{l}/lib/{row['id']}/", lib_rows, n_readings)
 
 
 # the app reads the same file when a row carries no pinyin of its own (App.tsx zhToneText)
