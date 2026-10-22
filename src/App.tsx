@@ -937,10 +937,15 @@ export default function Home() {
   // the reading and the line in hand; a finished piece starts over on the next visit, as a
   // finished chapter does. Nothing is written before the readings have arrived and the saved
   // piece has been restored, or the empty first render would wipe it
+  // ...and nothing before the reading view has been opened: the default piece was written for
+  // every learner the moment the readings arrived, reading or not
+  const readingSeen = useRef(ENTRY.articles);
   useEffect(() => {
     if (!readingId) return;
+    if (view === "articles") readingSeen.current = true;
+    if (!readingSeen.current) return;
     try { localStorage.setItem("ketiklab-reading", JSON.stringify({ id: readingId, line: readingDone ? 0 : readingLine })); } catch { /* ignore */ }
-  }, [readingId, readingLine, readingDone]);
+  }, [readingId, readingLine, readingDone, view]);
   // the restored position meets its list only now (words.json, a dictionary file or the
   // favourites arrived after the [sourceKey] effect): past the chapter's end, its last word
   useEffect(() => {
