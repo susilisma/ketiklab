@@ -1,6 +1,6 @@
 import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
-import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats } from "./srs";
+import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats, type ReviewRecord } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, setProgressNormalizer, SYNCED_KEYS, type ProgressBlob } from "./cloud";
@@ -1731,7 +1731,13 @@ export default function Home() {
     if (pf !== "off") keyClick();
   }
   async function exportProgress() {
-    const reviews = await getAllRecords().catch(() => []);
+    // a refused database read (storage revoked, a corrupted store) used to go into the file as
+    // reviews: [] without a word, and a device restored from it had no ladder left
+    let reviews: ReviewRecord[];
+    try { reviews = await getAllRecords(); } catch {
+      alert(TX("没有导出：浏览器拒绝读取复习记录，请重试一次。", "Tidak diekspor: browser menolak membaca jadwal pengulangan. Coba sekali lagi.", "Nothing was exported: the browser refused to read the review schedule. Try once more.", uiLang));
+      return;
+    }
     const payload = {
       app: "ketiklab", version: 1, exportedAt: new Date().toISOString().slice(0, 19),
       local: Object.fromEntries(Object.keys(localStorage).filter(k => BACKUP_KEYS.has(k)).map(k => [k, localStorage.getItem(k)])),
