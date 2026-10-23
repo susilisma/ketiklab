@@ -31,7 +31,11 @@ QUEUE = os.path.join(ROOT, "queue", "words.json")
 # row came back as a fresh candidate the next day
 DROPPED = os.path.join(ROOT, "queue", "_dropped.txt")
 
-WORDS = int(os.environ.get("WORDS") or (sys.argv[1] if len(sys.argv) > 1 else 100))
+# the workflow's count input arrives as text: "abc" or "" used to be an int() traceback with no word of what was wrong
+_words = os.environ.get("WORDS") or (sys.argv[1] if len(sys.argv) > 1 else "100")
+if not str(_words).strip().isdigit() or int(_words) < 1:
+    sys.exit(f"build-trio-queue: WORDS must be a whole number of at least 1, got {_words!r}")
+WORDS = int(_words)
 QUEUE_CAP = int(os.environ.get("QUEUE_CAP", 400))
 
 HAN = re.compile(r"^[一-鿿]+$")

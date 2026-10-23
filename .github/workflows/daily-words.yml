@@ -15,7 +15,9 @@ on:
     inputs:
       count:
         description: "How many new words to generate"
-        default: "100"
+        # a number field: free text ("all", "") reached build-trio-queue.py's int() as a traceback
+        type: number
+        default: 100
 
 permissions:
   contents: write
