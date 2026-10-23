@@ -18,6 +18,7 @@ The files use Anki's header directives (separator, columns, tags column), so Fil
 name. Keep each deck name stable across updates — AnkiWeb ratings survive only when the name does not change; these
 decks replace the old ketiklab-trilingual.tsv, which should be retired rather than renamed.
 """
+import argparse
 import io
 import json
 import os
@@ -25,7 +26,10 @@ import sys
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-OUT_DIR = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "dist")
+# parsed, not read as argv[1]: `export-anki.py --help` used to write the three decks into a directory named --help
+_args = argparse.ArgumentParser(description="Export public/data/words.json as Anki-importable TSV decks, one per direction.")
+_args.add_argument("out_dir", nargs="?", default=os.path.join(ROOT, "dist"), help="where the three .tsv files are written (default: dist/)")
+OUT_DIR = _args.parse_args().out_dir
 
 # (file, learning-language field, pronunciation field, meaning field)
 DECKS = [
