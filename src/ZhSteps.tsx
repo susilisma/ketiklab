@@ -255,6 +255,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
           className={picked === o ? (o === word ? "ok" : "no") : ""}
           onClick={() => {
             if (picked === word) return;
+            // a pick is the learner's first move on the card: the clock starts (or resumes after a
+            // pause) as a key into the pinyin box does — the header used to say 按任意键开始 and the
+            // clock to read 00:00 through every wrong pick until the right one passed the word
+            onResume();
             setPicked(o);
             if (o === word) { onSpeak(); onPass(); }
             else { onMiss(); setTimeout(() => setPicked(null), 420); }
