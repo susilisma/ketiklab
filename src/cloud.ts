@@ -489,8 +489,13 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // a reload is only worth it when the marker stuck: with storage refused, the next
   // visit would link and reload all over again
   if (how === "replace") {
-    if (profileName) cloud["ketiklab-name"] = profileName;
-    replaceLocal(cloud); linkDevice(userId);
+    // an account that has no row yet has no copy to put here: the other account's progress, its
+    // places and its name go, but the device's own settings (the languages, the loop count, the
+    // input mode…) stay — replaceLocal({}) used to blank them all and the first-visit dialog met
+    // the learner again after the reload
+    const next = r.data ? cloud : Object.fromEntries(Object.entries(raw).filter(([k]) => !PROGRESS_KEYS.includes(k) && k !== "ketiklab-chapters" && k !== "ketiklab-name"));
+    if (profileName) next["ketiklab-name"] = profileName;
+    replaceLocal(next); linkDevice(userId);
     if (linkedUid() !== userId) return "same";
     noteAfterReload("switched"); location.reload();
     return "reloading";
