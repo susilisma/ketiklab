@@ -448,7 +448,10 @@ export async function pushProgress(userId: string, own?: ProgressBlob, wait = tr
   // own migration still waits for a dictionary, the old shape would otherwise be pushed
   const local = await normalized(own ?? collectLocal(), wait);
   const merged = mergeProgress(cloud, local);
-  if (!sameBlob(merged, cloud) || !sameBlob(cloud, r.data ?? {})) await saveProgress(userId, merged);
+  // written over the row as read, not in its place: the row is one upsert, and a key this build
+  // does not know (a setting a newer build added, pushed by the learner's other device) used to
+  // be dropped from the account by the next push of a device still running the cached old build
+  if (!sameBlob(merged, cloud) || !sameBlob(cloud, r.data ?? {})) await saveProgress(userId, { ...r.data, ...merged });
   lastPushed = canon(local);
   return { merged, cloudHasMore: !coversProgress(local, cloud) };
 }
@@ -499,7 +502,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   const merged = mergeProgress(local, cloud);
   for (const k of [...PROGRESS_KEYS, "ketiklab-chapters"]) { const m = mergeProgress(cloud, local)[k]; if (typeof m === "string") merged[k] = m; }
   if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
-  await saveProgress(userId, merged);
+  await saveProgress(userId, { ...r.data, ...merged }); // keys this build does not know stay in the row (see pushProgress)
   linkDevice(userId);
   if (linkedUid() !== userId || sameBlob(merged, local)) return "same";
   // `local` was read before the upsert: a word typed meanwhile (a second tab, or the
