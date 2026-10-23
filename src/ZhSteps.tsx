@@ -17,9 +17,9 @@ const HINTS: Record<ZhStep, [string, string, string]> = {
     "Just look: hanzi + pinyin + meaning. Press SPACE for the next one.",
   ],
   pinyin: [
-    "用普通英文键盘打出拼音，不需要中文输入法。TAB 看答案。",
-    "Ketik pinyin-nya dengan keyboard biasa, tanpa IME Mandarin. TAB untuk melihat jawaban.",
-    "Type the pinyin on a normal keyboard \u2014 no Chinese IME needed. TAB to peek.",
+    "用普通英文键盘打出拼音，不需要中文输入法。TAB 看答案，ENTER 跳过。",
+    "Ketik pinyin-nya dengan keyboard biasa, tanpa IME Mandarin. TAB untuk melihat jawaban, ENTER untuk melewati.",
+    "Type the pinyin on a normal keyboard \u2014 no Chinese IME needed. TAB to peek, ENTER to skip.",
   ],
   choose: [
     "看拼音和意思，选出正确的汉字。这是输入法选字的预演。",
