@@ -345,6 +345,13 @@ function record(v: unknown): Record<string, unknown> { const p = parsed(v); retu
 function list(v: unknown): unknown[] { const p = parsed(v); return Array.isArray(p) ? p : []; }
 const count = (v: unknown) => (typeof v === "number" && v > 0 ? v : 0);
 const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s): s is string => typeof s === "string");
+// the device drops a 错词本 key with a prefix that is no language of ours, and a star whose lang is
+// none (App's validMistakeKey and cleanFavorites: a hand-edited backup); the merge used to carry
+// both into the cloud row and keep them there, so canonical(cloud) always held progress the
+// device "lacked" and 云端有更多 never cleared, 合并到本机 or not. The same rule is applied here.
+const isLang = (x: unknown): x is "zh" | "id" | "en" => x === "zh" || x === "id" || x === "en";
+const validKey = (k: string) => k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":")));
+const mistakes = (v: unknown): string[] => strings(v).filter(validKey);
 /** The two lists in turns, each turn taking its side's next key not placed yet: a key the
  *  other side already placed is skipped rather than re-emitted at this side's rank, so
  *  merging a device into a cloud copy that already holds the merge gives that copy back. */
@@ -375,7 +382,7 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
         attempts: Math.max(count(x.attempts), count(y.attempts)),
         // each side is newest first; taking them in turns keeps the newest of both devices,
         // where appending one list to the other let 30 stale keys evict the other device's
-        mistakes: turns(strings(y.mistakes), strings(x.mistakes)).slice(0, 30),
+        mistakes: turns(mistakes(y.mistakes), mistakes(x.mistakes)).slice(0, 30),
       });
     } else if (k === "ketiklab-days") {
       const x = record(a), y = record(b), m: Record<string, number> = {};
@@ -396,7 +403,7 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // an item with no lang or key is no star: the device drops it on read (cleanFavorites), but
       // the merge carried it into the cloud row — as "undefined:undefined" — and every later
       // merge kept it, one of the 500 slots gone for good
-      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && typeof (f as { lang?: unknown }).lang === "string" && typeof (f as { key?: unknown }).key === "string";
+      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string";
       const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
       out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
