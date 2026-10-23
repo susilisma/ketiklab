@@ -1,0 +1,38 @@
+From ad37296d3d97945bc1964dcf730f65d5afbbecd5 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:01:51 +0000
+Subject: [PATCH 9/9] fix(seo-pages): the pinyin column of a Chinese library
+ page carries lang="zh-Latn-pinyin", as the topic pages' does
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+cc475d8 tagged every foreign-language cell of the generated pages, and the topic pages' pinyin column
+with it, but the library pages' pronunciation cell was left bare: on /id/lib/zh-core/ a screen reader
+still read 150 pinyin syllables ("méi yǒu") in an Indonesian voice next to headwords it now reads in
+Chinese. The zh-* lists' usphone is pinyin, so their cell gets the same tag (900 cells across the nine
+zh-* pages); the en-* lists' usphone is IPA, which belongs to no language, and stays untagged. Every
+other byte of the 41 pages is unchanged.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ scripts/build-seo-pages.py | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/build-seo-pages.py b/scripts/build-seo-pages.py
+index 5de911f..17a0935 100644
+--- a/scripts/build-seo-pages.py
++++ b/scripts/build-seo-pages.py
+@@ -348,7 +348,8 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
+     pron = any(e.get("usphone") for e in entries)  # the Indonesian list has no pronunciation field
+     cols = (T["cols"][lang] if pron else T["cols"][lang][:1]) + (header,)
+     rows = "\n".join(
+-        f'<tr><td class="w"{lang_attr(row["lang"], lang)}>{esc(e["name"])}</td>' + (f'<td class="p">{esc(e.get("usphone") or "")}</td>' if pron else "")
++        # the zh-* lists' usphone is pinyin, tagged as the topic pages tag theirs; the en-* lists' is IPA, which has no language
++        f'<tr><td class="w"{lang_attr(row["lang"], lang)}>{esc(e["name"])}</td>' + (f'<td class="p"{lang_attr("pinyin", lang) if row["lang"] == "zh" else ""}>{esc(e.get("usphone") or "")}</td>' if pron else "")
+         + f"<td>{cell(e)}</td></tr>"
+         for e in shown)
+     body = (
+-- 
+2.43.0
+

@@ -348,8 +348,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "1 行；阅读队列当前为空，无影响 ｜ 10-08 F4 代码读仍在，队列为空 ｜ 10-15 F5 复验仍在（promote.mjs:48；dry-run 999 → 30 词、3 篇阅读只放 1） ｜ 10-16 F5 复验仍在 ｜ 10-23 F5 复验仍在（promote.mjs:55）",
-   "date": "2026-10-23"
+   "reason": "1 行；阅读队列当前为空，无影响 ｜ 10-08 F4 代码读仍在，队列为空 ｜ 10-15 F5 复验仍在（promote.mjs:48；dry-run 999 → 30 词、3 篇阅读只放 1） ｜ 10-16 F5 复验仍在 ｜ 10-23 F5 复验仍在（promote.mjs:55） ｜ 10-24 F5 复验仍在（promote.mjs:55）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "paren-headwords-untypable",
@@ -715,10 +715,10 @@
    "fingerprint": "restore-swaps-list-mid-word",
    "title": "保存的词典文件到得比 words.json 晚时，学习者已在主题词上打字，词典到达后整词被换掉、已打字母清空（App.tsx:377-387）",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "约 4 行 touched ref ｜ 10-23 F1 已实现并验证（lateDict ref + cardTouched()，词典晚到时在词边界打开；b-restore-swap.cjs：achieve 打了 ac 时 en-core 到达，基线换成 said 清字母 → 修后保留，过词后开 said）；受 12 项上限未合入，补丁 patches/2026-10-23/0001（已在最终分支上重排，tsc/build 通过）",
-   "date": "2026-10-23",
-   "commit": ""
+   "status": "fixed",
+   "reason": "约 4 行 touched ref ｜ 10-23 F1 已实现并验证（lateDict ref + cardTouched()，词典晚到时在词边界打开；b-restore-swap.cjs：achieve 打了 ac 时 en-core 到达，基线换成 said 清字母 → 修后保留，过词后开 said）；受 12 项上限未合入，补丁 patches/2026-10-23/0001（已在最终分支上重排，tsc/build 通过） ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24",
+   "commit": "bbfe207"
   },
   {
    "fingerprint": "chapter-nav-drops-saved-list",
@@ -761,8 +761,8 @@
    "title": "主题词 SEO 页 CTA 无 lib 参数，保存过词典的人落到词典而非主题词",
    "priority": "P3",
    "status": "deferred",
-   "reason": "约 3 行",
-   "date": "2026-09-15",
+   "reason": "约 3 行 ｜ 10-24 F2 复验仍在，归入需要主人项 learn-param-ignored-on-returning-device",
+   "date": "2026-10-24",
    "commit": ""
   },
   {
@@ -770,8 +770,8 @@
    "title": "首访自词库页且 manifest 晚于 words.json 到达时，对话框因 key={lang} 重挂载，已选项被清",
    "priority": "P3",
    "status": "deferred",
-   "reason": "2 行；只在注入延迟下复现 ｜ 10-23 F2 代码复验仍在（key={lang} 重挂载），未在浏览器重跑",
-   "date": "2026-10-23",
+   "reason": "2 行；只在注入延迟下复现 ｜ 10-23 F2 代码复验仍在（key={lang} 重挂载），未在浏览器重跑 ｜ 10-24 F2 首次在浏览器复现（manifest 晚 2.5 s 时选项被清）并修（去 key={lang}，touched ref），存为 patches/2026-10-24/0006",
+   "date": "2026-10-24",
    "commit": ""
   },
   {
@@ -796,10 +796,10 @@
    "fingerprint": "mount-writes-defaults-before-restore",
    "title": "挂载时先把 state/days/fav/dark/name 的默认值写入 localStorage，23 ms 后才写回真值",
    "priority": "P3",
-   "status": "deferred",
-   "reason": "约 10 行 lazy useState；未观察到实际丢失 ｜ 09-30 F2/V3 新证据：第二个标签页挂载时第一个标签页 打拼音 框被清空、卡片与计数闪烁（默认值先写入再恢复）；V3 已在旁路构建验证约 12 行修法（favorites/profileName/dayCounts/correct-attempts-mistakes 改惰性初始化，删挂载读取；首访/坏值/导入字节一致），diff 见 reports/2026-09-30.md 未修复节；明日做｜10-01 run2：fav 部分已修（df23f32 惰性初始化，VX2 验证第二标签页不再收到 ketiklab-fav 事件）；state/days 仍先写默认值（VX2 t16 仍见 ketiklab-state/days 默认→真值两次写），在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入｜10-07 F3 再复现：state/days 先写零 ~10 ms，第二标签页回显零值；收藏已修，这两键未修 ｜ 10-08 F3 跟踪 21 次（含 CPU 节流）0 次丢失、自愈，维持 P3",
-   "date": "2026-10-07",
-   "commit": ""
+   "status": "fixed",
+   "reason": "约 10 行 lazy useState；未观察到实际丢失 ｜ 09-30 F2/V3 新证据：第二个标签页挂载时第一个标签页 打拼音 框被清空、卡片与计数闪烁（默认值先写入再恢复）；V3 已在旁路构建验证约 12 行修法（favorites/profileName/dayCounts/correct-attempts-mistakes 改惰性初始化，删挂载读取；首访/坏值/导入字节一致），diff 见 reports/2026-09-30.md 未修复节；明日做｜10-01 run2：fav 部分已修（df23f32 惰性初始化，VX2 验证第二标签页不再收到 ketiklab-fav 事件）；state/days 仍先写默认值（VX2 t16 仍见 ketiklab-state/days 默认→真值两次写），在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入｜10-07 F3 再复现：state/days 先写零 ~10 ms，第二标签页回显零值；收藏已修，这两键未修 ｜ 10-08 F3 跟踪 21 次（含 CPU 节流）0 次丢失、自愈，维持 P3 ｜ 10-24 F2 修：dayCounts / correct / attempts / mistakes 在 useState 初始化器读取，不再先写零值；G3 旧形数据字节相同，跨页 8 个零值 storage 事件 → 0；V 复验 PASS，已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24",
+   "commit": "018091c"
   },
   {
    "fingerprint": "cloud-url-login-csrf-autolink",
@@ -1003,19 +1003,19 @@
    "fingerprint": "first-link-cloud-langs-override-fresh-choice",
    "title": "新设备刚在首访对话框选好语言，登录合并后云端的 ketiklab-langs 覆盖之（cloud.ts:258）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "needs-owner",
    "commit": "",
-   "reason": "3 行：未绑定路径保留本机 ketiklab-langs ｜ 10-15 F4 单测复验仍在（cloud.ts:448-449） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在",
-   "date": "2026-10-23"
+   "reason": "3 行：未绑定路径保留本机 ketiklab-langs ｜ 10-15 F4 单测复验仍在（cloud.ts:448-449） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 复验仍在（S2），建议改需要主人：applyMerged 注明「首次绑定取账号设置」，ketiklab-langs 是同步键，新设备都过强制对话框，若本机优先则账号语言永不到新设备；窄修法：仅当云端行无 ketiklab-langs 时取本机",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "replace-with-no-cloud-row-blanks-device",
    "title": "新账号（云端无行）点「只用云端记录」清空本机全部同步键，重开出现首访对话框（cloud.ts:250-255）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "4 行：无云端行时保留设置键，或隐藏按钮 ｜ 10-15 F4 单测复验仍在（cloud.ts:437-442） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "45388e6",
+   "reason": "4 行：无云端行时保留设置键，或隐藏按钮 ｜ 10-15 F4 单测复验仍在（cloud.ts:437-442） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 修：无云端行时保留本机非进度键（去 chapters / name）；S3/A4 langs、loop 保留、无首访对话框；V 复验 PASS，已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "lang-select-inert-with-dictionary",
@@ -1048,10 +1048,10 @@
    "fingerprint": "og-image-alt-chinese-on-landing",
    "title": "/id/ /en/ 落地页 og:image:alt 仍是中文（build-seo-pages.py language_page 未改写）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "约 3 行 ｜ 10-16 F5 复验仍在 ｜ 10-23 F5 已实现并验证（T[og_alt] 按语言替换，/id/ /en/ 各自语言）；受上限未合入，补丁 patches/2026-10-23/0005",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "88188e4",
+   "reason": "约 3 行 ｜ 10-16 F5 复验仍在 ｜ 10-23 F5 已实现并验证（T[og_alt] 按语言替换，/id/ /en/ 各自语言）；受上限未合入，补丁 patches/2026-10-23/0005 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "landing-cache-keyed-with-query",
@@ -1066,10 +1066,10 @@
    "fingerprint": "seo-cells-no-lang-attr",
    "title": "生成页的外语单元格无 lang 属性，读屏用页面语言念中文/印尼语词（build-seo-pages.py 表格行）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "2–3 行 ｜ 10-16 F5 复验仍在（450 td / 1 lang） ｜ 10-23 F5 已实现并验证（lang_attr()：词头 / 释义 / 拼音 zh-Latn-pinyin / 阅读标题作者首行；/id/lib/zh-core/ 150×zh-CN 等）；受上限未合入，补丁 patches/2026-10-23/0006",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "cc475d8",
+   "reason": "2–3 行 ｜ 10-16 F5 复验仍在（450 td / 1 lang） ｜ 10-23 F5 已实现并验证（lang_attr()：词头 / 释义 / 拼音 zh-Latn-pinyin / 阅读标题作者首行；/id/lib/zh-core/ 150×zh-CN 等）；受上限未合入，补丁 patches/2026-10-23/0006 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "promote-burst-after-hand-emptied-queue",
@@ -1185,8 +1185,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 6 行 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 复验仍在",
-   "date": "2026-10-23"
+   "reason": "约 6 行 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 复验仍在 ｜ 10-24 F3 复验仍在；修法 ~4 行 onKeyDown 1–4",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "ladder-degrades-when-zh-pinyin-missing",
@@ -1392,8 +1392,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 13 行 globals.css：拆 --on-purple 令牌、浅色 --purple 改 #6558e6；F6 10-01 复核仍在 ｜ 10-16 F5 复验仍在（.zh-go / .acct-btn.primary / 档位数字 / 计划环 3.25:1，SPACE kbd 2.94:1） ｜ 10-23 L / F5 复验仍在（.zh-go / .acct-btn.primary / 活动档位数字 3.25:1）",
-   "date": "2026-10-23"
+   "reason": "约 13 行 globals.css：拆 --on-purple 令牌、浅色 --purple 改 #6558e6；F6 10-01 复核仍在 ｜ 10-16 F5 复验仍在（.zh-go / .acct-btn.primary / 档位数字 / 计划环 3.25:1，SPACE kbd 2.94:1） ｜ 10-23 L / F5 复验仍在（.zh-go / .acct-btn.primary / 活动档位数字 3.25:1） ｜ 10-24 L 复测 3.25:1 未变",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "dark-load-flash-and-light-body",
@@ -1635,8 +1635,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "目标含 v 时在提示里加「ü 打 v」；或在汉字可见时也接受 u；F4 10-01 复核仍在 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 复验仍在",
-   "date": "2026-10-23"
+   "reason": "目标含 v 时在提示里加「ü 打 v」；或在汉字可见时也接受 u；F4 10-01 复核仍在 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 复验仍在 ｜ 10-24 F3 代码复验仍在",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "choose-rung-prevnext-reveals-distractor",
@@ -1680,8 +1680,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "改为一项复习（setReviewRefs 单项）而非 changeLanguage+practiceWord ｜ 10-23 F3 复验仍在",
-   "date": "2026-10-23"
+   "reason": "改为一项复习（setReviewRefs 单项）而非 changeLanguage+practiceWord ｜ 10-23 F3 复验仍在 ｜ 10-24 F3 复验仍在；修法 ~8 行 resolveReviewRefs([id]) 单词复习",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "ladder-chapter-before-zhmap",
@@ -1698,8 +1698,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "pendingChapter ref 与 pendingIndex 并行 ｜ 10-23 F2 复验仍在（App.tsx 2073–2112）",
-   "date": "2026-10-23"
+   "reason": "pendingChapter ref 与 pendingIndex 并行 ｜ 10-23 F2 复验仍在（App.tsx 2073–2112） ｜ 10-24 F2 代码复验仍在；修法 pendingChapter ref ~6 行",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "unfav-last-during-fav-review-restarts",
@@ -2058,8 +2058,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "在完成卡处从 learnItems 解析（校验者：不要放进 lookupKey，否则错词本效果不再取词典）",
-   "date": "2026-09-23"
+   "reason": "在完成卡处从 learnItems 解析（校验者：不要放进 lookupKey，否则错词本效果不再取词典） ｜ 10-24 F3 复现（finish-wrong 显示 en:said）并修（itemInfo 从 learnItems 取名），存为 patches/2026-10-24/0004",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "space-swallowed-after-refocus-mid-phrase",
@@ -2103,8 +2103,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "在 Account 效果里监听 online 重试 linkThisDevice（校验者不建议改 autoPush 语义） ｜ 10-23 F4 复验仍在",
-   "date": "2026-10-23"
+   "reason": "在 Account 效果里监听 online 重试 linkThisDevice（校验者不建议改 autoPush 语义） ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 S7 复现仍在",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "zh-choose-options-fixed-order-per-word",
@@ -2616,8 +2616,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "source===\"fav\" 时网格渲染 favItems() 并计数，或词库页不高亮收藏按钮 ｜ 10-16 F2 复验仍在 ｜ 10-23 F2 r7.cjs 复验仍在（★ 我的收藏 · 2 亮而网格 300 词）",
-   "date": "2026-10-23"
+   "reason": "source===\"fav\" 时网格渲染 favItems() 并计数，或词库页不高亮收藏按钮 ｜ 10-16 F2 复验仍在 ｜ 10-23 F2 r7.cjs 复验仍在（★ 我的收藏 · 2 亮而网格 300 词） ｜ 10-24 F2 已修并验证（favList 走词典网格分支，2 张卡 / 搜索 / 点击正常，词典与主题网格与基线相同），存为 patches/2026-10-24/0005",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "settings-test-sound-detail-wrong-language",
@@ -2632,10 +2632,10 @@
    "fingerprint": "seo-lib-meta-descriptions-too-short",
    "title": "30 个词库生成页 description 12–46 字符（build-seo-pages.py:325 f\"{name}: {desc}\"），落地页 title 90/93 字符",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "description = name — count. desc. coverage；title ≤ 60 ｜ 10-16 F5 复验仍在（25 页 <50 字符） ｜ 10-23 与 lib-page-meta-description-zipf-only 同一补丁 patches/2026-10-23/0007",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "928db6d",
+   "reason": "description = name — count. desc. coverage；title ≤ 60 ｜ 10-16 F5 复验仍在（25 页 <50 字符） ｜ 10-23 与 lib-page-meta-description-zipf-only 同一补丁 patches/2026-10-23/0007 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "copy-consistency-id-en",
@@ -2643,8 +2643,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "sinkronisasi；Title Case；arti bahasa Indonesia；统一英式或美式 ｜ 10-16 F2 复验仍在（favourites/favorites、practise/practice、licence、Word Lists / WORD COLLECTIONS / Exam libraries 混用） ｜ 10-23 F2 复验仍在（favourite 28 / favorite 19、practise 13 / practice 58）",
-   "date": "2026-10-23"
+   "reason": "sinkronisasi；Title Case；arti bahasa Indonesia；统一英式或美式 ｜ 10-16 F2 复验仍在（favourites/favorites、practise/practice、licence、Word Lists / WORD COLLECTIONS / Exam libraries 混用） ｜ 10-23 F2 复验仍在（favourite 28 / favorite 19、practise 13 / practice 58） ｜ 10-24 F2 复验仍在（favourite 27 / favorite 33，practise 13 / practice 88）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "history-snapshot-only-on-promotion",
@@ -2724,8 +2724,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "提示加「ENTER · 跳过」或仅在 wrong>=3 || typed===\"\" 时响应 ｜ 10-16 F1 复验仍在 ｜ 10-23 F1 复验仍在",
-   "date": "2026-10-23"
+   "reason": "提示加「ENTER · 跳过」或仅在 wrong>=3 || typed===\"\" 时响应 ｜ 10-16 F1 复验仍在 ｜ 10-23 F1 复验仍在 ｜ 10-24 F1 文案修法已验证（HINTS.pinyin 三语加「ENTER 跳过」），存为 patches/2026-10-24/0003",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "merge-with-unreadable-profile-blanks-account-name",
@@ -2760,8 +2760,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "按 error.code/status 映射并以通用三语句收尾；回退时提示 ｜ 10-16 F4 复现（改名 503 原文 \"canceling statement due to statement timeout\"） ｜ 10-23 F4 rename-sync.cjs 复现仍在（503 原文，再进面板改名回退）",
-   "date": "2026-10-23"
+   "reason": "按 error.code/status 映射并以通用三语句收尾；回退时提示 ｜ 10-16 F4 复现（改名 503 原文 \"canceling statement due to statement timeout\"） ｜ 10-23 F4 rename-sync.cjs 复现仍在（503 原文，再进面板改名回退） ｜ 10-24 F4 S6 复现仍在",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "id-nav-label-overflow-wide-short",
@@ -3181,10 +3181,10 @@
    "fingerprint": "lib-dialog-return-visit-learn-mismatch",
    "title": "?lib=en-core 首访关掉对话框后再访：头部/卡片是英语词库而对话框学习语言默认 中文",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F2 发现、V3 确认并在旁路构建验证 1 行修法：manifest 恢复处 `if (linked) persistSource(d.id); if (!localStorage.getItem(\"ketiklab-langs\")) setLang(d.lang);`（去掉 linked && 的范围）；受 12 项上限未做 ｜ 10-16 F2 复验仍在 ｜ 10-23 F2 已实现（1 行，!ENTRY.learn 守卫；R6d 基线再访 header Core English / select zh / 对话框中文 → 修后 select en / 对话框 English）；受上限未合入，补丁 patches/2026-10-23/0003",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "0c92844",
+   "reason": "F2 发现、V3 确认并在旁路构建验证 1 行修法：manifest 恢复处 `if (linked) persistSource(d.id); if (!localStorage.getItem(\"ketiklab-langs\")) setLang(d.lang);`（去掉 linked && 的范围）；受 12 项上限未做 ｜ 10-16 F2 复验仍在 ｜ 10-23 F2 已实现（1 行，!ENTRY.learn 守卫；R6d 基线再访 header Core English / select zh / 对话框中文 → 修后 select en / 对话框 English）；受上限未合入，补丁 patches/2026-10-23/0003 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "readings-page-language-column-autonyms",
@@ -3370,10 +3370,10 @@
    "fingerprint": "stale-build-push-strips-newer-synced-keys",
    "title": "旧构建客户端下次推送把它不认识的新同步键从云端行删掉（mergeProgress 只输出本构建 SYNCED_KEYS，saveProgress 整行 upsert）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F5 t4 证明（3d5888d 加键时已发生一次）；修法 pushProgress / linkThisDevice 合并路径存 {...cloud, ...merged} ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "b79def5",
+   "reason": "F5 t4 证明（3d5888d 加键时已发生一次）；修法 pushProgress / linkThisDevice 合并路径存 {...cloud, ...merged} ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 修：push / 首次绑定合并写 {...r.data, ...merged}；S5/S5b 未知键保留，A2 相等云端 0 写；V 复验 PASS，已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "signout-during-link-write-completes-link",
@@ -4128,8 +4128,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F1 复现 3 s 仍 00:00；修法给 ZhSteps 传 onStart 回调 ｜ 10-08 V1 复测仍在 ｜ 10-16 F1 复验仍在（2.6 s 打字 00:00） ｜ 10-23 F1：3d36559 后打拼音档首键即启动时钟（该档已消失）；认读 / 选汉字档仍在",
-   "date": "2026-10-23"
+   "reason": "F1 复现 3 s 仍 00:00；修法给 ZhSteps 传 onStart 回调 ｜ 10-08 V1 复测仍在 ｜ 10-16 F1 复验仍在（2.6 s 打字 00:00） ｜ 10-23 F1：3d36559 后打拼音档首键即启动时钟（该档已消失）；认读 / 选汉字档仍在 ｜ 10-24 F1：选汉字档已修（f3356d2，onResume）并验证，受 12 项上限存为 patches/2026-10-24/0001；认读档不适用（唯一动作就是过词，已启动时钟），可关闭该臂",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "correction-toggle-shown-but-inert-on-pinyin-rung",
@@ -4137,8 +4137,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F1 复现；修法 zhLadder 时同样隐藏纠错组 ｜ 10-08 V1 复测仍在；退格改错激活后错字母仍回滚并记错 ｜ 10-16 F1 复验仍在 ｜ 10-23 F1 复验仍在（mode-row 只隐藏默写组）",
-   "date": "2026-10-23"
+   "reason": "F1 复现；修法 zhLadder 时同样隐藏纠错组 ｜ 10-08 V1 复测仍在；退格改错激活后错字母仍回滚并记错 ｜ 10-16 F1 复验仍在 ｜ 10-23 F1 复验仍在（mode-row 只隐藏默写组） ｜ 10-24 F1 已修并验证（mode-row 在梯档不渲染，320 无横滚），受上限存为 patches/2026-10-24/0002",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "pause-on-ladder-word-leaves-next-latin-word-unfocused",
@@ -4182,8 +4182,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah ｜ 10-08 F2 再复现，另有 README.md:60 与 build-seo-pages.py:62/71/82/90 的「Kamus:」 ｜ 10-16 F2 复验仍在（App.tsx:2103,2201,2204,2213-2226 六处 kamus） ｜ 10-23 F2 复验仍在",
-   "date": "2026-10-23"
+   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah ｜ 10-08 F2 再复现，另有 README.md:60 与 build-seo-pages.py:62/71/82/90 的「Kamus:」 ｜ 10-16 F2 复验仍在（App.tsx:2103,2201,2204,2213-2226 六处 kamus） ｜ 10-23 F2 复验仍在 ｜ 10-24 F2 复验仍在（Kamus ujian ×3 等）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "view-switch-not-in-history",
@@ -4198,10 +4198,10 @@
    "fingerprint": "cloud-merge-keeps-filtered-junk-keys",
    "title": "云端残留本机已过滤的坏键（fr:bank、非法收藏）让「云端有更多」横幅常驻（mergeProgress 不过滤）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "F3 场景 G 单次复现；修法在 mergeProgress 或归一器里套同一过滤 ｜ 10-08 F3 单元复现仍在 ｜ 10-16 F4 复验仍在（fr:bank；dropRetired 不涉及） ｜ 10-23 F4 复验仍在",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "c467fdc",
+   "reason": "F3 场景 G 单次复现；修法在 mergeProgress 或归一器里套同一过滤 ｜ 10-08 F3 单元复现仍在 ｜ 10-16 F4 复验仍在（fr:bank；dropRetired 不涉及） ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 修：合并按 validMistakeKey / cleanFavorites 规则过滤；S4 横幅不再常亮，A1 合法键全保留；V 复验 PASS，已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "bare-legacy-key-listed-twice-in-mistakes",
@@ -4209,8 +4209,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-14 F3/V1 复验仍在（achieve + id:trio:achieve 并列 mencapai）；裸汉字部分已随 439f2a8 修；拉丁裸键归属待主人 ｜ 10-15 F3 复验仍在（achieve 与 id:trio:achieve 并列 mencapai；切到学英语时按当前学习语言命名）；拉丁裸键归属待主人 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 t3 复验仍在（mencapai 两次）",
-   "date": "2026-10-23"
+   "reason": "10-14 F3/V1 复验仍在（achieve + id:trio:achieve 并列 mencapai）；裸汉字部分已随 439f2a8 修；拉丁裸键归属待主人 ｜ 10-15 F3 复验仍在（achieve 与 id:trio:achieve 并列 mencapai；切到学英语时按当前学习语言命名）；拉丁裸键归属待主人 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 t3 复验仍在（mencapai 两次） ｜ 10-24 F3 复验仍在",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "seo-page-inline-link-targets",
@@ -4344,8 +4344,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在",
-   "date": "2026-10-23"
+   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "pinyin-rung-tab-records-lapse",
@@ -5001,8 +5001,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "V3 公式：srs.due - (complete ? unresolved.length : 0) - (keys.length - refs.length - (complete ? 0 : unresolved.length))；旧行续到期属保留旧键设计 ｜ 10-15 F3 复验仍在：id:achieve 在 indonesian.json 取不到时每次复习再出现，词典到达一次后 renameRecords 合并自愈；公式两分支算术正确但只是外观 ｜ 10-16 F3 复验仍在（2 / 3） ｜ 10-23 F3 复验仍在",
-   "date": "2026-10-23"
+   "reason": "V3 公式：srs.due - (complete ? unresolved.length : 0) - (keys.length - refs.length - (complete ? 0 : unresolved.length))；旧行续到期属保留旧键设计 ｜ 10-15 F3 复验仍在：id:achieve 在 indonesian.json 取不到时每次复习再出现，词典到达一次后 renameRecords 合并自愈；公式两分支算术正确但只是外观 ｜ 10-16 F3 复验仍在（2 / 3） ｜ 10-23 F3 复验仍在 ｜ 10-24 F3 复验仍在（复习模式 · 2 / 3）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "single-dict-fail-generic-banner",
@@ -5521,10 +5521,10 @@
    "fingerprint": "export-with-refused-idb-read-writes-empty-reviews",
    "title": "导出备份时 IndexedDB 读取被拒 → reviews: [] 静默写入文件",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-15 F3-3 TRACE-ONLY；修法：读失败时提示并中止导出 ｜ 10-16 F3 浏览器复现（2 行 + 读取抛错 → 文件 reviews: [] 无警告；App.tsx:1517 catch(() => [])） ｜ 10-23 F3 复验仍在（App.tsx:1691）",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "0446204",
+   "reason": "10-15 F3-3 TRACE-ONLY；修法：读失败时提示并中止导出 ｜ 10-16 F3 浏览器复现（2 行 + 读取抛错 → 文件 reviews: [] 无警告；App.tsx:1517 catch(() => [])） ｜ 10-23 F3 复验仍在（App.tsx:1691） ｜ 10-24 F3 修：读取被拒时三语提示并不写文件；probe exportblocked PASS；V 复验 PASS，已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "reading-position-lost-on-reload",
@@ -5548,10 +5548,10 @@
    "fingerprint": "lib-page-meta-description-zipf-only",
    "title": "生成的词库页 meta/og description 只有「名称: Zipf 4.3–9.0」",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-15 F5-3；修法：description = 名称 — 词数 · 覆盖句 · KetikLab（lib_page 内三者已存在） ｜ 10-16 F5 复验仍在（build-seo-pages.py:349） ｜ 10-23 F5 已实现并验证（description = 名称 — n 词. 描述. 覆盖句；en/id 98–168 字符，zh 34–47 字）；受上限未合入，补丁 patches/2026-10-23/0007",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "928db6d",
+   "reason": "10-15 F5-3；修法：description = 名称 — 词数 · 覆盖句 · KetikLab（lib_page 内三者已存在） ｜ 10-16 F5 复验仍在（build-seo-pages.py:349） ｜ 10-23 F5 已实现并验证（description = 名称 — n 词. 描述. 覆盖句；en/id 98–168 字符，zh 34–47 字）；受上限未合入，补丁 patches/2026-10-23/0007 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "words-id-values-with-capitals-and-digit",
@@ -5649,8 +5649,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-16 V1 发现（C/C2 场景，手机联想或极快打字）；V1 已验证 17 行修法（carry effect 组合中不早退，handleType(text, carried=true) + staleLen = compStartLen），diff 在 scratch V1/fix1-correction.diff；今日只合入其中的超长守卫，其余明日评估 ｜ 10-23 F1 复验仍在",
-   "date": "2026-10-23"
+   "reason": "10-16 V1 发现（C/C2 场景，手机联想或极快打字）；V1 已验证 17 行修法（carry effect 组合中不早退，handleType(text, carried=true) + staleLen = compStartLen），diff 在 scratch V1/fix1-correction.diff；今日只合入其中的超长守卫，其余明日评估 ｜ 10-23 F1 复验仍在 ｜ 10-24 F1 代码复验仍在",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "v1-row-without-counts-becomes-nan",
@@ -5757,8 +5757,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-16 F5 静态发现（沙箱无 registry 未能跑到失步判定，UNVERIFIED）；修法一行 run: npm ci ｜ 10-23 F5 复验仍在（site.yml:107）",
-   "date": "2026-10-23"
+   "reason": "10-16 F5 静态发现（沙箱无 registry 未能跑到失步判定，UNVERIFIED）；修法一行 run: npm ci ｜ 10-23 F5 复验仍在（site.yml:107） ｜ 10-24 F5 复验仍在（site.yml:107）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "daily-words-count-non-numeric-traceback",
@@ -5766,8 +5766,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-16 F5 静态发现（wn 未装 UNVERIFIED）；修法两行 type: number, default: 100 ｜ 10-23 F5 复验仍在",
-   "date": "2026-10-23"
+   "reason": "10-16 F5 静态发现（wn 未装 UNVERIFIED）；修法两行 type: number, default: 100 ｜ 10-23 F5 复验仍在 ｜ 10-24 F5 复现（WORDS=abc traceback）并修（一行拒绝 + daily-words.yml count type: number），存为 patches/2026-10-24/0008",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "workflow-actions-pinned-by-major-tag",
@@ -6007,10 +6007,10 @@
    "fingerprint": "synced-message-on-signin-form",
    "title": "另一页退出且云端已与本机一致时，本页同步结束在登录表单下方印「已同步。」",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-21 F4 观察；无害；修法：同步结束时 session 已失效则不印成功文案 ｜ 10-23 F4 已实现并验证（cloud.ts signedInAs(uid)，pushNow/chooseLink 结束时账号已退出则不印文案；基线登录表单下「已同步。」→ 修后无）；受上限未合入，补丁 patches/2026-10-23/0004",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "722c9e7",
+   "reason": "10-21 F4 观察；无害；修法：同步结束时 session 已失效则不印成功文案 ｜ 10-23 F4 已实现并验证（cloud.ts signedInAs(uid)，pushNow/chooseLink 结束时账号已退出则不印文案；基线登录表单下「已同步。」→ 修后无）；受上限未合入，补丁 patches/2026-10-23/0004 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "pinyin-box-resume-after-escape-stays-paused-until-pass",
@@ -6025,10 +6025,10 @@
    "fingerprint": "reading-key-written-before-reading-opened",
    "title": "ketiklab-reading 在 readings 到达时即写入（首篇、行 0），从未打开阅读的学习者也有此键",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-21 V1 观察；无害；修法：只在阅读视图打开过之后写 ｜ 10-23 F2 已实现并验证（readingSeen ref；audit.cjs D 学习页加载基线写 {stork-tower,0} → 修后 null，打开阅读后写；R8 恢复不变）；受上限未合入，补丁 patches/2026-10-23/0002",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "c775efa",
+   "reason": "10-21 V1 观察；无害；修法：只在阅读视图打开过之后写 ｜ 10-23 F2 已实现并验证（readingSeen ref；audit.cjs D 学习页加载基线写 {stork-tower,0} → 修后 null，打开阅读后写；R8 恢复不变）；受上限未合入，补丁 patches/2026-10-23/0002 ｜ 10-24 结转补丁 git am 落下并重验（F1/F2/F4/F5 PASS），已合入 main 0446204，Build check #88（0 注解）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "han-only-rule-blocks-p-value-t-test",
@@ -6063,8 +6063,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-23 F3 量测（t4c-fast.cjs）；疑为红闪设计，快打者会丢键；是否缩短闪烁或缓冲按键由主人定",
-   "date": "2026-10-23"
+   "reason": "10-23 F3 量测（t4c-fast.cjs）；疑为红闪设计，快打者会丢键；是否缩短闪烁或缓冲按键由主人定 ｜ 10-24 F1 复验仍在（if (wrongFlash) return）",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "export-anki-help-creates-dir",
@@ -6072,8 +6072,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-23 F5 旁注；加 argparse 几行",
-   "date": "2026-10-23"
+   "reason": "10-23 F5 旁注；加 argparse 几行 ｜ 10-24 F5 已修（argparse）并验证，存为 patches/2026-10-24/0007",
+   "date": "2026-10-24"
   },
   {
    "fingerprint": "words-immigration-yimin-taken-by-immigrant",
@@ -6101,6 +6101,78 @@
    "commit": "",
    "reason": "10-23 D 旁注；删除改 manifest length，属重建 / 主人",
    "date": "2026-10-23"
+  },
+  {
+   "fingerprint": "seo-lib-pinyin-cell-no-lang",
+   "title": "zh-* 词库 SEO 页拼音格无 lang 属性（主题页已有 zh-Latn-pinyin），读屏按页面语言读",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-24 F5 新发现并修（build-seo-pages.py 一行），9 页 ×150 格验证，存为 patches/2026-10-24/0009",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "signin-form-busy-after-other-tab-signout",
+   "title": "另一页退出后、本页进行中的同步结束前（≤15 s），登录表单按钮显示 Memproses… 且禁用（busy 不在 uid 变化重置里）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-24 F4 新发现（s1-debug 0.96–2.98 s 三建皆有）；修法 ≤3 行：uid 变化重置加 setBusy(false)，pushNow / chooseLink 的 finally 只在 signedInAs(uid) 时清 busy",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "words-ladder-tangga-taken-by-stairs",
+   "title": "#1692 ladder · tangga lipat 两位读者一致 tangga，但 tangga 是 #646 stairs 的 id",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-24 R1 + R2；唯一性挡住；是否 stairs → anak tangga 腾位由主人定",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "words-marry-jiehun-taken-by-get-married",
+   "title": "#2370 marry · 娶；嫁；结婚 两位读者一致 结婚，但 结婚 是 #1958 get married 首义",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-24 R3 + R4；唯一性挡住",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "words-urban-village-head-cunzhang-taken",
+   "title": "#790 urban village head · 城市行政村长 两位读者一致 村长，但 村长 是 #1146 village head 首义",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-24 R6(10-23) + R5；唯一性挡住",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "words-legalization-renzheng-taken-by-accreditation",
+   "title": "#550 legalization · 认证手续 两位读者一致 认证，但 认证 是 #2782 accreditation 首义",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-24 R6(10-23) + R5；唯一性挡住",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "words-lagged-variable-loanword-lag",
+   "title": "#840 lagged variable · variabel tertunda 两位读者一致 variabel lag，但 lag 非 KBBI 词（英语借词）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "10-24 R6(10-23) + R5；借词属主人决定",
+   "date": "2026-10-24"
+  },
+  {
+   "fingerprint": "gloss-library-first-senses-2026-10-24",
+   "title": "D 扫描四个英语库首义 85 行 + words.json angular：64 字段两方一致已改（4011221）；16 行两方首项不一致、6 行读者未判错留档",
+   "priority": "释义",
+   "status": "fixed",
+   "commit": "4011221",
+   "reason": "见 reports/gloss-changes-2026-10-24.md 与 gloss-candidates-2026-10-24.md 第三节",
+   "date": "2026-10-24"
   }
  ]
 }

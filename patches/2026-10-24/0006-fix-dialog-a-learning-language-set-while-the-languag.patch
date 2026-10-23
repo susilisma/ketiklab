@@ -1,0 +1,73 @@
+From 3f8ad85f2d43b165aed4b8ed7b05440b4993b6c4 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:04:08 +0000
+Subject: [PATCH 6/9] fix(dialog): a learning language set while the language
+ dialog is open no longer wipes the learner's picks
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The dialog was keyed on the learning language so that a first visit through ?lib=en-core, whose
+list names the language once the manifest arrives, shows that language on the learning row. The
+key remounted the dialog, so a learner who had already picked an interface language and a meaning
+on a slow connection (manifest 2.5 s behind) saw every row jump back: Bahasa Indonesia / 中文 /
+Tanpa arti became English / English with the meaning row to choose again. The dialog now keeps its
+state and follows the interface and learning languages it is given only on the rows the learner has
+not touched: an untouched learning row still turns to English when the list arrives, a touched one
+stays, and the meaning pick survives either way (a pick that became the learning language already
+yields to the row above).
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/App.tsx | 15 +++++++++++----
+ 1 file changed, 11 insertions(+), 4 deletions(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 68705f4..29372b7 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -2610,14 +2610,21 @@ export default function Home() {
+     </main>
+ 
+     {/* closing stores nothing: a first visit that never saved asks again on the next load */}
+-    {/* keyed on the learning language: a first visit from a library page learns which one while the dialog is already open */}
+-    {showLangSetup && <LangSetup key={lang} initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={() => setShowLangSetup(false)} />}
++    {/* a first visit from a library page learns its language while the dialog is already open: the
++        dialog follows it on the rows the learner has not touched (keyed on it, it remounted and lost every pick) */}
++    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={() => setShowLangSetup(false)} />}
+   </div>;
+ }
+ 
+ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang | null) => void; onClose: () => void }) {
+   const [ui, setUi] = useState<Lang>(initialUi);
+   const [learn, setLearn] = useState<Lang>(initialLearn);
++  // the languages set while the dialog is open (the list a ?lib= link named arrived, another tab
++  // chose) reach the rows the learner has not touched; a row they picked on is theirs. The dialog
++  // used to be remounted for that and came back with every pick (interface, learning, meaning) gone
++  const uiTouched = useRef(false), learnTouched = useRef(false);
++  useEffect(() => { if (!uiTouched.current) setUi(initialUi); }, [initialUi]);
++  useEffect(() => { if (!learnTouched.current) setLearn(initialLearn); }, [initialLearn]);
+   // null until the learner touches the meaning row; until then the pre-selection follows
+   // the two rows above, and a pick that became the learning language no longer counts
+   const [picked, setPicked] = useState<MeaningLang | null>(null);
+@@ -2643,7 +2650,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
+         <h3>🖥 {mt.ui}</h3>
+         <p>{mt.uiDesc}</p>
+         <div className="lang-cards">
+-          {LANG_CARDS.map(c => <button key={c.code} ref={c.code === initialUi ? first : undefined} className={ui === c.code ? "lang-card active" : "lang-card"} onClick={() => setUi(c.code)}>
++          {LANG_CARDS.map(c => <button key={c.code} ref={c.code === initialUi ? first : undefined} className={ui === c.code ? "lang-card active" : "lang-card"} onClick={() => { uiTouched.current = true; setUi(c.code); }}>
+             <b>{c.name}</b><small>{c.uiDesc}</small>{ui === c.code && <span>{mt.selected}</span>}
+           </button>)}
+         </div>
+@@ -2652,7 +2659,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
+         <h3>⌨ {mt.learn}</h3>
+         <p>{mt.learnDesc}</p>
+         <div className="lang-cards">
+-          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => setLearn(c.code)}>
++          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => { learnTouched.current = true; setLearn(c.code); }}>
+             <b>{c.name}</b><small>{c.learnDesc[ui]}</small>{learn === c.code && <span>{mt.selected}</span>}
+           </button>)}
+         </div>
+-- 
+2.43.0
+

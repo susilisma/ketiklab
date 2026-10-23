@@ -1,0 +1,44 @@
+From 348d6b2d274743e9264a5f3b4e618066da02bc13 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:03:10 +0000
+Subject: [PATCH 1/9] =?UTF-8?q?fix(choose-rung):=20a=20pick=20on=20?=
+ =?UTF-8?q?=E9=80=89=E6=B1=89=E5=AD=97=20starts=20or=20resumes=20the=20clo?=
+ =?UTF-8?q?ck,=20as=20a=20key=20into=20the=20=E6=89=93=E6=8B=BC=E9=9F=B3?=
+ =?UTF-8?q?=20box=20does?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+On the 选汉字 rung the only input is the option buttons, and a click on one neither started
+the clock nor cleared a pause: the learner picked a wrong hanzi, saw it flash red, picked
+again, and all the while the header read 按任意键开始 and the clock 00:00, until the right pick
+passed the word and finishWord set running (b-ladder.cjs: wrong pick at 0.5 s, clock still
+00:00 two seconds later). After the pause button the first pick graded the word on a card
+that still said it was paused, with the same silent resume at the pass. 3d36559 gave the
+打拼音 box an onResume on every change; the pick handler calls the same callback, so the clock
+runs from the learner's first move and a pick after a pause resumes it openly. 认读 is
+unchanged: its only move is the pass itself, which starts the clock already.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/ZhSteps.tsx | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/src/ZhSteps.tsx b/src/ZhSteps.tsx
+index f8931ac..7c50344 100644
+--- a/src/ZhSteps.tsx
++++ b/src/ZhSteps.tsx
+@@ -255,6 +255,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
+           className={picked === o ? (o === word ? "ok" : "no") : ""}
+           onClick={() => {
+             if (picked === word) return;
++            // a pick is the learner's first move on the card: the clock starts (or resumes after a
++            // pause) as a key into the pinyin box does — the header used to say 按任意键开始 and the
++            // clock to read 00:00 through every wrong pick until the right one passed the word
++            onResume();
+             setPicked(o);
+             if (o === word) { onSpeak(); onPass(); }
+             else { onMiss(); setTimeout(() => setPicked(null), 420); }
+-- 
+2.43.0
+

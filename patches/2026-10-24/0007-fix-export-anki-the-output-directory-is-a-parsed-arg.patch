@@ -1,0 +1,45 @@
+From b86913fba3b1d7aba216bb476069b7a279808414 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:01:50 +0000
+Subject: [PATCH 7/9] fix(export-anki): the output directory is a parsed
+ argument, so --help prints usage instead of writing decks into a directory
+ named --help
+
+export-anki.py took sys.argv[1] as the output directory without looking at it: `export-anki.py --help`
+created a directory literally named "--help" and wrote the three TSV decks into it, which is what every
+other script's --help prints usage for. argparse now owns the one optional positional (out_dir, default
+dist/), so --help documents it and any other flag is refused; a bare run and a run with a directory are
+unchanged (same three files, same counts).
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ scripts/export-anki.py | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/export-anki.py b/scripts/export-anki.py
+index 5c40318..743f7d9 100644
+--- a/scripts/export-anki.py
++++ b/scripts/export-anki.py
+@@ -18,6 +18,7 @@ The files use Anki's header directives (separator, columns, tags column), so Fil
+ name. Keep each deck name stable across updates — AnkiWeb ratings survive only when the name does not change; these
+ decks replace the old ketiklab-trilingual.tsv, which should be retired rather than renamed.
+ """
++import argparse
+ import io
+ import json
+ import os
+@@ -25,7 +26,10 @@ import sys
+ 
+ sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
+ ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+-OUT_DIR = sys.argv[1] if len(sys.argv) > 1 else os.path.join(ROOT, "dist")
++# parsed, not read as argv[1]: `export-anki.py --help` used to write the three decks into a directory named --help
++_args = argparse.ArgumentParser(description="Export public/data/words.json as Anki-importable TSV decks, one per direction.")
++_args.add_argument("out_dir", nargs="?", default=os.path.join(ROOT, "dist"), help="where the three .tsv files are written (default: dist/)")
++OUT_DIR = _args.parse_args().out_dir
+ 
+ # (file, learning-language field, pronunciation field, meaning field)
+ DECKS = [
+-- 
+2.43.0
+

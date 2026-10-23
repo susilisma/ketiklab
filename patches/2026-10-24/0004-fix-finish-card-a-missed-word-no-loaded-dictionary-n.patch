@@ -1,0 +1,53 @@
+From fc32b8fb6fc32b8aabcefc469e33d34e5e653e46 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:06:36 +0000
+Subject: [PATCH 4/9] fix(finish-card): a missed word no loaded dictionary
+ names is printed from the list in hand
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The chapter finish card named each missed word through lookupKey, which knows the topic
+words and the dictionaries fetched this session. A favourite taken from a dictionary that was
+not fetched this time (its glosses live in the favourite's snapshot, so nothing fetched it) was
+therefore printed as its raw key, "en:said" with no meaning. The card now falls back to the
+list being practised, which holds the word and its meaning line. The 错词本 list is left as
+it was: it fetches the dictionary a missed word belongs to and names it from there.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/App.tsx | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 0301d12..8a3473d 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -1497,6 +1497,15 @@ export default function Home() {
+     const legacy = wordByEn.get(key) || (lg === "zh" && ZH_RENAMES[key] ? wordByEn.get(ZH_RENAMES[key]) : undefined);
+     return legacy ? { ...trioInfo(legacy), legacy: true } : undefined;
+   }
++  // the list in hand names a word no loaded dictionary does: a favourite from a dictionary not
++  // fetched this session (its glosses are in the snapshot) was printed on the finish card as its raw
++  // key, "en:said" with no meaning. Not consulted by the 错词本 list, which fetches that dictionary
++  const itemInfo = (id: string): KeyInfo | undefined => {
++    const it = learnItems.find(i => `${i.lang}:${i.key}` === id);
++    if (!it) return undefined;
++    const m = listMeaning(it);
++    return { text: it.text, lang: it.lang, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label };
++  };
+   const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes"
+     ? mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter(x => x.info) as { key: string; info: KeyInfo }[]
+     : [];
+@@ -2449,7 +2458,7 @@ export default function Home() {
+           <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
+           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
+           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
+-          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k); return <span key={k}><b lang={langAttr(info?.lang)}>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined} lang={langAttr(info?.meaningLang)}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
++          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k) || itemInfo(k); return <span key={k}><b lang={langAttr(info?.lang)}>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined} lang={langAttr(info?.meaningLang)}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
+           <div className="chapter-actions">
+             {/* after a review: practise its missed words again or leave it; the chapter buttons belong to a chapter */}
+             {!reviewKeys && <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>}
+-- 
+2.43.0
+

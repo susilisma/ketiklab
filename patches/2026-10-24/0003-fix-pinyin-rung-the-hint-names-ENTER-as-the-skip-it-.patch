@@ -1,0 +1,39 @@
+From edb75cf37d12dbaec754b9b7cd6ea5039b23453d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:03:10 +0000
+Subject: [PATCH 3/9] fix(pinyin-rung): the hint names ENTER as the skip it is
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+ENTER in the 打拼音 box skips the word at any moment and files its lapse and 错词本 entry, as
+ENTER does in the Latin box — but that box prints "ENTER · 跳过" under it while the rung's hint
+only said "TAB 看答案", so a learner who pressed ENTER to confirm the pinyin (as an IME would)
+had the word skipped as a miss with nothing having told them. The hint names the key in all
+three languages; the behaviour is unchanged.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/ZhSteps.tsx | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/src/ZhSteps.tsx b/src/ZhSteps.tsx
+index 7c50344..bb7f006 100644
+--- a/src/ZhSteps.tsx
++++ b/src/ZhSteps.tsx
+@@ -17,9 +17,9 @@ const HINTS: Record<ZhStep, [string, string, string]> = {
+     "Just look: hanzi + pinyin + meaning. Press SPACE for the next one.",
+   ],
+   pinyin: [
+-    "用普通英文键盘打出拼音，不需要中文输入法。TAB 看答案。",
+-    "Ketik pinyin-nya dengan keyboard biasa, tanpa IME Mandarin. TAB untuk melihat jawaban.",
+-    "Type the pinyin on a normal keyboard \u2014 no Chinese IME needed. TAB to peek.",
++    "用普通英文键盘打出拼音，不需要中文输入法。TAB 看答案，ENTER 跳过。",
++    "Ketik pinyin-nya dengan keyboard biasa, tanpa IME Mandarin. TAB untuk melihat jawaban, ENTER untuk melewati.",
++    "Type the pinyin on a normal keyboard \u2014 no Chinese IME needed. TAB to peek, ENTER to skip.",
+   ],
+   choose: [
+     "看拼音和意思，选出正确的汉字。这是输入法选字的预演。",
+-- 
+2.43.0
+

@@ -1,0 +1,58 @@
+From 6d98d99a658fdddf71557ed958f63dc249fcaeb7 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Fri, 23 Oct 2026 22:01:50 +0000
+Subject: [PATCH 8/9] fix(daily-words): a count that is not a whole number is
+ refused with one line instead of an int() traceback
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The Daily word batch dispatch form took free text and handed it to build-trio-queue.py as WORDS, where
+`int(os.environ.get("WORDS") or …)` turned "all", "abc" or "1.5" into a ValueError traceback after the
+wordnet imports, with no word of which input was wrong; "0" and "-5" were accepted and produced an empty
+or wrong-sized batch. The input is now a number field (default 100, as site.yml's count already is), and
+the script checks the value itself — it also arrives through argv — exiting with
+"WORDS must be a whole number of at least 1, got 'abc'" before anything is loaded. An empty value still
+means the default and " 20 " is still 20.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ .github/workflows/daily-words.yml | 4 +++-
+ scripts/build-trio-queue.py       | 6 +++++-
+ 2 files changed, 8 insertions(+), 2 deletions(-)
+
+diff --git a/.github/workflows/daily-words.yml b/.github/workflows/daily-words.yml
+index d5e352e..9bc0f30 100644
+--- a/.github/workflows/daily-words.yml
++++ b/.github/workflows/daily-words.yml
+@@ -15,7 +15,9 @@ on:
+     inputs:
+       count:
+         description: "How many new words to generate"
+-        default: "100"
++        # a number field: free text ("all", "") reached build-trio-queue.py's int() as a traceback
++        type: number
++        default: 100
+ 
+ permissions:
+   contents: write
+diff --git a/scripts/build-trio-queue.py b/scripts/build-trio-queue.py
+index 10d01ff..bea5245 100644
+--- a/scripts/build-trio-queue.py
++++ b/scripts/build-trio-queue.py
+@@ -31,7 +31,11 @@ QUEUE = os.path.join(ROOT, "queue", "words.json")
+ # row came back as a fresh candidate the next day
+ DROPPED = os.path.join(ROOT, "queue", "_dropped.txt")
+ 
+-WORDS = int(os.environ.get("WORDS") or (sys.argv[1] if len(sys.argv) > 1 else 100))
++# the workflow's count input arrives as text: "abc" or "" used to be an int() traceback with no word of what was wrong
++_words = os.environ.get("WORDS") or (sys.argv[1] if len(sys.argv) > 1 else "100")
++if not str(_words).strip().isdigit() or int(_words) < 1:
++    sys.exit(f"build-trio-queue: WORDS must be a whole number of at least 1, got {_words!r}")
++WORDS = int(_words)
+ QUEUE_CAP = int(os.environ.get("QUEUE_CAP", 400))
+ 
+ HAN = re.compile(r"^[一-鿿]+$")
+-- 
+2.43.0
+
