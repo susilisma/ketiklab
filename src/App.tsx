@@ -342,7 +342,12 @@ export default function Home() {
   const [reveal, setReveal] = useState(false);
   // a tap on the hidden-meaning placeholder shows the meaning for the rest of this word
   const [meaningPeek, setMeaningPeek] = useState(false);
-  const [dayCounts, setDayCounts] = useState<Record<string, number>>({});
+  // read at mount, as the favourites are: the persist effects' first run wrote {} and
+  // {correct:0, attempts:0, mistakes:[]} over the saved values for the ~10 ms before the
+  // restore effects put them back, and another tab showed the zeros for that moment
+  const [dayCounts, setDayCounts] = useState<Record<string, number>>(() => {
+    try { return cleanDayCounts(JSON.parse(localStorage.getItem("ketiklab-days") || "{}")); } catch { return {}; }
+  });
 
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
   const [lang, setLang] = useState<Lang>(ENTRY.learn ?? rememberedLearn() ?? "zh");
@@ -383,14 +388,17 @@ export default function Home() {
   const [typingFocus, setTypingFocus] = useState(false);
   const [index, setIndex] = useState(0);
   const [typed, setTyped] = useState("");
-  const [correct, setCorrect] = useState(0);
-  const [attempts, setAttempts] = useState(0);
+  const [savedState] = useState(() => {
+    try { const v: unknown = JSON.parse(localStorage.getItem("ketiklab-state") || "null"); return v && typeof v === "object" ? v as { correct?: unknown; attempts?: unknown; mistakes?: unknown } : null; } catch { return null; }
+  });
+  const [correct, setCorrect] = useState(() => Number(savedState?.correct) || 0);
+  const [attempts, setAttempts] = useState(() => Number(savedState?.attempts) || 0);
   const [seconds, setSeconds] = useState(0);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<WordFilter>(() => {
     try { const c = localStorage.getItem("ketiklab-category") || ""; return (CATEGORIES as string[]).includes(c) ? c as WordFilter : "business"; } catch { return "business"; }
   });
-  const [mistakes, setMistakes] = useState<string[]>([]);
+  const [mistakes, setMistakes] = useState<string[]>(() => Array.isArray(savedState?.mistakes) ? savedState.mistakes.filter(validMistakeKey) : []);
   const [readingLang, setReadingLang] = useState<ReadingLang>("all");
   const [openReadingGroup, setOpenReadingGroup] = useState<string | null>(null);
   const [readingId, setReadingId] = useState("");
@@ -746,7 +754,6 @@ export default function Home() {
     } catch { /* ignore */ }
     try { if (localStorage.getItem("ketiklab-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
-    try { setDayCounts(cleanDayCounts(JSON.parse(localStorage.getItem("ketiklab-days") || "{}"))); } catch { /* ignore */ }
     return () => { alive = false; mounted.current = false; };
   }, []);
   // Another tab (or the installed app beside a browser tab) wrote its progress: this tab takes
@@ -841,12 +848,6 @@ export default function Home() {
     } catch { setShowLangSetup(true); }
   }, []);
 
-  useEffect(() => {
-    try {
-      const saved = localStorage.getItem("ketiklab-state");
-      if (saved) { const v = JSON.parse(saved); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
-    } catch { /* ignore */ }
-  }, []);
   useEffect(() => { try { localStorage.setItem("ketiklab-state", JSON.stringify({ correct, attempts, mistakes })); } catch { /* ignore */ } }, [correct, attempts, mistakes]);
   // the clock belongs to the practice card: it pauses while another view is open
   // and while the veil covers the card (Escape, a blur, a view switch): the learner is not typing,
