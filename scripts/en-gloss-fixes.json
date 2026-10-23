@@ -5020,6 +5020,77 @@
     "menunggang",
     "tumpangan"
    ]
+  },
+  "issue": {
+   "trans": [
+    "问题",
+    "待解决的事"
+   ]
+  },
+  "grow": {
+   "trans": [
+    "生长",
+    "成熟"
+   ]
+  },
+  "line": {
+   "trans": [
+    "线",
+    "排队"
+   ]
+  },
+  "forum": {
+   "trans": [
+    "论坛",
+    "座谈会"
+   ]
+  },
+  "suppose": {
+   "trans": [
+    "假设",
+    "假定"
+   ]
+  },
+  "chemical": {
+   "trans": [
+    "化学的",
+    "化学"
+   ]
+  },
+  "residential": {
+   "trans": [
+    "住宅的",
+    "住宅",
+    "住所"
+   ]
+  },
+  "drunk": {
+   "trans": [
+    "醉的",
+    "喝醉了",
+    "酒醉"
+   ]
+  },
+  "hitting": {
+   "trans": [
+    "打",
+    "冲击",
+    "冲撞"
+   ]
+  },
+  "worried": {
+   "trans": [
+    "担心的",
+    "忧虑",
+    "担心"
+   ]
+  },
+  "ward": {
+   "trans": [
+    "病房",
+    "受监护人",
+    "被监护人"
+   ]
   }
  },
  "en-plus": {
@@ -8984,6 +9055,9 @@
   "heal": {
    "idtrans": [
     "menyembuhkan"
+   ],
+   "trans": [
+    "治愈"
    ]
   },
   "occasional": {
@@ -13063,6 +13137,10 @@
    "idtrans": [
     "berputar",
     "memintal"
+   ],
+   "trans": [
+    "旋转",
+    "自旋"
    ]
   },
   "berry": {
@@ -14391,6 +14469,11 @@
    "idtrans": [
     "mengatur",
     "meregulasi"
+   ],
+   "trans": [
+    "调节",
+    "使有规则",
+    "使有规律"
    ]
   },
   "repeal": {
@@ -14563,6 +14646,11 @@
    "idtrans": [
     "menyinkronkan",
     "menyelaraskan"
+   ],
+   "trans": [
+    "同步",
+    "使同时发生",
+    "使同步"
    ]
   },
   "allowance": {
@@ -14794,6 +14882,10 @@
    "idtrans": [
     "memfokuskan",
     "fokus"
+   ],
+   "trans": [
+    "聚焦",
+    "对焦"
    ]
   },
   "garage": {
@@ -15367,6 +15459,9 @@
    "idtrans": [
     "afiliasi",
     "anggota"
+   ],
+   "trans": [
+    "附属机构"
    ]
   },
   "cathedral": {
@@ -16241,6 +16336,10 @@
    "idtrans": [
     "menuangkan",
     "mengalir"
+   ],
+   "trans": [
+    "倒",
+    "倾泻"
    ]
   },
   "invisible": {
@@ -16283,6 +16382,11 @@
     "saluran pembuangan",
     "drainase",
     "mengeringkan"
+   ],
+   "trans": [
+    "排水",
+    "排掉水",
+    "放干"
    ]
   },
   "scan": {
@@ -16387,6 +16491,11 @@
     "mengekspos",
     "membeberkan",
     "memaparkan"
+   ],
+   "trans": [
+    "暴露",
+    "使接触到",
+    "使暴露"
    ]
   },
   "regulated": {
@@ -17040,6 +17149,19 @@
     "战争",
     "战事",
     "作战"
+   ]
+  },
+  "breed": {
+   "trans": [
+    "繁殖",
+    "使繁殖",
+    "培育"
+   ]
+  },
+  "shine": {
+   "trans": [
+    "发光",
+    "发亮"
    ]
   }
  },
@@ -19195,6 +19317,11 @@
     "menyingkap",
     "mengungkap",
     "membuka"
+   ],
+   "trans": [
+    "揭露",
+    "使曝光",
+    "揭示"
    ]
   },
   "unnatural": {
@@ -21733,6 +21860,11 @@
    "idtrans": [
     "menipu",
     "menyesatkan"
+   ],
+   "trans": [
+    "欺骗性的",
+    "欺诈",
+    "欺骗"
    ]
   },
   "devastation": {
@@ -21768,6 +21900,10 @@
     "menghambat",
     "menahan",
     "mencegah"
+   ],
+   "trans": [
+    "抑制",
+    "压抑"
    ]
   },
   "latch": {
@@ -23532,6 +23668,10 @@
    "idtrans": [
     "menyusup",
     "menginfiltrasi"
+   ],
+   "trans": [
+    "渗透",
+    "渗入"
    ]
   },
   "inhale": {
@@ -25592,6 +25732,10 @@
    "idtrans": [
     "mengalir deras",
     "tercurah"
+   ],
+   "trans": [
+    "瀑布",
+    "瀑布般落下"
    ]
   },
   "patio": {
@@ -25996,6 +26140,11 @@
     "menyulut",
     "menyalakan",
     "membakar"
+   ],
+   "trans": [
+    "点燃",
+    "使燃烧",
+    "点火"
    ]
   },
   "millennial": {
@@ -29004,6 +29153,11 @@
    "idtrans": [
     "menderita",
     "terserang"
+   ],
+   "trans": [
+    "受折磨的",
+    "受疾病折磨",
+    "患病"
    ]
   },
   "chariot": {
@@ -30666,6 +30820,10 @@
    "idtrans": [
     "interdisipliner",
     "lintas disiplin"
+   ],
+   "trans": [
+    "跨学科的",
+    "跨学科"
    ]
   },
   "scatter": {
@@ -30898,6 +31056,11 @@
    "idtrans": [
     "lapuk",
     "usang"
+   ],
+   "trans": [
+    "风化的",
+    "经风吹日晒",
+    "风化"
    ]
   },
   "psychotic": {
@@ -31203,6 +31366,37 @@
     "碎片",
     "碎石",
     "削凿"
+   ]
+  },
+  "eddy": {
+   "trans": [
+    "漩涡",
+    "打旋",
+    "旋动"
+   ]
+  },
+  "diffusion": {
+   "trans": [
+    "扩散"
+   ]
+  },
+  "airbus": {
+   "trans": [
+    "空中客车",
+    "空中巴士"
+   ]
+  },
+  "kayak": {
+   "trans": [
+    "皮划艇",
+    "皮艇"
+   ]
+  },
+  "tapered": {
+   "trans": [
+    "逐渐变细的",
+    "尖端细",
+    "渐缩"
    ]
   }
  },
@@ -34778,6 +34972,10 @@
    "idtrans": [
     "penonton",
     "pemirsa"
+   ],
+   "trans": [
+    "观众",
+    "目击者"
    ]
   },
   "spectator": {
@@ -34930,6 +35128,10 @@
    "idtrans": [
     "menggabungkan",
     "bergabung"
+   ],
+   "trans": [
+    "合并",
+    "使成一体"
    ]
   },
   "migrant": {
@@ -36495,6 +36697,11 @@
    "idtrans": [
     "berputar",
     "memutar"
+   ],
+   "trans": [
+    "旋转",
+    "轮换",
+    "轮流"
    ]
   },
   "cigar": {
@@ -37109,6 +37316,154 @@
     "无偿的",
     "未付的",
     "无薪的"
+   ]
+  },
+  "disclose": {
+   "trans": [
+    "披露",
+    "使曝光",
+    "揭示"
+   ]
+  },
+  "spatial": {
+   "trans": [
+    "空间的",
+    "空间"
+   ]
+  },
+  "initiate": {
+   "trans": [
+    "发起",
+    "引入"
+   ]
+  },
+  "activate": {
+   "trans": [
+    "激活",
+    "使活泼"
+   ]
+  },
+  "advertise": {
+   "trans": [
+    "做广告",
+    "宣传",
+    "宣扬"
+   ]
+  },
+  "optic": {
+   "trans": [
+    "视觉的",
+    "眼"
+   ]
+  },
+  "tempting": {
+   "trans": [
+    "诱人的",
+    "吸引人",
+    "诱人"
+   ]
+  },
+  "consulate": {
+   "trans": [
+    "领事馆"
+   ]
+  },
+  "angular": {
+   "trans": [
+    "有角的"
+   ]
+  },
+  "provoke": {
+   "trans": [
+    "激怒",
+    "唤起",
+    "引起"
+   ]
+  },
+  "flipping": {
+   "trans": [
+    "翻转",
+    "翻书页",
+    "翻动书页"
+   ]
+  },
+  "hoax": {
+   "trans": [
+    "骗局",
+    "愚弄"
+   ]
+  },
+  "syndicate": {
+   "trans": [
+    "辛迪加"
+   ]
+  },
+  "pivot": {
+   "trans": [
+    "枢轴",
+    "在枢轴上转动"
+   ]
+  },
+  "impaired": {
+   "trans": [
+    "受损的",
+    "受折磨"
+   ]
+  },
+  "hog": {
+   "trans": [
+    "猪"
+   ]
+  },
+  "spokesman": {
+   "trans": [
+    "发言人"
+   ]
+  },
+  "announcer": {
+   "trans": [
+    "播音员"
+   ]
+  },
+  "simplified": {
+   "trans": [
+    "简化的",
+    "使简化",
+    "使简单"
+   ]
+  },
+  "updating": {
+   "trans": [
+    "更新",
+    "使现代化"
+   ]
+  },
+  "bending": {
+   "trans": [
+    "弯曲",
+    "使弯曲",
+    "使成弓形"
+   ]
+  },
+  "tying": {
+   "trans": [
+    "系",
+    "接合",
+    "联合"
+   ]
+  },
+  "upsetting": {
+   "trans": [
+    "令人不安的",
+    "使心烦",
+    "打扰"
+   ]
+  },
+  "compelled": {
+   "trans": [
+    "被迫的",
+    "强制",
+    "强迫"
    ]
   }
  },
