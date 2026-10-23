@@ -348,7 +348,8 @@ def lib_page(lang, row, entries, lib_rows, n_readings):
     pron = any(e.get("usphone") for e in entries)  # the Indonesian list has no pronunciation field
     cols = (T["cols"][lang] if pron else T["cols"][lang][:1]) + (header,)
     rows = "\n".join(
-        f'<tr><td class="w"{lang_attr(row["lang"], lang)}>{esc(e["name"])}</td>' + (f'<td class="p">{esc(e.get("usphone") or "")}</td>' if pron else "")
+        # the zh-* lists' usphone is pinyin, tagged as the topic pages tag theirs; the en-* lists' is IPA, which has no language
+        f'<tr><td class="w"{lang_attr(row["lang"], lang)}>{esc(e["name"])}</td>' + (f'<td class="p"{lang_attr("pinyin", lang) if row["lang"] == "zh" else ""}>{esc(e.get("usphone") or "")}</td>' if pron else "")
         + f"<td>{cell(e)}</td></tr>"
         for e in shown)
     body = (
