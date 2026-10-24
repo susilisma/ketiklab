@@ -82,6 +82,21 @@ function humanError(e: unknown, l: Lang): string {
   const minLen = /password should be at least (\d+) characters/.exec(m)?.[1];
   if (minLen)
     return T(`密码至少 ${minLen} 位。`, `Kata sandi minimal ${minLen} karakter.`, `Password needs at least ${minLen} characters.`, l);
+  // the other policy rejections (required character classes, a leaked password): the rule is the
+  // server's, so no number is claimed; GoTrue's text used to be printed as it came
+  if (ae.code === "weak_password" || m.includes("password should") || m.includes("password is known to be weak"))
+    return T("密码不符合要求，换一个更长、含字母和数字的密码。", "Kata sandi belum memenuhi syarat. Coba yang lebih panjang, dengan huruf dan angka.", "That password does not meet the requirements. Try a longer one with letters and numbers.", l);
+  if (ae.code === "signup_disabled" || m.includes("signups not allowed"))
+    return T("目前暂不开放注册。", "Pendaftaran sedang ditutup.", "Sign-ups are closed at the moment.", l);
+  if (ae.code === "validation_failed" || ae.code === "email_address_invalid" || m.includes("validate email") || m.includes("email address") && m.includes("invalid"))
+    return T("邮箱格式不对，检查一下再试。", "Format email tidak valid. Periksa lagi.", "That email address is not valid. Check it and try again.", l);
+  // a PostgREST write refused because the session's token had run out (PGRST301, a tab left in the
+  // background past the refresh), or auth-js finding no session: about the sign-in, not an emailed
+  // link — the generic "expired" line below told the learner to request a new link
+  if (ae.code === "PGRST301" || m.includes("jwt expired") || m.includes("jwt") && m.includes("invalid") || m.includes("session missing"))
+    return T("登录已过期，这次没有同步。请重新登录。", "Sesi masuk sudah kedaluwarsa; tidak jadi disinkronkan. Masuk lagi.", "Your sign-in has expired, so nothing was synced. Sign in again.", l);
+  if (ae.code === "42501" || m.includes("row-level security"))
+    return T("服务器拒绝了这次写入。退出后重新登录再试。", "Server menolak penulisan ini. Keluar, masuk lagi, lalu coba lagi.", "The server refused this write. Sign out, sign in again and retry.", l);
   if (m.includes("expired") || m.includes("invalid or has"))
     return T("这个链接已失效或过期，请重新申请一封。",
              "Tautan ini sudah kedaluwarsa. Minta yang baru.",
@@ -92,7 +107,10 @@ function humanError(e: unknown, l: Lang): string {
   // "For security purposes, you can only request this after 60 seconds."
   if (m.includes("for security purposes") || m.includes("only request this after"))
     return T("操作太频繁，请等一分钟再试。", "Terlalu sering. Coba lagi satu menit lagi.", "Too many requests. Try again in a minute.", l);
-  return raw;
+  // whatever else the server said (a gateway's 503 page, "canceling statement due to statement
+  // timeout", an SMTP failure) is not for the learner: one sentence, with the code for a bug report
+  const code = [ae.code, ae.status].find(c => c && /^[A-Za-z0-9_]{2,24}$/.test(String(c)));
+  return T("服务器出了点问题，请稍后再试。", "Server sedang bermasalah. Coba lagi nanti.", "Something went wrong on the server. Try again later.", l) + (code ? ` (${code})` : "");
 }
 
 /** A dead link's hash is untrusted: two outcomes are ever printed, never its text. */
@@ -400,7 +418,10 @@ export function Account({ uiLang, name, onName }: {
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
           <input value={shownName} maxLength={24} readOnly={untrustedView} onChange={e => { if (!untrustedView) onName(e.target.value); }}
-            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id && name.trim() !== profName) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim())).catch(e2 => setErr(humanError(e2, uiLang))); }}
+            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id && name.trim() !== profName) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim()))
+              // not saved: the field, the header and storage go back to the account's name now and say so — kept, the new name
+              // stood until the next visit to the panel, whose profile read put the old one back without a word
+              .catch(e2 => { onName(profName); setErr(T("名字没有保存：", "Nama tidak tersimpan: ", "The name was not saved: ", uiLang) + humanError(e2, uiLang)); }); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 

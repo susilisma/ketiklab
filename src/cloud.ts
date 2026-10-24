@@ -196,7 +196,7 @@ export async function loadProfile(userId: string): Promise<Profile | null> {
 // throw instead, so a caller's "saved" message can only follow a clean write.
 export async function saveName(userId: string, name: string) {
   const { error } = await supabase.from("profiles").upsert({ id: userId, name }, { onConflict: "id" });
-  if (error) throw new Error(error.message);
+  if (error) throw Object.assign(new Error(error.message), { code: error.code }); // the code lets Account word it (humanError)
 }
 
 /** Whole-progress blob; one row per account. "No row yet" and "could not ask" are
@@ -217,7 +217,7 @@ export async function saveProgress(userId: string, data: ProgressBlob) {
   // rejects: refused here instead, before anything is sent
   if (session?.user.id !== userId) throw new Error("not signed in as this account");
   const { error } = await supabase.from("progress").upsert({ user_id: userId, data }, { onConflict: "user_id" });
-  if (error) throw new Error(error.message);
+  if (error) throw Object.assign(new Error(error.message), { code: error.code });
 }
 
 /** Keys we mirror to the cloud. Everything else stays device-local on purpose. */
