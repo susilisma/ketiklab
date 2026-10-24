@@ -397,7 +397,7 @@ button.profile:hover>i{color:var(--purple)}
 .sidebar-bottom{flex:1 1 0;min-width:0;margin:0;display:flex;align-items:center}.mini-progress{display:none}.sidebar-bottom .profile{border:0;padding:0;height:48px;justify-content:center}.profile div,.profile>i{display:none}.profile>span{width:40px;height:40px}.sidebar-bottom .profile:hover{border-radius:11px}
 .main>header{gap:8px}.chapter small{display:none}.round{display:none}
 /* the title may take two lines beside the two 40px controls ("Business & Work · 614" and "Hidup di Indonesia · 399" were ellipsized at 375px); a longer name still ends in … after the second line */
-.chapter b{font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow:hidden}.chapter b>span:first-child{display:inline;overflow:visible}.chapter b>span:last-child{display:inline}.language{padding:0 6px}.language span{display:none}.primary{padding:0 12px;gap:8px}
+.chapter b{font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow:hidden}.chapter b>span:first-child{display:inline;overflow:visible}.chapter b>span:last-child{display:inline;white-space:normal}.language{padding:0 6px}.language span{display:none}.primary{padding:0 12px;gap:8px}
 }
 /* 320px: beside the two controls the title has about 150px, where "Hidup di Indonesia · 399" and "Life in Indonesia · 399" need a third line, which the two-line clamp cut to "Hidup di Indones…"; three 12px lines (45px) still sit inside the 56px header */
 @media(max-width:360px){.chapter b{-webkit-line-clamp:4;font-size:12px;line-height:1.15}}
