@@ -104,7 +104,10 @@ jobs:
         with:
           node-version: 22
       - name: Install
-        run: npm ci || npm install
+        # the fallback keeps the hourly deploy going when package-lock.json has drifted from
+        # package.json, but that build resolves versions afresh; it is announced in the run
+        # summary rather than passing in silence
+        run: npm ci || { echo "::warning title=package-lock.json out of sync::npm ci failed; built with npm install instead — regenerate the lockfile"; npm install --no-audit --no-fund; }
       - name: Build
         run: npm run build
       - name: Generate language landing pages, library pages and sitemap
