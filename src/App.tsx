@@ -593,12 +593,15 @@ export default function Home() {
       // out of the box; a focused button or link keeps its own ENTER, and the zh rungs
       // without the App box handle theirs
       if (e.key === "Enter") {
-        if (!input.current || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
+        // the 打拼音 box too: its hint names ENTER as the skip, but after Escape or a tap on the
+        // hanzi the box is blurred and its own handler does not see the key
+        const box = input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox");
+        if (!box || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
         e.preventDefault();
         // on an untouched card the veil says "press any key to start / continue": ENTER is that
         // key, not a skip that files a word the learner never tried as a miss and an SRS lapse —
         // also with the clock running, after 开始 and a click on the page took the focus away
-        if (!typedRef.current) { input.current.focus(); return; }
+        if (!(input.current ? typedRef.current : box.value)) { box.focus(); return; }
         if (!e.repeat) skipRef.current(); return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
