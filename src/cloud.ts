@@ -185,10 +185,12 @@ export async function resetPassword(email: string) {
   if (error) throw error;
 }
 
-export async function loadProfile(userId: string): Promise<Profile | null> {
+/** null: the account has no profile row. undefined: could not ask — the two used to be one null, and a
+ *  merge into an account whose profile read had failed wrote "" over the name its row held. */
+export async function loadProfile(userId: string): Promise<Profile | null | undefined> {
   const { data, error } = await supabase
     .from("profiles").select("id,name").eq("id", userId).maybeSingle();
-  if (error) return null;
+  if (error) return undefined;
   return (data as Profile) ?? null;
 }
 
@@ -479,10 +481,12 @@ export function finishPendingRestore(): boolean {
   if (!p || session?.user.id !== p.uid || linkedUid() !== p.uid) return false;
   p.run(); return true;
 }
-export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
+// profileName null: the profile could not be read, so the name the account's row carries stands in
+export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName: string | null = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
   const cloud = await normalized(r.data ?? {});
+  profileName ??= typeof cloud["ketiklab-name"] === "string" ? cloud["ketiklab-name"] : "";
   // through the same decision as in pushProgress: a device whose own key migration is still
   // fetching a dictionary would otherwise upload the old shape beside the cloud's new one
   const raw = collectLocal();
@@ -493,6 +497,10 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // (even none) replaces it, or a nameless account was named after the previous user
   // on every one of its devices
   if (wasLinked) local["ketiklab-name"] = profileName;
+  // written to storage too, on the paths that do not reload (Account reads the name there) — but only
+  // once the account's row holds it: written before the upsert, a merge that then failed left the
+  // other account's name on a device still linked to this one, and the next sign-in here pushed it
+  const nameHome = () => { if (wasLinked) try { localStorage.setItem("ketiklab-name", profileName); } catch { /* ignore */ } };
   // a reload is only worth it when the marker stuck: with storage refused, the next
   // visit would link and reload all over again
   if (how === "replace") {
@@ -507,7 +515,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     noteAfterReload("switched"); location.reload();
     return "reloading";
   }
-  if (!r.data) { await saveProgress(userId, local); linkDevice(userId); return "uploaded"; }
+  if (!r.data) { await saveProgress(userId, local); nameHome(); linkDevice(userId); return "uploaded"; }
   // progress merges with this device on top, as every later push does: with the cloud on
   // top its 30 mistakes came first and the words just missed here were cut by the cap.
   // The settings keys stay the account's choice, as before.
@@ -515,7 +523,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   for (const k of [...PROGRESS_KEYS, "ketiklab-chapters"]) { const m = mergeProgress(cloud, local)[k]; if (typeof m === "string") merged[k] = m; }
   if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
   await saveProgress(userId, { ...r.data, ...merged }); // keys this build does not know stay in the row (see pushProgress)
-  linkDevice(userId);
+  nameHome(); linkDevice(userId);
   if (linkedUid() !== userId || sameBlob(merged, local)) return "same";
   // `local` was read before the upsert: a word typed meanwhile (a second tab, or the
   // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,

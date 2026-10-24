@@ -164,6 +164,8 @@ export function Account({ uiLang, name, onName }: {
   const [urlErr, setUrlErr] = useState("");
   const lastUid = useRef<string | undefined>(undefined);
   const forgetting = useRef(false);
+  // false while the profile could not be read: its name is unknown then, not blank
+  const profKnown = useRef(true);
   // the "last synced" time in the interface language, not the browser's locale
   const stamp = () => new Date().toLocaleTimeString(uiLang === "zh" ? "zh-CN" : uiLang === "id" ? "id-ID" : "en-US");
 
@@ -204,6 +206,7 @@ export function Account({ uiLang, name, onName }: {
       // keeps its name too
       const untrusted = (!!linked && linked !== uid) || (!linked && !sessionTyped(uid));
       const prof = await loadProfile(uid);
+      profKnown.current = prof !== undefined;
       // the first link of a typed sign-in outlasts the panel: leaving it during the profile
       // round-trip used to abandon the link, and autoPush never links a device on its own,
       // so nothing was backed up for the rest of the session and nothing said so
@@ -356,11 +359,15 @@ export function Account({ uiLang, name, onName }: {
     if (!session) return;
     setErr(""); setMsg(syncingText(uiLang)); setBusy(true);
     try {
-      const done = await withinSyncWait(linkThisDevice(session.user.id, how, profName));
+      // profile unreadable: the account's name is whatever its row holds (linkThisDevice leaves it in storage), not ""
+      const own = profKnown.current ? profName : null;
+      const done = await withinSyncWait(linkThisDevice(session.user.id, how, own));
       if (done === "reloading") return;
       if (!signedInAs(session.user.id)) { setMsg(""); return; }
       // no reload on this path, so the header would keep the previous user's name
-      onName(profName);
+      const settled = own ?? collectLocal()["ketiklab-name"];
+      onName(typeof settled === "string" ? settled : "");
+      if (own === null) setProfName(typeof settled === "string" ? settled : "");
       setForeign(false);
       setSyncedAt(stamp());
       setMsg(done === "uploaded"

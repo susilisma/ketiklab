@@ -119,7 +119,7 @@ function useProfile(uid: string | undefined) {
   useEffect(() => {
     if (!uid) { setProfile(null); return; }
     let alive = true;
-    loadProfile(uid).then(p => { if (alive) setProfile(p); });
+    loadProfile(uid).then(p => { if (alive) setProfile(p ?? null); });
     return () => { alive = false; };
   }, [uid]);
   return profile;
