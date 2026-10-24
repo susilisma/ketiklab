@@ -175,7 +175,14 @@ export async function signOut() {
   if (uid && linkedUid() === uid) {
     try { await Promise.race([pushProgress(uid, undefined, false), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
   }
-  try { await supabase.auth.signOut(); } catch { /* ignore */ }
+  // offline with a token past its expiry auth-js cannot refresh and returns the error with the session kept (with
+  // a live token it drops the session itself before returning the error): 退出登录 was pressed, so the session goes
+  // from this device either way. Dropped from storage and the page reloaded; the sign-out mark stays, and the next
+  // load tries the server again. Without this the card came back in silence and the next tick synced on.
+  let failed = false;
+  try { failed = !!(await supabase.auth.signOut()).error; } catch { failed = true; }
+  const key = `sb-${new URL(SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
+  try { if (failed && localStorage.getItem(key)) { localStorage.removeItem(key); location.reload(); } } catch { /* ignore */ }
 }
 
 export async function resetPassword(email: string) {
