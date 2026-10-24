@@ -52,7 +52,9 @@ function plan({
 }) {
   if (fixedCount !== null) {
     const words = Math.max(0, Math.min(queuedWords, Math.floor(fixedCount)));
-    return { words, readings: Math.min(queuedReadings, 1), wordsHours: null, readingsHours: null };
+    // a count that covers the whole words queue is the "flush the whole queue" dispatch, so the
+    // readings go with it; a smaller manual count releases one reading, as it always did
+    return { words, readings: words === queuedWords ? queuedReadings : Math.min(queuedReadings, 1), wordsHours: null, readingsHours: null };
   }
   // a negative clock skew must never turn into a negative slice
   const clamp = (h) => Math.min(Math.max(h, 0), maxCatchupHours);
