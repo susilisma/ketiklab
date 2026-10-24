@@ -326,12 +326,19 @@ export function Account({ uiLang, name, onName }: {
       // it); the click that blurred it used to push the stale profile name and snap the
       // field, the header and storage back to it.
       const own = linked === uid ? name.trim() : profName;
-      const { cloudHasMore } = await withinSyncWait(pushProgress(uid, own ? { ...collectLocal(), "ketiklab-name": own } : collectLocal()));
+      // the profile could not be read: the account's name is unknown, not blank. Pushed as blank, a
+      // link session on another learner's unlinked device named the account after them — the device's
+      // old name went up in the blob and into the profile row. The row's own name stands instead.
+      const unknown = linked !== uid && !profKnown.current;
+      const blob = collectLocal();
+      if (own) blob["ketiklab-name"] = own; else if (unknown) delete blob["ketiklab-name"];
+      const { merged, cloudHasMore } = await withinSyncWait(pushProgress(uid, blob));
       // signed out in another tab while the read was in flight: the cloud already matched, so the
       // push wrote nothing and ended here — and printed 已同步 under the sign-in form (the effect
       // that re-runs on the sign-out had already cleared the card's messages)
       if (!signedInAs(uid)) { setMsg(""); return; }
       if (own) { onName(own); setProfName(own); }
+      else if (unknown) { const n = typeof merged["ketiklab-name"] === "string" ? merged["ketiklab-name"] : ""; onName(n); setProfName(n); }
       else if (name.trim()) await withinSyncWait(saveName(uid, name.trim()));
       linkDevice(uid); setLinkOnly(false);
       setCloudNewer(cloudHasMore);
