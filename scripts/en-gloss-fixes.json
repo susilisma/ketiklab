@@ -5091,6 +5091,24 @@
     "受监护人",
     "被监护人"
    ]
+  },
+  "crew": {
+   "trans": [
+    "船员",
+    "全体水手"
+   ]
+  },
+  "mac": {
+   "trans": [
+    "雨衣",
+    "马金托什雨衣"
+   ]
+  },
+  "replacement": {
+   "trans": [
+    "替代者",
+    "替换者"
+   ]
   }
  },
  "en-plus": {
@@ -12855,6 +12873,11 @@
    "idtrans": [
     "khas",
     "berbeda"
+   ],
+   "trans": [
+    "独特",
+    "典型",
+    "有特色"
    ]
   },
   "donation": {
@@ -15975,6 +15998,11 @@
     "menghubungkan",
     "berhubungan",
     "mengaitkan"
+   ],
+   "trans": [
+    "联系",
+    "联合",
+    "连接"
    ]
   },
   "supplied": {
@@ -21178,6 +21206,9 @@
   "launcher": {
    "idtrans": [
     "peluncur"
+   ],
+   "trans": [
+    "发射器"
    ]
   },
   "lessen": {
@@ -22508,6 +22539,11 @@
    "idtrans": [
     "mengosongkan",
     "dikosongkan"
+   ],
+   "trans": [
+    "清空",
+    "搬出",
+    "腾出"
    ]
   },
   "entrenched": {
@@ -23069,6 +23105,10 @@
    "idtrans": [
     "menyesatkan",
     "mengelabui"
+   ],
+   "trans": [
+    "误导",
+    "引导错"
    ]
   },
   "multiplied": {
@@ -29421,6 +29461,9 @@
   "interconnected": {
    "idtrans": [
     "saling terhubung"
+   ],
+   "trans": [
+    "相互关联"
    ]
   },
   "intolerant": {
@@ -31397,6 +31440,19 @@
     "逐渐变细的",
     "尖端细",
     "渐缩"
+   ]
+  },
+  "surrogate": {
+   "trans": [
+    "替代者",
+    "替换者"
+   ]
+  },
+  "intoxicated": {
+   "trans": [
+    "醉酒",
+    "喝醉了",
+    "酒醉"
    ]
   }
  },
@@ -36028,6 +36084,10 @@
    "idtrans": [
     "berputar",
     "memintal"
+   ],
+   "trans": [
+    "旋转",
+    "自旋"
    ]
   },
   "transmit": {
@@ -37464,6 +37524,43 @@
     "被迫的",
     "强制",
     "强迫"
+   ]
+  },
+  "notified": {
+   "trans": [
+    "通知"
+   ]
+  },
+  "aligned": {
+   "trans": [
+    "对齐"
+   ]
+  },
+  "flipped": {
+   "trans": [
+    "翻转",
+    "翻书页",
+    "翻动书页"
+   ]
+  },
+  "subscriber": {
+   "trans": [
+    "订阅者",
+    "订户"
+   ]
+  },
+  "stricken": {
+   "trans": [
+    "受灾的",
+    "受疾病折磨",
+    "患病"
+   ]
+  },
+  "bypass": {
+   "trans": [
+    "绕行道",
+    "环形公路",
+    "环形路"
    ]
   }
  },
