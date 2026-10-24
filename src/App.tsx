@@ -362,6 +362,9 @@ export default function Home() {
   // the topic words and the favourites change list with the learning language under one
   // chapter key; a dictionary is the same list in every language, so its chapter is kept
   const sharesChapterKey = (src: string) => src === "trio" || src === "fav";
+  // the dialog was saved with its learning row untouched while a ?lib= link's list had not yet
+  // named the language the row should have shown: the manifest handler lets the link name it
+  const linkedLearnPending = useRef(false);
   const viewRef = useRef(view); viewRef.current = view;
   const reviewRef = useRef<string[] | null>(null); // the listener keeps a review session in place, as changeLanguage does
   const [uiLang, setUiLang] = useState<Lang>(initialUi);
@@ -697,6 +700,15 @@ export default function Home() {
           // return visit of a learner who closed the dialog on it: the English list came back with
           // the select and the dialog on 中文 (a ?learn= link still names its own language)
           if ((linked || !ENTRY.learn) && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
+          // ...or the dialog was saved while the list was still on its way, with the learning row
+          // left as pre-filled: that row only said 中文 because the link had not named its language
+          // yet, so the save kept 中文 and the English list then opened under it (select, settings
+          // and the saved choice all 中文). The link names the language here, as it would have
+          // before the save, and the saved choice is rewritten with it
+          else if (linked && linkedLearnPending.current) {
+            linkedLearnPending.current = false;
+            try { const cur = readLangs(localStorage.getItem("ketiklab-langs") || ""); if (cur.learn !== d.lang) { setLang(d.lang); writeLangs(cur.ui, d.lang, cur.byLearn); } } catch { /* ignore */ }
+          }
           loadDict(d).then((data: DictEntry[]) => {
             if (!mounted.current) return;
             dictCache.current.set(d.id, data);
@@ -1998,7 +2010,10 @@ export default function Home() {
   }
   // def is null when the meaning row was left on its pre-selection: nothing is stored for
   // it, so the meaning keeps following the interface language instead of freezing today's
-  function saveLangSetup(ui: Lang, learn: Lang, def: MeaningLang | null) {
+  function saveLangSetup(ui: Lang, learn: Lang, def: MeaningLang | null, learnTouched = true) {
+    // the list a ?lib= link names has not arrived (no manifest yet, no list in hand) and the
+    // learner left the learning row as it was pre-filled: the link still gets to name the language
+    linkedLearnPending.current = !learnTouched && !!ENTRY.lib && !dictsRef.current.length;
     const byLearn: MeaningPrefs = { ...defByLearn };
     if (def) byLearn[learn] = def;
     setUiLang(ui);
@@ -2642,7 +2657,7 @@ export default function Home() {
   </div>;
 }
 
-function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang | null) => void; onClose: () => void }) {
+function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang | null, learnTouched: boolean) => void; onClose: () => void }) {
   const [ui, setUi] = useState<Lang>(initialUi);
   const [learn, setLearn] = useState<Lang>(initialLearn);
   // the languages set while the dialog is open (the list a ?lib= link named arrived, another tab
@@ -2705,7 +2720,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
       <div className="lang-modal-actions">
         {def === null && <small className="lang-modal-need">{mt.defRequired}</small>}
         <button className="lang-modal-cancel" onClick={onClose}>{mt.cancel}</button>
-        <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, picked && picked !== learn ? picked : null); }}>{mt.save}</button>
+        <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, picked && picked !== learn ? picked : null, learnTouched.current); }}>{mt.save}</button>
       </div>
     </div>
   </div>;
