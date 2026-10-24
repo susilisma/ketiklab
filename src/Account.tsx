@@ -34,6 +34,14 @@ function humanError(e: unknown, l: Lang): string {
   const ae = (e && typeof e === "object" ? e : {}) as { name?: string; status?: number; message?: string; code?: string };
   const raw = typeof e === "string" ? e : ae.message || String(e);
   const m = raw.toLowerCase();
+  const serverTrouble = (code?: unknown) => T("服务器出了点问题，请稍后再试。", "Server sedang bermasalah. Coba lagi nanti.", "Something went wrong on the server. Try again later.", l) + (code ? ` (${code})` : "");
+  // GoTrue's 500 when its mail server fails ("Error sending confirmation email" / "…recovery email"): the
+  // address was fine and the connection worked, so neither "check the address" nor "check your connection"
+  if (m.includes("error sending"))
+    return T("邮件没能发出，请稍后再试。", "Email tidak terkirim. Coba lagi nanti.", "The email could not be sent. Try again later.", l);
+  // auth-js files every 5xx under AuthRetryableFetchError along with a dead connection; a status says the
+  // server answered, and the learner used to be told to check a connection that worked
+  if (ae.name === "AuthRetryableFetchError" && typeof ae.status === "number" && ae.status >= 500) return serverTrouble(ae.status);
   // A dead connection carries the browser's own wording — Chrome "Failed to fetch",
   // Firefox "NetworkError…", Safari "Load failed" — so the error class is checked
   // first and the text only as a fallback.
@@ -109,8 +117,7 @@ function humanError(e: unknown, l: Lang): string {
     return T("操作太频繁，请等一分钟再试。", "Terlalu sering. Coba lagi satu menit lagi.", "Too many requests. Try again in a minute.", l);
   // whatever else the server said (a gateway's 503 page, "canceling statement due to statement
   // timeout", an SMTP failure) is not for the learner: one sentence, with the code for a bug report
-  const code = [ae.code, ae.status].find(c => c && /^[A-Za-z0-9_]{2,24}$/.test(String(c)));
-  return T("服务器出了点问题，请稍后再试。", "Server sedang bermasalah. Coba lagi nanti.", "Something went wrong on the server. Try again later.", l) + (code ? ` (${code})` : "");
+  return serverTrouble([ae.code, ae.status].find(c => c && /^[A-Za-z0-9_]{2,24}$/.test(String(c))));
 }
 
 /** A dead link's hash is untrusted: two outcomes are ever printed, never its text. */
