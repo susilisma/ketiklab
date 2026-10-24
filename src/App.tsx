@@ -1506,16 +1506,17 @@ export default function Home() {
   // stored a zh dictionary mistake as the bare headword (现在), and read as the learning language
   // it was named by nothing for a learner of English or Indonesian and retired by 开始复习
   const splitId = (id: string): [Lang, string] => { const i = id.indexOf(":"); return i < 0 ? [/^[\u3400-\u9fff]+$/.test(id) ? "zh" : lang, id] : [id.slice(0, i) as Lang, id.slice(i + 1)]; };
-  type KeyInfo = { text: string; lang: Lang; meaning: string; meaningLang?: Lang; note: boolean; label?: string; legacy?: boolean };
+  // id is the word's own key, "<lang>:trio:<en>" or "<lang>:<headword>": two 错词本 keys that name one word list it once
+  type KeyInfo = { id: string; text: string; lang: Lang; meaning: string; meaningLang?: Lang; note: boolean; label?: string; legacy?: boolean };
   function lookupKey(id: string): KeyInfo | undefined {
     const [lg, key] = splitId(id);
-    const trioInfo = (w: Word): KeyInfo => { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { text: wordValue(w, lg), lang: lg, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label }; };
+    const trioInfo = (w: Word): KeyInfo => { const m = listMeaning({ lang: lg, glosses: trioGlosses(w, lg), meaning: "" }); return { id: `${lg}:${TRIO}${w.en}`, text: wordValue(w, lg), lang: lg, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label }; };
     const w = trioOf(key);
     if (w) return trioInfo(w);
     for (const d of dicts) {
       if (d.lang !== lg) continue;
       const e = dictCache.current.get(d.id)?.find(x => x.name === key);
-      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { text: e.name, lang: lg, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label }; }
+      if (e) { const m = listMeaning({ lang: lg, glosses: dictGlosses(d, e), def: e.def, meaning: "", dictId: d.id }); return { id: `${lg}:${e.name}`, text: e.name, lang: lg, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label }; }
     }
     // written before topic words had their own namespace: the bare English headword, which
     // a dictionary of this language may hold too — that is why the dictionaries went first
@@ -1531,11 +1532,17 @@ export default function Home() {
     const it = learnItems.find(i => `${i.lang}:${i.key}` === id);
     if (!it) return undefined;
     const m = listMeaning(it);
-    return { text: it.text, lang: it.lang, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label };
+    return { id, text: it.text, lang: it.lang, meaning: m.text, meaningLang: m.lang, note: m.note, label: m.label };
   };
-  const dueEntries: { key: string; info: KeyInfo }[] = view === "mistakes"
-    ? mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter(x => x.info) as { key: string; info: KeyInfo }[]
-    : [];
+  // a bare key from before keys carried a language ("achieve", kept as it is) beside the word's own
+  // key (id:trio:achieve) listed mencapai twice, and 开始复习 then served it once (resolveReviewRefs
+  // folds them): the list folds them the same way, keeping the entry under the word's own key
+  const dueEntries: { key: string; info: KeyInfo }[] = (() => {
+    if (view !== "mistakes") return [];
+    const all = mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter((x): x is { key: string; info: KeyInfo } => !!x.info);
+    const own = new Set(all.filter(x => !x.info.legacy).map(x => x.info.id)), seen = new Set<string>();
+    return all.filter(x => !(x.info.legacy && own.has(x.info.id)) && !seen.has(x.info.id) && !!seen.add(x.info.id));
+  })();
   const gq = search.trim().toLowerCase();
   const rankMatch = (text: string, meaning: string, q: string): number => {
     const tt = text.toLowerCase();
