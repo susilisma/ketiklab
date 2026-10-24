@@ -172,7 +172,8 @@ export function Account({ uiLang, name, onName }: {
     const cur = session?.user.id;
     if (lastUid.current !== cur) {
       lastUid.current = cur;
-      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setLinkOnly(false); setCloudNewer(false);
+      // busy too: a sync still running when another tab signed out kept the sign-in form's button on 处理中… and disabled
+      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setLinkOnly(false); setCloudNewer(false); setBusy(false);
     }
     if (!session) return;
     let alive = true;
@@ -316,7 +317,7 @@ export function Account({ uiLang, name, onName }: {
       setSyncedAt(stamp());
       setMsg(T("已同步。", "Tersinkron.", "Synced.", uiLang));
     } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
-    finally { setBusy(false); }
+    finally { if (signedInAs(uid)) setBusy(false); } // signed out meanwhile: the reset above cleared it, and a sign-in typed since may own it now
   }
 
   // Bring what the cloud has onto this device. Reloads, because App would write its
@@ -350,7 +351,7 @@ export function Account({ uiLang, name, onName }: {
             "This device's progress has been uploaded to your account.", uiLang)
         : T("已同步。", "Tersinkron.", "Synced.", uiLang));
     } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
-    finally { setBusy(false); }
+    finally { if (signedInAs(session.user.id)) setBusy(false); }
   }
 
   const noteText = note === "restored"
