@@ -512,8 +512,10 @@ export default function Home() {
   // a saved dictionary whose file arrived while a topic word was being typed: applied when the
   // card moves on (advanceOrFinishChapter), dropped once another list has been chosen
   const lateDict = useRef<(() => void) | null>(null);
-  // letters on the card (the App box, the 打拼音 box) or the done window still open
-  const cardTouched = () => typedRef.current !== "" || finishing.current || !!document.querySelector<HTMLInputElement>(".zh-typebox")?.value;
+  // letters on the card (the App box, the 打拼音 box), the done window still open, or a slip
+  // already noted: after a strict-mode first slip the box is rolled back to empty, and the list
+  // was swapped under the learner retyping the word their lapse was just filed for
+  const cardTouched = () => typedRef.current !== "" || finishing.current || hadWrong.current || !!document.querySelector<HTMLInputElement>(".zh-typebox")?.value;
   // the storage listener (mounted once) reaches this render's favListChanged through it
   const favListChangedRef = useRef<(remaining: PracticeItem[]) => void>(() => {}); favListChangedRef.current = favListChanged;
   const flashToken = useRef(0);
