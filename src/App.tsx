@@ -2184,13 +2184,28 @@ export default function Home() {
     const ix = activeItems.findIndex(i => `${i.lang}:${i.key}` === id);
     if (ix >= 0) { jumpToItem(ix); return; }
     const [lg, key] = splitId(id);
+    // a 错词本 word of another learning language is practised as a one-word review session, the
+    // way 开始复习 serves it: it used to go through changeLanguage, which wrote the other language
+    // into ketiklab-langs, so the learner came back to the wrong language on the next visit
+    if (lg !== lang) { reviewOne(id); return; }
     const w = trioOf(key);
-    if (w) { if (lg !== lang) changeLanguage(lg); practiceWord(w, lg); return; }
+    if (w) { practiceWord(w, lg); return; }
     for (const d of dicts) if (d.lang === lg && dictCache.current.get(d.id)?.some(e => e.name === key)) { gotoDictWord(d.id, key); return; }
     // a hanzi key of a first sense re-glossed since (zh:直走 for straight) is listed through
     // ZH_RENAMES by lookupKey and served by 开始复习, so 练习 → resolves it the same way
     const legacy = wordByEn.get(key) || (lg === "zh" && ZH_RENAMES[key] ? wordByEn.get(ZH_RENAMES[key]) : undefined);
-    if (legacy) { if (lg !== lang) changeLanguage(lg); practiceWord(legacy, lg); }
+    if (legacy) practiceWord(legacy, lg);
+  }
+  function reviewOne(id: string) {
+    const req = ++sourceReq.current;
+    resolveReviewRefs([id]).then(refs => {
+      if (!refs.length || req !== sourceReq.current) return;
+      setReviewRefs(refs); setReviewKeys(refs.map(r => r.key)); setReviewDueTotal(0);
+      setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
+      setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
+      setView("learn"); setRunning(true);
+      setTimeout(() => input.current?.focus(), 40);
+    }).catch(() => {});
   }
   // the click moved focus to the button; refocusing the input would run its onFocus,
   // which sets running again, so only a start gives the focus back
