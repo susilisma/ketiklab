@@ -1,0 +1,43 @@
+From 3cc35e5dde19a9d072266b200a5064d893be7a57 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:13:45 +0000
+Subject: [PATCH 01/14] fix(late-dict): a topic word already slipped on is not
+ swapped for the saved dictionary either
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The saved dictionary file that arrives after words.json waits for the next word boundary while
+the card is touched (bbfe207), and cardTouched read the letters in the box: after a first slip
+in strict mode the box is rolled back to empty 350 ms later, so a learner looking at the word
+before retyping it had the list swapped under them there and then (f1 s3 L2: "ax" on achieve,
+en-core arrives at 1.8 s, the card shows "said" with the lapse and 错词本 entry already filed
+for achieve). A slip noted on the word counts as the card being in use; hadWrong is reset by
+every path that leaves the word, so the hold ends at the boundary as before.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit 81da7184c0dfee78f2e042c8766e3f3c94f4eef1)
+---
+ src/App.tsx | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 62065bb..99991c5 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -512,8 +512,10 @@ export default function Home() {
+   // a saved dictionary whose file arrived while a topic word was being typed: applied when the
+   // card moves on (advanceOrFinishChapter), dropped once another list has been chosen
+   const lateDict = useRef<(() => void) | null>(null);
+-  // letters on the card (the App box, the 打拼音 box) or the done window still open
+-  const cardTouched = () => typedRef.current !== "" || finishing.current || !!document.querySelector<HTMLInputElement>(".zh-typebox")?.value;
++  // letters on the card (the App box, the 打拼音 box), the done window still open, or a slip
++  // already noted: after a strict-mode first slip the box is rolled back to empty, and the list
++  // was swapped under the learner retyping the word their lapse was just filed for
++  const cardTouched = () => typedRef.current !== "" || finishing.current || hadWrong.current || !!document.querySelector<HTMLInputElement>(".zh-typebox")?.value;
+   // the storage listener (mounted once) reaches this render's favListChanged through it
+   const favListChangedRef = useRef<(remaining: PracticeItem[]) => void>(() => {}); favListChangedRef.current = favListChanged;
+   const flashToken = useRef(0);
+-- 
+2.43.0
+

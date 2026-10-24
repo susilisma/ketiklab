@@ -1,0 +1,91 @@
+From 47d20e19feceeb4f2fa63d72ae54d87bf381ad67 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:00:22 +0000
+Subject: [PATCH 08/14] =?UTF-8?q?fix(choose-rung):=20the=20keys=201?=
+ =?UTF-8?q?=E2=80=934=20pick=20the=20option=20in=20that=20position,=20as?=
+ =?UTF-8?q?=20an=20IME=20candidate=20row=20does?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The 选汉字 rung offered four hanzi buttons and nothing else: a keyboard learner had to Tab
+through them to reach the one they could read at a glance, and the rung that rehearses picking
+an IME candidate did not take the digit every IME takes. A window keydown listener, mounted only
+while the rung is up, maps 1–4 to the options in order and runs the same pick as a click (clock
+resume, speak, pass or miss); it steps aside when the focus is in a field, a select or a dialog,
+and ignores modifier chords and key repeat. The buttons carry aria-keyshortcuts for readers.
+Verified in headless Chromium: pressing the digit of the right option passes the word, a wrong
+digit marks the button and clears after 420 ms, exactly as the clicks do; the baseline ignored
+every digit.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit e516917a48bef0ea97444274407b85494e76d091)
+---
+ src/ZhSteps.tsx | 42 +++++++++++++++++++++++++++++++-----------
+ 1 file changed, 31 insertions(+), 11 deletions(-)
+
+diff --git a/src/ZhSteps.tsx b/src/ZhSteps.tsx
+index bb7f006..49e8e7c 100644
+--- a/src/ZhSteps.tsx
++++ b/src/ZhSteps.tsx
+@@ -237,6 +237,34 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
+     return all.sort((a, b) => ((seed + a.charCodeAt(0)) % 7) - ((seed + b.charCodeAt(0)) % 7));
+   }, [pool, word]);
+ 
++  const pick = (o: string) => {
++    if (picked === word) return;
++    // a pick is the learner's first move on the card: the clock starts (or resumes after a
++    // pause) as a key into the pinyin box does — the header used to say 按任意键开始 and the
++    // clock to read 00:00 through every wrong pick until the right one passed the word
++    onResume();
++    setPicked(o);
++    if (o === word) { onSpeak(); onPass(); }
++    else { onMiss(); setTimeout(() => setPicked(null), 420); }
++  };
++  const pickRef = useRef(pick); pickRef.current = pick;
++  // 1–4 pick the option in that position, as an IME candidate row does: a keyboard user had to
++  // Tab through the four buttons to reach the one they could read at a glance
++  useEffect(() => {
++    if (step !== "choose") return;
++    const onKey = (e: KeyboardEvent) => {
++      if (e.ctrlKey || e.metaKey || e.altKey || e.repeat || e.key < "1" || e.key > "4") return;
++      const el = document.activeElement as HTMLElement | null;
++      if (el && (el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable || el.closest("[role=dialog]"))) return;
++      const o = options[Number(e.key) - 1];
++      if (!o) return;
++      e.preventDefault();
++      pickRef.current(o);
++    };
++    window.addEventListener("keydown", onKey);
++    return () => window.removeEventListener("keydown", onKey);
++  }, [step, options]);
++
+   if (step === "read") {
+     return <div className="zh-step">
+       <button className="zh-go" onClick={onPass}>
+@@ -250,19 +278,11 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
+     return <div className="zh-step">
+       {/* the choices are hanzi whatever the interface language: a screen reader reads them as Chinese */}
+       <div className="zh-options" lang="zh-CN">
+-        {options.map(o => <button
++        {options.map((o, i) => <button
+           key={o}
+           className={picked === o ? (o === word ? "ok" : "no") : ""}
+-          onClick={() => {
+-            if (picked === word) return;
+-            // a pick is the learner's first move on the card: the clock starts (or resumes after a
+-            // pause) as a key into the pinyin box does — the header used to say 按任意键开始 and the
+-            // clock to read 00:00 through every wrong pick until the right one passed the word
+-            onResume();
+-            setPicked(o);
+-            if (o === word) { onSpeak(); onPass(); }
+-            else { onMiss(); setTimeout(() => setPicked(null), 420); }
+-          }}>{o}</button>)}
++          aria-keyshortcuts={String(i + 1)}
++          onClick={() => pick(o)}>{o}</button>)}
+       </div>
+       <p className="zh-tip">{zhStepHint("choose", uiLang)}</p>
+     </div>;
+-- 
+2.43.0
+

@@ -1,0 +1,122 @@
+From 96f30f8e2a3c8277862134b591a7b62cffac4edb Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:07:09 +0000
+Subject: [PATCH 11/14] fix(cloud): merging a device into an account whose
+ profile could not be read keeps the account's name instead of blanking it
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+loadProfile answered null both for "no profile row" and for "the read failed", so on a device
+linked to another account, 合并进这个账号 for a signed-in account whose profiles read had hit a
+503 wrote ketiklab-name "" into that account's progress row, showed Pelajar in the header and
+reported the merge as done. A failed read is now undefined, Account remembers that the name is
+unknown, and linkThisDevice then keeps the name the account's row already carries (none, for
+an account without a row) in the row, in storage and in the header.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit f10c217d44b9d9b56cdb37fe9a6904cb17180a6e)
+---
+ src/Account.tsx    | 11 +++++++++--
+ src/Membership.tsx |  2 +-
+ src/cloud.ts       | 13 +++++++++----
+ 3 files changed, 19 insertions(+), 7 deletions(-)
+
+diff --git a/src/Account.tsx b/src/Account.tsx
+index e1aca7c..a8e9a5d 100644
+--- a/src/Account.tsx
++++ b/src/Account.tsx
+@@ -164,6 +164,8 @@ export function Account({ uiLang, name, onName }: {
+   const [urlErr, setUrlErr] = useState("");
+   const lastUid = useRef<string | undefined>(undefined);
+   const forgetting = useRef(false);
++  // false while the profile could not be read: its name is unknown then, not blank
++  const profKnown = useRef(true);
+   // the "last synced" time in the interface language, not the browser's locale
+   const stamp = () => new Date().toLocaleTimeString(uiLang === "zh" ? "zh-CN" : uiLang === "id" ? "id-ID" : "en-US");
+ 
+@@ -204,6 +206,7 @@ export function Account({ uiLang, name, onName }: {
+       // keeps its name too
+       const untrusted = (!!linked && linked !== uid) || (!linked && !sessionTyped(uid));
+       const prof = await loadProfile(uid);
++      profKnown.current = prof !== undefined;
+       // the first link of a typed sign-in outlasts the panel: leaving it during the profile
+       // round-trip used to abandon the link, and autoPush never links a device on its own,
+       // so nothing was backed up for the rest of the session and nothing said so
+@@ -356,11 +359,15 @@ export function Account({ uiLang, name, onName }: {
+     if (!session) return;
+     setErr(""); setMsg(syncingText(uiLang)); setBusy(true);
+     try {
+-      const done = await withinSyncWait(linkThisDevice(session.user.id, how, profName));
++      // profile unreadable: the account's name is whatever its row holds (linkThisDevice leaves it in storage), not ""
++      const own = profKnown.current ? profName : null;
++      const done = await withinSyncWait(linkThisDevice(session.user.id, how, own));
+       if (done === "reloading") return;
+       if (!signedInAs(session.user.id)) { setMsg(""); return; }
+       // no reload on this path, so the header would keep the previous user's name
+-      onName(profName);
++      const settled = own ?? collectLocal()["ketiklab-name"];
++      onName(typeof settled === "string" ? settled : "");
++      if (own === null) setProfName(typeof settled === "string" ? settled : "");
+       setForeign(false);
+       setSyncedAt(stamp());
+       setMsg(done === "uploaded"
+diff --git a/src/Membership.tsx b/src/Membership.tsx
+index fd748a7..9928618 100644
+--- a/src/Membership.tsx
++++ b/src/Membership.tsx
+@@ -119,7 +119,7 @@ function useProfile(uid: string | undefined) {
+   useEffect(() => {
+     if (!uid) { setProfile(null); return; }
+     let alive = true;
+-    loadProfile(uid).then(p => { if (alive) setProfile(p); });
++    loadProfile(uid).then(p => { if (alive) setProfile(p ?? null); });
+     return () => { alive = false; };
+   }, [uid]);
+   return profile;
+diff --git a/src/cloud.ts b/src/cloud.ts
+index 4e92fdb..6603c95 100644
+--- a/src/cloud.ts
++++ b/src/cloud.ts
+@@ -185,10 +185,12 @@ export async function resetPassword(email: string) {
+   if (error) throw error;
+ }
+ 
+-export async function loadProfile(userId: string): Promise<Profile | null> {
++/** null: the account has no profile row. undefined: could not ask — the two used to be one null, and a
++ *  merge into an account whose profile read had failed wrote "" over the name its row held. */
++export async function loadProfile(userId: string): Promise<Profile | null | undefined> {
+   const { data, error } = await supabase
+     .from("profiles").select("id,name").eq("id", userId).maybeSingle();
+-  if (error) return null;
++  if (error) return undefined;
+   return (data as Profile) ?? null;
+ }
+ 
+@@ -479,10 +481,12 @@ export function finishPendingRestore(): boolean {
+   if (!p || session?.user.id !== p.uid || linkedUid() !== p.uid) return false;
+   p.run(); return true;
+ }
+-export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
++// profileName null: the profile could not be read, so the name the account's row carries stands in
++export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName: string | null = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
+   const r = await loadProgress(userId);
+   if (!r.ok) throw new Error("cloud read failed: " + r.error);
+   const cloud = await normalized(r.data ?? {});
++  profileName ??= typeof cloud["ketiklab-name"] === "string" ? cloud["ketiklab-name"] : "";
+   // through the same decision as in pushProgress: a device whose own key migration is still
+   // fetching a dictionary would otherwise upload the old shape beside the cloud's new one
+   const raw = collectLocal();
+@@ -492,7 +496,8 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
+   // wasLinked means the name stored here is another person's: the account's own name
+   // (even none) replaces it, or a nameless account was named after the previous user
+   // on every one of its devices
+-  if (wasLinked) local["ketiklab-name"] = profileName;
++  // (written to storage too: on the paths that do not reload, Account reads the name there)
++  if (wasLinked) { local["ketiklab-name"] = profileName; try { localStorage.setItem("ketiklab-name", profileName); } catch { /* ignore */ } }
+   // a reload is only worth it when the marker stuck: with storage refused, the next
+   // visit would link and reload all over again
+   if (how === "replace") {
+-- 
+2.43.0
+

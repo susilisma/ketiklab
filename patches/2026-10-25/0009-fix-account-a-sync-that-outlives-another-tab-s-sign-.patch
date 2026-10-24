@@ -1,0 +1,59 @@
+From a0eeb48f4ba613447d4ef5cdf12d72bb81f7f67d Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:05:18 +0000
+Subject: [PATCH 09/14] =?UTF-8?q?fix(account):=20a=20sync=20that=20outlive?=
+ =?UTF-8?q?s=20another=20tab's=20sign-out=20no=20longer=20leaves=20the=20s?=
+ =?UTF-8?q?ign-in=20form's=20button=20on=20=E5=A4=84=E7=90=86=E4=B8=AD?=
+ =?UTF-8?q?=E2=80=A6=20and=20disabled?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+Page A pressed 立即同步; while its progress read was in flight, page B signed out. A got the
+SIGNED_OUT and showed the sign-in form, but busy was not among the states the uid change
+resets, so until A's own sync ended (up to the 15 s bound) the form's button read Memproses…
+and was disabled. The uid-change reset now clears busy as well, and the finally of pushNow /
+chooseLink only clears it while this account is still the one signed in: a sign-in typed in
+the meantime owns the flag by then.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit 846eb2b8b3a2d621e76f9649d43c986c0445e7a5)
+---
+ src/Account.tsx | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/src/Account.tsx b/src/Account.tsx
+index 213c420..dde0196 100644
+--- a/src/Account.tsx
++++ b/src/Account.tsx
+@@ -172,7 +172,8 @@ export function Account({ uiLang, name, onName }: {
+     const cur = session?.user.id;
+     if (lastUid.current !== cur) {
+       lastUid.current = cur;
+-      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setLinkOnly(false); setCloudNewer(false);
++      // busy too: a sync still running when another tab signed out kept the sign-in form's button on 处理中… and disabled
++      setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setLinkOnly(false); setCloudNewer(false); setBusy(false);
+     }
+     if (!session) return;
+     let alive = true;
+@@ -316,7 +317,7 @@ export function Account({ uiLang, name, onName }: {
+       setSyncedAt(stamp());
+       setMsg(T("已同步。", "Tersinkron.", "Synced.", uiLang));
+     } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
+-    finally { setBusy(false); }
++    finally { if (signedInAs(uid)) setBusy(false); } // signed out meanwhile: the reset above cleared it, and a sign-in typed since may own it now
+   }
+ 
+   // Bring what the cloud has onto this device. Reloads, because App would write its
+@@ -350,7 +351,7 @@ export function Account({ uiLang, name, onName }: {
+             "This device's progress has been uploaded to your account.", uiLang)
+         : T("已同步。", "Tersinkron.", "Synced.", uiLang));
+     } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
+-    finally { setBusy(false); }
++    finally { if (signedInAs(session.user.id)) setBusy(false); }
+   }
+ 
+   const noteText = note === "restored"
+-- 
+2.43.0
+

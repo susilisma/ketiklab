@@ -1,0 +1,36 @@
+From 0df3310ca4d4fe9a35dc77fcd8f11b07e1cd91ab Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 21:59:32 +0000
+Subject: [PATCH 06/14] fix(promote): a manual flush releases the queued
+ readings with the words, not one of them
+
+plan() released at most one reading on every fixed-count run, so the "flush the
+whole queue" dispatch (count 999) emptied the words queue and left all but one
+reading behind, to be taken one per run. A count that covers the whole words queue
+is that flush, and now takes the readings too; a smaller manual count still
+releases one reading, and scheduled runs are unchanged.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit d5acf0ecaa3f828a438f5225d0eff420ce7d4a9b)
+---
+ scripts/promote.mjs | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/scripts/promote.mjs b/scripts/promote.mjs
+index 372562d..7e44012 100644
+--- a/scripts/promote.mjs
++++ b/scripts/promote.mjs
+@@ -52,7 +52,9 @@ function plan({
+ }) {
+   if (fixedCount !== null) {
+     const words = Math.max(0, Math.min(queuedWords, Math.floor(fixedCount)));
+-    return { words, readings: Math.min(queuedReadings, 1), wordsHours: null, readingsHours: null };
++    // a count that covers the whole words queue is the "flush the whole queue" dispatch, so the
++    // readings go with it; a smaller manual count releases one reading, as it always did
++    return { words, readings: words === queuedWords ? queuedReadings : Math.min(queuedReadings, 1), wordsHours: null, readingsHours: null };
+   }
+   // a negative clock skew must never turn into a negative slice
+   const clamp = (h) => Math.min(Math.max(h, 0), maxCatchupHours);
+-- 
+2.43.0
+

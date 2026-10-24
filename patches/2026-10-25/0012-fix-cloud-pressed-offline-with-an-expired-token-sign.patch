@@ -1,0 +1,48 @@
+From 5fab4c54eacc58a82a6efb29ee559ce8acf40a15 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:24:18 +0000
+Subject: [PATCH 12/14] =?UTF-8?q?fix(cloud):=20=E9=80=80=E5=87=BA=E7=99=BB?=
+ =?UTF-8?q?=E5=BD=95=20pressed=20offline=20with=20an=20expired=20token=20s?=
+ =?UTF-8?q?igns=20the=20device=20out=20instead=20of=20failing=20in=20silen?=
+ =?UTF-8?q?ce?=
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+signOut() ignored the {error} auth-js returns when the refresh behind its sign-out cannot
+reach the server: after the retry window the card simply came back, the session stayed in
+storage, and once the network returned the device refreshed the token and pushed progress
+as the account again. auth-js itself drops the session before returning that error when the
+token is still live, so the expired case now does the same: the stored session is removed
+and the page reloaded, which lands on the site signed out; the sign-out mark is left for the
+next load, which ends it the way auth-js ends a session it could not tell the server about.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit 46085fa9479e8611f872a4eb0a131f9174d51816)
+---
+ src/cloud.ts | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
+
+diff --git a/src/cloud.ts b/src/cloud.ts
+index 6603c95..a5e25da 100644
+--- a/src/cloud.ts
++++ b/src/cloud.ts
+@@ -175,7 +175,14 @@ export async function signOut() {
+   if (uid && linkedUid() === uid) {
+     try { await Promise.race([pushProgress(uid, undefined, false), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
+   }
+-  try { await supabase.auth.signOut(); } catch { /* ignore */ }
++  // offline with a token past its expiry auth-js cannot refresh and returns the error with the session kept (with
++  // a live token it drops the session itself before returning the error): 退出登录 was pressed, so the session goes
++  // from this device either way. Dropped from storage and the page reloaded; the sign-out mark stays, and the next
++  // load tries the server again. Without this the card came back in silence and the next tick synced on.
++  let failed = false;
++  try { failed = !!(await supabase.auth.signOut()).error; } catch { failed = true; }
++  const key = `sb-${new URL(SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
++  try { if (failed && localStorage.getItem(key)) { localStorage.removeItem(key); location.reload(); } } catch { /* ignore */ }
+ }
+ 
+ export async function resetPassword(email: string) {
+-- 
+2.43.0
+

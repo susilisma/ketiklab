@@ -1,0 +1,47 @@
+From 9ec5837e6da73845fcfa61a406b376683aa24e2a Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 22:13:45 +0000
+Subject: [PATCH 02/14] fix(pinyin-rung): ENTER skips the word after Escape
+ left the box, as the hint says
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+The 打拼音 hint names ENTER as the skip (7f01198), and the box's own handler skips on it; but
+after Escape, or a tap on the hanzi, the box is blurred and the window handler that takes
+ENTER for the Latin box returned at once on the ladder, where input.current is null (f1 s5
+KP1c: "xu" typed into 学习, Escape, ENTER — nothing). The window handler now reaches the pinyin
+box too, with the same rule as for the Latin box: an empty box is focused, letters in it are
+skipped with the word's lapse.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit 1d25f15985bccd7a04fb8330efb6f87a4d6e32bd)
+---
+ src/App.tsx | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 99991c5..92fbb22 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -593,12 +593,15 @@ export default function Home() {
+       // out of the box; a focused button or link keeps its own ENTER, and the zh rungs
+       // without the App box handle theirs
+       if (e.key === "Enter") {
+-        if (!input.current || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
++        // the 打拼音 box too: its hint names ENTER as the skip, but after Escape or a tap on the
++        // hanzi the box is blurred and its own handler does not see the key
++        const box = input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox");
++        if (!box || (el && el !== document.body && el.closest("button, a, [role=button], summary"))) return;
+         e.preventDefault();
+         // on an untouched card the veil says "press any key to start / continue": ENTER is that
+         // key, not a skip that files a word the learner never tried as a miss and an SRS lapse —
+         // also with the clock running, after 开始 and a click on the page took the focus away
+-        if (!typedRef.current) { input.current.focus(); return; }
++        if (!(input.current ? typedRef.current : box.value)) { box.focus(); return; }
+         if (!e.repeat) skipRef.current(); return;
+       }
+       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
+-- 
+2.43.0
+

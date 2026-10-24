@@ -1,0 +1,37 @@
+From 5ba74d68abeb045b0a6e70ae0dd296f51763e8a8 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sat, 24 Oct 2026 21:59:32 +0000
+Subject: [PATCH 07/14] fix(site): a build that fell back to npm install says
+ so in the run summary
+
+site.yml ran `npm ci || npm install`: when package-lock.json no longer matched
+package.json, npm ci failed and the deploy went on with npm install, which resolves
+versions afresh, and nothing in the run said the deployed bundle was not the
+locked one. The fallback stays, so a drifted lockfile cannot stall the hourly
+content deploy, but it now prints a workflow warning naming the cause.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+(cherry picked from commit a0fb8790f07b60ea6a298392e671891259dbfbdd)
+---
+ .github/workflows/site.yml | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/.github/workflows/site.yml b/.github/workflows/site.yml
+index d00b978..eb3a905 100644
+--- a/.github/workflows/site.yml
++++ b/.github/workflows/site.yml
+@@ -104,7 +104,10 @@ jobs:
+         with:
+           node-version: 22
+       - name: Install
+-        run: npm ci || npm install
++        # the fallback keeps the hourly deploy going when package-lock.json has drifted from
++        # package.json, but that build resolves versions afresh; it is announced in the run
++        # summary rather than passing in silence
++        run: npm ci || { echo "::warning title=package-lock.json out of sync::npm ci failed; built with npm install instead — regenerate the lockfile"; npm install --no-audit --no-fund; }
+       - name: Build
+         run: npm run build
+       - name: Generate language landing pages, library pages and sitemap
+-- 
+2.43.0
+
