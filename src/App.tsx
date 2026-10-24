@@ -471,6 +471,10 @@ export default function Home() {
   const chapterStart = useRef(0);
   const secondsRef = useRef(0);
   const pendingIndex = useRef<number | null>(null);
+  // the chapter that goes with pendingIndex: gotoDictWord / gotoTrioWord / practiceWord write it to
+  // ketiklab-chapters for the restore effect to read back, but a browser whose storage throws
+  // (quota, private mode) kept the write and landed the offset inside chapter 1 of the list
+  const pendingChapter = useRef<number | null>(null);
   // bumped by every choice of list; a dictionary fetch that was started for an
   // older choice sees the mismatch and drops its result instead of applying it
   const sourceReq = useRef(0);
@@ -906,12 +910,13 @@ export default function Home() {
     // a review session is its own list: picking another rung or learning language
     // changes the key but not the words, so the session keeps its place and its tally
     if (reviewKeys) return;
-    const ch = savedChapter(sourceKey);
+    const ch = pendingChapter.current ?? savedChapter(sourceKey);
+    pendingChapter.current = null;
     setChapter(ch);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     skipPositionWrite.current = true;
-    if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; }
+    if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; pendingChapter.current = null; }
     else {
       // a list that lost words since the position was saved: its last word, not a wrap-round;
       // a list still on its way (words.json, a dictionary file) is clamped when it arrives
@@ -1966,7 +1971,7 @@ export default function Home() {
     const saved = (() => { try { return localStorage.getItem("ketiklab-source"); } catch { return null; } })();
     const d = dicts.find(x => x.id === src) ?? dictLoadErrorRef.current ?? (sharesChapterKey(src) ? dicts.find(x => x.id === saved) : undefined);
     if (!d || d.lang === next) return false;
-    sourceReq.current++; pendingIndex.current = null;
+    sourceReq.current++; pendingIndex.current = null; pendingChapter.current = null;
     setLinkedMissing(null); setDictLoadError(null); setGlobalSearch(false);
     setSource("trio"); persistSource("trio");
     return true;
@@ -2021,7 +2026,7 @@ export default function Home() {
     writeLangs(uiLang, lang, byLearn);
   }
   function changeCategory(nextCategory: WordFilter) {
-    sourceReq.current++; pendingIndex.current = null;
+    sourceReq.current++; pendingIndex.current = null; pendingChapter.current = null;
     // a list chosen here is the answer to the "linked list does not exist" banner: it used to
     // stay above the practice card through every later choice until its own button or a reload
     // (and to the "this dictionary failed to load" one, now that the practice card shows it)
@@ -2058,7 +2063,7 @@ export default function Home() {
       } catch { if (req === sourceReq.current) setDictLoadError(d); return; }
       if (req !== sourceReq.current) return;
     }
-    pendingIndex.current = null;
+    pendingIndex.current = null; pendingChapter.current = null;
     setLinkedMissing(null);
     setDictWords(data);
     setSource(d.id);
@@ -2070,7 +2075,7 @@ export default function Home() {
     setTimeout(() => input.current?.focus(), 40);
   }
   function selectFav() {
-    sourceReq.current++; pendingIndex.current = null;
+    sourceReq.current++; pendingIndex.current = null; pendingChapter.current = null;
     setLinkedMissing(null); setDictLoadError(null);
     setSource("fav"); persistSource("fav");
     setGlobalSearch(false);
@@ -2118,7 +2123,7 @@ export default function Home() {
     writeChapter(sourceKey, ch); setChapter(ch);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
-    pendingIndex.current = null;
+    pendingIndex.current = null; pendingChapter.current = null;
     // the word asked for may be the one just slipped on (错词本 练习 →, the library card): a
     // fresh run of it, so the slip is forgotten here too, since setIndex to the same index
     // does not run the [index] reset
@@ -2146,7 +2151,7 @@ export default function Home() {
     setLinkedMissing(null);
     const key = trioChapterKey("all", lang, step);
     if (source === "trio" && key === sourceKey) moveWithinList(gi);
-    else { pendingIndex.current = gi % 20; slipOn.current = ""; writeChapter(key, Math.floor(gi / 20)); }
+    else { pendingIndex.current = gi % 20; pendingChapter.current = Math.floor(gi / 20); slipOn.current = ""; writeChapter(key, pendingChapter.current); }
     setGlobalSearch(false);
     setReviewKeys(null); setCategory("all"); setSource("trio"); persistSource("trio");
     setTyped(""); resetWordRun(); autoSpokenWord.current = null;
@@ -2161,7 +2166,7 @@ export default function Home() {
     const gi = data.findIndex(e => e.name === key); if (gi < 0) return;
     setLinkedMissing(null);
     if (source === d.id) moveWithinList(gi);
-    else { pendingIndex.current = gi % 20; slipOn.current = ""; writeChapter(d.id, Math.floor(gi / 20)); }
+    else { pendingIndex.current = gi % 20; pendingChapter.current = Math.floor(gi / 20); slipOn.current = ""; writeChapter(d.id, pendingChapter.current); }
     setGlobalSearch(false);
     setDictWords(data); setReviewKeys(null); setSource(d.id); persistSource(d.id);
     setTyped(""); resetWordRun(); autoSpokenWord.current = null;
@@ -2309,8 +2314,9 @@ export default function Home() {
     if (source === "trio" && key === sourceKey) moveWithinList(gi);
     else {
       pendingIndex.current = gi % 20;
+      pendingChapter.current = Math.floor(gi / 20);
       slipOn.current = "";
-      writeChapter(key, Math.floor(gi / 20));
+      writeChapter(key, pendingChapter.current);
       if (cat !== category) setCategory(cat);
       if (source !== "trio") { setSource("trio"); persistSource("trio"); }
     }
