@@ -1524,7 +1524,9 @@ export default function Home() {
   }
   // the list in hand names a word no loaded dictionary does: a favourite from a dictionary not
   // fetched this session (its glosses are in the snapshot) was printed on the finish card as its raw
-  // key, "en:said" with no meaning. Not consulted by the 错词本 list, which fetches that dictionary
+  // key, "en:said" with no meaning — or, when a topic word shares the headword, as that topic word:
+  // the dictionary favourite air (water) missed was printed as udara · 空气, lookupKey's legacy
+  // fallback. Not consulted by the 错词本 list, which fetches that dictionary
   const itemInfo = (id: string): KeyInfo | undefined => {
     const it = learnItems.find(i => `${i.lang}:${i.key}` === id);
     if (!it) return undefined;
@@ -2502,7 +2504,7 @@ export default function Home() {
           <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
-          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const info = lookupKey(k) || itemInfo(k); return <span key={k}><b lang={langAttr(info?.lang)}>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined} lang={langAttr(info?.meaningLang)}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
+          {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const named = lookupKey(k); const info = named && !named.legacy ? named : itemInfo(k) || named; return <span key={k}><b lang={langAttr(info?.lang)}>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined} lang={langAttr(info?.meaningLang)}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
             {/* after a review: practise its missed words again or leave it; the chapter buttons belong to a chapter */}
             {!reviewKeys && <button onClick={retryChapter}>{uiLang === "zh" ? "重练本章" : uiLang === "id" ? "Ulangi bab" : "Retry chapter"}</button>}
