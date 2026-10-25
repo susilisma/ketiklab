@@ -1,0 +1,41 @@
+From 4150c2871ac8969583bff49d67153369a38497f3 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 25 Oct 2026 22:04:14 +0000
+Subject: [PATCH 2/6] fix(late-dict): a held-back dictionary dropped for
+ another choice no longer stays the saved list
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With a saved dictionary held back to the word boundary (its file came while a
+topic word was being typed), a chapter button, a library word or a review
+chosen before that boundary dropped it — but ketiklab-source still named it,
+so the next load reopened the dictionary under a learner who had gone on with
+the topic words. The boundary now saves the list in hand, as the fetch handler
+does when such a choice came before the file.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ src/App.tsx | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/src/App.tsx b/src/App.tsx
+index 96eeb64..a2acd5b 100644
+--- a/src/App.tsx
++++ b/src/App.tsx
+@@ -1640,7 +1640,11 @@ export default function Home() {
+   function advanceOrFinishChapter(wasWrong: boolean) {
+     // the saved dictionary held back while this word was typed opens now, at the boundary,
+     // unless a list was chosen in the meantime (the [sourceKey] effect places its word)
+-    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current && open()) return; }
++    // dropped because another list was chosen meanwhile (a chapter button, a word from the
++    // library, a review): the list in hand is what the next visit reopens, as when the file
++    // arrives after such a choice (loadManifest) — the held-back dictionary used to stay saved
++    // and came back on the next load, under a learner who had gone on with the topic words
++    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { if (open()) return; } else persistSource(sourceRef.current); }
+     // a review session keeps its own tally: exitReview clears it, so the summary
+     // after 退出复习 never counts words from other lists
+     setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
+-- 
+2.43.0
+

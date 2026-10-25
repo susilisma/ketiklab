@@ -1,0 +1,36 @@
+From bdcbccfa388cf2c36dc3197a8f90891c1694d342 Mon Sep 17 00:00:00 2001
+From: Claude <noreply@anthropic.com>
+Date: Sun, 25 Oct 2026 22:05:44 +0000
+Subject: [PATCH 4/6] fix(daily-words): a manual run asked for 0 words is
+ refused by the generator, not turned into 100
+
+daily-words.yml passed `inputs.count || '100'` to the generator. In an expression a number
+input of 0 is falsy, so a dispatch with count=0 fell through to the default and wrote 100 rows
+into queue/words.json, while build-trio-queue.py:36 refuses a count below 1 with a message
+saying so. The count now goes through format(), which keeps 0 as the string "0", the same
+construct site.yml:51 already uses for WORDS_PER_RUN; a scheduled run, where inputs.count is
+empty, still gets 100. The workflow still runs only by hand.
+
+Co-Authored-By: Claude Fable 5.1 <noreply@anthropic.com>
+---
+ .github/workflows/daily-words.yml | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/.github/workflows/daily-words.yml b/.github/workflows/daily-words.yml
+index 9bc0f30..d7542fa 100644
+--- a/.github/workflows/daily-words.yml
++++ b/.github/workflows/daily-words.yml
+@@ -48,7 +48,9 @@ jobs:
+           python -m wn download omw-id:1.4 || true
+       - name: Generate and commit the batch
+         env:
+-          WORDS: ${{ inputs.count || '100' }}
++          # format(): a number input of 0 is falsy in an expression, so `inputs.count || '100'`
++          # turned a dispatch asking for 0 words into 100; a scheduled run still gets 100
++          WORDS: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.count) || '100' }}
+         run: |
+           git config user.name "ketiklab-bot"
+           git config user.email "bot@users.noreply.github.com"
+-- 
+2.43.0
+
