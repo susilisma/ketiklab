@@ -1640,7 +1640,11 @@ export default function Home() {
   function advanceOrFinishChapter(wasWrong: boolean) {
     // the saved dictionary held back while this word was typed opens now, at the boundary,
     // unless a list was chosen in the meantime (the [sourceKey] effect places its word)
-    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current && open()) return; }
+    // dropped because another list was chosen meanwhile (a chapter button, a word from the
+    // library, a review): the list in hand is what the next visit reopens, as when the file
+    // arrives after such a choice (loadManifest) — the held-back dictionary used to stay saved
+    // and came back on the next load, under a learner who had gone on with the topic words
+    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { if (open()) return; } else persistSource(sourceRef.current); }
     // a review session keeps its own tally: exitReview clears it, so the summary
     // after 退出复习 never counts words from other lists
     setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
