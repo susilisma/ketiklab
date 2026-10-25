@@ -514,7 +514,7 @@ export default function Home() {
   const leftByKey = useRef(false);
   // a saved dictionary whose file arrived while a topic word was being typed: applied when the
   // card moves on (advanceOrFinishChapter), dropped once another list has been chosen
-  const lateDict = useRef<(() => void) | null>(null);
+  const lateDict = useRef<(() => boolean) | null>(null);
   // letters on the card (the App box, the 打拼音 box), the done window still open, or a slip
   // already noted: after a strict-mode first slip the box is rolled back to empty, and the list
   // was swapped under the learner retyping the word their lapse was just filed for
@@ -724,7 +724,12 @@ export default function Home() {
             // the file came after words.json and the learner is already typing a topic word: the
             // list used to be swapped under the card there and then, the half-typed word replaced
             // and its letters wiped. The dictionary takes over at the next word boundary instead
-            if (cardTouched()) { lateDict.current = () => { if (d.lang === langRef.current) apply(); }; return; }
+            // ...and at that boundary the same rule as here: a language picked in the meantime leaves a
+            // list of another language unopened (a saved one is forgotten, as above) — a mismatch that
+            // was not picked (a zh learner's ?lib=en-core, saved by an earlier visit) opens, as it does
+            // when nothing was typed. It says whether it opened: the boundary used to return either way,
+            // so the word just passed was neither counted nor left behind until it was typed a second time
+            if (cardTouched()) { lateDict.current = () => { if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return false; } apply(); return true; }; return; }
             apply();
           // the file of this one list could not be fetched: the banner names it and its retry
           // fetches it again (selectDict); it used to be reported as the whole set of exam
@@ -1635,7 +1640,7 @@ export default function Home() {
   function advanceOrFinishChapter(wasWrong: boolean) {
     // the saved dictionary held back while this word was typed opens now, at the boundary,
     // unless a list was chosen in the meantime (the [sourceKey] effect places its word)
-    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { open(); return; } }
+    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current && open()) return; }
     // a review session keeps its own tally: exitReview clears it, so the summary
     // after 退出复习 never counts words from other lists
     setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
