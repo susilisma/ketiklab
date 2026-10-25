@@ -1300,6 +1300,11 @@ export default function Home() {
     it.meaning = resolveMeaning(it)?.text ?? "";
     return it;
   };
+  // the library grid and the 🌐 results: a tap on one of these cards opens the word, it plays
+  // nothing, so the "tap to hear" call to action a row without a transcription carries on the
+  // practice card (where ▶ is beside it) is not true here — the language label stands alone
+  const stripHear = (s: string) => { const hear = " · " + TX("点击播放标准发音", "ketuk untuk mendengar", "tap to hear pronunciation", uiLang); const i = s.indexOf(hear); return i < 0 ? s : s.slice(0, i) + s.slice(i + hear.length); };
+  const gridSub = (w: Word, lg: Lang) => stripHear(trioItem(w, lg).sub);
   // No branch may yield an empty list: `item` is dereferenced unguarded below.
   // ladderWords cannot be empty here — `ready` means words.json loaded.
   // a topic favourite froze "点击播放标准发音" in the interface language of the day it was
@@ -1562,7 +1567,7 @@ export default function Home() {
       const text = wordValue(w, lang), hay = `${w.en} ${w.id} ${w.zh}`;
       if (!hay.toLowerCase().includes(gq)) continue;
       const m = listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" });
-      globalResults.push({ src: "trio", key: TRIO + w.en, text, sub: trioItem(w, lang).sub, meaning: m.text, meaningLang: m.lang, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
+      globalResults.push({ src: "trio", key: TRIO + w.en, text, sub: gridSub(w, lang), meaning: m.text, meaningLang: m.lang, note: m.note, lang, rank: rankMatch(text + " " + w.en, hay, gq) });
     }
     for (const d of dicts) {
       const data = allDicts[d.id]; if (!data) continue;
@@ -2556,8 +2561,8 @@ export default function Home() {
                       ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => { if (r.src !== "trio") { gotoDictWord(r.src, r.key); return; } const w = trioOf(r.key); if (w) gotoTrioWord(w); }}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3 lang={htmlLang(r.lang)}>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note, label: r.label, lang: r.meaningLang })}</div></button>)}</div>
                       : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
           : dictInfo || favList
-          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${it.lang}`} key={`${it.lang}-${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3 lang={htmlLang(it.lang)}>{it.text}</h3><p>{it.sub}</p><em>{dictInfo ? dictName(dictInfo) : it.dict || TX("主题词汇", "Kosakata Tematik", "Words by Topic", uiLang)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>
-          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3 lang={htmlLang(lang)}>{wordValue(w, lang)}</h3><p>{trioItem(w, lang).sub}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
+          ? <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${it.lang}`} key={`${it.lang}-${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3 lang={htmlLang(it.lang)}>{it.text}</h3><p>{stripHear(it.sub || "")}</p><em>{dictInfo ? dictName(dictInfo) : it.dict || TX("主题词汇", "Kosakata Tematik", "Words by Topic", uiLang)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>
+          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3 lang={htmlLang(lang)}>{wordValue(w, lang)}</h3><p>{gridSub(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
         <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p><a href={DATA + "SOURCES.md"} target="_blank" rel="noreferrer">Open English WordNet · Chinese Open Wordnet · Wordnet Bahasa · wordfreq · CMUdict · pypinyin</a></p><span>{uiLang === "zh" ? "各词库的具体来源与授权见上方链接；其中托福词表取自第三方备考材料，未获再分发授权。" : uiLang === "id" ? "Sumber dan lisensi tiap kamus ada di tautan di atas; daftar TOEFL berasal dari materi pihak ketiga tanpa izin distribusi." : "Per-library sources and licences are linked above; the TOEFL list comes from third-party material with no redistribution licence."}</span></div>
       </Panel>}
 
