@@ -48,7 +48,9 @@ jobs:
           python -m wn download omw-id:1.4 || true
       - name: Generate and commit the batch
         env:
-          WORDS: ${{ inputs.count || '100' }}
+          # format(): a number input of 0 is falsy in an expression, so `inputs.count || '100'`
+          # turned a dispatch asking for 0 words into 100; a scheduled run still gets 100
+          WORDS: ${{ github.event_name == 'workflow_dispatch' && format('{0}', inputs.count) || '100' }}
         run: |
           git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
