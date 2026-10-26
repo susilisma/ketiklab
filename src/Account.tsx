@@ -173,7 +173,12 @@ export function Account({ uiLang, name, onName }: {
   const forgetting = useRef(false);
   // false while the profile could not be read: its name is unknown then, not blank
   const profKnown = useRef(true);
+  // whether the name field was typed in since the profile was read: with the profile unreadable
+  // the field has nothing to be compared with, so only an edit is worth a save
+  const nameEdited = useRef(false);
   // the "last synced" time in the interface language, not the browser's locale
+  // the prefix of the name field's failure line: a later save that succeeds clears that line and no other
+  const notSaved = T("名字没有保存：", "Nama tidak tersimpan: ", "The name was not saved: ", uiLang);
   const stamp = () => new Date().toLocaleTimeString(uiLang === "zh" ? "zh-CN" : uiLang === "id" ? "id-ID" : "en-US");
 
   useEffect(() => {
@@ -201,6 +206,8 @@ export function Account({ uiLang, name, onName }: {
       lastUid.current = cur;
       // busy too: a sync still running when another tab signed out kept the sign-in form's button on 处理中… and disabled
       setProfName(""); setSyncedAt(""); setMsg(""); setErr(""); setForeign(false); setLinkOnly(false); setCloudNewer(false); setBusy(false);
+      // unknown until the read below answers: a blur during a stalled read used to compare with the reset "" and blank the name
+      profKnown.current = false;
     }
     if (!session) return;
     let alive = true;
@@ -438,11 +445,14 @@ export function Account({ uiLang, name, onName }: {
 
         <label className="acct-field">
           <span>{T("显示名字", "Nama tampilan", "Display name", uiLang)}</span>
-          <input value={shownName} maxLength={24} readOnly={untrustedView} onChange={e => { if (!untrustedView) onName(e.target.value); }}
-            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id && name.trim() !== profName) saveName(session.user.id, name.trim()).then(() => setProfName(name.trim()))
+          <input value={shownName} maxLength={24} readOnly={untrustedView} onChange={e => { if (!untrustedView) { nameEdited.current = true; onName(e.target.value); } }}
+            // with the profile unreadable (offline) profName is "", not the account's name: a bare focus and blur used to
+            // try a save against it, fail, and put that "" over the name the device held — the header said 学习者 and the
+            // next push carried the blank name to the cloud. Then only an edit is saved, and a failure keeps the edit
+            onBlur={() => { if (session && !untrustedView && linkedUid() === session.user.id && (profKnown.current ? name.trim() !== profName : nameEdited.current)) saveName(session.user.id, name.trim()).then(() => { nameEdited.current = false; setProfName(name.trim()); setErr(e => e.startsWith(notSaved) ? "" : e); })
               // not saved: the field, the header and storage go back to the account's name now and say so — kept, the new name
               // stood until the next visit to the panel, whose profile read put the old one back without a word
-              .catch(e2 => { onName(profName); setErr(T("名字没有保存：", "Nama tidak tersimpan: ", "The name was not saved: ", uiLang) + humanError(e2, uiLang)); }); }}
+              .catch(e2 => { if (profKnown.current) onName(profName); setErr(notSaved + humanError(e2, uiLang)); }); }}
             placeholder={T("你的名字", "Nama kamu", "Your name", uiLang)} />
         </label>
 
