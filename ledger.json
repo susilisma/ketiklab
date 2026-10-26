@@ -346,10 +346,10 @@
    "fingerprint": "promote-flush-one-reading",
    "title": "promote.mjs 手动 flush 每次只放 1 篇阅读（promote.mjs:48）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "补丁已验证，受 12 项上限结转：patches/2026-10-26/0005",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "a60cdae",
+   "reason": "补丁 0005 今日合入；E 临时副本 3 词 3 篇 flush → 全放，旧脚本只放 1 篇",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "paren-headwords-untypable",
@@ -1183,10 +1183,10 @@
    "fingerprint": "zh-choose-no-number-keys",
    "title": "选汉字档不支持 1–4 数字键选项，键盘用户须 Tab 四次",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "补丁已验证（含今日折入的「对话框打开时 1–4 不生效」修正，查找者 A / C 各自独立发现），受 12 项上限结转：patches/2026-10-26/0001",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "4f170df",
+   "reason": "补丁 0001 今日合入（查找者 A / C 浏览器复验：1–4 选对应位置，对话框打开时无效）",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "ladder-degrades-when-zh-pinyin-missing",
@@ -1716,8 +1716,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "ZhSteps 加 onActivity 接 setRunning，暂停时 blur 框",
-   "date": "2026-09-21"
+   "reason": "ZhSteps 加 onActivity 接 setRunning，暂停时 blur 框 ｜ 10-27 A：打拼音键与选字已通过 onResume 启动时钟、暂停后下一键恢复并判分（与拉丁框一致）；认读仍不开钟；剩余为打磨",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "typing-focus-stale-on-unmount",
@@ -1815,8 +1815,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "4 处 aria-label",
-   "date": "2026-09-21"
+   "reason": "4 处 aria-label ｜ 10-27 B：对话框已有 role=dialog aria-modal aria-labelledby；搜索框 / 阅读框 / 拼音框仍只靠 placeholder",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "settings-data-note-contradicts-account",
@@ -2119,10 +2119,10 @@
    "fingerprint": "session-hint-collapses-to-ellipsis-375",
    "title": "375 会话栏提示缩成「…」/「PR…」，中文档位无遮罩时没有别的提示",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "手机用短字符串（按任意键 / Tekan tombol / Press a key）；F8 10-01 复核仍在（5 个 learn 375 格） ｜ 10-23 L：375 闲置不渲染 .hint，session-meta 用短字符串，无省略号；可视为已消失待确认",
-   "date": "2026-10-23"
+   "reason": "10-27 B / L 复验：375 闲置 .hint 不渲染，session-meta 短字串无省略号；已消失，关闭",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "id-word-list-terminology-drift",
@@ -3381,8 +3381,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F5 t3 复现（生产里窗口 = 一次在途 POST）；修法各 await 后复查 session?.user.id，pushNow 里 linkDevice 前复查 ｜ 10-16 F4：修后部分消失——不再 reload / 把云端副本还原到已退出设备（uid 变化时丢弃 deferred restore）；设备仍标记已绑定属正常",
-   "date": "2026-10-16"
+   "reason": "F5 t3 复现（生产里窗口 = 一次在途 POST）；修法各 await 后复查 session?.user.id，pushNow 里 linkDevice 前复查 ｜ 10-16 F4：修后部分消失——不再 reload / 把云端副本还原到已退出设备（uid 变化时丢弃 deferred restore）；设备仍标记已绑定属正常 ｜ 10-27 D：单标签页合并进行中 退出登录 已禁用，合并完成即绑定；另一标签页退出的窗口仍在（cloud.ts:490-492）",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "en-dict-rare-sense-batch-2b",
@@ -5755,10 +5755,10 @@
    "fingerprint": "site-yml-npm-ci-fallback-masks-lockfile-drift",
    "title": "site.yml:104 npm ci || npm install：锁文件失步时静默回落 npm install 并部署未审的版本",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "补丁（只加 ::warning）结转：patches/2026-10-26/0006；主人若不想碰 site.yml 可弃",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "1b5a309",
+   "reason": "补丁 0006 今日合入（只加 ::warning）；E 校验 YAML 与 shell 语义",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "daily-words-count-non-numeric-traceback",
@@ -5791,10 +5791,10 @@
    "fingerprint": "lang-dialog-autofocus-ring-on-unselected-card",
    "title": "首访对话框 id/en 时 first.current.focus() 落在第 1 张 中文 卡，画出 Chromium 默认 focus-visible 环，而选中的是另一张卡（App.tsx:2342/2358）",
    "priority": "P3",
-   "status": "deferred",
+   "status": "fixed",
    "commit": "",
-   "reason": "10-16 L 发现（dialog_375x812_en_dark.png）；修法：ref 放在已选卡 和/或 .lang-card:focus-visible 紫色 outline",
-   "date": "2026-10-16"
+   "reason": "10-27 A / B / L 复验：ref 落在 initialUi 对应卡（App.tsx:2717），焦点环与已选卡一致；已消失，关闭",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "metric-streak-label-3-lines-375-id",
@@ -6232,19 +6232,19 @@
    "fingerprint": "auth-5xx-reported-as-no-connection",
    "title": "GoTrue 5xx（SMTP 失败 500 unexpected_failure、网关 503）被 humanError 说成「无法连接服务器，检查网络」（auth-js 把 500–530 抛成 AuthRetryableFetchError；Account.tsx:40）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "补丁已验证（查找者 D 复核无误），受 12 项上限结转：patches/2026-10-26/0003",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "3680d3d",
+   "reason": "补丁 0003 今日合入；D 复验 27/27 三语措辞",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "daily-words-count-zero-becomes-100",
    "title": "daily-words.yml:51 `inputs.count || '100'`：dispatch count=0 取假值变 100 词（site.yml:51 已用 format('{0}')）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "修法：WORDS 走 format()（dispatch 时 \"0\" 交给 build-trio-queue.py 的 <1 守卫拒绝；schedule 仍 100）；受 12 项上限结转：patches/2026-10-26/0004",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "3c9fe15",
+   "reason": "补丁 0004 今日合入；E 本地跑 build-trio-queue 门控 WORDS=0 拒绝、空值 100",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "zh-dict-def-wrong-pos-48",
@@ -6304,10 +6304,10 @@
    "fingerprint": "choose-rung-digits-pick-behind-lang-dialog",
    "title": "选汉字 档 1–4 数字键在首访语言对话框打开时仍选中对话框后面的选项（写 lapse / 错词本 或通过并开钟）",
    "priority": "P2",
-   "status": "deferred",
-   "commit": "",
-   "reason": "结转补丁 0008 引入的回归，查找者 A 与 C 各自独立发现并给出同一修法（监听器跟随 active 属性）；已折入补丁 patches/2026-10-26/0001，0008 本身未上线故线上无此问题",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "4f170df",
+   "reason": "折入补丁 0001 今日合入；A / C 复验对话框后 1–4 不写行、不开钟",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "library-grid-tap-to-hear-false-cta",
@@ -6322,10 +6322,10 @@
    "fingerprint": "late-dict-dropped-keeps-saved-source",
    "title": "晚到的词典因 sourceReq 变动被丢弃时不 persistSource，ketiklab-source 仍是 en-core，刷新后又回到学习者已离开的词典",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "查找者 A 修法 f560740 经校验者 V1 验证，受 12 项上限结转：patches/2026-10-26/0002",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "1666660",
+   "reason": "补丁 0002 今日合入；A 复验（verify-late-dict-source 5/5）",
+   "date": "2026-10-27"
   },
   {
    "fingerprint": "timed-out-merge-lands-after-replace",
@@ -6371,6 +6371,114 @@
    "commit": "",
    "reason": "见 reports/gloss-candidates-2026-10-26.md；明日送下一位读者或主人",
    "date": "2026-10-26"
+  },
+  {
+   "fingerprint": "position-restored-into-another-chapter",
+   "title": "ketiklab-position 只存章内序号不带章号：重置进度 / 导入备份 / 云端恢复改了 ketiklab-chapters 后，旧位置被套进另一章（第 1 章从第 8 词、第 6 章从第 16 词开始，前面的词不出现）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "c65a621",
+   "reason": "查找者 A 发现并修（位置带 {ch,pos}，只在同章恢复；旧裸数字仍接受），校验者 V2 确认（3 场景基线失败 / 修后通过，29+3 回归通过，旧包读新值落第 1 词不崩）",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "focus-header-transparent-landscape-scroll",
+   "title": "专注模式页眉全透明：横屏手机（812×375 / 667×375）输入法档点框后页面滚动，练习词与 FOCUS MODE 行画在语言选择与主题按钮上",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "9371153",
+   "reason": "查找者 L 发现并修（页眉保留 86% 底色与模糊，只去边框），校验者 V1 40 格确认：基线 4 格穿透，修后 0；无闲置色带；learn-controls-paint-over-sticky-header 未回归（V1 自评 P3 偏上）",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "offline-name-blur-blanks-name",
+   "title": "设备已绑定、profile 读不到（离线 / PostgREST 故障或挂起）时，显示名字 框点进点出即把名字写成空：页眉变 学习者，ketiklab-name 空，下一次 autoPush 把空名推进云端 blob",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "aa419b9",
+   "reason": "查找者 D 发现并修（profile 未知时只有真实编辑才保存，失败保留编辑），校验者 V1 补上 profile 读取挂起期间 profKnown 仍为 true 的缺口（挂起读取时的 blur 也会抹名），并入同一提交；另把失败行在后续成功保存时清掉。V1 套件 15/15、竞态 2/2、D 的 5xx 27/27 通过；0fd43d6 合并失败留名场景仍成立",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "missed-words-review-exit-restarts-finished-chapter",
+   "title": "章末 1 错词 → 练习错词 → 完成 → 退出复习：卡片回到该章第 1 词（章末写位置 0），完成卡与 下一章 消失，须用章节导航",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 A 发现（hunt2 R2）；App.tsx:960 chapterFinished ? 0 + exitReview 按位置恢复；「完成的章下次从头」是设计，但这是同一会话；修法：退出复习时若该章已完成则保留完成卡",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "late-dict-opens-over-chapter-finish",
+   "title": "晚到的词典恰在本章最后一个词的边界打开时，advanceOrFinishChapter 在 setChDone / setChapterFinished 前返回，该章完成卡不出现（通过本身已计）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 A 代码阅读（App.tsx:1647），未在浏览器复现",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "replace-drops-settings-cloud-row-lacks",
+   "title": "只用云端记录 的有行分支 replaceLocal(cloud) 整体替换：云端行缺 ketiklab-langs / loop / hide-pron 等设置键时设备的值被清掉，语言回落到 ketiklab-ui 或再见首访对话框",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 D 复现（h2_replace_langs）；修法：replace 分支 next = { ...deviceSettings, ...cloud }（只影响设置，不影响进度）",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "gotrue-validation-failed-worded-as-email",
+   "title": "注册密码超过 72 字符时 GoTrue 返回 422 validation_failed，Account.tsx:99 一律说成「邮箱地址无效」",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 D 假服务器复现；修法：validation_failed 且消息含 password 时走弱密码句",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "promote-small-count-empty-words-flushes-readings",
+   "title": "词队列为空而阅读队列有篇目时，小 count 的手动运行满足 words === queuedWords (0===0) 放出全部阅读，而补丁 0005 的约定是小 count 只放 1 篇",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 E 复现（0 词 + 3 篇，count 5 → 3 篇）；今日无害（阅读经人工审核、队列为空）；一处修法 fixedCount >= queuedWords && queuedWords > 0",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "site-workflow-run-side-branch-redeploys-main",
+   "title": "在非 main 分支 dispatch 的重建工作流成功后，workflow_run 在默认分支语境触发 site.yml，promote 在 main 上跑且 go=true，main 被无变化地重建重部署（未检查 workflow_run.head_branch）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 E 代码阅读，需 GitHub 复现；无害的同树重部署",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "sw-activate-vs-inflight-swr-orphan-cache",
+   "title": "慢网络下旧 worker 的在途 SWR 刷新可能在新 worker activate 删旧缓存后落地，caches.open(旧版本名).put 重建一个孤儿旧缓存，新 words.json 晚一次访问才出现",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "10-27 E 代码阅读（sw.js:28,41-62,158-162），本地未复现；无混合内容，只多一次访问的陈旧",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-10-27",
+   "title": "释义候选：唯一性挡住 problem 问题 / immigration 移民 / insubordinate membangkang；R5 UNSURE 27 字段（见候选表二）；en-upper chevy",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "见 reports/gloss-candidates-2026-10-27.md；明日送下一位读者或主人",
+   "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "gloss-uniqueness-blocked-2026-10-27",
+   "title": "唯一性挡住的两方一致改义：problem 难题→问题（question 占）、insubordinate durhaka→membangkang（disobey 占）；immigration 移民 已在 words-immigration-yimin-taken-by-immigrant",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "是否允许占位词改用次义或放宽首义唯一规则；见 reports/gloss-candidates-2026-10-27.md 表一",
+   "date": "2026-10-27"
   }
  ]
 }
