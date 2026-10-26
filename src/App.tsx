@@ -909,10 +909,20 @@ export default function Home() {
   // the word within the chapter, kept per list in its own key (ketiklab-position, this device
   // only): the chapter came back after a reload but the learner was put on its first word
   // again, 04/20 → 01/20, and the words already passed came round once more
+  // ...with the chapter it was reached in: the chapter is synced, restored from a backup and
+  // cleared by 重置进度, the position is none of these, so a position kept from chapter 3
+  // opened chapter 1 (after the reset) or chapter 6 (after a restore) at its word 16, and the
+  // 15 words before it were never shown. A position saved for another chapter is word 1.
+  // (a bare number is the shape written before the chapter was kept: taken as it is)
   const readPositions = (): Record<string, unknown> => {
     try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-position") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
   };
-  const savedPosition = (key: string) => Math.min(19, Math.max(0, Math.floor(Number(readPositions()[key])) || 0));
+  const clampPos = (v: unknown) => Math.min(19, Math.max(0, Math.floor(Number(v)) || 0));
+  const savedPosition = (key: string, ch: number) => {
+    const v = readPositions()[key];
+    if (v && typeof v === "object") { const p = v as { ch?: unknown; pos?: unknown }; return Number(p.ch) === ch ? clampPos(p.pos) : 0; }
+    return clampPos(v);
+  };
   const readSavedReading = (): { id: string; line: number } | null => {
     try {
       const p: unknown = JSON.parse(localStorage.getItem("ketiklab-reading") || "null");
@@ -944,7 +954,7 @@ export default function Home() {
       // a list still on its way (words.json, a dictionary file) is clamped when it arrives
       const inChapter = activeItemsRef.current.slice(ch * 20, ch * 20 + 20).length;
       clampPosition.current = !inChapter;
-      setIndex(inChapter ? Math.min(savedPosition(sourceKey), inChapter - 1) : savedPosition(sourceKey));
+      setIndex(inChapter ? Math.min(savedPosition(sourceKey, ch), inChapter - 1) : savedPosition(sourceKey, ch));
     }
     setTyped("");
     resetWordRun();
@@ -958,12 +968,13 @@ export default function Home() {
     try {
       const m = readPositions();
       const pos = chapterFinished ? 0 : index % 20;
-      if (m[sourceKey] === pos) return;
-      m[sourceKey] = pos;
+      const cur = m[sourceKey] as { ch?: unknown; pos?: unknown } | undefined;
+      if (cur && typeof cur === "object" && cur.ch === chapter && cur.pos === pos) return;
+      m[sourceKey] = { ch: chapter, pos };
       localStorage.setItem("ketiklab-position", JSON.stringify(m));
     } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, sourceKey, chapterFinished]);
+  }, [index, sourceKey, chapterFinished, chapter]);
   // the reading and the line in hand; a finished piece starts over on the next visit, as a
   // finished chapter does. Nothing is written before the readings have arrived and the saved
   // piece has been restored, or the empty first render would wipe it
@@ -2351,11 +2362,12 @@ export default function Home() {
   // then wrote over the real position
   function exitReview() {
     setReviewKeys(null); setReviewDueTotal(0);
-    setChapter(savedChapter(sourceKey));
+    const ch = savedChapter(sourceKey);
+    setChapter(ch);
     setChapterFinished(false); setChDone(0); setChWrongKeys([]);
     chapterStart.current = secondsRef.current;
     // same as startReview: the slip noted inside the review must not grade the list's word
-    setIndex(savedPosition(sourceKey)); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
+    setIndex(savedPosition(sourceKey, ch)); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
   }
   function practiceWord(w: Word, lg: Lang = lang) {
     setReviewKeys(null);
