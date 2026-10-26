@@ -285,7 +285,8 @@
 /* ---- focus mode: while typing, strip everything except the word ---- */
 /* idle width while sliding out: --sidebar-w is 0 in focus, and a 0-width box is a padding-wide sliver, not a slide */
 .app.focused .sidebar{visibility:hidden;opacity:0;transform:translateX(-100%);width:var(--sidebar-idle)}
-.app.focused .main>header{border-bottom:0;background:transparent;backdrop-filter:none}
+/* the bar keeps its translucent ground: fully transparent, a landscape phone that scrolled the ladder's input box into view drew the word and the FOCUS MODE line through the language select and the theme button */
+.app.focused .main>header{border-bottom:0}
 .app.focused .chapter small{display:none}
 .app.focused .session-meta .chapter-nav{display:none}
 .app.focused .mode-row,.app.focused .prevnext,.app.focused .hint{display:none}
