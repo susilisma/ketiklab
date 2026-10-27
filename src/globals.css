@@ -401,7 +401,8 @@ button.profile:hover>i{color:var(--purple)}
 .chapter b{font-size:13px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;white-space:normal;overflow:hidden}.chapter b>span:first-child{display:inline;overflow:visible}.chapter b>span:last-child{display:inline;white-space:normal}.language{padding:0 6px}.language span{display:none}.primary{padding:0 12px;gap:8px}
 }
 /* 320px: beside the two controls the title has about 150px, where "Hidup di Indonesia · 399" and "Life in Indonesia · 399" need a third line, which the two-line clamp cut to "Hidup di Indones…"; three 12px lines (45px) still sit inside the 56px header */
-@media(max-width:360px){.chapter b{-webkit-line-clamp:4;font-size:12px;line-height:1.15}}
+/* ...and up to 389px (375 is the iPhone SE/8/X/13 mini width): beside "Indonesia ▾" and "Mulai →" the box is 117–145px, where "Kosakata Indonesia frekuensi tinggi · 3003" needs three 13px lines, so the two-line clamp dropped the count ("…" after tinggi); four 12px lines (55px) still fit the 56px header */
+@media(max-width:389px){.chapter b{-webkit-line-clamp:4;font-size:12px;line-height:1.15}}
 /* learn: the word's top edge = header + strip + card padding + air, and air is solved from --word-top, so it lands at the same share of every viewport, idle or focused */
 /* width:100%: margin:0 auto would otherwise shrink-wrap the flex item */
 .learn-view{flex:1;width:100%;max-width:var(--learn-w);margin:0 auto;display:flex;flex-direction:column;justify-content:flex-start;padding:12px var(--page-x) var(--stats-gap)}
