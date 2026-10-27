@@ -1668,11 +1668,17 @@ export default function Home() {
     // library, a review): the list in hand is what the next visit reopens, as when the file
     // arrives after such a choice (loadManifest) — the held-back dictionary used to stay saved
     // and came back on the next load, under a learner who had gone on with the topic words
-    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { if (open()) return; } else persistSource(sourceRef.current); }
+    // ...but not at the chapter's last word: opened there it returned before the tally and the
+    // finish card, so the chapter the learner had just typed through ended without a card and
+    // its position stayed at word 20. The card wins and the dictionary stays held: the card's
+    // buttons (下一章, 重练本章, 练习错词) are each a choice of list (sourceReq), so the first
+    // boundary after one of them drops it and persists the topic words, as any choice does; a
+    // reload from the card still opens it, the saved source being untouched until then
+    const atEnd = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1;
+    if (lateDict.current && !atEnd) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { if (open()) return; } else persistSource(sourceRef.current); }
     // a review session keeps its own tally: exitReview clears it, so the summary
     // after 退出复习 never counts words from other lists
     setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
-    const atEnd = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1;
     // a review that answered its last word used to wrap round to the first one
     // and go on for ever; it ends on the same card a chapter does
     if (atEnd) {
@@ -1905,8 +1911,9 @@ export default function Home() {
     keepFinishCard();
     const keys = chWrongKeys.slice();
     // the review list is built from refs, so resolve the missed words the same way a due list is
+    const req = ++sourceReq.current;
     resolveReviewRefs(keys).then(refs => {
-      if (!refs.length) return;
+      if (!refs.length || req !== sourceReq.current) return;
       // this session holds the chapter's missed words, not the due list: the earlier review's
       // total would otherwise be printed under it as "复习模式 · 2 / 5"
       setReviewRefs(refs); setReviewKeys(refs.map(r => r.key)); setReviewDueTotal(0);
