@@ -6403,19 +6403,19 @@
    "fingerprint": "missed-words-review-exit-restarts-finished-chapter",
    "title": "章末 1 错词 → 练习错词 → 完成 → 退出复习：卡片回到该章第 1 词（章末写位置 0），完成卡与 下一章 消失，须用章节导航",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-27 A 发现（hunt2 R2）；App.tsx:960 chapterFinished ? 0 + exitReview 按位置恢复；「完成的章下次从头」是设计，但这是同一会话；修法：退出复习时若该章已完成则保留完成卡",
-   "date": "2026-10-27"
+   "status": "fixed",
+   "commit": "4315327",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；finishedBeforeReview 记录（含 lang）在同列表同章同语言时还原完成卡；V2 首版发现 id↔en 切换后错卡回归，已修（9d3b6f3 并入）；A a1/a1b、V2 v2-f1-* 全过",
+   "date": "2026-10-28"
   },
   {
    "fingerprint": "late-dict-opens-over-chapter-finish",
    "title": "晚到的词典恰在本章最后一个词的边界打开时，advanceOrFinishChapter 在 setChDone / setChapterFinished 前返回，该章完成卡不出现（通过本身已计）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-27 A 代码阅读（App.tsx:1647），未在浏览器复现",
-   "date": "2026-10-27"
+   "status": "fixed",
+   "commit": "7bc901f",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；atEnd 先于晚到词典打开，完成卡优先；练习错词 也提升 sourceReq（V2 首版发现复习中词典打开的回归，已修）；完成卡上任何选择后词典在第一个词边界被丢弃、trio 持久化，卡上刷新仍打开词典；A a2/a2b、V2 v2-f2-* 全过",
+   "date": "2026-10-28"
   },
   {
    "fingerprint": "replace-drops-settings-cloud-row-lacks",
@@ -6430,10 +6430,10 @@
    "fingerprint": "gotrue-validation-failed-worded-as-email",
    "title": "注册密码超过 72 字符时 GoTrue 返回 422 validation_failed，Account.tsx:99 一律说成「邮箱地址无效」",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-27 D 假服务器复现；修法：validation_failed 且消息含 password 时走弱密码句",
-   "date": "2026-10-27"
+   "status": "fixed",
+   "commit": "7e7ce02",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；密码 >72 字节的 422 现说 密码太长了，最多 72 位（三语）；D 0/3→3/3，主检出复跑 3/3",
+   "date": "2026-10-28"
   },
   {
    "fingerprint": "promote-small-count-empty-words-flushes-readings",
@@ -6468,7 +6468,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "见 reports/gloss-candidates-2026-10-27.md；明日送下一位读者或主人",
+   "reason": "未改项已并入 reports/gloss-candidates-2026-10-28.md（今日 R5 第三次裁定：student pelajar、bubbling bergelembung、productivity 生产率、insubordinate zh 不服从 已改；其余仍留）",
    "date": "2026-10-27"
   },
   {
@@ -6479,6 +6479,168 @@
    "commit": "",
    "reason": "是否允许占位词改用次义或放宽首义唯一规则；见 reports/gloss-candidates-2026-10-27.md 表一",
    "date": "2026-10-27"
+  },
+  {
+   "fingerprint": "ime-stale-cancel-recommit-graded-as-lapse",
+   "title": "输入法档：上一词提交后 320 ms 内开始的组合被取消 / 以拉丁或标点结束，之后 1 s 内提交的正确词被按旧词长度截短判错（App.tsx handleType staleLen 只在下次渲染重置）",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "07a2742",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；C 复现 7/9→9/9，V1 自写复现 3/6→6/6（取消 / 拉丁提交 / 标点三种结尾），ime-regress 9/9、keys-320 5/5 无回归",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "ladder-hide-meaning-stood-down-by-dictation",
+   "title": "释义隐藏 + 在输入法档选了 默写 全隐藏 后，打拼音 / 选汉字 档释义明文显示、无偷看按钮（App.tsx:1414 meaningHidden 要求 dictation===off）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "f80d58a",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；C 11/13→13/13，V1 16/18→20/20，认读仍豁免",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "srs-record-review-carries-nan-string-counts",
+   "title": "SRS 行 reps/lapses 为 NaN 或字符串（旧升级残留 / 手改备份）时作答后仍为 NaN 或 \"31\"（srs.ts recordReview、merged）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "95a1388",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；count() 强制数字；C 1/4→4/4、harness 38/38；V1 普通行序列与基线逐项相同、导出 byte-equal",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "seo-channel-page-bare-ampersand",
+   "title": "dist/xhs 与 dist/ig 的 meta refresh 与 <a href> 属性里 & 未转义（build-seo-pages.py channel_page）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "8423f20",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；seo-check 1291 项 2 FAIL→0；重定向 4/4",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "seo-readings-era-cell-no-lang",
+   "title": "阅读 SEO 页年代格（唐 / 宋 / Tradisional 等 152 格）无 lang 属性，读屏以页面语言读出（build-seo-pages.py:404）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "c96d8d5",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；含 lang 960→1112 格，裸格 152→0",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "header-count-ellipsized-375-id-indonesian",
+   "title": "印尼语界面 + 印尼语高频库在 361–389 px 宽的页眉按钮 Kosakata Indonesia frekuensi tinggi · 3003 两行截断，词数永不显示（globals.css:404 的 360 px 规则未覆盖 375）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "22aad66",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；规则放宽到 389 px；layout state-library-dict 2/4→4/4，narrow-header 4/4，174 格矩阵全过",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "input-mode-default-written-before-restore",
+   "title": "ketiklab-input（自动回退 / 手动）在挂载 +120 ms 被默认值 strict 覆盖 1 ms 后再恢复，SYNCED_KEYS 推送可能带走默认值（018091c 同类）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "40d4093",
+   "reason": "已合入 main 7bc901f（Build check #92 0 注解，Build and deploy #859 成功）；改为状态初始化读取；A/V2：已存 soft 刷新后 0 次写入，新设备仍写一次 strict，云端 applyLocal 路径均 reload",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "ime-commit-inside-red-flash-dropped",
+   "title": "输入法档错提交后 350 ms 红闪期间的再次提交被丢弃（不判分、不记 lapse，需重打）（App.tsx handleType if (wrongFlash) return）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "C 浏览器复现，无误判；与 strict-flash-lockout-drops-fast-keys 同类",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "reload-in-done-window-replays-counted-word",
+   "title": "打完一词后 320 ms 完成窗内刷新：correct 已计但位置未推进，刷新后同一词再出现并再计一次（A pw/a15-reload-in-window.cjs）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "窗口极窄；修法需在显示下一词前写下一位置，留待",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "ci-lockfile-commit-push-race-reds-build-check",
+   "title": "ci.yml 提交 lockfile 的 push 无重试：checkout 后到 push 间有新推送时 Build check 变红（代码阅读）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "cancel-in-progress 使新推送的运行取代；自愈",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "learn-library-error-banners-not-announced",
+   "title": "学习 / 词库 / 错词本 的 ⚠ .review-banner 无 role / aria-live（App.tsx:2457-2461、2562-2563、2575、2592）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "与 account-messages-not-announced 同类；是否加 role=status 由主人定",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "session-hint-id-third-line-cut-375",
+   "title": "375 px 细指针窗口、印尼语界面的闲置提示 TEKAN TOMBOL APA SAJA UNTUK MULAI 第三行被截为 UNTUK…（globals.css:446 line-clamp:3）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "只在窄桌面窗口出现（触屏得短句 Ketuk untuk mulai）；session-hint-collapses-to-ellipsis-375 的后续",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "offline-signout-never-revokes-server-side",
+   "title": "离线时 退出登录：auth-js 在 logout 请求失败时自行丢弃本地会话并发 SIGNED_OUT，ketiklab-signing-out 被清，服务端会话永不撤销（cloud.ts:168-186/115）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "D 浏览器复现；设备侧结果正确；撤销需保留 refresh token（185dcde 否定）；signout-global-scope 的姊妹项",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "first-link-hanging-read-says-nothing",
+   "title": "未绑定设备密码登录时 progress GET 永不返回：卡片永无 同步中 / 错误，设备不绑定、autoPush 不绑定（Account.tsx:243-255 effect 无 withinSyncWait）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "failed-first-link-never-retried 的姊妹项；需同 15 s 上限与提示",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "signup-existing-email-enumerated",
+   "title": "用已注册邮箱注册时页面把 GoTrue 的无身份占位用户译成 这个邮箱已经注册过了（Account.tsx:274-277），等于自行泄露邮箱是否注册",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "设计取舍；与 signup-existing-email-overwrites-typed-uid 相邻",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "purple-on-purple-soft-selected-3.80",
+   "title": "--purple 文字在 --purple-soft 底上：浅色 3.80:1、深色 4.28:1（nav.active、mode-row active、zh-ladder on、global-toggle on、acct-tabs on、lang-card.active span 3.61:1）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "调色板决定；与 purple-white-dark-contrast 同组",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "words-online-motorbike-taxi-duplicate-rows",
+   "title": "words.json #1110 online motorcycle taxi · 网约摩的 与 #1682 online motorbike taxi · 网约摩托 / ojol 是同一概念两行；1682 的 网约摩的 被 1110 占",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "两位独立裁定者都要把 1682 改为 网约摩的；去留由主人定",
+   "date": "2026-10-28"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-10-28",
+   "title": "释义候选：被唯一性 / 主人项挡住 969 零售价、1682 网约摩的 / ojek online、840 variabel lag、852 cotton bud、3609 membangkang、1982 jantung；读者分歧 947 / 841 / 895；R5 UNSURE 约 30 字段",
+   "priority": "释义",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "见 reports/gloss-candidates-2026-10-28.md",
+   "date": "2026-10-28"
   }
  ]
 }
