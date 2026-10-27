@@ -26,6 +26,10 @@ const RELAPSE_DELAY = 10 * 60 * 1000; // 10 minutes
 // is answered under its new key and inherits it (see recordReview).
 const keyed = (en: string) => en.includes(":");
 const HANZI = /^[㐀-鿿]+$/;
+// a count read back from a row: a number, or a string that spells one, else 0. Rows upgraded
+// before merged() guarded its sums carry NaN (or a hand-edited backup a string) and every
+// later answer carried it on (NaN + 1, "3" + 1 = "31"); restoreRecords reads the same way
+const count = (v: unknown) => ((typeof v === "number" || (typeof v === "string" && v.trim() !== "")) && Number.isFinite(Number(v)) ? Math.trunc(Number(v)) : 0);
 
 class KetikDB extends Dexie {
   reviews!: Table<ReviewRecord, string>;
@@ -62,10 +66,10 @@ function merged(old: ReviewRecord, target: ReviewRecord | undefined, to: string)
     dueAt: lead.dueAt,
     // a row that never carried counts (written by hand, or by the version-1 schema before the
     // app kept them) used to turn them into NaN here, which every later answer carried on
-    reps: (old.reps ?? 0) + (target?.reps ?? 0),
-    lapses: (old.lapses ?? 0) + (target?.lapses ?? 0),
+    reps: count(old.reps) + count(target?.reps),
+    lapses: count(old.lapses) + count(target?.lapses),
     lastResult: lead.lastResult,
-    updatedAt: Math.max(old.updatedAt ?? 0, target?.updatedAt ?? 0),
+    updatedAt: Math.max(count(old.updatedAt), count(target?.updatedAt)),
   };
 }
 
@@ -102,8 +106,8 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
       en,
       step,
       dueAt,
-      reps: (existing?.reps ?? 0) + 1,
-      lapses: (existing?.lapses ?? 0) + (correct ? 0 : 1),
+      reps: count(existing?.reps) + 1,
+      lapses: count(existing?.lapses) + (correct ? 0 : 1),
       lastResult: correct ? "correct" : "wrong",
       updatedAt: now,
     });
