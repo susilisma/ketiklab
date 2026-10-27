@@ -446,18 +446,21 @@ CHANNELS = {
 
 def channel_page(slug, ui, learn, step, title, waiting):
     q = f"?ui={ui}&learn={learn}" + (f"&step={step}" if step else "") + f"&from={slug}"
+    # the href and the refresh content are attribute values: a bare & there is a markup error (the
+    # library pages already write &amp;); the script line is JavaScript and keeps the plain query
+    qa = esc(q, quote=True)
     return f"""<!doctype html>
 <html lang="{HTML_LANG[ui]}">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="robots" content="noindex, follow" />
-    <meta http-equiv="refresh" content="0; url=/{q}" />
+    <meta http-equiv="refresh" content="0; url=/{qa}" />
     <link rel="canonical" href="{SITE}/" />
     <title>{title}</title>
   </head>
   <body style="margin:0;display:grid;place-items:center;min-height:100vh;font:16px/1.6 system-ui,-apple-system,'PingFang SC',sans-serif;background:#f6f6fb;color:#2a2a35">
-    <p><a href="/{q}" style="color:#6b5df6">{waiting}</a></p>
+    <p><a href="/{qa}" style="color:#6b5df6">{waiting}</a></p>
     <script>location.replace("/{q}");</script>
   </body>
 </html>
