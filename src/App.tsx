@@ -1411,7 +1411,9 @@ export default function Home() {
   veiledRef.current = !typingFocus && !zhLadder;
   // Hide meaning: dictation keeps the meaning as the cue for the form, and 认读 promises it on
   // screen. The peek is TAB held in the App input, or a tap — 打拼音 owns TAB for its pinyin.
-  const meaningHidden = meaningVisibility === "hidden" && dictation === "off" && !(zhLadder && rung === "read") && !reveal && !meaningPeek;
+  // Dictation is inert on the ladder rungs (letterVisible below, and the mode row is not even
+  // shown there): a 全隐藏 chosen at 输入法 used to show the meaning in the clear on 打拼音 and 选汉字
+  const meaningHidden = meaningVisibility === "hidden" && (dictation === "off" || zhLadder) && !(zhLadder && rung === "read") && !reveal && !meaningPeek;
   // extra lines are a second cue: in dictation they wait for TAB like the letters — but the
   // ladder rungs have no dictation (letterVisible ignores it there) and no TAB to reveal
   const extrasShown = (dictation === "off" || reveal || zhLadder) && !meaningHidden;
