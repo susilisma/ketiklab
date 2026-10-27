@@ -1913,8 +1913,12 @@ export default function Home() {
     if (wrongFlash) return;
     if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
     // the box still shows the previous word (or the rolled-back text) in front of
-    // this commit: grade only what was committed since, after the kept prefix
-    if (staleLen.current > 0) raw = typed + raw.slice(staleLen.current);
+    // this commit: grade only what was committed since, after the kept prefix.
+    // Consumed here, not left to the layout effect below: the box is rewritten to the graded
+    // text, so the stale prefix is gone — a composition cancelled over it graded nothing and
+    // rendered nothing, and the word committed next, within the second before the clock tick
+    // re-rendered, was cut by that length and filed as a lapse (自信的 graded as 的)
+    if (staleLen.current > 0) { raw = typed + raw.slice(staleLen.current); staleLen.current = 0; }
     // iOS and macOS smart punctuation type ’ for the apostrophe in driver's license and
     // – for the hyphen in cost-benefit analysis: folded the way the reader folds its texts
     raw = foldTypography(raw);
