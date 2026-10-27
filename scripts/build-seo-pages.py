@@ -393,6 +393,12 @@ def trio_page(lang, words, lib_rows, n_readings, zh_pinyin):
     return path, static_page(lang, title, f"{name}: {desc}", path, body, lambda l: f"/{l}/lib/trio/", lib_rows, n_readings)
 
 
+def era_attr(r, page_lang):
+    """lang attribute for the era cell when the era carries words (a dynasty, "1930-an"), not for a bare year."""
+    era = str(r.get("era") or "")
+    return lang_attr(r["lang"], page_lang) if re.search(r"[^\d\s.\-\u2013\u2014~]", era) else ""
+
+
 def readings_page(lang, readings, lib_rows):
     name = T["readings"][lang]; n = len(readings)
     # the two KetikLab practice texts are not public domain: counted apart from the classics
@@ -401,7 +407,8 @@ def readings_page(lang, readings, lib_rows):
     title = f"{name} — {fmt('pieces', lang, n=n)} | KetikLab"
     cols = T["cols_read"][lang]
     rows = "\n".join(
-        f'<tr><td class="w"{lang_attr(r["lang"], lang)}>{esc(r["title"])}</td><td{lang_attr(r["lang"], lang)}>{esc(r.get("author") or "")}</td><td>{esc(str(r.get("era") or ""))}</td>'
+        # the era too: a dynasty (唐, 北宋) or "1930-an" is written in the piece's language, a bare year in none
+        f'<tr><td class="w"{lang_attr(r["lang"], lang)}>{esc(r["title"])}</td><td{lang_attr(r["lang"], lang)}>{esc(r.get("author") or "")}</td><td{era_attr(r, lang)}>{esc(str(r.get("era") or ""))}</td>'
         f'<td>{esc(READ_LANG.get(r["lang"], r["lang"]))}</td><td{lang_attr(r["lang"], lang)}>{esc((r.get("lines") or [""])[0])}</td></tr>'
         for r in readings)
     body = (
