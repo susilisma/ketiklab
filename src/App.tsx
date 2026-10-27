@@ -518,6 +518,14 @@ export default function Home() {
   // a saved dictionary whose file arrived while a topic word was being typed: applied when the
   // card moves on (advanceOrFinishChapter), dropped once another list has been chosen
   const lateDict = useRef<(() => boolean) | null>(null);
+  // the finish card a review was started over (练习错词, or 开始复习 with the chapter's card up):
+  // exitReview puts it back — it used to open the chapter at its first word, the card and 下一章
+  // gone, so the learner who had just practised the chapter's missed words had to find the next
+  // chapter through the chapter select. Cleared by every fresh run of a chapter
+  // (the learning language is kept beside the key: trioChapterKey names the language only on a
+  // zh rung, so the English list shares "trio:business" with the Indonesian one and a language
+  // change inside the review used to bring the Indonesian card back over the English list)
+  const finishedBeforeReview = useRef<{ key: string; lang: Lang; chapter: number; done: number; wrong: string[]; elapsed: number } | null>(null);
   // letters on the card (the App box, the 打拼音 box), the done window still open, or a slip
   // already noted: after a strict-mode first slip the box is rolled back to empty, and the list
   // was swapped under the learner retyping the word their lapse was just filed for
@@ -535,7 +543,7 @@ export default function Home() {
   // every path that starts a list from its first word: the chapter's tally, its finish
   // card and its clock start over too — choosing the list that is already open used to
   // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
-  const resetChapterRun = () => { setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
+  const resetChapterRun = () => { finishedBeforeReview.current = null; setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
   // choosing a list anew is a fresh run: a slip remembered on its first word (whose lapse is
   // already written) must not grade the new run's perfect answer as missed. Not for a
   // language change, which also resets the chapter but keeps the slip by design.
@@ -947,6 +955,7 @@ export default function Home() {
     const ch = pendingChapter.current ?? savedChapter(sourceKey);
     pendingChapter.current = null;
     setChapter(ch);
+    finishedBeforeReview.current = null;
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     skipPositionWrite.current = true;
@@ -1876,6 +1885,7 @@ export default function Home() {
       m[sourceKey] = target;
       localStorage.setItem("ketiklab-chapters", JSON.stringify(m));
     } catch { /* ignore */ }
+    finishedBeforeReview.current = null;
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     // a new run of the chapter, like choosing the list anew: a slip remembered on its first
@@ -1886,8 +1896,13 @@ export default function Home() {
   }
   function retryChapter() { setChapterTo(chapterSafe); }
   function nextChapter() { setChapterTo(chapterSafe + 1 >= chapterCount ? 0 : chapterSafe + 1); }
+  // the chapter's finish card, when a review is started over it, for exitReview to put back
+  function keepFinishCard() {
+    finishedBeforeReview.current = chapterFinished && !reviewKeys ? { key: sourceKey, lang, chapter: chapterSafe, done: chDone, wrong: chWrongKeys, elapsed: chElapsed } : null;
+  }
   function practiceChapterWrong() {
     if (!chWrongKeys.length) return;
+    keepFinishCard();
     const keys = chWrongKeys.slice();
     // the review list is built from refs, so resolve the missed words the same way a due list is
     resolveReviewRefs(keys).then(refs => {
@@ -2183,6 +2198,7 @@ export default function Home() {
   function moveWithinList(gi: number) {
     const ch = Math.floor(gi / 20);
     writeChapter(sourceKey, ch); setChapter(ch);
+    finishedBeforeReview.current = null;
     setChapterFinished(false); setChDone(0); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     pendingIndex.current = null; pendingChapter.current = null;
@@ -2262,6 +2278,7 @@ export default function Home() {
     const req = ++sourceReq.current;
     resolveReviewRefs([id]).then(refs => {
       if (!refs.length || req !== sourceReq.current) return;
+      keepFinishCard();
       setReviewRefs(refs); setReviewKeys(refs.map(r => r.key)); setReviewDueTotal(0);
       setChapterFinished(false); setChDone(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
       setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
@@ -2353,6 +2370,7 @@ export default function Home() {
     setReviewLoadFailed(!refs.length && !report.complete);
     if (!refs.length) return;
     sourceReq.current++;
+    keepFinishCard();
     setReviewRefs(refs);
     // the keys the resolved items keep: two keys for one word were counted as "1 / 2" otherwise
     setReviewKeys(refs.map(r => r.key));
@@ -2372,7 +2390,14 @@ export default function Home() {
     setReviewKeys(null); setReviewDueTotal(0);
     const ch = savedChapter(sourceKey);
     setChapter(ch);
-    setChapterFinished(false); setChDone(0); setChWrongKeys([]);
+    // the finish card the review was started over comes back, with its tally, when the list, the
+    // learning language and the chapter are still the ones it was for (a rung or language change
+    // inside the review moves the list, and the chapter then opens at its own saved word, as below)
+    const kept = finishedBeforeReview.current; finishedBeforeReview.current = null;
+    const restore = !!kept && kept.key === sourceKey && kept.lang === lang && kept.chapter === ch;
+    setChapterFinished(restore); setChDone(restore ? kept.done : 0); setChWrongKeys(restore ? kept.wrong : []);
+    // the card has no word to type, so the clock stops as it does when a chapter ends
+    if (restore) { setChElapsed(kept.elapsed); setRunning(false); }
     chapterStart.current = secondsRef.current;
     // same as startReview: the slip noted inside the review must not grade the list's word
     setIndex(savedPosition(sourceKey, ch)); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
