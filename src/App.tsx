@@ -336,7 +336,10 @@ export default function Home() {
   const [dictation, setDictation] = useState<"off" | "all" | "vowel" | "random">("off");
   // "strict": a wrong key rolls the word back. "soft": wrong letters stay on screen
   // and BACKSPACE fixes them, which beginners need far more than the discipline.
-  const [inputMode, setInputMode] = useState<"strict" | "soft">("strict");
+  // read at mount, as the favourites and the counts are (018091c): restored by the mount effect,
+  // the persist effect's first run wrote "strict" over a saved "soft" for the ~15 ms before, and
+  // the key is synced, so a push in that moment carried the default
+  const [inputMode, setInputMode] = useState<"strict" | "soft">(() => { try { return localStorage.getItem("ketiklab-input") === "soft" ? "soft" : "strict"; } catch { return "strict"; } });
   // No accounts yet, so the sidebar profile is whatever name this browser saved.
   const [profileName, setProfileName] = useState("");
   const [reveal, setReveal] = useState(false);
@@ -778,7 +781,6 @@ export default function Home() {
       // "fav" is not a manifest id, so the dictionary restore above never matches it
       if (favs.length && localStorage.getItem("ketiklab-source") === "fav") setSource("fav");
     } catch { /* ignore */ }
-    try { if (localStorage.getItem("ketiklab-input") === "soft") setInputMode("soft"); } catch { /* ignore */ }
     try { setProfileName(localStorage.getItem("ketiklab-name") || ""); } catch { /* ignore */ }
     return () => { alive = false; mounted.current = false; };
   }, []);
