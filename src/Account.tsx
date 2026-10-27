@@ -92,7 +92,12 @@ function humanError(e: unknown, l: Lang): string {
     return T(`密码至少 ${minLen} 位。`, `Kata sandi minimal ${minLen} karakter.`, `Password needs at least ${minLen} characters.`, l);
   // the other policy rejections (required character classes, a leaked password): the rule is the
   // server's, so no number is claimed; GoTrue's text used to be printed as it came
-  if (ae.code === "weak_password" || m.includes("password should") || m.includes("password is known to be weak"))
+  // bcrypt's limit, GoTrue's other validation_failed ("Password cannot be longer than 72 characters"): it was
+  // filed under the email wording below, and the learner was told to check an address that was fine
+  const maxLen = /password cannot be longer than (\d+) characters/.exec(m)?.[1];
+  if (maxLen)
+    return T(`密码太长了，最多 ${maxLen} 位。`, `Kata sandi terlalu panjang: maksimal ${maxLen} karakter.`, `That password is too long: at most ${maxLen} characters.`, l);
+  if (ae.code === "weak_password" || m.includes("password should") || m.includes("password is known to be weak") || ae.code === "validation_failed" && m.includes("password"))
     return T("密码不符合要求，换一个更长、含字母和数字的密码。", "Kata sandi belum memenuhi syarat. Coba yang lebih panjang, dengan huruf dan angka.", "That password does not meet the requirements. Try a longer one with letters and numbers.", l);
   if (ae.code === "signup_disabled" || m.includes("signups not allowed"))
     return T("目前暂不开放注册。", "Pendaftaran sedang ditutup.", "Sign-ups are closed at the moment.", l);
