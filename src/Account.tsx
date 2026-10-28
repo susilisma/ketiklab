@@ -176,6 +176,10 @@ export function Account({ uiLang, name, onName }: {
   const [urlErr, setUrlErr] = useState("");
   const lastUid = useRef<string | undefined>(undefined);
   const forgetting = useRef(false);
+  // a first link whose read failed or never answered left the device unlinked, and autoPush never
+  // links a device on its own: it is tried again when the connection comes back (or on the next visit)
+  const linkFailed = useRef(false);
+  const [linkRetry, setLinkRetry] = useState(0);
   // false while the profile could not be read: its name is unknown then, not blank
   const profKnown = useRef(true);
   // whether the name field was typed in since the profile was read: with the profile unreadable
@@ -199,7 +203,9 @@ export function Account({ uiLang, name, onName }: {
     });
     const n = takeNote(); if (n) setNote(n);
     const ue = takeUrlError(); if (ue) setUrlErr(ue);
-    return () => { alive = false; data.subscription.unsubscribe(); };
+    const again = () => { if (linkFailed.current) { linkFailed.current = false; setLinkRetry(k => k + 1); } };
+    window.addEventListener("online", again);
+    return () => { alive = false; data.subscription.unsubscribe(); window.removeEventListener("online", again); };
   }, []);
 
   // Account mounts afresh on every visit to the tab, so this runs often. It only
@@ -244,12 +250,16 @@ export function Account({ uiLang, name, onName }: {
         if (linked && linked !== uid) { setForeign(true); setLinkOnly(!sessionTyped(uid)); return; }
         if (!linked && !sessionTyped(uid)) { setLinkOnly(true); return; }
         if (recovering) return;
+        // the same 15 s limit as the buttons: a read that never answers used to leave the card
+        // without a word, and the first link of a typed sign-in never happened (nothing was backed
+        // up for the rest of the session and autoPush could not start)
         if (linked === uid) {
-          const { cloudHasMore } = await pushProgress(uid);
+          const { cloudHasMore } = await withinSyncWait(pushProgress(uid));
           if (!alive) return;
           setCloudNewer(cloudHasMore);
         } else {
-          const done = await linkThisDevice(uid, "merge", prof?.name || "", () => alive);
+          if (alive) { setErr(""); setMsg(syncingText(uiLang)); }
+          const done = await withinSyncWait(linkThisDevice(uid, "merge", prof?.name || "", () => alive));
           if (!alive || done === "reloading" || done === "deferred") return;
           setMsg(done === "uploaded"
             ? T("这台设备上的学习记录已上传到你的账号。",
@@ -258,11 +268,14 @@ export function Account({ uiLang, name, onName }: {
             : T("已同步。", "Tersinkron.", "Synced.", uiLang));
         }
         setSyncedAt(stamp());
-      } catch (e2: unknown) { if (alive) setErr(humanError(e2, uiLang)); }
+      } catch (e2: unknown) {
+        if (firstLink && linkedUid() !== uid) linkFailed.current = true;
+        if (alive) { setMsg(""); setErr(humanError(e2, uiLang)); }
+      }
     })();
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [session?.user?.id, recovering]);
+  }, [session?.user?.id, recovering, linkRetry]);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
