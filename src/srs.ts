@@ -76,6 +76,16 @@ function merged(old: ReviewRecord, target: ReviewRecord | undefined, to: string)
 export async function recordReview(en: string, correct: boolean, now = Date.now(), inherit?: string): Promise<void> {
   await db.transaction("rw", db.reviews, async () => {
     let existing = await db.reviews.get(en);
+    // a key an older build wrote for this very word, which another list may own too:
+    // English topic words shared "en:achieve" with the English dictionaries before topic
+    // words moved to "en:trio:achieve". The ladder is adopted, the row is left alone.
+    // Looked up before the bare key below: a word that also had a bare row ("achieve",
+    // from before keys carried a language) took that oldest ladder alone and restarted a
+    // word mastered under "en:achieve" (step 5) from the bare row's rung
+    if (!existing && inherit && inherit !== en) {
+      const prev = await db.reviews.get(inherit);
+      if (prev) existing = { ...prev, en };
+    }
     // the same word under its old bare key: inherit its ladder position when this
     // key has none yet, else merge it in as renameRecords would (deleted outright, the bare
     // row's answers were lost), and drop the old row either way so it cannot stay due forever
@@ -83,13 +93,6 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
     if (i >= 0) {
       const old = await db.reviews.get(en.slice(i + 1).replace(/^trio:/, ""));
       if (old) { await db.reviews.delete(old.en); existing = existing ? merged(old, existing, en) : { ...old, en }; }
-    }
-    // a key an older build wrote for this very word, which another list may own too:
-    // English topic words shared "en:achieve" with the English dictionaries before topic
-    // words moved to "en:trio:achieve". The ladder is adopted, the row is left alone.
-    if (!existing && inherit && inherit !== en) {
-      const prev = await db.reviews.get(inherit);
-      if (prev) existing = { ...prev, en };
     }
     // clamped on read as well as on restore: a row imported before restoreRecords clamped
     // (step -3) answered correctly took INTERVALS[-2] and got a NaN dueAt, never due again
