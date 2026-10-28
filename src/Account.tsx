@@ -254,9 +254,13 @@ export function Account({ uiLang, name, onName }: {
         // without a word, and the first link of a typed sign-in never happened (nothing was backed
         // up for the rest of the session and autoPush could not start)
         if (linked === uid) {
-          const { cloudHasMore } = await withinSyncWait(pushProgress(uid));
+          // the push goes on past the limit and still lands (it did before the limit too): its
+          // answer then brings the 云端有更多 offer late rather than not at all, as the error
+          // for the wait is already showing — the capped await alone dropped cloudHasMore
+          const push = pushProgress(uid);
+          push.then(r => { if (alive) setCloudNewer(r.cloudHasMore); }).catch(() => { /* the capped await reports it */ });
+          await withinSyncWait(push);
           if (!alive) return;
-          setCloudNewer(cloudHasMore);
         } else {
           if (alive) { setErr(""); setMsg(syncingText(uiLang)); }
           const done = await withinSyncWait(linkThisDevice(uid, "merge", prof?.name || "", () => alive));
