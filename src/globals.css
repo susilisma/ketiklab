@@ -183,7 +183,8 @@
 .backup-btns{display:flex;gap:10px}
 .backup-btns button,.import-btn{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:11px 18px;font-size:12px;font-weight:700;cursor:pointer}
 .backup-btns button:hover,.import-btn:hover{border-color:var(--purple);color:var(--purple)}
-.import-btn input{display:none}
+/* the file input stays in the tab order, hidden off-screen rather than display:none, which took the import out of a keyboard user's reach (no Tab stop, nothing for Enter or Space to open): focus lands on the input, the label shows the ring, and Enter or Space opens the picker */
+.import-btn{position:relative}.import-btn input{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;opacity:0;pointer-events:none}.import-btn:focus-within{border-color:var(--purple);box-shadow:0 0 0 3px var(--purple-soft)}
 
 /* ---- reading list categorized groups (round 6) ---- */
 .reading-group{margin-bottom:6px}
