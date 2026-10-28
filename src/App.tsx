@@ -443,10 +443,14 @@ export default function Home() {
     window.addEventListener("resize", fadeCategoryTabs);
     return () => window.removeEventListener("resize", fadeCategoryTabs);
   }, [view, category, source, fadeCategoryTabs]);
-  const [narrowRow, setNarrowRow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 430px)").matches);
+  // the phone row: the chapter option reads "1/31", the header option "Indonesia", the touch hint
+  // 点击开始. The same 640px the stylesheet caps the chapter select at (96px): at 430px, with the
+  // cap reaching 640, a 431–640px window (a phone held sideways, a split screen) printed
+  // "Chapter 1 / 18" / "Bab 1 / 18" / "第 1 / 18 章" into a box that showed "Chapte"
+  const [narrowRow, setNarrowRow] = useState(() => typeof window.matchMedia === "function" && window.matchMedia("(max-width: 640px)").matches);
   useEffect(() => {
     if (typeof window.matchMedia !== "function") return;
-    const mq = window.matchMedia("(max-width: 430px)"); const on = () => setNarrowRow(mq.matches);
+    const mq = window.matchMedia("(max-width: 640px)"); const on = () => setNarrowRow(mq.matches);
     mq.addEventListener("change", on); return () => mq.removeEventListener("change", on);
   }, []);
   // how many were due when the session started: the session takes REVIEW_CAP of them
