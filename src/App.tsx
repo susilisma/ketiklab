@@ -539,7 +539,7 @@ export default function Home() {
   // strict-mode flash timers so neither can act on the word that replaced it, and
   // start its repetitions, reveal and slip count from zero — the [index] effect
   // does the same but only fires when the index actually changes
-  const resetWordRun = () => { autoAdvance.current++; finishing.current = false; carry.current = ""; dropPinyinCarry(); hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setMeaningPeek(false); setWrongCountWord(0); };
+  const resetWordRun = () => { autoAdvance.current++; finishing.current = false; carry.current = ""; dropPinyinCarry(); hadWrong.current = false; lapseRecorded.current = false; cancelFlash(); setLoopIx(0); setReveal(false); setMeaningPeek(false); setWrongCountWord(0); if (nextPos.current !== null) { nextPos.current = null; setJudged(n => n + 1); } };
   // every path that starts a list from its first word: the chapter's tally, its finish
   // card and its clock start over too — choosing the list that is already open used to
   // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
@@ -944,6 +944,13 @@ export default function Home() {
   // the restore below sets the index from storage; the write effect after it must not first
   // store the index of the render that preceded the restore (0 on load, 0 after a list change)
   const skipPositionWrite = useRef(false);
+  // the word the advance timer will move to once the 320 ms done window closes, from the moment
+  // the word is judged: the pass is counted then, but the position moved only when the timer
+  // fired, so a reload inside the window brought the counted word back and counted it again.
+  // Cleared by the timer (the index then says the same) and by every path that leaves the word
+  // inside the window (resetWordRun), which writes the position the card actually shows
+  const nextPos = useRef<number | null>(null);
+  const [judged, setJudged] = useState(0);
   // the list as rendered, for the effect above: activeItems itself is derived further down
   const activeItemsRef = useRef<PracticeItem[]>([]);
   const clampPosition = useRef(false);
@@ -978,14 +985,14 @@ export default function Home() {
     if (reviewKeys) return;
     try {
       const m = readPositions();
-      const pos = chapterFinished ? 0 : index % 20;
+      const pos = chapterFinished ? 0 : nextPos.current ?? index % 20;
       const cur = m[sourceKey] as { ch?: unknown; pos?: unknown } | undefined;
       if (cur && typeof cur === "object" && cur.ch === chapter && cur.pos === pos) return;
       m[sourceKey] = { ch: chapter, pos };
       localStorage.setItem("ketiklab-position", JSON.stringify(m));
     } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, sourceKey, chapterFinished, chapter]);
+  }, [index, sourceKey, chapterFinished, chapter, judged]);
   // the reading and the line in hand; a finished piece starts over on the next visit, as a
   // finished chapter does. Nothing is written before the readings have arrived and the saved
   // piece has been restored, or the empty first render would wipe it
@@ -1726,6 +1733,9 @@ export default function Home() {
     if (!cleanRun && !lapseRecorded.current && !slipped) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
     else if (lastRep && cleanRun && !recognizeOnly) recordReview(wordId, true, undefined, legacyId).then(refreshSrs).catch(() => {});
     if (lastRep) { setAttempts(n => n + 1); if (cleanRun) setCorrect(n => n + 1); setSessionWords(n => n + 1); bumpToday(); }
+    // the position moves on now, as the timer will (the chapter's last word ends it: word 1, as
+    // the finish card's write says); a review keeps no position, its write effect sits it out
+    if (lastRep) { nextPos.current = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1 ? 0 : index % 20 + 1; setJudged(n => n + 1); }
     const token = ++autoAdvance.current;
     // repeat the same word loopTimes before moving on (reference "loop word" mode)
     if (!lastRep) {
@@ -1742,6 +1752,7 @@ export default function Home() {
     window.setTimeout(() => {
       if (autoAdvance.current !== token) return;
       finishing.current = false;
+      nextPos.current = null;
       markStale();
       setTyped(""); setLoopIx(0);
       const wasWrong = hadWrong.current || slipOn.current === wordId;
