@@ -59,12 +59,22 @@ jobs:
       - name: Commit the regenerated lockfile
         if: github.event_name == 'push'
         run: |
-          if git diff --quiet -- package-lock.json; then
-            echo "package-lock.json already in sync with package.json"
-            exit 0
-          fi
           git config user.name "ketiklab-bot"
           git config user.email "bot@users.noreply.github.com"
-          git add package-lock.json
-          git commit -m "chore(deps): sync package-lock.json with package.json"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+          # the branch may have moved since checkout (a second push while this ran). A
+          # rejected push regenerates the lockfile on the new tip and tries again, as
+          # site.yml's bot push does, rather than ending the run red with nothing pushed.
+          for attempt in 1 2 3 4 5; do
+            if git diff --quiet -- package-lock.json; then
+              echo "package-lock.json already in sync with package.json"
+              exit 0
+            fi
+            git add package-lock.json
+            git commit -m "chore(deps): sync package-lock.json with package.json"
+            git push origin "HEAD:${GITHUB_REF_NAME}" && exit 0
+            sleep $((attempt * 10))
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            npm install --no-audit --no-fund
+          done
+          exit 1
