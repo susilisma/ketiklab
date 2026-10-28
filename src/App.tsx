@@ -497,8 +497,10 @@ export default function Home() {
   // set the moment a word is graded, cleared when its advance timer fires: keys
   // that land in that window must not grade the same word again or skip it
   const finishing = useRef(false);
-  // when the last skip happened: a second ENTER inside the same 320 ms window is the same gesture
-  const skippedAt = useRef(0);
+  // when the last skip happened: a second ENTER inside the same 320 ms window is the same gesture.
+  // Not 0: that is a real moment on the page's clock, and an ENTER in the first 320 ms after
+  // navigation (a cached load renders in ~200 ms) was swallowed as a double tap of a skip never made
+  const skippedAt = useRef(-Infinity);
   // letters typed inside the 320 ms "done" window after a word: they belong to the next word
   // and used to be wiped with the box, so the key after them was graded against the new word's
   // first letter — every word typed without a pause at the boundary came out as a miss
