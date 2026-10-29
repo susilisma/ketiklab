@@ -5577,8 +5577,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-15 D INFO（与 zh-pinyin-orphan-hanzi-keys 同类，计数更新为 39） ｜ 10-16 D 复验仍 39（另 13 键只被次义引用） ｜ 10-29 E 复验仍 39（次义引用键 17）",
-   "date": "2026-10-29"
+   "reason": "今日 4 个旧首义键保留（结束 亦为词典词头），新首义补了 4 条；无引用汉字键仍 39 + 4",
+   "date": "2026-10-30"
   },
   {
    "fingerprint": "fav-unstar-from-other-tab-wraps-list",
@@ -6691,19 +6691,19 @@
    "fingerprint": "append-batch-readings-no-in-batch-title-author-dedup",
    "title": "append-batch.mjs 同一批次两篇同题同作者（大小写不同）的阅读都被追加（readTA 只对既有阅读查重，bRid 只存 id）；阅读字段不 trim",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-29 E harness 复现（copy 上 5/10 追加含 t-read + t-read3，id 带空格）；队列为空、阅读经人工审核，无害；修法：bRid 加 title|author 键 + trim",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "38f94bf",
+   "reason": "同批次题名+作者折叠大小写/trim 去重，字段 trim；V1 43/43",
+   "date": "2026-10-30"
   },
   {
    "fingerprint": "append-batch-zh-charset-unchecked",
    "title": "append-batch.mjs 不检查 zh 字符集：含换行或 ASCII 分号的 zh 通过校验被追加，成为无拼音来源的练习目标（trio 行不经 TYPEABLE 过滤）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-29 E harness 复现；live 数据 0 行，无用户影响；修法：校验 /^[\\u3400-\\u9fff]+(；[\\u3400-\\u9fff]+)*$/",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "44ed15f",
+   "reason": "每个 zh 义项须匹配 /^[㐀-鿿]+$/；promote exit 1 队列原样；V1 43/43",
+   "date": "2026-10-30"
   },
   {
    "fingerprint": "first-link-in-other-tab-reloads-practising-tab",
@@ -6718,28 +6718,28 @@
    "fingerprint": "seo-readings-language-cell-no-lang",
    "title": "/en/readings/ 与 /id/readings/ 的「语言」列 <td>中文</td>（64 格）及 /zh/ 的 English 无 lang 属性，标题 / 作者 / 年代格有",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-29 B 在 dist 验证；语言名以自身语言书写是设计，只缺属性；build-seo-pages.py 一处",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "5cf6dd5",
+   "reason": "readings 表语言名格带 lang；V1 3 页 480 行逐字核对，其余页 byte-identical",
+   "date": "2026-10-30"
   },
   {
    "fingerprint": "fav-last-slot-unstar-in-window-no-finish-card-when-nothing-answered",
    "title": "收藏列表从保存的最后一词开始、本次未答过词：答对后在 320 ms 窗内取消收藏 → 无完成卡，卡片显示 01/1，位置留 pos 1（App.tsx:1813 resetWordRun 先清 finishing.current，:1819 的 chDone>0||finishing 守卫失效）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-29 V2 S12b 复现，基线与修后相同（fav-remove-last-slot-replays-chapter 的子情形）；建议修法：分支顶部 const justDone = finishing.current && loopIx + 1 >= loopTimes，守卫改 (chDone > 0 || justDone)；未测，明日按价值",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "18f5bac",
+   "reason": "justDone 在 resetWordRun 前读取；A 7/7、V2 22 场景无回归",
+   "date": "2026-10-30"
   },
   {
    "fingerprint": "session-hint-id-320-360-residual-clamp",
    "title": "细指针 320 px 印尼语提示 5 行（61–97 px）与 360 px + ≥100 章列表仍被 line-clamp 裁剪",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-29 B / V3 量测，仅细指针窄桌面窗口；session-hint-id-third-line-cut-375 修后的残留",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "7141607 + 0df93a9",
+   "reason": "≤371px 细指针紧凑规则；B 144 格 0 BAD，V2 sweep 355–380 无遮字，372+ 与粗指针 byte-identical",
+   "date": "2026-10-30"
   },
   {
    "fingerprint": "import-label-ring-stays-after-mouse-click",
@@ -6765,8 +6765,107 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "见 reports/gloss-candidates-2026-10-29.md；明日送下一位读者或主人",
-   "date": "2026-10-29"
+   "reason": "见 reports/gloss-candidates-2026-10-29.md；1407/1411 仍被唯一性挡住，其余主人项",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "pinyin-box-shift-tab-keeps-focus-mode",
+   "title": "打拼音框 Shift+TAB 离开后 running 仍 true：FOCUS MODE 不退、时钟继续、侧栏隐藏，键盘用户走不到导航（ZhSteps.tsx:327）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "fad7d98",
+   "reason": "Shift+TAB 调 onLeave；V4 20/20，其他档与 App 框两版相同",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "fav-star-double-click-removes-next-favourite",
+   "title": "我的收藏 双击 ★：第二击把滑入的下一收藏也取消，3 → 1 学习者未见（App.tsx toggleFav/favListChanged）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "f0b8ac3",
+   "reason": "unstarredAt ref，320 ms 内的第二次取消忽略；V2 双击/dblclick/双 Enter 均 3 → 2，400 ms 后刻意第二击仍生效",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "auth-form-no-time-limit",
+   "title": "登录/注册/重置/改密请求永不返回时按钮永久 处理中… 无提示，忘记密码？ 守卫吞掉后续点击（Account.tsx submit/forgot/setNewPassword）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "0250cfe",
+   "reason": "withinSyncWait 15 s + 三臂 服务器没有响应；V3 四种挂起 × 三语、happy path 三语",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "zh-choose-stride-not-coprime-35",
+   "title": "选汉字 步长 7/5 在池为 35 倍数（36/71/106 词复习）时只走 7 格：12/36 卡同长干扰项不足、2 卡答案唯一同长（ZhSteps.tsx:223）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "d98e0f4",
+   "reason": "步长取 7/5/11 中第一个不整除池的，否则 1；V4 节点 harness N=4..420 只有 35 倍数改变，浏览器 36 词复习 36/36",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "session-hint-id-361-371-residual-clamp",
+   "title": "361–371px 细指针 130/151 章列表印尼语提示仍丢 mulai（规则止于 360）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "0df93a9",
+   "reason": "规则上限 371；V2 sweep 无遮字，主检出 361/365/371/372/375 矩阵 0 BAD",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "late-dict-skip-at-boundary-leaves-topic-position",
+   "title": "lateDict 到达后在边界 ENTER 跳词：词典打开、attempts/错词本写了，但 trio 的 ketiklab-position 不写，下次仍是第 1 词（App.tsx skipWord/advanceOrFinishChapter）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "需给跳词写 nextPos 并在非 lateDict 路径清除，非安全一行改动；A a04 J3 复现",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "fav-untouched-last-slot-unstar-leaves-pos-1",
+   "title": "未答过词时取消收藏未动过的最后一词：卡片 01/1 而 ketiklab-position 留 pos 1，刷新即钳回 0",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "无害；V2 v2-probe2 复现，基线与修后相同",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "fav-chapter2-sole-word-card-says-chapter-1",
+   "title": "21 词收藏第 2 章唯一一词答对后取消收藏：完成卡标题 Chapter 1（列表缩到 20，chapterSafe 钳位）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "外观；V2 S7b",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "late-auth-answer-signs-in-after-timeout",
+   "title": "登录请求 15 s 超时后改用另一账号登录成功，迟到的第一个 token 仍由 auth-js 保存并切换账号（外来账号先问，不静默合并）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "接受现状（与同步迟到答复一致）或给 createClient 传可中断 fetch；V3 实测",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-10-30",
+   "title": "words.json 1600–1999 双读后的未改候选：1852 it turns out（原来 被占）、1993 message、1614 backpacker、1792 sell-in、1882 neighborhood watch；大写缩写 11 行、借词 2 行、x-ray 拉丁字母",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "见 reports/gloss-candidates-2026-10-30.md；明日送第三位读者或主人",
+   "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "id-acronym-glosses-1600-1999",
+   "title": "11 行印尼语释义为大写缩写（SIM、KPR、kode QR、APBD、kode HS、SPT masa/tahunan、PKWT、PKWTT、UMP、UMK）：保留缩写还是改全称（既知 30 行大写组内）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "两位读者只标格式；学习者打不出大写",
+   "date": "2026-10-30"
   }
  ]
 }
