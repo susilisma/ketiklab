@@ -505,6 +505,10 @@ export default function Home() {
   // Not 0: that is a real moment on the page's clock, and an ENTER in the first 320 ms after
   // navigation (a cached load renders in ~200 ms) was swallowed as a double tap of a skip never made
   const skippedAt = useRef(-Infinity);
+  // when the favourites list last slid under the card (the word un-starred, the next favourite in
+  // its slot with ★ lit): a second click inside the same 320 ms window is the same gesture, as the
+  // ENTER guard above — a double click on ★ un-starred the word that slid in unseen (3 → 1)
+  const unstarredAt = useRef(-Infinity);
   // letters typed inside the 320 ms "done" window after a word: they belong to the next word
   // and used to be wiped with the box, so the key after them was graded against the new word's
   // first letter — every word typed without a pause at the boundary came out as a miss
@@ -1769,6 +1773,7 @@ export default function Home() {
   function toggleFav() {
     if (!item) return;
     if (!isFav) { setFavorites(list => [{ key: item.key, text: item.text, sub: item.sub, meaning: item.meaning, example: item.example, voice: item.voice, lang: item.lang, dict: item.dict, dictId: item.dictId, glosses: item.glosses, def: item.def }, ...list].slice(0, 500)); return; }
+    if (performance.now() - unstarredAt.current < 320) return;
     const remaining = favorites.filter(f => `${f.lang}:${f.key}` !== wordId);
     setFavorites(remaining);
     favListChanged(remaining);
@@ -1818,6 +1823,7 @@ export default function Home() {
       if (justDone) { const wasWrong = hadWrong.current || slipOn.current === wordId; setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId]))); }
       // the next favourite slides into this slot: nothing typed so far belongs to it
       setTyped(""); resetWordRun(); autoSpokenWord.current = null;
+      unstarredAt.current = performance.now();
       // the slot was the chapter's last: nothing slides in, and wrapping to word 1 ran the
       // whole list a second time (4 words counted for 2 favourites)
       const slot = index % Math.max(learnItems.length, 1), left = Math.min(20, remaining.length - chapterSafe * 20);
