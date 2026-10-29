@@ -53,6 +53,12 @@ function humanError(e: unknown, l: Lang): string {
     return T("同步没有响应，请稍后再试。",
              "Sinkronisasi tidak merespons. Coba lagi nanti.",
              "The sync did not respond. Try again later.", l);
+  // a sign-in / sign-up / reset / new-password request that never answered (withinSyncWait):
+  // not a sync, so the sync wording would mislead
+  if (m.includes("server did not respond"))
+    return T("服务器没有响应，请稍后再试。",
+             "Server tidak merespons. Coba lagi nanti.",
+             "The server did not respond. Try again later.", l);
   // saveProgress refuses a write once the session is gone (another tab signed out while this
   // one was syncing): the wording was the guard's own English, printed on the sign-in form
   if (m.includes("not signed in as this account"))
@@ -136,11 +142,16 @@ function linkError(code: string, l: Lang): string {
 
 // A sync request that never returns (a proxy that swallows the connection, a half-open
 // socket) used to leave every button of the card disabled with no word: 15 s is the limit,
-// and the three sync buttons say what they are doing in the meantime, as 退出登录 does
+// and the three sync buttons say what they are doing in the meantime, as 退出登录 does.
+// The sign-in form's requests (token, signup, recover, new password) take the same limit:
+// stalled, they kept the button on 处理中… for good, and 忘记密码？ swallowed every further
+// click in silence. auth-js cannot cancel the request, so a late answer still lands (a late
+// token still signs in, as it does after a sync's late answer): only the waiting is bounded.
 const SYNC_WAIT_MS = 15000;
-function withinSyncWait<T>(p: Promise<T>): Promise<T> {
+const AUTH_TIMED_OUT = "server did not respond";
+function withinSyncWait<T>(p: Promise<T>, reason = "sync timed out"): Promise<T> {
   return new Promise<T>((resolve, reject) => {
-    const t = setTimeout(() => reject(new Error("sync timed out")), SYNC_WAIT_MS);
+    const t = setTimeout(() => reject(new Error(reason)), SYNC_WAIT_MS);
     p.then(v => { clearTimeout(t); resolve(v); }, e => { clearTimeout(t); reject(e); });
   });
 }
@@ -289,7 +300,7 @@ export function Account({ uiLang, name, onName }: {
       if (mode === "up") {
         // a blank Name falls back to this device's name only while the device belongs to
         // nobody: on a device linked to another account that name is the previous user's
-        const res = await signUp(addr, password, formName.trim() || (linkedUid() ? "" : name.trim()));
+        const res = await withinSyncWait(signUp(addr, password, formName.trim() || (linkedUid() ? "" : name.trim())), AUTH_TIMED_OUT);
         // With confirmation on, signing up an address that already has an account
         // returns a placeholder user with no identities instead of an error, and
         // sends no email.
@@ -309,7 +320,7 @@ export function Account({ uiLang, name, onName }: {
           setMode("in");
         }
       } else {
-        await signIn(addr, password);
+        await withinSyncWait(signIn(addr, password), AUTH_TIMED_OUT);
         // the dead-link notice is about the link, not about this account: it stayed on the
         // signed-in card after a password sign-in that followed it. (Not on a uid change: on a
         // shared computer the link's failure is still news to whoever signs in next.)
@@ -331,9 +342,11 @@ export function Account({ uiLang, name, onName }: {
     try {
       if (!email.trim()) { setErr(T("先填邮箱。", "Isi email dulu.", "Enter your email first.", uiLang)); return; }
       const addr = email.trim();
-      await resetPassword(addr);
+      // the link has no busy face of its own: the wait used to show nothing at all
+      setMsg(T("正在发送…", "Mengirim…", "Sending…", uiLang));
+      await withinSyncWait(resetPassword(addr), AUTH_TIMED_OUT);
       setMsg(T(`重置链接已发到 ${addr}。`, `Tautan reset sudah dikirim ke ${addr}.`, `A reset link went to ${addr}.`, uiLang));
-    } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
+    } catch (e2: unknown) { setMsg(""); setErr(humanError(e2, uiLang)); }
     finally { forgetting.current = false; }
   }
 
@@ -341,7 +354,7 @@ export function Account({ uiLang, name, onName }: {
     e.preventDefault();
     setErr(""); setMsg(""); setBusy(true);
     try {
-      await updatePassword(newPw);
+      await withinSyncWait(updatePassword(newPw), AUTH_TIMED_OUT);
       finishRecovery(); setRecovering(false); setNewPw("");
       setMsg(T("密码已更新。", "Kata sandi sudah diperbarui.", "Password updated.", uiLang));
     } catch (e2: unknown) { setErr(humanError(e2, uiLang)); }
