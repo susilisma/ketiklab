@@ -112,17 +112,23 @@ for (const raw of newWords) {
   kept.words.push(obj);
 }
 
-const bRid = new Set();
-for (const r of newReadings) {
-  if (!r || typeof r !== "object") { skip.readings.push("not-object"); continue; }
-  const { id, lang, title, author, era, genre, lines, note } = r;
-  if (![id, lang, title, author, era, genre, note].every((x) => typeof x === "string" && x.trim())) { skip.readings.push("empty-field"); continue; }
+// ids and title|author keys of the readings this batch already keeps: two readings of one batch
+// with the same title and author (differing only in case) were both appended, since the
+// existing-readings check knew nothing of the batch and the in-batch check only held ids
+const bRid = new Set(), bRTA = new Set();
+for (const raw of newReadings) {
+  if (!raw || typeof raw !== "object") { skip.readings.push("not-object"); continue; }
+  // trimmed like the word fields: " Sonnet 18 " slipped past the duplicate check and was stored as typed
+  const t = (x) => (typeof x === "string" ? x.trim() : x);
+  const [id, lang, title, author, era, genre, note] = [raw.id, raw.lang, raw.title, raw.author, raw.era, raw.genre, raw.note].map(t);
+  const lines = Array.isArray(raw.lines) ? raw.lines.map(t) : raw.lines;
+  if (![id, lang, title, author, era, genre, note].every((x) => typeof x === "string" && x)) { skip.readings.push("empty-field"); continue; }
   if (!LANGS.has(lang)) { skip.readings.push("bad-lang"); continue; }
-  if (!Array.isArray(lines) || lines.length < 2 || !lines.every((l) => typeof l === "string" && l.trim())) { skip.readings.push("bad-lines"); continue; }
+  if (!Array.isArray(lines) || lines.length < 2 || !lines.every((l) => typeof l === "string" && l)) { skip.readings.push("bad-lines"); continue; }
   const ta = (title + "|" + author).toLowerCase();
   if (readIdSet.has(id) || readTA.has(ta)) { skip.readings.push(`dup-existing: ${id}`); continue; }
-  if (bRid.has(id)) { skip.readings.push(`dup-in-batch: ${id}`); continue; }
-  bRid.add(id);
+  if (bRid.has(id) || bRTA.has(ta)) { skip.readings.push(`dup-in-batch: ${id}`); continue; }
+  bRid.add(id); bRTA.add(ta);
   kept.readings.push({ id, lang, title, author, era, genre, lines, note });
 }
 
