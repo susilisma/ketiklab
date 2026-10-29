@@ -324,7 +324,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         // Shift+TAB and Escape leave the box, so the page stays reachable by keyboard
         if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) onMiss(); setPeek(true); }
         // leaving the box is a pause: with running left true the header kept saying FOCUS MODE
-        // and the clock went on counting seconds the learner was not typing
+        // and the clock went on counting seconds the learner was not typing — after Shift+TAB
+        // too, which moved the focus out but left the clock running and the sidebar hidden,
+        // unlike the App box's Shift+TAB
+        if (e.key === "Tab" && e.shiftKey) onLeave();
         if (e.key === "Escape") { onLeave(); box.current?.blur(); }
         if (e.key === "Enter") { e.preventDefault(); if (!e.repeat) onSkip(); }
       }}
