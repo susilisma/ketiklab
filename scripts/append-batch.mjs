@@ -53,7 +53,12 @@ const zhSenses = (w) => String(w.zh).split("；").map((x) => x.trim()).filter(Bo
 const zhSet = new Set(words.flatMap(zhSenses));
 // the first sense is the practice word: "；测词" made a card with nothing to type, and a
 // sense written twice ("测词；测词") printed twice on the meaning line
+// and every sense is Chinese characters only (the range App.tsx's TYPEABLE.zh types): "测验;考核"
+// with an ASCII semicolon, "测验 词" or "test" became a card the 打拼音 rung could not grade, since
+// zh-pinyin.json never holds such a key and topic rows are not filtered by TYPEABLE
+const HAN_SENSE = /^[\u3400-\u9fff]+$/;
 const badZh = (zh) => { const s = String(zh).split("；").map((x) => x.trim()); return !s[0] || s.some((x, i) => !x || s.indexOf(x) !== i); };
+const badZhChars = (zh) => String(zh).split("；").some((x) => !HAN_SENSE.test(x.trim()));
 const readIdSet = new Set(readings.map((r) => r.id));
 const readTA = new Set(readings.map((r) => (r.title + "|" + r.author).toLowerCase()));
 
@@ -68,6 +73,7 @@ function materializeWord(w) {
     if (!CATEGORIES.has(category)) return { err: "bad-category" };
     if (!LEVELS.has(level)) return { err: "bad-level" };
     if (badZh(zh)) return { err: "bad-zh-senses" };
+    if (badZhChars(zh)) return { err: "bad-zh-charset" };
     // the tuple form carries no example text; inventing one filled the library with one sentence
     return { obj: { en, id, zh, category, level, source: DEFAULT_SOURCE, examples: {} } };
   }
@@ -83,6 +89,7 @@ function materializeWord(w) {
   if (!CATEGORIES.has(category)) return { err: "bad-category" };
   if (!LEVELS.has(level)) return { err: "bad-level" };
   if (badZh(zh)) return { err: "bad-zh-senses" };
+  if (badZhChars(zh)) return { err: "bad-zh-charset" };
   // keep whichever languages the batch supplied; the card skips a missing row
   const ex = {};
   if (examples) for (const k of ["en", "id", "zh"]) {
