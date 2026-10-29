@@ -409,7 +409,8 @@ def readings_page(lang, readings, lib_rows):
     rows = "\n".join(
         # the era too: a dynasty (唐, 北宋) or "1930-an" is written in the piece's language, a bare year in none
         f'<tr><td class="w"{lang_attr(r["lang"], lang)}>{esc(r["title"])}</td><td{lang_attr(r["lang"], lang)}>{esc(r.get("author") or "")}</td><td{era_attr(r, lang)}>{esc(str(r.get("era") or ""))}</td>'
-        f'<td>{esc(READ_LANG.get(r["lang"], r["lang"]))}</td><td{lang_attr(r["lang"], lang)}>{esc((r.get("lines") or [""])[0])}</td></tr>'
+        # the language name is written in that language (中文, Bahasa Indonesia, English), so it carries lang too
+        f'<td{lang_attr(r["lang"], lang)}>{esc(READ_LANG.get(r["lang"], r["lang"]))}</td><td{lang_attr(r["lang"], lang)}>{esc((r.get("lines") or [""])[0])}</td></tr>'
         for r in readings)
     body = (
         f"<h1>{esc(name)}</h1>\n<p class=\"lead\">{esc(desc)}</p>\n"
