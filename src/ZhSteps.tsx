@@ -220,7 +220,11 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     const others = Array.from(new Set(pool.filter(w => w && w !== word)));
     const seed = word.length + (word.codePointAt(0) || 0);
     // the stride must be coprime with the pool size or the walk keeps landing on the same slots
-    const stride = others.length % 7 ? 7 : 5;
+    // (a pool of 35, 70, 105… words — a favourites list or a review of 36 Chinese words — divides
+    // by both 7 and 5, and the walk then saw only seven slots: 12 of the first 36 topic words got
+    // fewer same-length distractors than the pool held, and two showed the answer as the only
+    // option of its length again)
+    const stride = [7, 5, 11].find(s => others.length % s) || 1;
     const picks: string[] = [];
     // distractors of the answer's own length first: a one-character 是 among 昨天, 法规 and
     // 星期 was the only short option on the card, and the length gave the answer away (12 % of
