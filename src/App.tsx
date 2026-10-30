@@ -851,7 +851,10 @@ export default function Home() {
   useEffect(() => { refreshSrs(); }, [view]);
   // the box is unmounted with the learn view and no blur fires for that: the flag that
   // says it holds the focus stayed true, so the view came back without its veil
-  useEffect(() => { if (view !== "learn" || chapterFinished) setTypingFocus(false); }, [view, chapterFinished]);
+  // ...and leaving the view is a pause, as Escape is: the clock already sat out the other view, but
+  // `running` stayed true, so the learn view came back in focus mode (sidebar hidden, chapter
+  // select and mode row gone, the header saying 专注模式 / 暂停) over a veiled card whose clock stood still
+  useEffect(() => { if (view !== "learn" || chapterFinished) setTypingFocus(false); if (view !== "learn") setRunning(false); }, [view, chapterFinished]);
   // the input is keyed by the practice language, so a learning-language change on the topic words
   // remounts it without a blur event: typingFocus stayed true and the card showed neither focus nor
   // the veil (another tab's change; this tab's own change refocuses 30 ms later and onFocus sets the
