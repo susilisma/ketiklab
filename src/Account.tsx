@@ -241,7 +241,11 @@ export function Account({ uiLang, name, onName }: {
       // data with it until 立即同步 is pressed; a device linked to another account
       // keeps its name too
       const untrusted = (!!linked && linked !== uid) || (!linked && !sessionTyped(uid));
-      const prof = await loadProfile(uid);
+      // under the same 15 s limit as the sync below: a profile read that never answered held the
+      // card with no word for good — no first link, no push, no foreign-device card — where the
+      // sync's own read ends with a message. Timed out, the name is unknown (not blank), as when
+      // the read fails, and the sync goes on to say what the connection is doing
+      const prof = await withinSyncWait(loadProfile(uid)).catch((): undefined => undefined);
       profKnown.current = prof !== undefined;
       // the first link of a typed sign-in outlasts the panel: leaving it during the profile
       // round-trip used to abandon the link, and autoPush never links a device on its own,
