@@ -152,7 +152,11 @@ export async function signUp(email: string, password: string, name: string) {
     email, password, options: { data: { name } },
   });
   if (error) throw error;
-  markTyped(data.user?.id);
+  // with confirmation on, an address that already has an account comes back as a placeholder user
+  // (no identities, no session) and nothing is sent: its random id is nobody's, and marking it
+  // typed put it over the uid of the sign-up before it, so that account's own confirmation link
+  // then looked like a stranger's (the panel asked for 立即同步 instead of linking the device)
+  if (data.session || data.user?.identities?.length) markTyped(data.user?.id);
   return data;
 }
 
