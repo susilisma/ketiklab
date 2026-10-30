@@ -313,7 +313,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       className="zh-typebox"
       value={typed}
       inputMode="text"
-      placeholder={T(uiLang, "用键盘打拼音，例如 shi xian", "ketik pinyin, mis. shi xian", "type the pinyin, e.g. shi xian")}
+      // the example is no topic word: "shi xian" was the answer to the first 打拼音 card every
+      // learner meets (实现 opens 商务 and the whole collection), spelled out under its own box
+      placeholder={T(uiLang, "用键盘打拼音，例如 zhong wen", "ketik pinyin, mis. zhong wen", "type the pinyin, e.g. zhong wen")}
       onChange={e => {
         onResume();
         if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += e.target.value.slice(typed.length); return; }
