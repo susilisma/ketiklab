@@ -1698,7 +1698,19 @@ export default function Home() {
     // boundary after one of them drops it and persists the topic words, as any choice does; a
     // reload from the card still opens it, the saved source being untouched until then
     const atEnd = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1;
-    if (lateDict.current && !atEnd) { const open = lateDict.current; lateDict.current = null; if (!sourceReq.current) { if (open()) return; } else persistSource(sourceRef.current); }
+    if (lateDict.current && !atEnd) {
+      const open = lateDict.current; lateDict.current = null;
+      if (!sourceReq.current) {
+        if (open()) {
+          // the topic word just left behind: its list's position moves to the next word here, the
+          // list being swapped under the card in this same render (the write effect sits out the
+          // first render of the new list). A pass had written it when judged (nextPos); a skip had
+          // not, so the skipped word came back as the first on the next visit to the topic words
+          try { const m = readPositions(); m[sourceKey] = { ch: chapter, pos: index % 20 + 1 }; localStorage.setItem("ketiklab-position", JSON.stringify(m)); } catch { /* ignore */ }
+          return;
+        }
+      } else persistSource(sourceRef.current);
+    }
     // a review session keeps its own tally: exitReview clears it, so the summary
     // after 退出复习 never counts words from other lists
     setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
