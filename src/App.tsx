@@ -1413,7 +1413,7 @@ export default function Home() {
   // 选汉字 hides the hanzi and asks for it: the Chinese example sentence contains that very
   // word, so on that rung it is not shown (the other extra lines carry no hanzi to give away)
   const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && rung === "choose" && x.kind === "example"));
-  // 975 trio first senses have no zh-pinyin entry; the ladder filters them out but
+  // 1286 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
   // the plain pinyin any item is graded against at 打拼音 (empty when it has none): the next
   // word's needs it too, to know whether that word's rung holds its speech
