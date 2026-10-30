@@ -1046,6 +1046,9 @@ export default function Home() {
   // a password-reset link, a sign-up confirmation link and the reload that follows a
   // cloud restore all land on the home view; cloud.ts asks for the account panel
   useEffect(() => onAccountWanted(() => setView("account")), []);
+  // every view starts at its top: the scroll a long library or 错词本 list left behind stayed on
+  // the learn view, where on a 320×568 phone it put the 选汉字 prompt behind the sticky header
+  useEffect(() => { try { window.scrollTo(0, 0); } catch { /* ignore */ } }, [view]);
   // A favourite saved before glosses existed holds one meaning as text. Once its trio word
   // or dictionary is at hand it gets the glosses and follows the meaning choice like the
   // rest; the stored dict name was localized, so it is matched in all three languages.
