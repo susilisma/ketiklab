@@ -1357,7 +1357,13 @@ export default function Home() {
   // 17 rows were re-glossed since 09-21, and 教学大纲 was printed with the pinyin of 课程体系
   // a favourite saved before topic keys had their own namespace holds the bare headword
   const favWord = (f: PracticeItem) => f.dict ? undefined : trioOf(f.key) || wordByEn.get(f.key);
-  const favItems = () => favorites.map(f => { const w = favWord(f); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f; });
+  // a dictionary favourite's source tag is the dictionary's name in the interface language it was
+  // starred in (托福必考词 stayed on the English favourites grid): renamed for the current one
+  const favItems = () => favorites.map(f => {
+    const d = f.dictId ? dicts.find(x => x.id === f.dictId) : undefined;
+    if (d) return f.dict === dictName(d) ? f : { ...f, dict: dictName(d) };
+    const w = favWord(f); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f;
+  });
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favItems()
     : (dictInfo && dictWords && dictWords.length)
