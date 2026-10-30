@@ -1803,7 +1803,11 @@ export default function Home() {
   // in another tab (the storage listener calls this through a ref, so it sees this render's word)
   function favListChanged(remaining: PracticeItem[]) {
     if (source !== "fav") return;
-    if (!reviewKeys) {
+    // under the finish card there is no word to follow or to slide in: the card keeps its chapter.
+    // A favourite starred in another tab while the card was up used to carry the chapter's last
+    // word over the boundary, and the card then said the next chapter was the one just finished
+    // (下一章 wrapped back to the words just answered)
+    if (!reviewKeys && !chapterFinished) {
       // the word is still listed, moved by the words another tab added or removed before it: the
       // card follows it, letters typed so far included — the index used to stay put, so the word
       // that slid into the slot was shown half-typed, or an index past the chapter's end wrapped
