@@ -515,7 +515,12 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     // places and its name go, but the device's own settings (the languages, the loop count, the
     // input mode…) stay — replaceLocal({}) used to blank them all and the first-visit dialog met
     // the learner again after the reload
-    const next = r.data ? cloud : Object.fromEntries(Object.entries(raw).filter(([k]) => !PROGRESS_KEYS.includes(k) && k !== "ketiklab-chapters" && k !== "ketiklab-name"));
+    // ...and a row that holds no such key (an account whose other device never pushed the loop
+    // count, or pushed before a setting existed) leaves this device's value where it is for the
+    // same reason: replaceLocal(cloud) alone cleared them, and the panel came back in another
+    // language with the first-visit dialog
+    const own = Object.fromEntries(Object.entries(raw).filter(([k]) => !PROGRESS_KEYS.includes(k) && k !== "ketiklab-chapters" && k !== "ketiklab-name"));
+    const next: ProgressBlob = { ...own, ...cloud };
     if (profileName) next["ketiklab-name"] = profileName;
     replaceLocal(next); linkDevice(userId);
     if (linkedUid() !== userId) return "same";
