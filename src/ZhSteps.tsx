@@ -348,6 +348,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     />
     <p className={wrong >= 3 ? "zh-tip has-skip" : "zh-tip"}>
       {zhStepHint("pinyin", uiLang)}
+      {/* a ü the IME spelling keeps as v (lǜ, nǚ): the box takes v or ü and refuses u, which nothing
+          on the card said — "lu" for 律师 was graded a miss with no way to learn why. Not for lüe/nüe,
+          where "lue" is taken as well */}
+      {/v/.test(target) && " " + T(uiLang, "ü 用 v 打。", "ü diketik sebagai v.", "ü is typed as v.")}
       {wrong >= 3 && <button className="zh-skip" onClick={onSkip}>{T(uiLang, "跳过", "Lewati", "Skip")} →</button>}
     </p>
   </div>;
