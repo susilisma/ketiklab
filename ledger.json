@@ -1006,7 +1006,7 @@
    "status": "needs-owner",
    "commit": "",
    "reason": "3 行：未绑定路径保留本机 ketiklab-langs ｜ 10-15 F4 单测复验仍在（cloud.ts:448-449） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 复验仍在（S2），建议改需要主人：applyMerged 注明「首次绑定取账号设置」，ketiklab-langs 是同步键，新设备都过强制对话框，若本机优先则账号语言永不到新设备；窄修法：仅当云端行无 ketiklab-langs 时取本机",
-   "date": "2026-10-24"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "replace-with-no-cloud-row-blanks-device",
@@ -1087,7 +1087,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "仍未动（队列为空）",
-   "date": "2026-09-17"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "topic-words-without-any-pinyin",
@@ -1114,7 +1114,7 @@
    "status": "deferred",
    "commit": "4d965a1",
    "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：缓存步与 zh 工作流相同、权限/触发不变；缺词典仍在 build-en-dicts.py:141 报 wn.Error；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入 ｜ 10-16 F5 复验仍在",
-   "date": "2026-10-16"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "chapter-run-survives-same-key-list-change",
@@ -1633,10 +1633,10 @@
    "fingerprint": "pinyin-rung-umlaut-no-hint",
    "title": "打拼音档 10 个 ü 词只接受 v（律师 lvshi），提示文字不说 ü→v，lu 被判错",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "目标含 v 时在提示里加「ü 打 v」；或在汉字可见时也接受 u；F4 10-01 复核仍在 ｜ 10-16 F3 复验仍在 ｜ 10-23 F3 复验仍在 ｜ 10-24 F3 代码复验仍在 ｜ 10-29 C 复验仍在",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "bf42316",
+   "reason": "目标含 v 时提示追加「ü 用 v 打」三语；C c07、V3 vA 基线 4 FAIL → 全过；手机 ≤640 px 三错前 .zh-tip 隐藏为既有规则（主人项）",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "choose-rung-prevnext-reveals-distractor",
@@ -1716,8 +1716,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "ZhSteps 加 onActivity 接 setRunning，暂停时 blur 框 ｜ 10-27 A：打拼音键与选字已通过 onResume 启动时钟、暂停后下一键恢复并判分（与拉丁框一致）；认读仍不开钟；剩余为打磨",
-   "date": "2026-10-27"
+   "reason": "ZhSteps 加 onActivity 接 setRunning，暂停时 blur 框 ｜ 10-27 A：打拼音键与选字已通过 onResume 启动时钟、暂停后下一键恢复并判分（与拉丁框一致）；认读仍不开钟；剩余为打磨；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "typing-focus-stale-on-unmount",
@@ -2113,7 +2113,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "seed 混入每次挂载的 nonce；未在浏览器确认 ｜ 10-16 F3 复验仍在（答案位 28/26/26/20 %；同章相邻卡可出现完全相同的四选项） ｜ 10-23 F3 复验仍在（seed = 长度 + codePoint） ｜ 10-29 C 复验仍在",
-   "date": "2026-10-29"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "session-hint-collapses-to-ellipsis-375",
@@ -2653,7 +2653,7 @@
    "status": "deferred",
    "commit": "2575ff6 + 471dcc3",
    "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：新步只在非 push 且未 promote 时跑；两次运行幂等；gate/promote/build/deploy 步字节不变；补丁 471dcc3：坏 history.json → 警告 exit 0；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入 ｜ 10-16 F5 复验仍在（history.json 停在 09-15） ｜ 10-29 E 代码复验仍在，history.json 无漂移",
-   "date": "2026-10-29"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "public-sitemap-stub-tracked",
@@ -2749,10 +2749,10 @@
    "fingerprint": "signup-existing-email-overwrites-typed-uid",
    "title": "用已注册邮箱再注册返回 identities:[] 的占位用户，markTyped 仍写入其随机 id → 自己的确认链接被当不可信链接",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "signUp 仅在 identities 非空或有 session 时 markTyped ｜ 10-23 F4 复验仍在",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "53b87db",
+   "reason": "占位用户（无 session、无 identities）不再 markTyped；D s3、V3 vD 三语基线 10 FAIL → 全过",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "postgrest-errors-raw-and-rename-reverts-silently",
@@ -3382,7 +3382,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "F5 t3 复现（生产里窗口 = 一次在途 POST）；修法各 await 后复查 session?.user.id，pushNow 里 linkDevice 前复查 ｜ 10-16 F4：修后部分消失——不再 reload / 把云端副本还原到已退出设备（uid 变化时丢弃 deferred restore）；设备仍标记已绑定属正常 ｜ 10-27 D：单标签页合并进行中 退出登录 已禁用，合并完成即绑定；另一标签页退出的窗口仍在（cloud.ts:490-492） ｜ 10-29 D 复验单标签仍不绑定",
-   "date": "2026-10-29"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "en-dict-rare-sense-batch-2b",
@@ -4344,8 +4344,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示 ｜ 10-29 C 复验仍在",
-   "date": "2026-10-29"
+   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示 ｜ 10-29 C 复验仍在；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "pinyin-rung-tab-records-lapse",
@@ -5566,19 +5566,19 @@
    "fingerprint": "app-comment-stale-975-trio-first-senses",
    "title": "App.tsx:1176 注释写 975，现实为 1267 个主题词首义无阶梯条目",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-15 D INFO；一行注释",
-   "date": "2026-10-15"
+   "status": "fixed",
+   "commit": "8d22573",
+   "reason": "注释 975 → 1286，E 计数、V1 复核",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "zh-pinyin-stale-keys-39",
-   "title": "zh-pinyin.json 39 个键已无任何首义引用（今日改义后增加）",
+   "title": "zh-pinyin.json 无任何首义引用的汉字键 41（+ 只被次义引用 19、含拉丁 / 括号 13；今日修义后 文献记录 转为无引用）",
    "priority": "P3",
    "status": "deferred",
    "commit": "",
    "reason": "今日 4 个旧首义键保留（结束 亦为词典词头），新首义补了 4 条；无引用汉字键仍 39 + 4",
-   "date": "2026-10-30"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "fav-unstar-from-other-tab-wraps-list",
@@ -5677,7 +5677,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "10-16 V2 指出，既有竞态 ｜ 10-29 V1：经 online 重试也可到达，双 POST 均为 A∪B，数据一致",
-   "date": "2026-10-29"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "ime-recommit-on-kept-prefix-never-passes",
@@ -6421,10 +6421,10 @@
    "fingerprint": "replace-drops-settings-cloud-row-lacks",
    "title": "只用云端记录 的有行分支 replaceLocal(cloud) 整体替换：云端行缺 ketiklab-langs / loop / hide-pron 等设置键时设备的值被清掉，语言回落到 ketiklab-ui 或再见首访对话框",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-27 D 复现（h2_replace_langs）；修法：replace 分支 next = { ...deviceSettings, ...cloud }（只影响设置，不影响进度） ｜ 10-29 D 复验仍在",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "8070910",
+   "reason": "只用云端记录 的有行分支 next={...own,...cloud}；D s2、V3 vC 7 场景（基线 10 FAIL → 全过），合并 / 无行路径不变",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "gotrue-validation-failed-worded-as-email",
@@ -6442,7 +6442,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "10-27 E 复现（0 词 + 3 篇，count 5 → 3 篇）；今日无害（阅读经人工审核、队列为空）；一处修法 fixedCount >= queuedWords && queuedWords > 0 ｜ 10-29 E 复验仍在",
-   "date": "2026-10-29"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "site-workflow-run-side-branch-redeploys-main",
@@ -6451,16 +6451,16 @@
    "status": "deferred",
    "commit": "",
    "reason": "10-27 E 代码阅读，需 GitHub 复现；无害的同树重部署",
-   "date": "2026-10-27"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "sw-activate-vs-inflight-swr-orphan-cache",
    "title": "慢网络下旧 worker 的在途 SWR 刷新可能在新 worker activate 删旧缓存后落地，caches.open(旧版本名).put 重建一个孤儿旧缓存，新 words.json 晚一次访问才出现",
    "priority": "P3",
-   "status": "deferred",
+   "status": "refuted",
    "commit": "",
-   "reason": "10-27 E 代码阅读（sw.js:28,41-62,158-162），本地未复现；无混合内容，只多一次访问的陈旧 ｜ 10-29 E 代码复验仍在",
-   "date": "2026-10-29"
+   "reason": "E S4：旧 worker 的在途 SWR put 经 waitUntil 注册，Chromium 让新 worker waiting 到它结束后才 activate；t+6 s 只剩新缓存，无孤儿。其他引擎未测",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "gloss-candidates-2026-10-27",
@@ -6550,7 +6550,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "C 浏览器复现，无误判；与 strict-flash-lockout-drops-fast-keys 同类 ｜ 10-29 C 复验仍在",
-   "date": "2026-10-29"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "reload-in-done-window-replays-counted-word",
@@ -6622,7 +6622,7 @@
    "status": "needs-owner",
    "commit": "",
    "reason": "调色板决定；与 purple-white-dark-contrast 同组",
-   "date": "2026-10-28"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "words-online-motorbike-taxi-duplicate-rows",
@@ -6817,10 +6817,10 @@
    "fingerprint": "late-dict-skip-at-boundary-leaves-topic-position",
    "title": "lateDict 到达后在边界 ENTER 跳词：词典打开、attempts/错词本写了，但 trio 的 ketiklab-position 不写，下次仍是第 1 词（App.tsx skipWord/advanceOrFinishChapter）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "需给跳词写 nextPos 并在非 lateDict 路径清除，非安全一行改动；A a04 J3 复现",
-   "date": "2026-10-30"
+   "status": "fixed",
+   "commit": "5ba0223",
+   "reason": "词典在边界打开时直接写主题列表位置 {ch,pos:index%20+1}；A a01/a01b、V2 v2-latedict 基线 FAIL 4 → ALL OK，边界通过 / 章末 / 换语言 / 收藏 无回归",
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "fav-untouched-last-slot-unstar-leaves-pos-1",
@@ -6829,7 +6829,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "无害；V2 v2-probe2 复现，基线与修后相同",
-   "date": "2026-10-30"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "fav-chapter2-sole-word-card-says-chapter-1",
@@ -6838,7 +6838,7 @@
    "status": "deferred",
    "commit": "",
    "reason": "外观；V2 S7b",
-   "date": "2026-10-30"
+   "date": "2026-10-31"
   },
   {
    "fingerprint": "late-auth-answer-signs-in-after-timeout",
@@ -6866,6 +6866,132 @@
    "commit": "",
    "reason": "两位读者只标格式；学习者打不出大写",
    "date": "2026-10-30"
+  },
+  {
+   "fingerprint": "fav-dict-source-tag-frozen-in-saving-ui-language",
+   "title": "词典收藏的来源标签是收藏时界面语言的 dictName 快照，换界面语言后不重新本地化（托福必考词 留在英文收藏格）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "a364d8a",
+   "reason": "favItems 按 dictId 用当前界面语言的 dictName；B favdict、V2 v1-favtag 基线 FAIL 4 → ALL OK，en-gone / 主题词 / 无 dictId / 取消收藏 无回归",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "view-switch-returns-in-focus-mode",
+   "title": "打字中切到词库再回学习页：running 仍 true，页面以 .app.focused 回来（侧栏 / 章节选择隐藏、页眉 专注模式）而卡片蒙着、时钟不走",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "8e036a9",
+   "reason": "离开 learn 视图的 effect 同时 setRunning(false)；A a03 6/6、V2 v3-viewswitch 基线 FAIL 9 → 28 项 ALL OK，复习 / 练习错词 / 完成窗 / 红闪 / 阶梯档 无回归",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "fav-other-tab-star-under-finish-card-moves-chapter",
+   "title": "我的收藏 章末卡在时另一标签页加星：favListChanged 跟随卡片的词越过章界，卡片改题 Chapter 2，下一章 绕回刚答过的章",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "154d29c",
+   "reason": "章末卡在（chapterFinished && !reviewKeys）时列表变化不动 chapter/index；A a10、V2 v4-favtab 基线 FAIL 2 → 21 项 ALL OK",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "pinyin-placeholder-spells-first-card",
+   "title": "打拼音 空框占位「例如 shi xian」三语把第一张卡 实现 的答案写在框下",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "565c90b",
+   "reason": "例子改 zhong wen（中文 非任何义项）；C c11、V3 vB 基线 6 FAIL → 全过",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "profile-read-no-time-limit",
+   "title": "登录后 GET /profiles 永不返回：卡片无字、不绑定、不推送、online 重试无效，外来设备选择卡不出",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "1831dd5",
+   "reason": "withinSyncWait(loadProfile).catch(undefined)；D n15、V3 vE 基线再现 → 30.5 s 提示、重试绑定、外来卡 15.4 s；档案 500 / 10 s 慢答 / 三语 happy path 两版同，20 s 迟到答复不再盖过已打名字",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "view-switch-keeps-scroll-320x568-choose-prompt-hidden",
+   "title": "320×568 从滚过的词库点卡片回学习页保留 scrollY 222，四字词的 选汉字 拼音提示藏在粘性页眉后",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "29e3623",
+   "reason": "useEffect(() => scrollTo(0,0), [view])；L 矩阵 2 格 FAIL → 348/348；V4 基线再现 → scrollY 0，阅读进度 / 复习聚焦 / hash 着陆 / 同视图不重置 / 链接 / 35 次切换无泄漏 无回归",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "fav-star-in-review-shifts-saved-position",
+   "title": "练收藏到第 3/5 词时在复习中 ★ 一个非收藏词，退出复习 后卡片落在已答过的词（★ 放在列表前端，exitReview 按下标恢复）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "一词重复；修法需 exitReview 按键恢复，非最小改动（A a04）",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "fav-saved-chapter-beyond-list-applies-position",
+   "title": "ketiklab-chapters fav=2 + position {ch:2,pos:3} 而只剩 5 个收藏：第 3 章的位置套到第 1 章，词 1–3 不显示",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "触发牵强（章键同步、位置键不同步）；钳位 effect 在保存章无词时提前返回（A a02 T8）",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "zh-tip-hidden-until-third-miss-on-phone",
+   "title": "≤640 px 的 .zh-tip{display:none} 直到第三次错（globals.css:463），今日加的 ü 注在手机上三错前看不到",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "是否始终显示提示或至少 ü 注（V3 注）",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "pinyin-box-loses-letters-on-view-switch",
+   "title": "打拼音框在视图切换后丢失已打字母（ZhSteps 重挂），App 的拉丁框保留",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "两版相同，不是今日修复引起（V2 注）；若能不动设计可保留",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "missing-meaning-note-language-mixes",
+   "title": "缺释义灰注写在释义语言：英文界面 + 印尼语释义读到「Belum ada arti Indonesia · tap for the Chinese meaning」",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "onlyNote 注释说明有意；是否改随界面语言（B）",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "id-ladder-hint-spasi-vs-space-keycap",
+   "title": "印尼语阶梯提示「Tekan SPASI untuk lanjut」旁键帽印 SPACE（ZhSteps.tsx:16 vs :278）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "外观；SPACE 是键帽（B）",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-10-31",
+   "title": "words.json 2000–2399 双读后的未改候选：唯一性挡住 2024 free / 2085 / 2133 dong / 2134 deh / 2139 soalnya / 2142 pod / 2366 memorial / 2370 marry；替换词不同 2130 id / 2175 / 2188 / 2291 / 2375；借词 2098 / 2142；2101 BPJS 大写",
+   "priority": "释义",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "见 reports/gloss-candidates-2026-10-31.md",
+   "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "id-adjective-de-style-inconsistent",
+   "title": "A1/A2 形容词行一部分用「…的」（军事的、医疗的…），与 2018–2041 的无 的 风格不一致",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "R1 备注；是否统一",
+   "date": "2026-10-31"
   }
  ]
 }
