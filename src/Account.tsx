@@ -272,9 +272,12 @@ export function Account({ uiLang, name, onName }: {
           // the push goes on past the limit and still lands (it did before the limit too): its
           // answer then brings the 云端有更多 offer late rather than not at all, as the error
           // for the wait is already showing — the capped await alone dropped cloudHasMore
+          // ...and a late answer that succeeded takes the wait's error down with it: the card kept
+          // saying 同步没有响应 after the row had been written, until the next visit
+          let late = false;
           const push = pushProgress(uid);
-          push.then(r => { if (alive) setCloudNewer(r.cloudHasMore); }).catch(() => { /* the capped await reports it */ });
-          await withinSyncWait(push);
+          push.then(r => { if (!alive) return; setCloudNewer(r.cloudHasMore); if (late) { setErr(""); setSyncedAt(stamp()); } }).catch(() => { /* the capped await reports it */ });
+          try { await withinSyncWait(push); } catch (e3) { late = true; throw e3; }
           if (!alive) return;
         } else {
           if (alive) { setErr(""); setMsg(syncingText(uiLang)); }
@@ -385,7 +388,12 @@ export function Account({ uiLang, name, onName }: {
       const unknown = linked !== uid && !profKnown.current;
       const blob = collectLocal();
       if (own) blob["ketiklab-name"] = own; else if (unknown) delete blob["ketiklab-name"];
-      const { merged, cloudHasMore } = await withinSyncWait(pushProgress(uid, blob));
+      // the push goes on past the 15 s wait and still lands (see the mount push above): a late success on a
+      // device linked to this account clears the wait's error, or 同步没有响应 stood over a sync that had landed
+      let late = false;
+      const push = pushProgress(uid, blob);
+      push.then(r => { if (late && signedInAs(uid) && linkedUid() === uid) { setErr(""); setCloudNewer(r.cloudHasMore); setSyncedAt(stamp()); } }).catch(() => { /* the capped await reports it */ });
+      const { merged, cloudHasMore } = await withinSyncWait(push).catch((e3: unknown) => { late = true; throw e3; });
       // signed out in another tab while the read was in flight: the cloud already matched, so the
       // push wrote nothing and ended here — and printed 已同步 under the sign-in form (the effect
       // that re-runs on the sign-out had already cleared the card's messages)
