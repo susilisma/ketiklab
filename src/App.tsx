@@ -872,6 +872,10 @@ export default function Home() {
   // list not opened this session was silently left out, so the list disagreed with the
   // button above it. Fetch those dictionaries (as 开始复习 does) and render again.
   const [, setDictTick] = useState(0);
+  // the languages whose dictionaries this fetch has been tried for: until then lookupKey leaves a
+  // legacy key unnamed rather than naming it by the topic word for the frames before the fetch
+  // lands (id:air was listed as udara · 空气, then as air · 水 — on a slow network for seconds)
+  const dictTried = useRef(new Set<Lang>());
   useEffect(() => {
     if (!ready || view !== "mistakes" || !mistakes.length || !dicts.length) return;
     // a legacy key named by the topic word only because its dictionaries are not loaded yet
@@ -879,7 +883,8 @@ export default function Home() {
     const missing = mistakes.filter(k => { const info = lookupKey(k); return !info || (info.legacy && dicts.some(d => d.lang === splitId(k)[0] && !dictCache.current.has(d.id))); });
     if (!missing.length) return;
     let alive = true;
-    resolveReviewRefs(missing).then(() => { if (alive) setDictTick(n => n + 1); }).catch(() => {});
+    const tried = () => { for (const k of missing) dictTried.current.add(splitId(k)[0]); if (alive) setDictTick(n => n + 1); };
+    resolveReviewRefs(missing).then(tried, tried);
     return () => { alive = false; };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, mistakes, dicts]);
@@ -1584,6 +1589,9 @@ export default function Home() {
     // written before topic words had their own namespace: the bare English headword, which
     // a dictionary of this language may hold too — that is why the dictionaries went first
     const legacy = wordByEn.get(key) || (lg === "zh" && ZH_RENAMES[key] ? wordByEn.get(ZH_RENAMES[key]) : undefined);
+    // not before the 错词本 effect above has tried this language's dictionaries, one of which may
+    // own the key: the finish card falls back to the item in hand (itemInfo) meanwhile
+    if (legacy && !dictTried.current.has(lg) && dicts.some(d => d.lang === lg && !dictCache.current.has(d.id))) return undefined;
     return legacy ? { ...trioInfo(legacy), legacy: true } : undefined;
   }
   // the list in hand names a word no loaded dictionary does: a favourite from a dictionary not
