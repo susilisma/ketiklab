@@ -2504,7 +2504,9 @@ export default function Home() {
   function resetProgress() {
     if (!window.confirm(TX("确定清除全部学习进度？此操作无法撤销（可先在数据统计页导出备份）", "Hapus semua progres? Tidak bisa dibatalkan (ekspor cadangan dulu di halaman statistik)", "Erase all progress? This cannot be undone (export a backup from Statistics first)", uiLang))) return;
     setCorrect(0); setAttempts(0); setMistakes([]); setDayCounts({}); setSessionWords(0);
-    try { localStorage.removeItem("ketiklab-chapters"); } catch { /* ignore */ }
+    // the word within each chapter too: kept, a chapter-1 position survived the reset (the other
+    // chapters' did not, their chapter now being 0), and the list reopened at word 8 of a fresh run
+    try { localStorage.removeItem("ketiklab-chapters"); localStorage.removeItem("ketiklab-position"); } catch { /* ignore */ }
     if (reviewKeys) exitReview();
     setChapterTo(0);
     resetAll().then(refreshSrs).catch(() => {});
