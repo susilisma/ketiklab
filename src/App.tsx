@@ -1028,7 +1028,10 @@ export default function Home() {
   useEffect(() => {
     if (!clampPosition.current || reviewKeys) return;
     const n = activeItemsRef.current.slice(chapter * 20, chapter * 20 + 20).length;
-    if (!n) return;
+    // the list is here but the saved chapter lies past its end (the favourites shrank elsewhere, the
+    // chapter key synced and the position key not): the card shows the last chapter, and a position
+    // saved for another chapter is word 1 — it used to be applied there, word 4 of 5 with 1–3 unseen
+    if (!n) { if (activeItemsRef.current.length) { clampPosition.current = false; setIndex(0); } return; }
     clampPosition.current = false;
     if (index >= n) setIndex(n - 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
