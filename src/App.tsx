@@ -536,6 +536,10 @@ export default function Home() {
   // zh rung, so the English list shares "trio:business" with the Indonesian one and a language
   // change inside the review used to bring the Indonesian card back over the English list)
   const finishedBeforeReview = useRef<{ key: string; lang: Lang; chapter: number; done: number; wrong: string[]; elapsed: number } | null>(null);
+  // the word the review was started over, for exitReview: the favourites list may have moved under the
+  // review (★ on a review word puts it at the front, an unstar in another tab), and restored by index
+  // alone the card landed on a word already answered, or skipped one
+  const wordBeforeReview = useRef<{ key: string; id: string } | null>(null);
   // letters on the card (the App box, the 打拼音 box), the done window still open, or a slip
   // already noted: after a strict-mode first slip the box is rolled back to empty, and the list
   // was swapped under the learner retyping the word their lapse was just filed for
@@ -1976,6 +1980,7 @@ export default function Home() {
   // the chapter's finish card, when a review is started over it, for exitReview to put back
   function keepFinishCard() {
     finishedBeforeReview.current = chapterFinished && !reviewKeys ? { key: sourceKey, lang, chapter: chapterSafe, done: chDone, wrong: chWrongKeys, elapsed: chElapsed } : null;
+    if (!reviewKeys) wordBeforeReview.current = { key: sourceKey, id: wordId };
   }
   function practiceChapterWrong() {
     if (!chWrongKeys.length) return;
@@ -2468,19 +2473,31 @@ export default function Home() {
   // then wrote over the real position
   function exitReview() {
     setReviewKeys(null); setReviewDueTotal(0);
-    const ch = savedChapter(sourceKey);
-    setChapter(ch);
+    let ch = savedChapter(sourceKey);
     // the finish card the review was started over comes back, with its tally, when the list, the
     // learning language and the chapter are still the ones it was for (a rung or language change
     // inside the review moves the list, and the chapter then opens at its own saved word, as below)
     const kept = finishedBeforeReview.current; finishedBeforeReview.current = null;
     const restore = !!kept && kept.key === sourceKey && kept.lang === lang && kept.chapter === ch;
+    let pos = savedPosition(sourceKey, ch);
+    // the favourites moved under the review: the card follows the word it was on, as favListChanged
+    // does outside a review — restored by index it landed on a word already answered (★ on a review
+    // word had put it at the front). Not under a finish card, which keeps its chapter (154d29c)
+    const was = wordBeforeReview.current; wordBeforeReview.current = null;
+    if (!restore && source === "fav" && was && was.key === sourceKey) {
+      const at = activeItems.findIndex(it => `${it.lang}:${it.key}` === was.id);
+      if (at >= 0 && at !== ch * 20 + pos) { ch = Math.floor(at / 20); pos = at % 20; writeChapter(sourceKey, ch); }
+    }
+    // ...or shrank (the word itself unstarred in the review): the chapter's last word, not a wrap-round
+    const n = activeItems.slice(ch * 20, ch * 20 + 20).length;
+    if (n && pos >= n) pos = n - 1;
+    setChapter(ch);
     setChapterFinished(restore); setChDone(restore ? kept.done : 0); setChWrongKeys(restore ? kept.wrong : []);
     // the card has no word to type, so the clock stops as it does when a chapter ends
     if (restore) { setChElapsed(kept.elapsed); setRunning(false); }
     chapterStart.current = secondsRef.current;
     // same as startReview: the slip noted inside the review must not grade the list's word
-    setIndex(savedPosition(sourceKey, ch)); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
+    setIndex(pos); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
   }
   function practiceWord(w: Word, lg: Lang = lang) {
     setReviewKeys(null);
