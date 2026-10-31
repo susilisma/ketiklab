@@ -1872,6 +1872,9 @@ export default function Home() {
       // (only when something of this chapter was answered: an untouched chapter emptied this way has no
       // card to show, and the wrap to word 1 counts nothing twice)
       if (remaining.length && slot >= left && (chDone > 0 || justDone)) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
+      // nothing answered yet: the card shows the chapter's new last word, so the index says so too — left
+      // one past the list it rendered that word by wrap-round while the stored position stayed one too far
+      else if (remaining.length && slot >= left && left > 0) setIndex(left - 1);
     }
     // an empty favourites list would fall back to the ladder while still labelled 我的收藏
     if (!remaining.length) { sourceReq.current++; setSource("trio"); persistSource("trio"); }
