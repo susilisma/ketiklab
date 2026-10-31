@@ -6826,10 +6826,10 @@
    "fingerprint": "fav-untouched-last-slot-unstar-leaves-pos-1",
    "title": "未答过词时取消收藏未动过的最后一词：卡片 01/1 而 ketiklab-position 留 pos 1，刷新即钳回 0",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "无害；V2 v2-probe2 复现，基线与修后相同",
-   "date": "2026-10-31"
+   "status": "fixed",
+   "commit": "3be9e85",
+   "reason": "A 修，V4 确认：favListChanged 未答过且槽位是章末时 setIndex(left-1)；非末槽 / 唯一收藏 / 已答后 / 另一标签加星 / 第 20 槽后有第 2 章 均不变",
+   "date": "2026-11-01"
   },
   {
    "fingerprint": "fav-chapter2-sole-word-card-says-chapter-1",
@@ -6925,19 +6925,19 @@
    "fingerprint": "fav-star-in-review-shifts-saved-position",
    "title": "练收藏到第 3/5 词时在复习中 ★ 一个非收藏词，退出复习 后卡片落在已答过的词（★ 放在列表前端，exitReview 按下标恢复）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "一词重复；修法需 exitReview 按键恢复，非最小改动（A a04）",
-   "date": "2026-10-31"
+   "status": "fixed",
+   "commit": "7a354d9",
+   "reason": "A 修，V4 确认 30 项：wordBeforeReview ref，source=fav 且无完成卡时按键找回并写章；章界两向、复习中取消本词、154d29c 完成卡保持；残留：复习中 ★ 后刷新仍按下标重开（ref 不持久），见 reload-mid-review-after-star-reopens-by-index",
+   "date": "2026-11-01"
   },
   {
    "fingerprint": "fav-saved-chapter-beyond-list-applies-position",
    "title": "ketiklab-chapters fav=2 + position {ch:2,pos:3} 而只剩 5 个收藏：第 3 章的位置套到第 1 章，词 1–3 不显示",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "触发牵强（章键同步、位置键不同步）；钳位 effect 在保存章无词时提前返回（A a02 T8）",
-   "date": "2026-10-31"
+   "status": "fixed",
+   "commit": "59ac5f6",
+   "reason": "A 修，V4 确认（收藏 01/5、主题词第 101 章 01/14）；词典列表因 setDictWords/setSource 批处理不走此分支，见 dict-saved-chapter-beyond-list-sourcekey-batch",
+   "date": "2026-11-01"
   },
   {
    "fingerprint": "zh-tip-hidden-until-third-miss-on-phone",
@@ -6952,10 +6952,10 @@
    "fingerprint": "pinyin-box-loses-letters-on-view-switch",
    "title": "打拼音框在视图切换后丢失已打字母（ZhSteps 重挂），App 的拉丁框保留",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "两版相同，不是今日修复引起（V2 注）；若能不动设计可保留",
-   "date": "2026-10-31"
+   "status": "fixed",
+   "commit": "9e7d5e0",
+   "reason": "C 发现，V3 确认：模块级 kept 槽按 step+word+plain 保留已打字母与错数，过关/跳词结束，resetWordRun→dropPinyinCarry 清除；残留：320 ms 内弹跳的第二次 ENTER 让新词实例不再保留（P4，见 pinyin-kept-bounced-enter-stops-keeping）",
+   "date": "2026-11-01"
   },
   {
    "fingerprint": "missing-meaning-note-language-mixes",
@@ -6992,6 +6992,132 @@
    "commit": "",
    "reason": "R1 备注；是否统一",
    "date": "2026-10-31"
+  },
+  {
+   "fingerprint": "start-button-leaves-pinyin-box-unfocused",
+   "title": "打拼音档：暂停后点 开始，时钟走但焦点在 body（拉丁框同流程有焦点），手机无键盘",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "6285605",
+   "reason": "C 发现，V3 确认：start() 退回 .zh-typebox；对话框 inert 时不夺焦；认读/选汉字 无框不崩",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "lookupkey-legacy-name-before-dict-fetch",
+   "title": "错词本列表在词典取回前把旧键 id:air 显示为主题词 udara · 空气（取回后才是 air · 水；慢网下数秒），点 练习 会练错词",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "0e5e9cd",
+   "reason": "C 发现，V3 确认（主人 P3 残留 lookupkey-dictcache-residue 的最后一段）：dictTried ref，该语言词典未试前 legacy 回退返回 undefined；lookupKey 的三个调用方（取回 effect、dueEntries、完成卡）逐一核对，取回失败仍回退主题词",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "mistakes-empty-copy-while-dicts-fetching",
+   "title": "只含旧键的错词本在词典取回期间显示「错词本里没有可显示的词」（0e5e9cd 把 hanzi 旧键既有的行为扩展到拉丁旧键）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "7d04208",
+   "reason": "主代理按 V3 建议：取回期间显示既有的 正在加载词库… 行；取回失败标记已试，回退不变（loading.cjs slow/fail 两种）",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "library-list-search-no-match-empty-grid",
+   "title": "词库内（词典 / 收藏 / 主题词）搜索无结果时只渲染空网格 + 「0 词」，全部词库搜索才有 没有找到 卡",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "5cf63f7",
+   "reason": "L 备注，主代理修：三个列表分支在关键词非空且无匹配时显示同一张 没有找到 / Tidak ditemukan / No matches 卡；三语渲染 0 错误",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "reset-progress-keeps-chapter1-positions",
+   "title": "重置进度 清 ketiklab-chapters 不清 ketiklab-position：第 1 章的词位置熬过重置，en-core 重开在 08/20",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "a26bb4e",
+   "reason": "A 发现，V4 确认：resetProgress 同时移除 ketiklab-position；其他键（fav/langs/sync-uid/keys/name/loop…）不动；ketiklab-position 不在 SYNCED_KEYS，推送不变",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "sync-late-success-keeps-timeout-error",
+   "title": "绑定设备的进度 GET / upsert 在 15 s 后才答复：卡片 同步没有响应 不清除、无 上次同步；立即同步 的迟到成功被丢弃",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "2a67687",
+   "reason": "D 发现，V2 确认：late 标志，迟到成功清 err 并盖 syncedAt（挂载推送 alive 时；pushNow 仅 signedInAs && linkedUid 时）；迟到失败 / 中途退出 / 换账号 / 面板重开 / online / 三语 / 外来设备卡 均无回归",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "account-ratelimit-id-lagi-twice",
+   "title": "印尼语 429 文案「Terlalu sering. Coba lagi satu menit lagi.」与「… Coba lagi satu jam lagi.」lagi 重复",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "a6cdc58",
+   "reason": "B 发现一处，V2 确认并找出第二处（Account.tsx:88）：改为 Coba lagi dalam satu menit / dalam satu jam；zh/en 臂不变",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "pinyin-kept-bounced-enter-stops-keeping",
+   "title": "9e7d5e0 残留：skipWord 320 ms 守卫内弹跳的第二次 ENTER 对新词实例执行 end()，之后打的字母在视图切换时不再保留",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V3 发现，两版都丢（基线本就不保留）；修法：skipWord 返回是否跳词，或把 over 放到 onPass/onSkip 回调里",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "dict-saved-chapter-beyond-list-sourcekey-batch",
+   "title": "词典保存章超出列表（en-business ch 21 / 18 章 + position {ch:20,pos:5}）开在第 18 章 06/7：setDictWords 与 setSource 批处理，钳位 effect 带旧 chapter 闭包先行清旗",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V4 发现，触发需词典跨版本减章；一行扩展（[sourceKey] effect 列表已在而保存章无词时 index 0）已在 /home/user/wtV4/pw/suggest-sourcekey-clamp.diff 试过 0 FAIL，未采纳",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "reload-mid-review-after-star-reopens-by-index",
+   "title": "复习中 ★ 后刷新：wordBeforeReview 是 ref，刷新后退出复习按下标重开（03/6 confident）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V4 备注，两版相同；持久化需写 localStorage，非最小改动",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "start-button-on-settings-starts-clock-no-card",
+   "title": "页眉 开始 在每个视图都在：设置页点 开始 时钟走而无卡片",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V3 备注，既有行为，与 start-button-on-finish-card 同族",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "first-link-read-vs-other-device-push-last-writer-wins",
+   "title": "设备 2 首绑的行读取在途时设备 1 挂载推送写入 → 设备 2 整行 upsert 盖掉设备 1 的 3 个错词与当日计数；设备 1 的 autoPush 因 canon==lastPushed 不补推，直到下次进面板",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "D 发现（s4）：整行 upsert 无并发检查，自愈但设备 1 在此前被清空则永久丢失；需版本列 / If-Match，属两设备合并族",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "regloss-old-senses-zh-dict-headwords-keep-dict-name",
+   "title": "e2db4c3 的 15 个旧首义中 坚信/塑像/必需品/鼓掌（zh-plus）与 名作（zh-upper）是词典词头：zh:<旧义> 行按词典豁免保留词典名，主题词进度从零",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "V1 发现；改义前这些行已经由词典先行解析为词典词，不新增丢失；是否合并属 renamed-topic-headwords-lose-progress 同一决定",
+   "date": "2026-11-01"
+  },
+  {
+   "fingerprint": "gloss-2400-2799-no-consensus",
+   "title": "R5 判 WRONG 但读者无同一首义或被唯一性挡住：2422 interaction（互动 被占）、2451 continuous、2458 transaction（交易 被占）、2498 retain（mempertahankan 被占）、2525 mild、2551 predict（预测 被占）、2572 ignorance（无知 被占）、2585 rehabilitation（康复 被占）、2587 robbery（抢劫 被占）、2600 thermal（热的 被占）、2623 absent（缺席 被占）、2666 troubled、2668 moisture（kelembapan 被占）、2671 abusive（kasar 被占）、2788 looting、2688 reproduce（id 生物义）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "见 gloss-changes-2026-11-01.md 表二",
+   "date": "2026-11-01"
   }
  ]
 }
