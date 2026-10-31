@@ -2356,7 +2356,9 @@ export default function Home() {
     if (running) { pausedByButton.current = true; setRunning(false); input.current?.blur(); document.querySelector<HTMLElement>(".zh-typebox")?.blur(); return; }
     // the finish card has no word to type: 开始 would only start the clock on nothing
     if (chapterFinished) return;
-    setRunning(true); setTimeout(() => input.current?.focus(), 20);
+    // the 打拼音 box too: after 暂停 the 开始 button left it unfocused (no caret, and on a phone no
+    // keyboard) until the next key, which the window handler above sends in — a phone has no such key
+    setRunning(true); setTimeout(() => (input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox"))?.focus(), 20);
   }
   // Keys are "<lang>:<word key>". Within a language an English key can still exist
   // both in the trio collection and in an English dictionary: prefer the dictionary
