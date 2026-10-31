@@ -85,7 +85,7 @@ function humanError(e: unknown, l: Lang): string {
              "Too many attempts from this network. Wait a few minutes and try again.", l);
   if (m.includes("rate limit"))
     return T("发信次数达到上限，请等一小时再试。",
-             "Batas pengiriman email tercapai. Coba lagi satu jam lagi.",
+             "Batas pengiriman email tercapai. Coba lagi dalam satu jam.",
              "Email sending limit reached. Try again in an hour.", l);
   if (m.includes("already registered") || m.includes("already exists"))
     return T("这个邮箱已经注册过了，直接登录即可。",
@@ -125,7 +125,7 @@ function humanError(e: unknown, l: Lang): string {
     return T("这个链接无效，请重新申请一封。", "Tautan ini tidak valid. Minta yang baru.", "That link is not valid. Request a new one.", l);
   // "For security purposes, you can only request this after 60 seconds."
   if (m.includes("for security purposes") || m.includes("only request this after"))
-    return T("操作太频繁，请等一分钟再试。", "Terlalu sering. Coba lagi satu menit lagi.", "Too many requests. Try again in a minute.", l);
+    return T("操作太频繁，请等一分钟再试。", "Terlalu sering. Coba lagi dalam satu menit.", "Too many requests. Try again in a minute.", l);
   // whatever else the server said (a gateway's 503 page, "canceling statement due to statement
   // timeout", an SMTP failure) is not for the learner: one sentence, with the code for a bug report
   return serverTrouble([ae.code, ae.status].find(c => c && /^[A-Za-z0-9_]{2,24}$/.test(String(c))));
