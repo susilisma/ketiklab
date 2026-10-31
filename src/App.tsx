@@ -1608,6 +1608,9 @@ export default function Home() {
   // a bare key from before keys carried a language ("achieve", kept as it is) beside the word's own
   // key (id:trio:achieve) listed mencapai twice, and 开始复习 then served it once (resolveReviewRefs
   // folds them): the list folds them the same way, keeping the entry under the word's own key
+  // a 错词本 key still waiting for its language's dictionaries (the effect above is fetching them):
+  // the list says it is loading rather than that there is nothing to list
+  const dictsPending = view === "mistakes" && mistakes.some(k => { const lg = splitId(k)[0], info = lookupKey(k); return (!info || info.legacy) && !dictTried.current.has(lg) && dicts.some(d => d.lang === lg && !dictCache.current.has(d.id)); });
   const dueEntries: { key: string; info: KeyInfo }[] = (() => {
     if (view !== "mistakes") return [];
     const all = mistakes.map(k => ({ key: k, info: lookupKey(k) })).filter((x): x is { key: string; info: KeyInfo } => !!x.info);
@@ -2704,6 +2707,7 @@ export default function Home() {
         {/* "nothing due" only when nothing is: due rows whose list is not loaded, or a
             clean run with no missed word, have no entry here but are still due above */}
         <div className="mistake-list">{dueEntries.length ? dueEntries.map((x,i)=><button key={x.key} onClick={()=>jumpToKey(x.key)}><span>{i+1}</span><b lang={htmlLang(x.info.lang)}>{x.info.text}</b><em className={x.info.note ? "meaning-missing" : undefined} lang={langAttr(x.info.meaningLang)}>{defTag(x.info.label)}{x.info.meaning}</em><i>{TX("练习 →", "Latih →", "Practice →", uiLang)}</i></button>)
+          : dictsPending ? <div className="empty"><b>⏳</b><h3>{t.loading}</h3></div>
           : srs.due || mistakes.length ? <div className="empty"><b>◎</b><h3>{TX("错词本里没有可显示的词", "Belum ada yang bisa ditampilkan di sini", "Nothing to list here", uiLang)}</h3><p>{srs.due ? TX(`有 ${srs.due} 个词到期，点上方「开始复习」。`, `${srs.due} kata perlu diulang — tekan “Mulai mengulang” di atas.`, `${srs.due} ${srs.due === 1 ? "word is" : "words are"} due: press “Start review” above.`, uiLang) : TX("错过的词在别的词库里，打开那个词库后会显示。", "Kata yang salah ada di daftar lain; buka daftar itu untuk melihatnya.", "The missed words belong to another list; open it to see them here.", uiLang)}</p></div>
           : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
