@@ -539,6 +539,9 @@ html.dark{color-scheme:dark}.dark .language option,.dark .setting option,.dark .
 .install-hint{display:inline-flex;align-items:center;gap:10px;margin:14px 0 0;padding:8px 10px 8px 14px;border:1px solid var(--line);border-radius:12px;background:var(--bg);color:var(--muted);font-size:12px;text-align:left}
 .install-hint>button:first-child{border:0;background:var(--purple);color:#fff;border-radius:9px;padding:9px 14px;font-size:12px;font-weight:700;min-height:var(--touch,40px)}
 .install-hint .install-no{border:0;background:transparent;color:var(--muted);font-size:13px;padding:6px;min-width:var(--touch,40px);min-height:var(--touch,40px)}
+/* today keeps the purple ring on the day its goal is met, in both themes */
+.week div.today b{background:var(--purple);color:#fff}
+.dark .week div.today b{background:var(--purple);color:#fff}
 /* the row the Save button is waiting on, when the dialog opens with it unanswered */
 .lang-modal-section.wants{border-radius:14px;padding-inline:12px;margin-inline:-12px;background:color-mix(in srgb,var(--purple) 7%,transparent)}
 .lang-modal-section.wants>p b{color:var(--purple)}

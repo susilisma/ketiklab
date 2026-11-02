@@ -59,18 +59,20 @@ export function zhStepHint(step: ZhStep, ui: UiLang) {
 // trip later. It stays on for the rest of the session, so switching back is instant.
 export function useZhMap(base: string, needed = true) {
   const [map, setMap] = useState<Record<string, string>>({});
-  const asked = useRef(false);
+  // the ladder filters by level and every word is level 4 without the map: the caller waits
+  // for `settled` before building a Chinese list, so a switch to Chinese cannot flash the
+  // whole library. A failed fetch settles too — the app degrades as it did before.
+  const [settled, setSettled] = useState(false);
   useEffect(() => {
-    if (!needed || asked.current) return;
-    asked.current = true;
+    if (!needed) return;
     let alive = true;
     fetch(base + "zh-pinyin.json")
       .then(r => (r.ok ? r.json() : {}))
-      .then(d => { if (alive) setMap(d || {}); })
-      .catch(() => { asked.current = false; });
+      .then(d => { if (alive) { setMap(d || {}); setSettled(true); } })
+      .catch(() => { if (alive) setSettled(true); });
     return () => { alive = false; };
   }, [base, needed]);
-  return map;
+  return { map, settled: settled || !needed };
 }
 
 export function zhToned(map: Record<string, string>, word: string) {

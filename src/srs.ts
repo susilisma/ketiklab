@@ -73,7 +73,10 @@ function merged(old: ReviewRecord, target: ReviewRecord | undefined, to: string)
   };
 }
 
-export async function recordReview(en: string, correct: boolean, now = Date.now(), inherit?: string): Promise<void> {
+// returns the row it wrote, so the caller can say what it actually scheduled instead of
+// assuming: a word answered before it was due keeps the date it had, and 认读 never calls this
+export async function recordReview(en: string, correct: boolean, now = Date.now(), inherit?: string): Promise<ReviewRecord | null> {
+  let written: ReviewRecord | null = null;
   await db.transaction("rw", db.reviews, async () => {
     let existing = await db.reviews.get(en);
     // a key an older build wrote for this very word, which another list may own too:
@@ -105,16 +108,18 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
     // not a recall from memory, so it keeps the rung and the date it already has
     else if (existing && existing.dueAt > now) { step = prevStep; dueAt = existing.dueAt; }
     else { step = Math.min(prevStep + 1, INTERVALS.length - 1); dueAt = now + INTERVALS[step] * DAY; }
-    await db.reviews.put({
+    written = {
       en,
       step,
       dueAt,
       reps: count(existing?.reps) + 1,
       lapses: count(existing?.lapses) + (correct ? 0 : 1),
-      lastResult: correct ? "correct" : "wrong",
+      lastResult: correct ? "correct" as const : "wrong" as const,
       updatedAt: now,
-    });
+    };
+    await db.reviews.put(written);
   });
+  return written;
 }
 
 export type SrsStats = { due: number; learning: number; mastered: number; total: number };
