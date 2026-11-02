@@ -6043,10 +6043,10 @@
    "fingerprint": "heart-hati-vs-cardiac-jantung",
    "title": "words.json #1982 heart · hati（解剖义应为 jantung）但 #2719 cardiac 已占 jantung；需两行同改（cardiac → kardiak）",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-21 D + R4 均判 heart·hati 错且提 jantung；R2 UNSURE；apply-gloss 因唯一性拒绝；需主人决定",
-   "date": "2026-10-21"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "learn-link-with-unsaved-foreign-list",
@@ -6079,19 +6079,19 @@
    "fingerprint": "words-immigration-yimin-taken-by-immigrant",
    "title": "words.json #267 immigration · 入境：两位读者（10-21 R2、今日 R6）一致判错且首项都是 移民，但 移民 是 #2599 immigrant 的首义",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-23：唯一性规则挡住；可选 immigrant → 移民者 后 immigration → 移民，需主人定",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "words-contamination-wuran-taken-by-pollution",
    "title": "words.json #1407 contamination · 沾染；污染：两位读者（R3、R6）判错且首项都是 污染（R4 UNSURE 同），但 污染 是 #1394 pollution 的首义",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-23：唯一性规则挡住；中文二者同词，需主人定（如 contamination → 污染；沾染 且 pollution → 环境污染）",
-   "date": "2026-10-23"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "zh-upper-bani-romanian-coin-headword",
@@ -6124,37 +6124,37 @@
    "fingerprint": "words-ladder-tangga-taken-by-stairs",
    "title": "#1692 ladder · tangga lipat 两位读者一致 tangga，但 tangga 是 #646 stairs 的 id",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-24 R1 + R2；唯一性挡住；是否 stairs → anak tangga 腾位由主人定",
-   "date": "2026-10-24"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "words-marry-jiehun-taken-by-get-married",
    "title": "#2370 marry · 娶；嫁；结婚 两位读者一致 结婚，但 结婚 是 #1958 get married 首义",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-24 R3 + R4；唯一性挡住",
-   "date": "2026-10-24"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "words-urban-village-head-cunzhang-taken",
    "title": "#790 urban village head · 城市行政村长 两位读者一致 村长，但 村长 是 #1146 village head 首义",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-24 R6(10-23) + R5；唯一性挡住",
-   "date": "2026-10-24"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "words-legalization-renzheng-taken-by-accreditation",
    "title": "#550 legalization · 认证手续 两位读者一致 认证，但 认证 是 #2782 accreditation 首义",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-24 R6(10-23) + R5；唯一性挡住",
-   "date": "2026-10-24"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "words-lagged-variable-loanword-lag",
@@ -6259,10 +6259,10 @@
    "fingerprint": "words-uniqueness-blocked-pairs-2026-10-25",
    "title": "两方判错但被唯一性挡住：appraisal zh 评估（evaluation 占）、performance review 绩效考核 / penilaian kinerja、satisfactory memuaskan（#2635）、humiliation penghinaan（#2809）",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-25 R2 + R5 / R3 + R4；与 10-24 六组同属腾位问题，主人定",
-   "date": "2026-10-25"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "gloss-candidates-2026-10-25",
@@ -6358,10 +6358,10 @@
    "fingerprint": "gloss-uniqueness-blocked-2026-10-26",
    "title": "两方一致但被唯一性挡住：dissuade → mencegah、apprenticed → magang、casualty → korban、grandma 奶奶、retain → mempertahankan、transaction 交易、predict 预测、ignorance 无知",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "占位词均为另一行的 id / 首义；是否允许改用次义或放宽首义唯一规则",
-   "date": "2026-10-26"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "gloss-candidates-2026-10-26",
@@ -6475,10 +6475,10 @@
    "fingerprint": "gloss-uniqueness-blocked-2026-10-27",
    "title": "唯一性挡住的两方一致改义：problem 难题→问题（question 占）、insubordinate durhaka→membangkang（disobey 占）；immigration 移民 已在 words-immigration-yimin-taken-by-immigrant",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "是否允许占位词改用次义或放宽首义唯一规则；见 reports/gloss-candidates-2026-10-27.md 表一",
-   "date": "2026-10-27"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "ime-stale-cancel-recommit-graded-as-lapse",
@@ -6754,10 +6754,10 @@
    "fingerprint": "words-contamination-curriculum-first-sense-blocked",
    "title": "#1407 contamination 首义 沾染（三方同判应为 污染，被 #1394 pollution 占）；#1411 curriculum 首义 课程体系（应为 课程，被 #281 course 占）",
    "priority": "P3",
-   "status": "needs-owner",
-   "commit": "",
-   "reason": "10-29 R1 / R2 / R5 同词；首义唯一性规则挡住，需主人腾位（与 969 零售价 / 3609 membangkang / 1982 jantung 同组）",
-   "date": "2026-10-29"
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
   },
   {
    "fingerprint": "gloss-candidates-2026-10-29",
@@ -7114,10 +7114,307 @@
    "fingerprint": "gloss-2400-2799-no-consensus",
    "title": "R5 判 WRONG 但读者无同一首义或被唯一性挡住：2422 interaction（互动 被占）、2451 continuous、2458 transaction（交易 被占）、2498 retain（mempertahankan 被占）、2525 mild、2551 predict（预测 被占）、2572 ignorance（无知 被占）、2585 rehabilitation（康复 被占）、2587 robbery（抢劫 被占）、2600 thermal（热的 被占）、2623 absent（缺席 被占）、2666 troubled、2668 moisture（kelembapan 被占）、2671 abusive（kasar 被占）、2788 looting、2688 reproduce（id 生物义）",
    "priority": "P3",
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "主人 11-02 决定正确优先于唯一；VG 盲判后全部应用，见 gloss-changes-2026-11-03.md",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "finish-card-tomorrow-count-never-resets",
+   "title": "完成卡「明天回来复习」计数只增不清：下一章 40、重练本章 60（App.tsx chTomorrow 无 setChTomorrow(0)，早答保留日期的行仍计入）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "f0cddb4",
+   "reason": "A/B/C 三方复现；V1/C 在修后构建验证 20 → 复习退出 20 → 重练无 → 下一章 20；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "dup-row-tap-does-nothing",
+   "title": "词库 / 🌐 / 错词本 点共享首义的第二行（contamination 污染）什么都不发生：gotoTrioWord/practiceWord 在去重阶梯里按 en 找不到即返回，且 stepForWord 已先升档",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "593c742",
+   "reason": "按练习值定位，档位在找到词后才写；V1 验证 污染 一张卡、点开 17/20、错词本 练习 → 污染；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "dup-row-listed-in-grid-search-favs-review",
+   "title": "词库网格 / 🌐 / 收藏 / 复习列出共享首义的两行，复习一次打两遍 污染；输入法档页眉 1231 / 1233 假装档位收窄",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "593c742",
+   "reason": "activeWords/🌐/favItems/resolveReviewRefs 按练习值去重；V1 验证收藏 2 / 复习 2 / 4、第二行下一轮复习送出；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "lib-counts-not-deduped",
+   "title": "词库页眉 / 分类标签 / 🌐 共 N 词 仍印原始行数 3879，而分页 3851",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b1144b4",
+   "reason": "catCount 按练习值；V1b 验证 zh 3851 / id 3866 / en 3879 与分页一致；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "fav-button-vs-pager-count",
+   "title": "★ 我的收藏 · 3 对分页 · 2",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b1144b4",
+   "reason": "favItems().length；V1b 验证；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "unstar-dead-press-on-shared-favourite",
+   "title": "pollution / contamination 同星时卡上 ★ 按一次无可见效果",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b1144b4",
+   "reason": "isFav / toggleFav 按 lang:text；V1b 验证一按两行皆去、非共享收藏照旧；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "fav-dict-nonstring-white-screens-library",
+   "title": "手编备份 / 伪造云端行的收藏项 dict / dictId 非字符串 → 词库页 React #31 白屏直到清站点数据",
+   "priority": "P1",
+   "status": "fixed",
+   "commit": "7d5183a",
+   "reason": "cleanFavorites 校验 dict/dictId；V2 三条路径验证词库正常、合法词典收藏仍有标签；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "cloud-or-backup-langs-unvalidated-overwrites-choice",
+   "title": "云端行 / 备份里 ketiklab-langs 为 \"null\" / \"[]\" / {\"ui\":\"xx\"} 被原样写入，首访对话框回来或学习语言静默改变",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "7d5183a + f659e12",
+   "reason": "storable() 要求对象且 ui/learn 为语言；V2/V2b 验证；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "jwt-expired-on-read-worded-as-cloud-read-failed",
+   "title": "读进度 401 PGRST301 被说成「暂时读不到云端记录」",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "7d5183a",
+   "reason": "过期判断提前；V2 三语验证；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "cloud-row-keeps-dropped-fav-banner-sticks",
+   "title": "修 7d5183a 后：merge 的 star() 仍把设备丢弃的收藏项写回云端行，云端有更多 横幅常驻",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "f659e12",
+   "reason": "V2 发现、V2b 验证横幅不再常驻、首次推送清掉该项；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "css-dead-rule-reading-list-button-i",
+   "title": "globals.css 唯一低于 12 px 的规则 .reading-list button>i{font-size:8px} 已无匹配元素",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "e615785",
+   "reason": "E 发现；删除；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "finish-card-english-goal-arm-terser-than-other-arms",
+   "title": "完成卡英文「today 20/20」读作日期",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "0d12ee4",
+   "reason": "改 today's goal；V1 验证；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "lang-dialog-focus-lost-on-close",
+   "title": "语言对话框关闭后焦点落到 body",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "0d12ee4",
+   "reason": "卸载时把焦点还给打开它的按钮；V1 三语验证；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "finish-card-next-chapter-wraps-id",
+   "title": "375 宽印尼语「Bab berikutnya →」箭头折到第二行",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b143f09",
+   "reason": "L 发现；white-space:nowrap；L 矩阵复跑 finish 单元通过；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "metric-streak-label-three-lines-id",
+   "title": "印尼语「Hari berturut-turut」占三行，指标条撑高、完成页出现滚动",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "37f2c64",
+   "reason": "改 Hari beruntun；L 矩阵复跑通过；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "nav-icon-keyboard-glyph-wider-than-box",
+   "title": "1280+ 宽 id/en 界面 ⌨ 表情字形 26 px 超出 19 px 框，与标签重叠 3 px",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "37f2c64 + e5a8d8d",
+   "reason": "U+FE0E 文本呈现 + min-width；沙箱字体下 VS15 无效，min-width 后 12 个宽屏单元通过；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "pinyin-box-dead-on-identical-key-twice",
+   "title": "手编备份里同一收藏连续两次：ZhSteps 不重挂，拼音框满且死（只剩 ENTER）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "04e4bad",
+   "reason": "C 复现；cleanFavorites 每键一行；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "favourites-index-vs-deduped-list",
+   "title": "favListChanged 用原始 remaining 定位而卡片列表已按词去重，重复词在前时槽位差一",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "04e4bad",
+   "reason": "C 追踪；改用 onceByWord(remaining)；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "zh-renames-dead-entry-shadowed-by-live-first-sense",
+   "title": "绩效考核 → appraisal 条目被 performance review 的现首义遮蔽，永不触发且日后改义会指错行",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "a1d516f",
+   "reason": "V2 发现；删除，KEYS_FLAG v4.201；V2b 迁移验证；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "gloss-uniqueness-parked-applied-2026-11-03",
+   "title": "按主人 11-02 决定应用全部唯一性搁置改义：34 处 + 2800–3199 双读 26 处 = 60 处",
+   "priority": "释义",
+   "status": "fixed",
+   "commit": "ce0f9ba",
+   "reason": "VG 盲判 34/34 APPLY；见 reports/gloss-changes-2026-11-03.md；已合入 main e5a8d8d",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-11-03",
+   "title": "2800–3199 双读与分歧行的未改候选：2818 tile、2876 meltdown、3158 clutter、3173 knitted、2688 reproduce（VG 判 live 可接受）；2175 regulatory capture 无两方同词；单方项 1993 / 1396 / 1433",
+   "priority": "释义",
+   "status": "deferred",
+   "commit": "",
+   "reason": "见 reports/gloss-changes-2026-11-03.md 未改表；2175 送第三位读者",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "words-merge-retail-selling-price-into-retail-price",
+   "title": "#969 retail selling price 与 #2087 retail price 现已同为 零售价，建议删 #969 留 #2087（删行丢 zh:trio:<en> 键）",
+   "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "见 gloss-changes-2026-11-01.md 表二",
-   "date": "2026-11-01"
+   "reason": "G 提议，主人定",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "lapse-retry-within-10-min-keeps-the-lapse",
+   "title": "srs.ts 早答分支也作用于 step −1 的 10 分钟行：错后 1 分钟答对仍 −1 / +10 min，练习错词 既不升档也不被完成卡计入",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "C 复现；一行修法 prevStep >= 0；是否算「回忆」由主人定",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "due-time-is-answer-time-plus-24h",
+   "title": "dueAt = 答题时刻 + 24 h：23:30 答对的词次日 07:00 不到期",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "C 追踪 + 单测；若改为按日历日，noteScheduled 的 12–36 h 窗口须同改",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "dark-ignores-prefers-color-scheme",
+   "title": "只认 ketiklab-dark，系统深色且未设置时渲染浅色",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "L 复现；可能是有意；修法 index.html + dark 初值各一行",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "library-300-cards-one-column-phone",
+   "title": "375 宽词库单列 300 卡，文档高 5.6 万 px",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "L 观察；可考虑 60 卡首页 + 显示更多",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "reading-note-footer-english-only-in-zh-ui",
+   "title": "reading.note 只在中文界面显示，但 88/160 条注无中文",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "B 复现；数据项：只显示含 CJK 的注或翻译并加 lang",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "no-live-region-for-status-messages",
+   "title": "全站无 aria-live / role=status（账号同步行、阅读失败横幅、完成卡）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "B 普查；与既有「横幅 role=status」主人项同组",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "ready-gate-loading-screen-on-switch-to-zh",
+   "title": "id/en 学习者中途切到中文时整个应用（含设置页）换成加载屏一次往返",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "A 追踪；非最小改动",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "dup-typed-text-after-parenthetical",
+   "title": "practisedOnce 按原始字段去重而卡片打去括号文本：en 已有 full / full (after eating) 等 3 对同打",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "A 追踪；按打字文本去重需同步 wordValue 的用处",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "review-dedupe-merges-dict-and-topic-same-spelling",
+   "title": "复习把到期的词典行 en:achieve 与主题行 en:trio:achieve 合为一项，第二项下轮送出（基线打两遍）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "V1 备注：按练习值去重的直接结果，是否接受由主人定",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "star-shared-across-sources-same-spelling",
+   "title": "★ 按 lang:text：同一拼写的词典词与主题词（或两本词典）共用一颗星",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "V1b 备注；593c742/b1144b4 的设计结果",
+   "date": "2026-11-03"
+  },
+  {
+   "fingerprint": "link-tokens-stay-in-browser-history",
+   "title": "邮件链接 #access_token 留在后退栈与全局历史（hashchange 监听会在回退时擦除）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "D 追踪；唯一修法 flowType pkce，取舍属主人",
+   "date": "2026-11-03"
   }
  ]
 }
