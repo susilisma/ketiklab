@@ -2784,7 +2784,7 @@ export default function Home() {
               ? `今日目标 ${goal}${streak}`
               : uiLang === "id"
               ? `target hari ini ${goal}${streak}`
-              : `today ${goal}${streak}`}</p>;
+              : `today's goal ${goal}${streak}`}</p>;
           })()}
           {/* and the way to be there tomorrow: one line, once, after something was finished */}
           {canInstall && !installDone && !STANDALONE && <p className="install-hint">
@@ -2998,7 +2998,9 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
   // a dialog takes the focus with it, or keys keep landing on the practice card behind it: on
   // the card already selected, so the focus ring and the 已选 mark sit on the same card (the
   // ring used to be drawn on 中文 while an Indonesian or English visit had its own card chosen)
-  useEffect(() => { first.current?.focus(); }, []);
+  // and gives it back on close: after Escape or ✕ the focus sat on <body>, so the next Tab
+  // started over from the top of the page instead of from the button that opened the dialog
+  useEffect(() => { const opener = document.activeElement as HTMLElement | null; first.current?.focus(); return () => { if (opener && opener.isConnected && typeof opener.focus === "function") opener.focus(); }; }, []);
   // Save starts disabled when the interface language and the learning language are the same and
   // the browser's own language is no help; the row that unlocks it is the third one, below the
   // fold on a phone. Focus its first option — that scrolls it into view and puts the keyboard
