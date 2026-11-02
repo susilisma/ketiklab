@@ -65,6 +65,12 @@ function humanError(e: unknown, l: Lang): string {
     return T("这次没有同步：账号已在别处退出登录。记录仍在这台设备上，重新登录后再同步。",
              "Tidak jadi disinkronkan: akun sudah keluar di tempat lain. Datamu masih di perangkat ini — masuk lagi untuk menyinkronkan.",
              "Not synced: the account was signed out elsewhere. Your progress is still on this device — sign in again to sync.", l);
+  // a PostgREST write refused because the session's token had run out (PGRST301, a tab left in the
+  // background past the refresh), or auth-js finding no session: about the sign-in, not an emailed
+  // link — the generic "expired" line below told the learner to request a new link. Read
+  // before the "cloud read failed" line: a read refused for the same reason carries that prefix
+  if (ae.code === "PGRST301" || m.includes("jwt expired") || m.includes("jwt") && m.includes("invalid") || m.includes("session missing"))
+    return T("登录已过期，这次没有同步。请重新登录。", "Sesi masuk sudah kedaluwarsa; tidak jadi disinkronkan. Masuk lagi.", "Your sign-in has expired, so nothing was synced. Sign in again.", l);
   if (m.includes("cloud read failed"))
     return T("暂时读不到云端记录，没有改动任何数据，请稍后再试。",
              "Data cloud belum bisa dibaca. Tidak ada yang diubah — coba lagi nanti.",
@@ -109,11 +115,6 @@ function humanError(e: unknown, l: Lang): string {
     return T("目前暂不开放注册。", "Pendaftaran sedang ditutup.", "Sign-ups are closed at the moment.", l);
   if (ae.code === "validation_failed" || ae.code === "email_address_invalid" || m.includes("validate email") || m.includes("email address") && m.includes("invalid"))
     return T("邮箱格式不对，检查一下再试。", "Format email tidak valid. Periksa lagi.", "That email address is not valid. Check it and try again.", l);
-  // a PostgREST write refused because the session's token had run out (PGRST301, a tab left in the
-  // background past the refresh), or auth-js finding no session: about the sign-in, not an emailed
-  // link — the generic "expired" line below told the learner to request a new link
-  if (ae.code === "PGRST301" || m.includes("jwt expired") || m.includes("jwt") && m.includes("invalid") || m.includes("session missing"))
-    return T("登录已过期，这次没有同步。请重新登录。", "Sesi masuk sudah kedaluwarsa; tidak jadi disinkronkan. Masuk lagi.", "Your sign-in has expired, so nothing was synced. Sign in again.", l);
   if (ae.code === "42501" || m.includes("row-level security"))
     return T("服务器拒绝了这次写入。退出后重新登录再试。", "Server menolak penulisan ini. Keluar, masuk lagi, lalu coba lagi.", "The server refused this write. Sign out, sign in again and retry.", l);
   if (m.includes("expired") || m.includes("invalid or has"))

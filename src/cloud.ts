@@ -300,12 +300,20 @@ export function collectLocal(): ProgressBlob {
   return out;
 }
 
+// the language choice is read as an object (readLangs in App.tsx): a cloud row or a backup
+// holding "null" or "[]" under ketiklab-langs brought the first-visit dialog back over a device
+// that had chosen, so a value that is not an object is left out and the device's own stays
+export function storable(k: string, v: string): boolean {
+  if (k !== "ketiklab-langs") return true;
+  try { const o = JSON.parse(v); return !!o && typeof o === "object" && !Array.isArray(o); } catch { return false; }
+}
+
 export function applyLocal(blob: ProgressBlob) {
   // progress from another device may predate the topic-word key namespace, so the
   // one-time key migration in App.tsx has to run again over whatever lands here
   forgetKeyMigration();
   for (const [k, v] of Object.entries(blob || {})) {
-    if (!SYNCED_KEYS.includes(k) || typeof v !== "string") continue;
+    if (!SYNCED_KEYS.includes(k) || typeof v !== "string" || !storable(k, v)) continue;
     try { localStorage.setItem(k, v); } catch { /* ignore */ }
   }
 }

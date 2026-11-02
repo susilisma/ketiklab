@@ -3,7 +3,7 @@ import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, Di
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats, type ReviewRecord } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
-import { onAccountWanted, setProgressNormalizer, SYNCED_KEYS, type ProgressBlob } from "./cloud";
+import { onAccountWanted, setProgressNormalizer, storable, SYNCED_KEYS, type ProgressBlob } from "./cloud";
 import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 // first Chinese senses that were re-glossed since topic words were keyed by the hanzi typed
 // (old sense → English headword): a hanzi-era row like zh:直走 names no current word, and
@@ -315,10 +315,11 @@ const foldTypography = (s: string) => s.replace(/[\u2018\u2019\u02BC]/g, "'").re
 // throw at favorites.some(...) on every load until site data is cleared. Every field the card
 // renders as text must be text: an object in sub/meaning/example/def (a hand-edited backup, a
 // cloud blob) reached JSX and white-screened every load, since ketiklab-source="fav" is
-// persisted and main.tsx has no error boundary
+// persisted and main.tsx has no error boundary — and dict/dictId, which the library grid prints
+// on a dictionary favourite, left the library dead until site data was cleared
 function cleanFavorites(f: unknown): PracticeItem[] {
   const str = (v: unknown) => v === undefined || typeof v === "string";
-  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })) : [];
+  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })) : [];
 }
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
@@ -2013,7 +2014,7 @@ export default function Home() {
       try {
         const data = JSON.parse(String(reader.result));
         if (data.app !== "ketiklab") throw new Error("bad file");
-        if (data.local && typeof data.local === "object") for (const [k, v] of Object.entries(data.local)) if (BACKUP_KEYS.has(k) && typeof v === "string") localStorage.setItem(k, v);
+        if (data.local && typeof data.local === "object") for (const [k, v] of Object.entries(data.local)) if (BACKUP_KEYS.has(k) && typeof v === "string" && storable(k, v)) localStorage.setItem(k, v);
         // the review ladder lives in IndexedDB; a refused write there used to be swallowed and
         // the page reloaded with an empty ladder and no word about it
         let reviewsLost = false;
