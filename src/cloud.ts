@@ -305,7 +305,7 @@ export function collectLocal(): ProgressBlob {
 // that had chosen, so a value that is not an object is left out and the device's own stays
 export function storable(k: string, v: string): boolean {
   if (k !== "ketiklab-langs") return true;
-  try { const o = JSON.parse(v); return !!o && typeof o === "object" && !Array.isArray(o); } catch { return false; }
+  try { const o = JSON.parse(v); return !!o && typeof o === "object" && !Array.isArray(o) && isLang(o.ui) && isLang(o.learn); } catch { return false; }
 }
 
 export function applyLocal(blob: ProgressBlob) {
@@ -370,7 +370,7 @@ const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s)
 // none (App's validMistakeKey and cleanFavorites: a hand-edited backup); the merge used to carry
 // both into the cloud row and keep them there, so canonical(cloud) always held progress the
 // device "lacked" and 云端有更多 never cleared, 合并到本机 or not. The same rule is applied here.
-const isLang = (x: unknown): x is "zh" | "id" | "en" => x === "zh" || x === "id" || x === "en";
+function isLang(x: unknown): x is "zh" | "id" | "en" { return x === "zh" || x === "id" || x === "en"; }
 const validKey = (k: string) => k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":")));
 const mistakes = (v: unknown): string[] => strings(v).filter(validKey);
 /** The two lists in turns, each turn taking its side's next key not placed yet: a key the
@@ -424,7 +424,7 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // an item with no lang or key is no star: the device drops it on read (cleanFavorites), but
       // the merge carried it into the cloud row — as "undefined:undefined" — and every later
       // merge kept it, one of the 500 slots gone for good
-      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string";
+      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string" && ["dict", "dictId"].every(k => (f as Record<string, unknown>)[k] === undefined || typeof (f as Record<string, unknown>)[k] === "string");
       const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
       out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
