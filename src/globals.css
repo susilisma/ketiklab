@@ -137,7 +137,7 @@
 .prevnext span{max-width:45%;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .chapter-complete{background:var(--surface);border:1px solid var(--line);border-radius:22px;box-shadow:var(--shadow)}
 .chapter-actions{display:flex;gap:10px;justify-content:center;margin-top:6px;flex-wrap:wrap}
-.chapter-actions button{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:11px 18px;font-size:12px;font-weight:700}
+.chapter-actions button{border:1px solid var(--line);background:var(--surface);color:var(--text);border-radius:11px;padding:11px 18px;font-size:12px;font-weight:700;white-space:nowrap}
 .chapter-actions button:hover{border-color:var(--purple);color:var(--purple)}
 .chapter-actions button.go{background:var(--purple);border-color:var(--purple);color:#fff}
 .chapter-complete>div:not(.chapter-actions):not(.finish-wrong){display:grid;grid-auto-flow:column;grid-template-rows:auto auto;justify-content:center;column-gap:70px;row-gap:3px;max-width:none;margin:22px auto 8px}
