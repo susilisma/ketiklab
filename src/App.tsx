@@ -316,10 +316,12 @@ const foldTypography = (s: string) => s.replace(/[\u2018\u2019\u02BC]/g, "'").re
 // renders as text must be text: an object in sub/meaning/example/def (a hand-edited backup, a
 // cloud blob) reached JSX and white-screened every load, since ketiklab-source="fav" is
 // persisted and main.tsx has no error boundary — and dict/dictId, which the library grid prints
-// on a dictionary favourite, left the library dead until site data was cleared
+// on a dictionary favourite, left the library dead until site data was cleared. One row per key:
+// the same favourite twice in a row (a hand-edited backup) does not remount the 打拼音 rung, whose
+// box then stayed full and dead to every key but ENTER
 function cleanFavorites(f: unknown): PracticeItem[] {
   const str = (v: unknown) => v === undefined || typeof v === "string";
-  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })) : [];
+  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })).filter((p, i, a) => a.findIndex(q => q.lang === p.lang && q.key === p.key) === i) : [];
 }
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
@@ -1476,11 +1478,12 @@ export default function Home() {
   // a dictionary favourite's source tag is the dictionary's name in the interface language it was
   // starred in (托福必考词 stayed on the English favourites grid): renamed for the current one
   // and, like every list typed through, a word once: two starred rows sharing 污染 were two cards
-  const favItems = () => { const seen = new Set<string>(); return favorites.map(f => {
+  const onceByWord = (list: PracticeItem[]) => { const seen = new Set<string>(); return list.filter(f => { const v = `${f.lang}:${f.text}`; if (seen.has(v)) return false; seen.add(v); return true; }); };
+  const favItems = () => onceByWord(favorites.map(f => {
     const d = f.dictId ? dicts.find(x => x.id === f.dictId) : undefined;
     if (d) return f.dict === dictName(d) ? f : { ...f, dict: dictName(d) };
     const w = favWord(f); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f;
-  }).filter(f => { const v = `${f.lang}:${f.text}`; if (seen.has(v)) return false; seen.add(v); return true; }); };
+  }));
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favItems()
     : (dictInfo && dictWords && dictWords.length)
@@ -1923,8 +1926,11 @@ export default function Home() {
   }
   // the favourites list changed under the word on the card: unstarred here, or starred / unstarred
   // in another tab (the storage listener calls this through a ref, so it sees this render's word)
-  function favListChanged(remaining: PracticeItem[]) {
+  function favListChanged(changed: PracticeItem[]) {
     if (source !== "fav") return;
+    // the list the card shows holds a word once (favItems): counted raw, a duplicate ahead of the
+    // word put the slot one past it and a chapter's length one too long
+    const remaining = onceByWord(changed);
     // under the finish card there is no word to follow or to slide in: the card keeps its chapter.
     // A favourite starred in another tab while the card was up used to carry the chapter's last
     // word over the boundary, and the card then said the next chapter was the one just finished
