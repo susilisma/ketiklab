@@ -998,6 +998,9 @@ export default function Home() {
   // the library grid listed contamination's 污染 beside pollution's, and the pager compared the
   // deduped ladder with this list and printed 1231 / 1233 as if a rung had narrowed it
   const activeWords = useMemo(() => practisedOnce(category === "all" ? words : words.filter(item => item.category === category), lang), [category, words, lang]);
+  // the library's counts say the same: the header, the category tabs and 🌐 printed the row
+  // count (3879) beside a pager that ends at 3851 for a Chinese learner
+  const catCount = useMemo(() => Object.fromEntries(CATEGORIES.map(c => [c, practisedOnce(c === "all" ? words : words.filter(item => item.category === c), lang).length])) as Record<WordFilter, number>, [words, lang]);
   const ladder = useMemo(() => buildLadder(words, zhMap, lang, zhStep, category), [words, zhMap, lang, zhStep, category]);
   const ladderWords = ladder.list;
   // the rung admits fewer words than the category holds, and the library still
@@ -1520,7 +1523,9 @@ export default function Home() {
   // A Chinese topic word is typed as its first sense, which was its key before the English
   // headword was: "zh:实现" may likewise be the zh-core word 实现's own row.
   const legacyId = item && !item.dict && (trioEn(item.key) === item.text || (item.lang === "zh" && trioOf(item.key))) ? `${item.lang}:${item.text}` : undefined;
-  const isFav = favorites.some(f => `${f.lang}:${f.key}` === wordId);
+  // by the word typed, as the favourites list is held: with pollution and contamination both
+  // starred, ★ on the one 污染 card used to remove one row and stay lit over the other
+  const isFav = favorites.some(f => f.lang === item.lang && f.text === item.text);
   const prevItem = learnItems[(index - 1 + learnItems.length) % Math.max(learnItems.length, 1)];
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
@@ -1759,7 +1764,7 @@ export default function Home() {
   // what 🌐 can actually search: the trio list plus the dictionaries whose file
   // arrived, not the manifest total that used to be shown even after a failed load
   const searchable = dicts.filter(d => allDicts[d.id]);
-  const globalCount = words.length + searchable.reduce((a, d) => a + d.length, 0);
+  const globalCount = catCount.all + searchable.reduce((a, d) => a + d.length, 0);
 
   function speak(text = targetWord, voiceLang = targetVoice) {
     const requestId = ++speechRequest.current;
@@ -1912,7 +1917,7 @@ export default function Home() {
     if (!item) return;
     if (!isFav) { setFavorites(list => [{ key: item.key, text: item.text, sub: item.sub, meaning: item.meaning, example: item.example, voice: item.voice, lang: item.lang, dict: item.dict, dictId: item.dictId, glosses: item.glosses, def: item.def }, ...list].slice(0, 500)); return; }
     if (performance.now() - unstarredAt.current < 320) return;
-    const remaining = favorites.filter(f => `${f.lang}:${f.key}` !== wordId);
+    const remaining = favorites.filter(f => !(f.lang === item.lang && f.text === item.text));
     setFavorites(remaining);
     favListChanged(remaining);
   }
@@ -2821,9 +2826,9 @@ export default function Home() {
       </section>}
 
       {view === "library" && <Panel title={t.library} eyebrow={EYEBROW.library[uiLang]}>
-        <div className="library-section-title"><b>{TX("KetikLab 主题词汇", "Kosakata Tematik KetikLab", "KetikLab Words by Topic", uiLang)}</b><span>{words.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favorites.length}</button>}
+        <div className="library-section-title"><b>{TX("KetikLab 主题词汇", "Kosakata Tematik KetikLab", "KetikLab Words by Topic", uiLang)}</b><span>{catCount.all} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>{favorites.length > 0 && <button className={source === "fav" ? "fav-source active" : "fav-source"} onClick={selectFav}>★ {uiLang === "zh" ? "我的收藏" : uiLang === "id" ? "Favorit saya" : "My favorites"} · {favItems().length}</button>}
         <div className="category-tabs" ref={categoryTabs} onScroll={fadeCategoryTabs}>
-          {CATEGORIES.map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catItem === "all" ? words.length : words.filter(wordItem => wordItem.category === catItem).length}</small></button>)}
+          {CATEGORIES.map(catItem => <button key={catItem} className={source === "trio" && category === catItem ? "active" : ""} onClick={() => selectTrio(catItem)}>{catItem === "all" ? t.all : CATEGORY_META[catItem][uiLang]}<small>{catCount[catItem]}</small></button>)}
         </div>
         {dictsError && <div className="review-banner"><span>⚠ {TX("考试词库加载失败", "Kamus ujian gagal dimuat", "Exam libraries failed to load", uiLang)}</span><button onClick={loadManifest}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
         {dictLoadError && <div className="review-banner"><span>⚠ {TX(`${dictName(dictLoadError)} 加载失败`, `${dictName(dictLoadError)} gagal dimuat`, `${dictName(dictLoadError)} failed to load`, uiLang)}</span><button onClick={() => selectDict(dictLoadError)}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></div>}
