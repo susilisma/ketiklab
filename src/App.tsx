@@ -205,6 +205,10 @@ const savedUi = (): Lang | null => { try { const s = localStorage.getItem("ketik
 const initialUi = (): Lang => savedUi() ?? ENTRY.ui ?? rememberedUi() ?? (isLang(browserTag()) ? browserTag() as Lang : "zh");
 // the learning language before any choice: the link's, else the one a link opened earlier (a saved ketiklab-langs still wins in the restore effect)
 const rememberedLearn = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-learn"); return isLang(u) ? u : null; } catch { return null; } };
+// the learning language a saved choice names, read before the first render: starting on zh and
+// correcting in an effect showed a Chinese card to an Indonesian learner for a frame — and
+// fetched the 78 kB Chinese pinyin map they never needed
+const savedLearn = (): Lang | null => { try { const sv = localStorage.getItem("ketiklab-langs"); return sv ? readLangs(sv).learn : null; } catch { return null; } };
 // the document's own title and language as served (index.html is Chinese; /en/ and /id/ carry
 // their SEO titles), read before any effect rewrites them
 const PAGE_TITLE = document.title;
@@ -393,7 +397,7 @@ export default function Home() {
   });
 
   const [view, setView] = useState<View>(ENTRY.articles ? "articles" : "learn");
-  const [lang, setLang] = useState<Lang>(ENTRY.learn ?? rememberedLearn() ?? "zh");
+  const [lang, setLang] = useState<Lang>(savedLearn() ?? ENTRY.learn ?? rememberedLearn() ?? "zh");
   // for the storage listener, which is registered once
   const langRef = useRef(lang); langRef.current = lang;
   const sourceRef = useRef(source); sourceRef.current = source;

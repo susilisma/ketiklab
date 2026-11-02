@@ -11,8 +11,10 @@ const ASSETS = [];
 // "./index.html" alone: the shell is read back by that key, so a "./" entry was only a third download of the same document
 const CORE = ["./index.html", "./zh/", "./id/", "./en/", "./manifest.webmanifest",
   "./icon-192.png", "./icon-512.png", "./maskable-512.png"];
-// the content the app fetches at start-up: without it an offline shell shows no words
-const DATA_CORE = ["./data/words.json", "./data/readings.json", "./data/manifest.json", "./data/zh-pinyin.json"];
+// the content the app fetches at start-up: without it an offline shell shows no words.
+// zh-pinyin.json is not here: 78 kB that only Chinese practice reads, and the fetch handler
+// stores it the first time a Chinese learner actually needs it.
+const DATA_CORE = ["./data/words.json", "./data/readings.json", "./data/manifest.json"];
 // The worker's scope covers the whole origin, but only the app's own document may
 // become the offline shell — never /ops/, sitemap.xml or a JSON file opened in a tab.
 const SHELL = new URL("./", self.location).pathname;
