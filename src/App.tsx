@@ -993,7 +993,10 @@ export default function Home() {
   // the reading state outlives the reading panel, so the clock must stop when the learner leaves it
   useEffect(() => { if (!readingActive || readingDone || view !== "articles") return; const timer = setInterval(() => setReadingSeconds(s => s + 1), 1000); return () => clearInterval(timer); }, [readingActive, readingDone, view]);
 
-  const activeWords = useMemo(() => category === "all" ? words : words.filter(item => item.category === category), [category, words]);
+  // the rows of the category with each practised value once, like the ladder built from them:
+  // the library grid listed contamination's 污染 beside pollution's, and the pager compared the
+  // deduped ladder with this list and printed 1231 / 1233 as if a rung had narrowed it
+  const activeWords = useMemo(() => practisedOnce(category === "all" ? words : words.filter(item => item.category === category), lang), [category, words, lang]);
   const ladder = useMemo(() => buildLadder(words, zhMap, lang, zhStep, category), [words, zhMap, lang, zhStep, category]);
   const ladderWords = ladder.list;
   // the rung admits fewer words than the category holds, and the library still
@@ -1468,11 +1471,12 @@ export default function Home() {
   const favWord = (f: PracticeItem) => f.dict ? undefined : trioOf(f.key) || wordByEn.get(f.key);
   // a dictionary favourite's source tag is the dictionary's name in the interface language it was
   // starred in (托福必考词 stayed on the English favourites grid): renamed for the current one
-  const favItems = () => favorites.map(f => {
+  // and, like every list typed through, a word once: two starred rows sharing 污染 were two cards
+  const favItems = () => { const seen = new Set<string>(); return favorites.map(f => {
     const d = f.dictId ? dicts.find(x => x.id === f.dictId) : undefined;
     if (d) return f.dict === dictName(d) ? f : { ...f, dict: dictName(d) };
     const w = favWord(f); const cur = w ? trioItem(w, f.lang) : undefined; return cur && cur.text === f.text ? { ...f, sub: cur.sub } : f;
-  });
+  }).filter(f => { const v = `${f.lang}:${f.text}`; if (seen.has(v)) return false; seen.add(v); return true; }); };
   const activeItems: PracticeItem[] = source === "fav" && favorites.length
     ? favItems()
     : (dictInfo && dictWords && dictWords.length)
@@ -1730,7 +1734,7 @@ export default function Home() {
   if (globalSearch && gq) {
     // a hit matches on the headword or on any of its meanings (idtrans too, so Indonesian
     // readers can search in Indonesian) and shows the one meaning line this learner reads
-    for (const w of words) {
+    for (const w of practisedOnce(words, lang)) {
       const text = wordValue(w, lang), hay = `${w.en} ${w.id} ${w.zh}`;
       if (!hay.toLowerCase().includes(gq)) continue;
       const m = listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" });
@@ -2384,6 +2388,8 @@ export default function Home() {
   }
   // Opening a word harder than the current rung is an explicit request for that
   // word, so climb to the step that holds it instead of landing somewhere else.
+  // the rung is returned, not written: the caller persists it once the word is found, so a
+  // row that opens nothing does not climb the rung on its way out
   function stepForWord(w: Word, lg: Lang = lang): ZhStep {
     // an empty map (zh-pinyin.json still on its way) rates every word level 4: climbing on
     // that would persist 输入法 for a level-1 word opened from the library a second early
@@ -2391,14 +2397,17 @@ export default function Home() {
     const level = zhLevel(zhMap, w.zh.split("；")[0]);
     if (level <= zhMaxLevel(zhStep)) return zhStep;
     const next = ZH_STEPS.find(st => zhMaxLevel(st.id) >= level);
-    const step: ZhStep = next ? next.id : "hanzi";
-    setZhStep(step);
-    return step;
+    return next ? next.id : "hanzi";
   }
+  // the list holds a practised value once (practisedOnce), so a row that shares its word with an
+  // earlier row is not in it under its own headword: it is found by the word the card types,
+  // and opens the card that practises it. Matched by en, contamination's 污染 opened nothing.
+  const indexOfWord = (list: Word[], w: Word, lg: Lang) => { const v = wordValue(w, lg); return list.findIndex(x => wordValue(x, lg) === v); };
   function gotoTrioWord(w: Word) {
     const step = stepForWord(w);
-    const gi = buildLadder(words, zhMap, lang, step, "all").list.findIndex(x => x.en === w.en);
+    const gi = indexOfWord(buildLadder(words, zhMap, lang, step, "all").list, w, lang);
     if (gi < 0) return;
+    if (step !== zhStep) setZhStep(step);
     sourceReq.current++;
     setLinkedMissing(null);
     const key = trioChapterKey("all", lang, step);
@@ -2515,9 +2524,11 @@ export default function Home() {
     // two keys for one word (a bare legacy "achieve" beside id:trio:achieve, "世界" beside zh:世界)
     // are one review item: listed twice, the second pass found the rung already mounted for
     // that word with its box full and dead to every key, and the session could only end in ENTER
+    // — and so are two keys for two rows that type the same word (pollution and contamination,
+    // both 污染): the second is served in a later session, once the first is no longer due
     const seen = new Set<string>();
     return keys.map(k => found.get(k)).filter((r): r is ReviewRef => !!r)
-      .filter(r => { const id = "w" in r ? `${r.lang}:${TRIO}${r.w.en}` : `${r.d.lang}:${r.e.name}`; if (seen.has(id)) return false; seen.add(id); return true; });
+      .filter(r => { const id = "w" in r ? `${r.lang}:${wordValue(r.w, r.lang)}` : `${r.d.lang}:${r.e.name}`; if (seen.has(id)) return false; seen.add(id); return true; });
   }
   async function startReview() {
     // no IndexedDB (a browser that blocks storage): the 错词本 review needs none of it
@@ -2597,8 +2608,9 @@ export default function Home() {
     // index into the list the learn view consumes, not the unfiltered category:
     // it slices 20 at a time, so an index taken from a 590-long list landed on
     // whatever sat at that offset inside the current chapter
-    const gi = buildLadder(words, zhMap, lg, step, cat).list.findIndex(x => x.en === w.en);
+    const gi = indexOfWord(buildLadder(words, zhMap, lg, step, cat).list, w, lg);
     if (gi < 0) return;
+    if (step !== zhStep) setZhStep(step);
     sourceReq.current++;
     setLinkedMissing(null);
     const key = trioChapterKey(cat, lg, step);
