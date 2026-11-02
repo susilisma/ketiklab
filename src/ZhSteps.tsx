@@ -53,16 +53,23 @@ export function zhStepHint(step: ZhStep, ui: UiLang) {
 /* ---------- data ---------- */
 /* zh-pinyin.json : { "实现": "shí xiàn|shi xian|1", ... }  level 1 = easiest */
 
-export function useZhMap(base: string) {
+// 78 kB over the wire, and nothing outside Chinese practice reads it: an Indonesian or
+// English learner used to pay for it on the first screen. `needed` only ever turns on — once
+// a Chinese word is in play the fetch starts and everything behaves as before, one round
+// trip later. It stays on for the rest of the session, so switching back is instant.
+export function useZhMap(base: string, needed = true) {
   const [map, setMap] = useState<Record<string, string>>({});
+  const asked = useRef(false);
   useEffect(() => {
+    if (!needed || asked.current) return;
+    asked.current = true;
     let alive = true;
     fetch(base + "zh-pinyin.json")
       .then(r => (r.ok ? r.json() : {}))
       .then(d => { if (alive) setMap(d || {}); })
-      .catch(() => {});
+      .catch(() => { asked.current = false; });
     return () => { alive = false; };
-  }, [base]);
+  }, [base, needed]);
   return map;
 }
 

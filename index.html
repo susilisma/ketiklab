@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- the words are fetched from a mount effect, so they cannot start until the bundle has
+         downloaded, parsed and run; this overlaps the two on a cold first visit -->
+    <link rel="preload" as="fetch" href="/data/words.json" />
     <meta name="theme-color" content="#7165eb" />
     <!-- the saved theme before the first paint: the app used to mount light and fade to dark -->
     <script>try{if(localStorage.getItem("ketiklab-dark")==="1")document.documentElement.classList.add("dark")}catch(e){}</script>

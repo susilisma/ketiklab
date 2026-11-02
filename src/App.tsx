@@ -115,6 +115,9 @@ function browserTag(): string {
   try { const tag = (navigator.language || "").slice(0, 2).toLowerCase(); return tag === "in" ? "id" : tag; } catch { return ""; }
 }
 const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
+// stands in while readings.json is still on its way, or after it failed: every field the
+// reader renders is present, and the view shows its own waiting line instead of this text
+const NO_READING: ReadingPiece = { id: "", lang: "en", title: "", author: "", era: "", genre: "", lines: [""], note: "" };
 // the lang attribute for text in one of our languages: a screen reader otherwise reads the
 // Chinese word, the Indonesian meaning and the English reading in the interface language's voice
 const htmlLang = (l: Lang) => l === "zh" ? "zh-CN" : l;
@@ -180,6 +183,20 @@ const ENTRY: { ui: Lang | null; learn: Lang | null; lib: string | null; step: Zh
 })();
 // a phone has no "any key"; the veil and the status line say what the gesture really is
 const COARSE = (() => { try { return matchMedia("(hover: none) and (pointer: coarse)").matches; } catch { return false; } })();
+// Already installed? Then never ask. Chrome reports it through the display mode, iOS through
+// its own flag, and an installed window opens with neither a tab nor an address bar.
+const STANDALONE = (() => {
+  try { return matchMedia("(display-mode: standalone)").matches || matchMedia("(display-mode: minimal-ui)").matches || (navigator as { standalone?: boolean }).standalone === true; } catch { return false; }
+})();
+// iOS has no install prompt: Safari puts it behind Share → Add to Home Screen, which has to be
+// described rather than offered. Chrome and Edge on iOS cannot install at all, so they are left out.
+const IOS_SAFARI = (() => {
+  try {
+    const ua = navigator.userAgent;
+    const ios = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
+    return ios && /Safari/.test(ua) && !/CriOS|FxiOS|EdgiOS|OPiOS/.test(ua);
+  } catch { return false; }
+})();
 // the interface language before any choice: the link's, else the one a link opened earlier, else the browser's when it is one of ours
 const rememberedUi = (): Lang | null => { try { const u = localStorage.getItem("ketiklab-ui"); return isLang(u) ? u : null; } catch { return null; } };
 // the choice saved in the dialog comes first, as the restore effect will decide a frame later: read only
@@ -265,14 +282,23 @@ const BACKUP_KEYS = new Set([...SYNCED_KEYS, "ketiklab-category", "ketiklab-zh-s
 // difficulty ladder: 认读 admits level 1, 打拼音 2, 选汉字 3, 输入法 everything.
 // Navigation helpers resolve indexes against this same list, so a word opened
 // from the library lands on itself rather than on whatever sits at that offset.
+// Two English headwords can share the best word in the language being practised —
+// pollution and contamination are both 污染, course and curriculum both 课程. The data keeps
+// the right word on both rows (a gloss is not made worse to keep it unique); the list a
+// learner types through holds that word once, so the same card never comes round twice.
+function practisedOnce(list: Word[], lang: Lang) {
+  const seen = new Set<string>();
+  return list.filter(w => { const v = wordValue(w, lang); if (!v || seen.has(v)) return !v; seen.add(v); return true; });
+}
+
 function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, step: ZhStep, cat: WordFilter) {
-  const inCatAll = cat === "all" ? all : all.filter(item => item.category === cat);
+  const inCatAll = practisedOnce(cat === "all" ? all : all.filter(item => item.category === cat), lang);
   if (lang !== "zh" || step === "hanzi") return { list: inCatAll, broad: false };
   const cap = zhMaxLevel(step);
   const byLevel = (a: Word, b: Word) => zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]);
   const inCat = inCatAll.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
   if (inCat.length >= 20) return { list: inCat.slice().sort(byLevel), broad: false };
-  const wide = all.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
+  const wide = practisedOnce(all, lang).filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
   if (wide.length < 20) return { list: inCatAll, broad: false };
   return { list: wide.slice().sort(byLevel), broad: true };
 }
@@ -302,6 +328,16 @@ export default function Home() {
   const [words, setWords] = useState<Word[]>([]);
   const [readings, setReadings] = useState<ReadingPiece[]>([]);
   const [dataError, setDataError] = useState(false);
+  // readings.json has its own fate now: the practice card does not wait for it, and its
+  // failure costs the reading view, not the app
+  const [readingsError, setReadingsError] = useState(false);
+  // The home screen is the only way back for a visitor who arrived by typing the address —
+  // Xiaohongshu carries no links, so there is no tab to reopen and nothing in history to find.
+  // Chrome hands us the prompt; it is kept until the learner has finished something, and the
+  // offer is made once on the card that says they did.
+  const installEvent = useRef<{ prompt: () => void } | null>(null);
+  const [canInstall, setCanInstall] = useState(false);
+  const [installDone, setInstallDone] = useState(false);
   const [dicts, setDicts] = useState<DictInfo[]>([]);
   const [dictsError, setDictsError] = useState(false);
   const [source, setSource] = useState<string>("trio");
@@ -402,7 +438,9 @@ export default function Home() {
   const [seconds, setSeconds] = useState(0);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<WordFilter>(() => {
-    try { const c = localStorage.getItem("ketiklab-category") || ""; return (CATEGORIES as string[]).includes(c) ? c as WordFilter : "business"; } catch { return "business"; }
+    // 日常生活 is where a first visit should start — 你好, 谢谢, 请 — not 商务工作, which opens on
+    // 实现 and 自信. It is also the roomiest list on every rung of the Chinese ladder.
+    try { const c = localStorage.getItem("ketiklab-category") || ""; return (CATEGORIES as string[]).includes(c) ? c as WordFilter : "daily"; } catch { return "daily"; }
   });
   const [mistakes, setMistakes] = useState<string[]>(() => Array.isArray(savedState?.mistakes) ? savedState.mistakes.filter(validMistakeKey) : []);
   const [readingLang, setReadingLang] = useState<ReadingLang>("all");
@@ -601,7 +639,11 @@ export default function Home() {
       return (localStorage.getItem("ketiklab-langs") ? saved : ENTRY.step ?? saved) ?? "read";
     } catch { return ENTRY.step ?? "read"; }
   });
-  const zhMap = useZhMap(DATA);
+  // the Chinese pinyin map is 78 kB and only Chinese practice reads it; the latch turns on
+  // for the learning language here and for a Chinese row inside a mixed list further down
+  const [zhNeeded, setZhNeeded] = useState(() => lang === "zh");
+  useEffect(() => { if (lang === "zh") setZhNeeded(true); }, [lang]);
+  const zhMap = useZhMap(DATA, zhNeeded);
   useEffect(() => { try { localStorage.setItem("ketiklab-zh-step", zhStep); } catch { /* ignore */ } }, [zhStep]);
   useEffect(() => {
     // how the focused control got its focus (as ZhSteps does): a button the learner tabbed
@@ -771,15 +813,19 @@ export default function Home() {
   useEffect(() => {
     let alive = true;
     mounted.current = true;
-    Promise.all([
-      fetch(DATA + "words.json").then(r => r.json()),
-      fetch(DATA + "readings.json").then(r => r.json()),
-    ]).then(([w, r]: [Word[], ReadingPiece[]]) => {
+    // the two files are fetched side by side but reported separately: the practice card only
+    // needs words.json, and readings.json (31 kB) used to hold the loading screen open with it
+    // — and take the whole app down with it when it alone failed
+    fetch(DATA + "words.json").then(r => r.json()).then((w: Word[]) => {
       if (!alive) return;
       // an error object or an empty list where the content should be: reported like a failed
       // fetch, instead of a blank page (words.filter) or a spinner that never ends
-      if (!Array.isArray(w) || !w.length || !Array.isArray(r) || !r.length) { setDataError(true); return; }
+      if (!Array.isArray(w) || !w.length) { setDataError(true); return; }
       setWords(w);
+    }).catch(() => { if (alive) setDataError(true); });
+    fetch(DATA + "readings.json").then(r => r.json()).then((r: ReadingPiece[]) => {
+      if (!alive) return;
+      if (!Array.isArray(r) || !r.length) { setReadingsError(true); return; }
       setReadings(r);
       // open on a reading in the language being learned: r[0] is the English Sonnet 18, which every
       // learner of Chinese or Indonesian got from the sidebar and from /zh/readings and /id/readings.
@@ -790,7 +836,7 @@ export default function Home() {
       const kept = saved && r.find(pc => pc.id === saved.id);
       if (kept) { setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); }
       else if (r.length) setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id);
-    }).catch(() => { if (alive) setDataError(true); });
+    }).catch(() => { if (alive) setReadingsError(true); });
     loadManifest();
     { const sp = initSoundPref(); setSoundProfileState(sp.profile); }
     // whole numbers only: a 3.5 from a hand-edited backup drew three dots and asked for four passes
@@ -1058,6 +1104,17 @@ export default function Home() {
   // a password-reset link, a sign-up confirmation link and the reload that follows a
   // cloud restore all land on the home view; cloud.ts asks for the account panel
   useEffect(() => onAccountWanted(() => setView("account")), []);
+  useEffect(() => {
+    if (STANDALONE) return;
+    try { if (localStorage.getItem("ketiklab-install") === "done") { setInstallDone(true); return; } } catch { /* ignore */ }
+    const onPrompt = (e: Event) => { e.preventDefault(); installEvent.current = e as unknown as { prompt: () => void }; setCanInstall(true); };
+    const onInstalled = () => { setInstallDone(true); try { localStorage.setItem("ketiklab-install", "done"); } catch { /* ignore */ } };
+    window.addEventListener("beforeinstallprompt", onPrompt);
+    window.addEventListener("appinstalled", onInstalled);
+    // iOS never fires the event; its own two-step path is described instead
+    if (IOS_SAFARI && COARSE) setCanInstall(true);
+    return () => { window.removeEventListener("beforeinstallprompt", onPrompt); window.removeEventListener("appinstalled", onInstalled); };
+  }, []);
   // every view starts at its top: the scroll a long library or 错词本 list left behind stayed on
   // the learn view, where on a 320×568 phone it put the 选汉字 prompt behind the sticky header
   useEffect(() => { try { window.scrollTo(0, 0); } catch { /* ignore */ } }, [view]);
@@ -1232,9 +1289,9 @@ export default function Home() {
     return () => { alive = false; };
   }, [words, dicts]);
 
-  // readings gates too: readings[0] is dereferenced unguarded below, and both
-  // files resolve from the same Promise.all, so requiring both costs nothing.
-  const ready = words.length > 0 && readings.length > 0;
+  // only the words gate the app: the reading view renders its own waiting state, so a
+  // slow or failed readings.json no longer holds the first practice word
+  const ready = words.length > 0;
 
   if (!ready) {
     return <div className={dark ? "app dark" : "app"}>
@@ -1412,6 +1469,9 @@ export default function Home() {
   // for a review without a single Chinese word, and 退出复习 left it there)
   const rung: ZhStep = reviewKeys && zhStep === "read" ? "pinyin" : zhStep;
   const practiceLang: Lang = (item && item.lang) || lang;
+  // a favourite or a due word in Chinese inside an Indonesian session: the map is worth its
+  // 78 kB from here on, and the sub-line fills in on the next frame
+  useEffect(() => { if (practiceLang === "zh") setZhNeeded(true); }, [practiceLang]);
   // one identity for favourites, the 错词本 and the SRS row: the Indonesian "air"
   // and the English "air" are different words and must not share progress
   const wordId = item ? `${item.lang}:${item.key}` : "";
@@ -1553,7 +1613,7 @@ export default function Home() {
   const totalTyped = Object.values(dayCounts).reduce((a, b) => a + b, 0);
   const activeDays = Object.values(dayCounts).filter(v => v > 0).length;
   function heatLevel(c: number): number { if (!c) return 0; const r = c / heatMax; return r > 0.75 ? 4 : r > 0.5 ? 3 : r > 0.25 ? 2 : 1; }
-  const reading = readings.find(piece => piece.id === readingId) || readings[0];
+  const reading = readings.find(piece => piece.id === readingId) || readings[0] || NO_READING;
   const filteredReadings = readings.filter(pc => readingLang === "all" || pc.lang === readingLang);
   const readingLangName: Record<"zh"|"id"|"en", string> = {
     // the groups hold prose too (three Indonesian pieces are PROSA), so the heading names no genre
@@ -2669,6 +2729,29 @@ export default function Home() {
           <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
+          {/* the one moment the learner has earned a reason to come back: the first correct answer
+              schedules a word for tomorrow (srs.ts INTERVALS[0] = 1 day). Only the words answered
+              cleanly are promised — a missed word returns in ten minutes, not tomorrow. */}
+          {(() => {
+            const back = Math.max(0, chDone - chWrongKeys.length);
+            if (!back) return null;
+            const goal = `${Math.min(todayCount, DAILY_GOAL)}/${DAILY_GOAL}`;
+            const streak = streakDays > 1 ? (uiLang === "zh" ? ` · 连续 ${streakDays} 天` : uiLang === "id" ? ` · ${streakDays} hari berturut-turut` : ` · ${streakDays}-day streak`) : "";
+            return <p className="finish-tomorrow">{uiLang === "zh"
+              ? `${back} 个词明天回来复习 · 今日目标 ${goal}${streak}`
+              : uiLang === "id"
+              ? `${back} kata kembali besok · target hari ini ${goal}${streak}`
+              : `${back} ${enOne(back, "word comes", "words come")} back tomorrow · today ${goal}${streak}`}</p>;
+          })()}
+          {/* and the way to be there tomorrow: one line, once, after something was finished */}
+          {canInstall && !installDone && !STANDALONE && <p className="install-hint">
+            {installEvent.current
+              ? <button onClick={() => { const e = installEvent.current; installEvent.current = null; setCanInstall(false); try { localStorage.setItem("ketiklab-install", "done"); } catch { /* ignore */ } setInstallDone(true); e?.prompt(); }}>
+                  {uiLang === "zh" ? "添加到主屏幕" : uiLang === "id" ? "Tambahkan ke layar utama" : "Add to home screen"}
+                </button>
+              : <span>{uiLang === "zh" ? "想明天接着练：分享 → 添加到主屏幕" : uiLang === "id" ? "Biar besok tinggal buka: Bagikan → Tambahkan ke Layar Utama" : "To pick it up tomorrow: Share → Add to Home Screen"}</span>}
+            <button className="install-no" onClick={() => { setInstallDone(true); try { localStorage.setItem("ketiklab-install", "done"); } catch { /* ignore */ } }} aria-label={TX("不用了", "Tidak usah", "No thanks", uiLang)}>✕</button>
+          </p>}
           {chWrongKeys.length > 0 && <div className="finish-wrong">{chWrongKeys.map(k => { const named = lookupKey(k); const info = named && !named.legacy ? named : itemInfo(k) || named; return <span key={k}><b lang={langAttr(info?.lang)}>{info ? info.text : k}</b><small className={info?.note ? "meaning-missing" : undefined} lang={langAttr(info?.meaningLang)}>{defTag(info?.label)}{info ? info.meaning : ""}</small></span>; })}</div>}
           <div className="chapter-actions">
             {/* after a review: practise its missed words again or leave it; the chapter buttons belong to a chapter */}
@@ -2737,7 +2820,12 @@ export default function Home() {
           : <div className="empty"><b>✓</b><h3>{t.noDueTitle}</h3><p>{t.noDueNote}</p></div>}</div>
       </Panel>}
 
-      {view === "articles" && <section className="reading-panel">
+      {view === "articles" && !readings.length && <section className="reading-panel"><div className="empty"><b>{readingsError ? "⚠" : "⏳"}</b><h3>{readingsError
+        ? TX("阅读篇目加载失败", "Bacaan gagal dimuat", "Readings failed to load", uiLang)
+        : TX("正在加载阅读篇目…", "Memuat bacaan…", "Loading readings…", uiLang)}</h3>
+        {readingsError && <p><button className="primary" onClick={() => { setReadingsError(false); fetch(DATA + "readings.json").then(r => r.json()).then((r: ReadingPiece[]) => { if (Array.isArray(r) && r.length) { setReadings(r); setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id); } else setReadingsError(true); }).catch(() => setReadingsError(true)); }}>{TX("重试", "Coba lagi", "Retry", uiLang)}</button></p>}
+      </div></section>}
+      {view === "articles" && readings.length > 0 && <section className="reading-panel">
         <div className="reading-heading">
           <div><span>{EYEBROW.articles[uiLang]}</span><h1>{t.articles}</h1><p>{t.readingTagline}</p></div>
           <div className="reading-filters">
@@ -2800,7 +2888,7 @@ export default function Home() {
       {view === "plan" && <Panel title={t.plan} eyebrow={EYEBROW.plan[uiLang]}>
         <div className="plan-layout">
           <div className="goal-card"><span>{t.finish}</span><strong>{goalPct}%</strong><div className="goal-ring" style={{"--p":`${goalPct*3.6}deg`} as React.CSSProperties}><b>{Math.min(todayCount, DAILY_GOAL)}</b><small>/{DAILY_GOAL} {TX("词", "kata", "words", uiLang)}</small></div></div>
-          <div className="week">{last7.map((d, i) => <div className={i === 6 ? "today" : d.count >= DAILY_GOAL ? "done" : ""} key={i}><span>{d.label}</span><b>{i === 6 ? d.count : d.count >= DAILY_GOAL ? "✓" : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", enOne(d.count, "word", "words"), uiLang)}` : TX("未练", "Absen", "No study", uiLang)}</small></div>)}</div>
+          <div className="week">{last7.map((d, i) => <div className={d.count >= DAILY_GOAL ? (i === 6 ? "today done" : "done") : i === 6 ? "today" : ""} key={i}><span>{d.label}</span><b>{d.count >= DAILY_GOAL ? "✓" : i === 6 ? d.count : (d.count || "·")}</b><small>{i === 6 ? `/${DAILY_GOAL}` : d.count ? `${d.count} ${TX("词", "kata", enOne(d.count, "word", "words"), uiLang)}` : TX("未练", "Absen", "No study", uiLang)}</small></div>)}</div>
         </div>
       </Panel>}
 
@@ -2826,11 +2914,18 @@ export default function Home() {
     {/* closing stores nothing: a first visit that never saved asks again on the next load */}
     {/* a first visit from a library page learns its language while the dialog is already open: the
         dialog follows it on the rows the learner has not touched (keyed on it, it remounted and lost every pick) */}
-    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={() => setShowLangSetup(false)} />}
+    {showLangSetup && <LangSetup initialUi={uiLang} initialLearn={lang} defByLearn={defByLearn} onSave={saveLangSetup} onClose={(settled) => {
+      // ketiklab-langs is written only on save, so a visitor who closed this dialog and then
+      // practised was shown it again over their own progress on every later visit. Closing it
+      // keeps whatever the dialog had already determined; the two ways to change it later stay
+      // where they are (设置 and the 选择释义语言 button under the word).
+      try { if (settled && !localStorage.getItem("ketiklab-langs")) writeLangs(uiLang, lang, defByLearn); } catch { /* ignore */ }
+      setShowLangSetup(false);
+    }} />}
   </div>;
 }
 
-function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang | null, learnTouched: boolean) => void; onClose: () => void }) {
+function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { initialUi: Lang; initialLearn: Lang; defByLearn: MeaningPrefs; onSave: (ui: Lang, learn: Lang, def: MeaningLang | null, learnTouched: boolean) => void; onClose: (settled: boolean) => void }) {
   const [ui, setUi] = useState<Lang>(initialUi);
   const [learn, setLearn] = useState<Lang>(initialLearn);
   // the languages set while the dialog is open (the list a ?lib= link named arrived, another tab
@@ -2845,19 +2940,27 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
   const def: MeaningLang | null = picked && picked !== learn ? picked : defByLearn[learn] ?? defaultDef(ui, learn, browserTag());
   const mt = MODAL_T[ui];
   const first = useRef<HTMLButtonElement>(null);
+  const defRow = useRef<HTMLDivElement>(null);
   // a dialog takes the focus with it, or keys keep landing on the practice card behind it: on
   // the card already selected, so the focus ring and the 已选 mark sit on the same card (the
   // ring used to be drawn on 中文 while an Indonesian or English visit had its own card chosen)
   useEffect(() => { first.current?.focus(); }, []);
+  // Save starts disabled when the interface language and the learning language are the same and
+  // the browser's own language is no help; the row that unlocks it is the third one, below the
+  // fold on a phone. Open on that row rather than on the two that are already answered.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  useEffect(() => { if (def === null) defRow.current?.scrollIntoView({ block: "center" }); }, []);
   // Escape closes it wherever the focus is: a click on the backdrop leaves the focus on <body>, outside this element
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const onKey = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(def !== null); };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
-  }, [onClose]);
+    // def is read in the handler: a choice made while the dialog is open has to reach it, or
+    // Escape would report the state the dialog opened in
+  }, [onClose, def]);
   return <div className="lang-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
     <div className="lang-modal">
-      <button className="lang-modal-close" onClick={onClose} aria-label={mt.cancel}>✕</button>
+      <button className="lang-modal-close" onClick={() => onClose(def !== null)} aria-label={mt.cancel}>✕</button>
       <h2 id="lang-modal-title">{mt.title}</h2>
       <p className="lang-modal-subtitle">{mt.subtitle}</p>
       <div className="lang-modal-section">
@@ -2878,7 +2981,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
           </button>)}
         </div>
       </div>
-      <div className="lang-modal-section">
+      <div className={def === null ? "lang-modal-section wants" : "lang-modal-section"} ref={defRow}>
         <h3>🌐 {mt.def}</h3>
         <p>{mt.defDesc}{def === null && <b> · {mt.defRequired}</b>}</p>
         <div className="lang-cards">
@@ -2892,7 +2995,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
       </div>
       <div className="lang-modal-actions">
         {def === null && <small className="lang-modal-need">{mt.defRequired}</small>}
-        <button className="lang-modal-cancel" onClick={onClose}>{mt.cancel}</button>
+        <button className="lang-modal-cancel" onClick={() => onClose(def !== null)}>{mt.cancel}</button>
         <button className="lang-modal-save" disabled={def === null} onClick={() => { if (def !== null) onSave(ui, learn, picked && picked !== learn ? picked : null, learnTouched.current); }}>{mt.save}</button>
       </div>
     </div>
