@@ -1585,7 +1585,7 @@ export default function Home() {
   const missOther = missNote && itemMeaningLang && itemMeaningLang !== "none" && missNote === MEANING_MISSING[itemMeaningLang] && !(extraMeanings === "all" && extrasShown)
     ? LANGS.find(l => l !== itemMeaningLang && !!item.glosses?.[l]) : undefined;
   // mousedown keeps focus where it is: the pinyin box or the App input
-  const peekButton = (label: string) => <button type="button" className="meaning-peek" onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); setMeaningPeek(true); }}>{label}</button>;
+  const peekButton = (label: React.ReactNode) => <button type="button" className="meaning-peek" onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); setMeaningPeek(true); }}>{label}</button>;
   const peekLabel = zhLadder ? TX("点一下查看释义", "Ketuk untuk melihat arti", "Tap to see the meaning", uiLang) : TX("按住 TAB 或点一下查看释义", "Tahan TAB atau ketuk untuk melihat arti", "Hold TAB or tap to see the meaning", uiLang);
   // Hide pronunciation in dictation: only under "hide all" on the steps that print a pronunciation
   // line, and the word is not read aloud on its own either until CTRL+SPACE or TAB
@@ -2737,12 +2737,14 @@ export default function Home() {
           <button className={isFav ? "fav-btn on" : "fav-btn"} onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label={isFav ? TX("取消收藏", "Hapus dari favorit", "Remove from favorites", uiLang) : TX("收藏", "Tambah ke favorit", "Add to favorites", uiLang)}>{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
           {practiceLang === "zh" && (rung === "read" || rung === "choose") &&
-            <p className={rung === "choose" ? "zh-annot solo" : "zh-annot"}
+            <p className={rung === "choose" ? "zh-annot solo" : "zh-annot"} lang="zh-Latn"
                onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
           {!(practiceLang === "zh" && rung === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} lang={htmlLang(practiceLang)} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
               the <wbr> after it is the only break opportunity: without one, overflow-wrap:anywhere
               splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
-          {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined}>{item.sub}</p>}
+          {/* the pronunciation line is in the word's language ("普通话 · nǐ hǎo"); one that ends in the interface-language
+              call to action ("American English · ketuk untuk mendengar") is mixed and keeps the page language */}
+          {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined} lang={stripHear(item.sub) === item.sub ? htmlLang(item.lang) : undefined}>{item.sub}</p>}
           {/* the meaning sits right under the word stack; the ladder pills come after it */}
           {(itemMeaningLang !== "none" || (itemExtras.length > 0 && (extrasShown || meaningHidden))) && <div className="meanings">
             {itemMeaningLang === "none" ? (meaningHidden ? peekButton(peekLabel) : null)
@@ -2750,7 +2752,7 @@ export default function Home() {
               : !itemMeaning && (item.glosses || !item.meaning)
                 ? (itemMeaningLang
                   ? (missOther && meaningPeek ? <><span className="meaning-missing" lang={htmlLang(itemMeaningLang)}>{missNote}</span><span lang={htmlLang(missOther)}><small>{LANGUAGE_META[missOther].label}</small>{item.glosses?.[missOther]}</span></>
-                    : missOther ? peekButton(`${missNote} · ${TX(`点一下看${LANG_NAME.zh[missOther]}释义`, `ketuk untuk arti ${LANG_NAME.id[missOther]}`, `tap for the ${LANG_NAME.en[missOther]} meaning`, uiLang)}`)
+                    : missOther ? peekButton(<><span lang={htmlLang(itemMeaningLang)}>{missNote}</span>{` · ${TX(`点一下看${LANG_NAME.zh[missOther]}释义`, `ketuk untuk arti ${LANG_NAME.id[missOther]}`, `tap for the ${LANG_NAME.en[missOther]} meaning`, uiLang)}`}</>)
                     : <span className="meaning-missing" lang={htmlLang(itemMeaningLang)}>{missNote}</span>)
                   // the dialog sets the current learning language; a review word from another one picks in place
                   : item.lang === lang ? <button type="button" className="meaning-pick" onClick={e => { e.stopPropagation(); setShowLangSetup(true); }}>{TX("选择释义语言", "Pilih bahasa arti", "Choose a meaning language", uiLang)}</button>
@@ -2866,16 +2868,16 @@ export default function Home() {
               : (!gq
                   ? <div className="empty"><b>🌐</b><h3>{uiLang === "zh" ? "输入关键词，在全部词库中搜索" : uiLang === "id" ? "Ketik untuk mencari di semua kamus" : "Type to search across all libraries"}</h3><p>{TX(`主题词汇 + ${searchable.length} 个考试词库，共 ${globalCount} 词`, `Kosakata Tematik + ${searchable.length} kamus ujian · ${globalCount} kata`, `Words by Topic + ${searchable.length} ${enOne(searchable.length, "exam library", "exam libraries")} · ${globalCount} words`, uiLang)}</p></div>
                   : (globalResults.length
-                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => { if (r.src !== "trio") { gotoDictWord(r.src, r.key); return; } const w = trioOf(r.key); if (w) gotoTrioWord(w); }}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3 lang={htmlLang(r.lang)}>{r.text}</h3><p>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note, label: r.label, lang: r.meaningLang })}</div></button>)}</div>
+                      ? <div className="word-grid">{globalResults.map((r, i) => <button className={`vocab-card ${r.lang === "zh" ? "zh" : r.lang}`} key={`${r.src}-${r.key}-${i}`} onClick={() => { if (r.src !== "trio") { gotoDictWord(r.src, r.key); return; } const w = trioOf(r.key); if (w) gotoTrioWord(w); }}><span className={`res-src ${r.lang}`}>{r.dictName || TX("主题词汇", "Tematik", "Topics", uiLang)}</span><h3 lang={htmlLang(r.lang)}>{r.text}</h3><p lang={htmlLang(r.lang)}>{r.sub}</p><div>{meaningCell({ text: r.meaning, note: r.note, label: r.label, lang: r.meaningLang })}</div></button>)}</div>
                       : <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>)))
           : dictInfo || favList
           // a search with no match says so, as the global search does, instead of an empty grid under "0 词"
           ? (search && !activeItems.some(it => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase()))
               ? <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>
-              : <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${it.lang}`} key={`${it.lang}-${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3 lang={htmlLang(it.lang)}>{it.text}</h3><p>{stripHear(it.sub || "")}</p><em>{dictInfo ? dictName(dictInfo) : it.dict || TX("主题词汇", "Kosakata Tematik", "Words by Topic", uiLang)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>)
+              : <div className="word-grid">{activeItems.map((it, ix) => ({ it, ix })).filter(({ it }) => `${it.text} ${it.meaning}`.toLowerCase().includes(search.toLowerCase())).slice(0, LIB_CAP).map(({ it, ix }) => <button className={`vocab-card ${it.lang}`} key={`${it.lang}-${it.key}-${ix}`} onClick={() => jumpToItem(ix)}><span>{String(ix + 1).padStart(3, "0")}</span><h3 lang={htmlLang(it.lang)}>{it.text}</h3><p lang={htmlLang(it.lang)}>{stripHear(it.sub || "")}</p><em>{dictInfo ? dictName(dictInfo) : it.dict || TX("主题词汇", "Kosakata Tematik", "Words by Topic", uiLang)}</em><div>{meaningCell(listMeaning(it))}</div></button>)}</div>)
           : search && !filtered.length
           ? <div className="empty"><b>🔍</b><h3>{uiLang === "zh" ? "没有找到" : uiLang === "id" ? "Tidak ditemukan" : "No matches"}</h3></div>
-          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3 lang={htmlLang(lang)}>{wordValue(w, lang)}</h3><p>{gridSub(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
+          : <div className="word-grid">{filtered.slice(0, LIB_CAP).map((w,i)=><button className={`vocab-card ${lang}`} key={w.en} onClick={()=>practiceWord(w)}><span>{String(i+1).padStart(3,"0")}</span><h3 lang={htmlLang(lang)}>{wordValue(w, lang)}</h3><p lang={htmlLang(lang)}>{gridSub(w, lang)}</p><em>{w.level} · {CATEGORY_META[w.category][uiLang]}</em><div>{meaningCell(listMeaning({ lang, glosses: trioGlosses(w, lang), meaning: "" }))}</div></button>)}</div>}
         <div className="source-note"><b>{uiLang === "zh" ? "词库来源" : uiLang === "id" ? "Sumber kosakata" : "Vocabulary sources"}</b><p><a href={DATA + "SOURCES.md"} target="_blank" rel="noreferrer">Open English WordNet · Chinese Open Wordnet · Wordnet Bahasa · wordfreq · CMUdict · pypinyin</a></p><span>{uiLang === "zh" ? "各词库的具体来源与授权见上方链接；其中托福词表取自第三方备考材料，未获再分发授权。" : uiLang === "id" ? "Sumber dan lisensi tiap kamus ada di tautan di atas; daftar TOEFL berasal dari materi pihak ketiga tanpa izin distribusi." : "Per-library sources and licences are linked above; the TOEFL list comes from third-party material with no redistribution licence."}</span></div>
       </Panel>}
 

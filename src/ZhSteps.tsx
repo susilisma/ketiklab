@@ -321,7 +321,8 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   /* step 2 — type the pinyin on a plain ASCII keyboard */
   const syllables = plain ? plain.split(" ") : [];
   return <div className="zh-step">
-    <div className="zh-pinbox">
+    {/* the syllables are pinyin whatever the interface language */}
+    <div className="zh-pinbox" lang="zh-Latn">
       {syllables.map((s, i) => {
         const before = normWord(syllables.slice(0, i).join(" "));
         const done = typed.length >= before.length + norm(s).length;
