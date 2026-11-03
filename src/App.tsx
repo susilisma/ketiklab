@@ -2046,11 +2046,14 @@ export default function Home() {
   // again (it was counted twice, the key after it lost, and the next word filed as a miss).
   // Not during the red flash of a wrong 输入法 commit, which ENTER still skips as before
   function wordDone() { return !wrongFlash && typed.length > 0 && (practiceLang === "zh" ? typed === targetWord : typed.toLowerCase() === foldTypography(targetWord).toLowerCase()); }
-  function skipWord() {
-    if (finishing.current || wordDone()) return;
+  // returns whether the word was skipped: the 打拼音 box asked, and a bounced ENTER it ignored
+  // had marked the new word's instance as over, so the letters typed next were no longer kept
+  // across a view switch (ZhSteps end)
+  function skipWord(): boolean {
+    if (finishing.current || wordDone()) return false;
     // a skip gets the same 320 ms window as a pass: a second ENTER 40–300 ms on (a double tap,
     // a bounce) skipped the next word unseen and filed its lapse and 错词本 entry
-    if (performance.now() - skippedAt.current < 320) return;
+    if (performance.now() - skippedAt.current < 320) return false;
     skippedAt.current = performance.now();
     if (!lapseRecorded.current && slipOn.current !== wordId) recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {});
     resetWordRun();
@@ -2063,6 +2066,7 @@ export default function Home() {
     setMistakes(m => Array.from(new Set([wordId, ...m])).slice(0, 30));
     setTyped("");
     advanceOrFinishChapter(true);
+    return true;
   }
   function setChapterTo(n: number) {
     const target = Math.max(0, Math.min(n, chapterCount - 1));

@@ -128,7 +128,8 @@ type Props = {
   uiLang: UiLang;
   active: boolean;
   onPass: () => void;
-  onSkip: () => void;
+  // false when the skip was not taken (a bounced ENTER inside the App's 320 ms window)
+  onSkip: () => boolean | void;
   onMiss: () => void;
   onSpeak: () => void;
   // Escape left the pinyin box on purpose: the App pauses the clock, as it does for its own box
@@ -155,7 +156,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   // the still-empty box before the carried letters were typed in, and was graded as a miss
   useLayoutEffect(() => { const same = kept.key === keptKey; setTyped(same ? kept.typed : ""); setWrong(same ? kept.wrong : 0); setPeek(false); setPicked(null); }, [word, step]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (!over.current) { kept.key = keptKey; kept.typed = typed; kept.wrong = wrong; } }, [keptKey, typed, wrong]);
-  const end = (fn: () => void) => { over.current = true; kept.key = ""; fn(); };
+  // a callback that declined (a bounced ENTER the App ignored) leaves this instance live, or the
+  // letters typed into it next were no longer kept across a view switch
+  const end = (fn: () => boolean | void) => { over.current = true; kept.key = ""; if (fn() === false) over.current = false; };
   // not while a dialog is open: the box would pull the focus out from under it
   useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
 
