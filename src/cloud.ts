@@ -537,12 +537,18 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     const own = Object.fromEntries(Object.entries(raw).filter(([k]) => !PROGRESS_KEYS.includes(k) && k !== "ketiklab-chapters" && k !== "ketiklab-name"));
     const next: ProgressBlob = { ...own, ...cloud };
     if (profileName) next["ketiklab-name"] = profileName;
+    // signed out (another tab) while the row was being read: the device stays as it is
+    if (!signedInAs(userId)) return "same";
     replaceLocal(next); linkDevice(userId);
     if (linkedUid() !== userId) return "same";
     noteAfterReload("switched"); location.reload();
     return "reloading";
   }
-  if (!r.data) { await saveProgress(userId, local); nameHome(); linkDevice(userId); return "uploaded"; }
+  // a sign-out from another tab that lands while the upsert is in flight: the row is written (the
+  // session was live when the request left), but the device is not tied to an account nobody is
+  // signed in to any more — it stayed linked, and on a shared computer the next learner met the
+  // "belongs to another account" card. The next typed sign-in links and merges again, idempotently.
+  if (!r.data) { await saveProgress(userId, local); if (!signedInAs(userId)) return "same"; nameHome(); linkDevice(userId); return "uploaded"; }
   // progress merges with this device on top, as every later push does: with the cloud on
   // top its 30 mistakes came first and the words just missed here were cut by the cap.
   // The settings keys stay the account's choice, as before.
@@ -550,6 +556,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   for (const k of [...PROGRESS_KEYS, "ketiklab-chapters"]) { const m = mergeProgress(cloud, local)[k]; if (typeof m === "string") merged[k] = m; }
   if (profileName || wasLinked) merged["ketiklab-name"] = profileName;
   await saveProgress(userId, { ...r.data, ...merged }); // keys this build does not know stay in the row (see pushProgress)
+  if (!signedInAs(userId)) return "same";
   nameHome(); linkDevice(userId);
   if (linkedUid() !== userId || sameBlob(merged, local)) return "same";
   // `local` was read before the upsert: a word typed meanwhile (a second tab, or the
