@@ -2688,7 +2688,7 @@ export default function Home() {
     {/* while the language dialog is open everything behind it is inert: Tab cannot walk out of it and ENTER cannot press a button behind it */}
     <aside className="sidebar" inert={showLangSetup}>
       <button className="brand" onClick={() => setView("learn")} aria-label={TX("KetikLab 首页", "Beranda KetikLab", "KetikLab home", uiLang)}><span>KL</span><b>KetikLab</b></button>
-      <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} title={t[item.id]} aria-label={t[item.id]} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge">{srs.due}</em>}</button>)}</nav>
+      <nav>{NAV.map(item => <button key={item.id} className={view === item.id ? "nav active" : "nav"} title={t[item.id]} aria-label={item.id === "mistakes" && srs.due > 0 ? `${t[item.id]} · ${t.due} ${srs.due}` : t[item.id]} onClick={() => setView(item.id)}><i>{item.icon}</i><span>{t[item.id]}</span>{item.id === "mistakes" && srs.due > 0 && <em className="nav-badge" aria-hidden="true">{srs.due}</em>}</button>)}</nav>
       <div className="sidebar-bottom">
         <div className="mini-progress"><span>{t.daily}<b>{Math.min(todayCount, DAILY_GOAL)}/{DAILY_GOAL}</b></span><div><i style={{width:`${Math.min(todayCount / DAILY_GOAL * 100, 100)}%`}} /></div></div>
         <button className="profile" onClick={() => setView("account")} title={TX("账号", "Akun", "Account", uiLang)}>
