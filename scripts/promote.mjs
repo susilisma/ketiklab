@@ -127,14 +127,16 @@ if (DRY_RUN) {
   process.exit(0);
 }
 
+// a queue emptied by hand (its rows deleted in a commit) never went through a release
+// that drained it, so its clock kept running: refilled later, the next hourly run paid
+// out every idle hour at once (75 words instead of 12 on 2026-09-15). Such a clock is
+// stopped now, whether or not the other queue releases something this run; the state
+// change is pushed like a promotion, so it survives the runner.
+const stop = (clock, queued) => (queued === 0 && clock && !clock.drained) ? { at: new Date(now).toISOString(), drained: true } : clock;
+const stopped = { words: stop(state.words, qWords.length), readings: stop(state.readings, qReads.length) };
+
 if (!takeWords.length && !takeReading.length) {
   console.log("nothing due this run — no promotion");
-  // a queue emptied by hand (its rows deleted in a commit) never went through a release
-  // that drained it, so its clock kept running: refilled later, the next hourly run paid
-  // out every idle hour at once (75 words instead of 12 on 2026-09-15). Stop such a clock
-  // now; the state change is pushed like a promotion, so it survives the runner.
-  const stop = (clock, queued) => (queued === 0 && clock && !clock.drained) ? { at: new Date(now).toISOString(), drained: true } : clock;
-  const stopped = { words: stop(state.words, qWords.length), readings: stop(state.readings, qReads.length) };
   const changed = stopped.words !== state.words || stopped.readings !== state.readings;
   if (changed) {
     writeFileSync(STATE, JSON.stringify(stopped, null, 1) + "\n");
@@ -169,13 +171,14 @@ for (const r of [...(summary.skipReasons?.words ?? []), ...(summary.skipReasons?
 // drain promoted items from the queue regardless of dup-skips
 writeFileSync(Q_WORDS, JSON.stringify(qWords.slice(takeWords.length), null, 0));
 if (takeReading.length) writeFileSync(Q_READS, JSON.stringify(qReads.slice(takeReading.length), null, 1));
-// a clock that released nothing is left untouched, so its time keeps accumulating
+// a clock that released nothing is left untouched (unless its queue is empty, see stop),
+// so its time keeps accumulating
 writeFileSync(STATE, JSON.stringify({
-  words: advance(state.words, {
+  words: advance(stopped.words, {
     count: takeWords.length, effectiveHours: wordsHours, hoursPerItem: 1 / WORDS_PER_HOUR,
     drained: takeWords.length === qWords.length, now,
   }),
-  readings: advance(state.readings, {
+  readings: advance(stopped.readings, {
     count: takeReading.length, effectiveHours: readingsHours, hoursPerItem: READING_EVERY_HOURS,
     drained: takeReading.length === qReads.length, now,
   }),
