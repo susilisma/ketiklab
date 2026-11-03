@@ -424,7 +424,10 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // an item with no lang or key is no star: the device drops it on read (cleanFavorites), but
       // the merge carried it into the cloud row — as "undefined:undefined" — and every later
       // merge kept it, one of the 500 slots gone for good
-      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string" && ["dict", "dictId"].every(k => (f as Record<string, unknown>)[k] === undefined || typeof (f as Record<string, unknown>)[k] === "string");
+      // ...and every body field the device checks (cleanFavorites in App.tsx): a star whose sub, voice or
+      // a gloss is not text was dropped on the device and kept here, so 云端有更多 never cleared either
+      const text = (v: unknown) => v === undefined || typeof v === "string";
+      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string" && ["dict", "dictId", "sub", "meaning", "example", "def", "voice"].every(k => text((f as Record<string, unknown>)[k])) && (() => { const g = (f as { glosses?: unknown }).glosses; return g === undefined || !!g && typeof g === "object" && Object.values(g).every(v => typeof v === "string"); })();
       const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
       out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
