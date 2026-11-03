@@ -121,6 +121,9 @@ const NO_READING: ReadingPiece = { id: "", lang: "en", title: "", author: "", er
 // the lang attribute for text in one of our languages: a screen reader otherwise reads the
 // Chinese word, the Indonesian meaning and the English reading in the interface language's voice
 const htmlLang = (l: Lang) => l === "zh" ? "zh-CN" : l;
+// a reading note with a Chinese version: 88 of the 160 notes are written only in the piece's own
+// language (English or Indonesian), and the Chinese interface used to print them as they are
+const HAS_CJK = /[\u3400-\u9fff]/;
 // A practice key is "<lang>:<headword>" for a dictionary entry and "<lang>:trio:<en>" for
 // a topic word, so the Indonesian word air (water) and the topic word air → udara cannot
 // share one ladder, one star and one 错词本 entry. The English headword is the stable half
@@ -2948,8 +2951,8 @@ export default function Home() {
               <span>✓</span><small>{t.completed}</small><h2 lang={htmlLang(reading.lang)}>{reading.title}</h2><p>{reading.author === "KetikLab" ? TX("你刚刚完整地输入了一篇练习短文。", "Kamu baru saja mengetik satu teks latihan secara lengkap.", "You have typed an entire practice text.", uiLang) : t.completedNote}</p><div><b>{reading.lines.join("").length}</b><small>{t.characters}</small><b>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</b><small>{t.timeUsed}</small></div><button onClick={restartReading}>{t.practiceAgain}</button>
             </div>}
 
-            {/* the notes are written in Chinese for pieces in every language */}
-            <div className="reader-footer">{uiLang === "zh" && reading.note && <p>{reading.note}</p>}<div><span>{readingProgress}%</span><i><b style={{width:`${readingProgress}%`}} /></i><time>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</time></div></div>
+            {/* a note is shown in the Chinese interface, and only when it has a Chinese version */}
+            <div className="reader-footer">{uiLang === "zh" && reading.note && HAS_CJK.test(reading.note) && <p lang="zh-CN">{reading.note}</p>}<div><span>{readingProgress}%</span><i><b style={{width:`${readingProgress}%`}} /></i><time>{String(Math.floor(readingSeconds/60)).padStart(2,"0")}:{String(readingSeconds%60).padStart(2,"0")}</time></div></div>
           </article>
         </div>
       </section>}
