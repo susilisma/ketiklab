@@ -156,9 +156,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   // the still-empty box before the carried letters were typed in, and was graded as a miss
   useLayoutEffect(() => { const same = kept.key === keptKey; setTyped(same ? kept.typed : ""); setWrong(same ? kept.wrong : 0); setPeek(false); setPicked(null); }, [word, step]); // eslint-disable-line react-hooks/exhaustive-deps
   useEffect(() => { if (!over.current) { kept.key = keptKey; kept.typed = typed; kept.wrong = wrong; } }, [keptKey, typed, wrong]);
-  // a callback that declined (a bounced ENTER the App ignored) leaves this instance live, or the
-  // letters typed into it next were no longer kept across a view switch
-  const end = (fn: () => boolean | void) => { over.current = true; kept.key = ""; if (fn() === false) over.current = false; };
+  // a callback that declined (a bounced ENTER the App ignored) leaves this instance live, with the
+  // key of the letters it already holds: cleared before asking, a letter typed between the two
+  // ENTERs was no longer kept across a view switch
+  const end = (fn: () => boolean | void) => { const key = kept.key; over.current = true; kept.key = ""; if (fn() === false) { over.current = false; kept.key = key; } };
   // not while a dialog is open: the box would pull the focus out from under it
   useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
 
