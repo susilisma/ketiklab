@@ -728,7 +728,10 @@ export default function Home() {
     const c = carry.current;
     if (!c || finishing.current) return;
     carry.current = "";
-    if (typed !== "" || wrongFlash || view !== "learn" || chapterFinished || !input.current || isComposing.current) return;
+    // not dropped while a composition is open: the next word's candidate window opened before
+    // this word was up (a fast typist, a phone's suggestions), and the carried word went
+    // ungraded while the commit that followed was graded against it and filed as its lapse
+    if (typed !== "" || wrongFlash || view !== "learn" || chapterFinished || !input.current) return;
     // Escape or the pause button inside the done window: the learner stopped, and the letters
     // typed before that are dropped — typed in, they were graded on a paused card and, when they
     // completed the word ("no" after yes), finishWord put the page back in focus mode behind the veil
@@ -745,8 +748,10 @@ export default function Home() {
     // an IME commit longer than the word (自信的了 for 自信的) is a different word, as handleType grades
     // it outside the window: dropped here too (no lapse), unless the rest starts the next word
     if (practiceLang === "zh" && n === want.length && folded.length > n && !(nextItem && nextItem.lang === "zh" && nextItem.text.startsWith(folded.slice(n)))) return;
-    input.current.value = folded.slice(0, n);
-    handleType(folded.slice(0, n));
+    // the box is left alone while a composition is open: its stale prefix is cut by staleLen
+    // when that composition ends, and the carried letters are graded here from their own text
+    if (!isComposing.current) input.current.value = folded.slice(0, n);
+    handleType(folded.slice(0, n), true);
     // the carried letters completed this word outright (yes, no): what follows them was typed
     // for the word after, and dropping it graded that word's first letters as missing
     if (n === want.length && folded.length > n) carry.current = folded.slice(n);
@@ -2116,13 +2121,18 @@ export default function Home() {
       setTimeout(() => input.current?.focus(), 30);
     }).catch(() => {});
   }
-  function handleType(raw: string) {
+  // carried: the text comes from the done window of the word before, not from the box, so it is
+  // graded even while a composition is open and leaves staleLen for that composition's commit
+  function handleType(raw: string, carried = false) {
     if (finishing.current || wordDone()) {
       // the box still shows the finished word; what follows it is the start of the next one.
       // An IME commit too: the next word committed inside the window used to be dropped and had
       // to be typed again (a composition still open here is left alone: it is graded, through
       // staleLen, when it ends)
       const n = targetWord.length;
+      // a carried word passed under an open composition: the box still shows the word before it,
+      // so the commit that ends the composition is read behind that stale prefix here too
+      if (!isComposing.current && staleLen.current > 0) { raw = typed + raw.slice(staleLen.current); staleLen.current = 0; }
       if (!isComposing.current && raw.length > n && foldTypography(raw.slice(0, n)).toLowerCase() === foldTypography(targetWord).toLowerCase()) {
         carry.current += raw.slice(n);
         if (input.current) input.current.value = raw.slice(0, n);
@@ -2130,14 +2140,14 @@ export default function Home() {
       return;
     }
     if (wrongFlash) return;
-    if (isComposing.current) return; // ignore mid-IME-composition (Chinese pinyin etc.)
+    if (isComposing.current && !carried) return; // ignore mid-IME-composition (Chinese pinyin etc.)
     // the box still shows the previous word (or the rolled-back text) in front of
     // this commit: grade only what was committed since, after the kept prefix.
     // Consumed here, not left to the layout effect below: the box is rewritten to the graded
     // text, so the stale prefix is gone — a composition cancelled over it graded nothing and
     // rendered nothing, and the word committed next, within the second before the clock tick
     // re-rendered, was cut by that length and filed as a lapse (自信的 graded as 的)
-    if (staleLen.current > 0) { raw = typed + raw.slice(staleLen.current); staleLen.current = 0; }
+    if (staleLen.current > 0 && !carried) { raw = typed + raw.slice(staleLen.current); staleLen.current = 0; }
     // iOS and macOS smart punctuation type ’ for the apostrophe in driver's license and
     // – for the hyphen in cost-benefit analysis: folded the way the reader folds its texts
     raw = foldTypography(raw);
