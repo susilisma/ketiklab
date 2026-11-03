@@ -128,7 +128,18 @@ if (DRY_RUN) {
 
 if (!takeWords.length && !takeReading.length) {
   console.log("nothing due this run — no promotion");
-  setOutput(false);
+  // a queue emptied by hand (its rows deleted in a commit) never went through a release
+  // that drained it, so its clock kept running: refilled later, the next hourly run paid
+  // out every idle hour at once (75 words instead of 12 on 2026-09-15). Stop such a clock
+  // now; the state change is pushed like a promotion, so it survives the runner.
+  const stop = (clock, queued) => (queued === 0 && clock && !clock.drained) ? { at: new Date(now).toISOString(), drained: true } : clock;
+  const stopped = { words: stop(state.words, qWords.length), readings: stop(state.readings, qReads.length) };
+  const changed = stopped.words !== state.words || stopped.readings !== state.readings;
+  if (changed) {
+    writeFileSync(STATE, JSON.stringify(stopped, null, 1) + "\n");
+    console.log("stopped the clock of a queue that was emptied by hand");
+  }
+  setOutput(changed);
   process.exit(0);
 }
 
