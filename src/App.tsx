@@ -1,4 +1,4 @@
-import { Fragment, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { Fragment, cloneElement, isValidElement, useCallback, useEffect, useId, useLayoutEffect, useMemo, useRef, useState } from "react";
 import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, DictInfo, PracticeItem } from "./types";
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats, type ReviewRecord } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
@@ -3083,4 +3083,10 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
 
 function Metric({value,label,accent}:{value:string|number;label:string;accent:string}) { return <div className={`metric ${accent}`}><i/><div><strong>{value}</strong><span>{label}</span></div></div> }
 function Panel({title,eyebrow,children}:{title:string;eyebrow:string;children:React.ReactNode}) { return <section className="panel"><div className="panel-head"><span>{eyebrow}</span><h1>{title}</h1></div>{children}</section> }
-function Setting({title,detail,children}:{title:string;detail:string;children:React.ReactNode}) { return <div className="setting"><div><b>{title}</b><p>{detail}</p></div>{children}</div> }
+// a select inside a setting is named by the setting's title and described by its detail line: the seven
+// on the settings page had no accessible name at all. A button keeps its own text as its name.
+function Setting({title,detail,children}:{title:string;detail:string;children:React.ReactNode}) {
+  const id = useId();
+  const control = isValidElement(children) && children.type === "select" ? cloneElement(children as React.ReactElement<Record<string, unknown>>, { "aria-labelledby": id, "aria-describedby": `${id}-d` }) : children;
+  return <div className="setting"><div><b id={id}>{title}</b><p id={`${id}-d`}>{detail}</p></div>{control}</div>;
+}
