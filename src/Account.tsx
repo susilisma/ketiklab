@@ -21,12 +21,17 @@ const DOMAIN_FIX: Record<string, string> = {
   "qq.co": "qq.com",
 };
 
-function suggestEmail(raw: string): string | null {
+// `typing`: the address is still being typed, so a domain that is only the start of its fix
+// ("gmail.co" on the way to "gmail.com") is no typo yet — the hint used to flash for one keystroke
+// on every Gmail / Yahoo / Hotmail address and push the password field down and back. The same
+// domain left behind (blur, submit) is suggested as before.
+function suggestEmail(raw: string, typing = false): string | null {
   const at = raw.lastIndexOf("@");
   if (at < 0) return null;
   const domain = raw.slice(at + 1).toLowerCase().trim();
   const fixed = DOMAIN_FIX[domain];
-  return fixed ? raw.slice(0, at + 1) + fixed : null;
+  if (!fixed || (typing && fixed.startsWith(domain))) return null;
+  return raw.slice(0, at + 1) + fixed;
 }
 
 /** Supabase speaks English error codes; learners deserve their own language. */
@@ -588,7 +593,8 @@ export function Account({ uiLang, name, onName }: {
         <label className="acct-field">
           <span>{T("邮箱", "Email", "Email", uiLang)}</span>
           <input type="email" required autoComplete="email" value={email}
-            onChange={e => { setEmail(e.target.value); setTypo(suggestEmail(e.target.value)); }}
+            onChange={e => { setEmail(e.target.value); setTypo(suggestEmail(e.target.value, true)); }}
+            onBlur={e => setTypo(suggestEmail(e.target.value))}
             placeholder="name@example.com" />
         </label>
         {typo && <button type="button" className="acct-typo"
