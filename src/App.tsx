@@ -376,6 +376,9 @@ export default function Home() {
   const [linkedMissing, setLinkedMissing] = useState<{ id: string; saved: boolean } | null>(null);
   const [chapter, setChapter] = useState(0);
   const [chapterFinished, setChapterFinished] = useState(false);
+  // the chapter the finish card is for: read from chapterSafe, the card of a favourites chapter
+  // that lost its last word (unstarred in the done window or in another tab) said "Chapter 1"
+  const [finishedChapter, setFinishedChapter] = useState(0);
   const [chDone, setChDone] = useState(0);
   const [chWrongKeys, setChWrongKeys] = useState<string[]>([]);
   const [chElapsed, setChElapsed] = useState(0);
@@ -1846,7 +1849,7 @@ export default function Home() {
     // and go on for ever; it ends on the same card a chapter does
     if (atEnd) {
       setChElapsed(Math.max(0, secondsRef.current - chapterStart.current));
-      setChapterFinished(true);
+      setFinishedChapter(chapterSafe); setChapterFinished(true);
       setRunning(false);
     } else {
       const ni = (index + 1) % Math.max(learnItems.length, 1);
@@ -1959,7 +1962,7 @@ export default function Home() {
           setChDone(n => n + 1); if (wasWrong) setChWrongKeys(k => Array.from(new Set([...k, wordId])));
           setTyped(""); resetWordRun(); autoSpokenWord.current = null;
           const left = Math.min(20, remaining.length - ch * 20);
-          if (slot + 1 >= left) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
+          if (slot + 1 >= left) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setFinishedChapter(ch); setChapterFinished(true); setRunning(false); }
           else setIndex(slot + 1);
           return;
         }
@@ -1982,7 +1985,7 @@ export default function Home() {
       const slot = index % Math.max(learnItems.length, 1), left = Math.min(20, remaining.length - chapterSafe * 20);
       // (only when something of this chapter was answered: an untouched chapter emptied this way has no
       // card to show, and the wrap to word 1 counts nothing twice)
-      if (remaining.length && slot >= left && (chDone > 0 || justDone)) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setChapterFinished(true); setRunning(false); }
+      if (remaining.length && slot >= left && (chDone > 0 || justDone)) { setChElapsed(Math.max(0, secondsRef.current - chapterStart.current)); setFinishedChapter(chapterSafe); setChapterFinished(true); setRunning(false); }
       // nothing answered yet: the card shows the chapter's new last word, so the index says so too — left
       // one past the list it rendered that word by wrap-round while the stored position stayed one too far
       else if (remaining.length && slot >= left && left > 0) setIndex(left - 1);
@@ -2612,7 +2615,7 @@ export default function Home() {
     setChapter(ch);
     setChapterFinished(restore); setChDone(restore ? kept.done : 0); setChWrongKeys(restore ? kept.wrong : []); setChTomorrow(restore ? kept.tomorrow : 0);
     // the card has no word to type, so the clock stops as it does when a chapter ends
-    if (restore) { setChElapsed(kept.elapsed); setRunning(false); }
+    if (restore) { setFinishedChapter(kept.chapter); setChElapsed(kept.elapsed); setRunning(false); }
     chapterStart.current = secondsRef.current;
     // same as startReview: the slip noted inside the review must not grade the list's word
     setIndex(pos); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
@@ -2785,7 +2788,7 @@ export default function Home() {
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
           <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
-          <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${chapterSafe + 1} 章` : uiLang === "id" ? `Bab ${chapterSafe + 1}` : `Chapter ${chapterSafe + 1}`}</h2>
+          <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${finishedChapter + 1} 章` : uiLang === "id" ? `Bab ${finishedChapter + 1}` : `Chapter ${finishedChapter + 1}`}</h2>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
           {/* the one moment the learner has earned a reason to come back: the first correct answer
