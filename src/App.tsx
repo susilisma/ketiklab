@@ -1667,6 +1667,7 @@ export default function Home() {
   const heatMax = Math.max(1, ...heat.map(h => h.count));
   const totalTyped = Object.values(dayCounts).reduce((a, b) => a + b, 0);
   const activeDays = Object.values(dayCounts).filter(v => v > 0).length;
+  const heatDays = heat.filter(c => c.count > 0).length, heatWords = heat.reduce((a, c) => a + c.count, 0);
   function heatLevel(c: number): number { if (!c) return 0; const r = c / heatMax; return r > 0.75 ? 4 : r > 0.5 ? 3 : r > 0.25 ? 2 : 1; }
   const reading = readings.find(piece => piece.id === readingId) || readings[0] || NO_READING;
   const filteredReadings = readings.filter(pc => readingLang === "all" || pc.lang === readingLang);
@@ -2979,7 +2980,9 @@ export default function Home() {
       {view === "stats" && <Panel title={t.stats} eyebrow={EYEBROW.stats[uiLang]}>
         <div className="stats-top"><Metric value={totalTyped} label={uiLang === "zh" ? "累计打词" : uiLang === "id" ? "Total diketik" : "Total typed"} accent="violet"/><Metric value={`${streakDays} ${enOne(streakDays, "day", t.day)}`} label={t.streak} accent="mint"/><Metric value={activeDays} label={uiLang === "zh" ? "学习天数" : uiLang === "id" ? "Hari aktif" : "Active days"} accent="amber"/><Metric value={srs.mastered} label={t.mastered} accent="blue"/></div>
         <div className="chart-card"><div><h3>{uiLang === "zh" ? "学习日历" : uiLang === "id" ? "Kalender belajar" : "Learning calendar"}</h3><p>{uiLang === "zh" ? "最近 13 周，颜色越深当天练得越多" : uiLang === "id" ? "13 minggu terakhir — makin gelap, makin banyak" : "Last 13 weeks — darker = more"}</p></div>
-          <div className="heatmap">{Array.from({ length: 13 }, (_, wk) => <div key={wk} className="heat-col">{Array.from({ length: 7 }, (_, dy) => { const cell = heat[wk * 7 + dy]; return <i key={dy} className={`heat l${cell ? heatLevel(cell.count) : 0}`} title={cell ? `${cell.day}: ${cell.count}` : ""} />; })}</div>)}</div>
+          {/* 91 cells with only a title tooltip said nothing to a screen reader: the grid is one image whose
+              name sums it up, in the interface language; the tooltips stay for the mouse */}
+          <div className="heatmap" role="img" aria-label={TX(`学习日历，最近 13 周：学习 ${heatDays} 天，共 ${heatWords} 词`, `Kalender belajar, 13 minggu terakhir: ${heatDays} hari aktif, ${heatWords} kata`, `Learning calendar, last 13 weeks: ${heatDays} active ${enOne(heatDays, "day", "days")}, ${heatWords} ${enOne(heatWords, "word", "words")}`, uiLang)}>{Array.from({ length: 13 }, (_, wk) => <div key={wk} className="heat-col">{Array.from({ length: 7 }, (_, dy) => { const cell = heat[wk * 7 + dy]; return <i key={dy} className={`heat l${cell ? heatLevel(cell.count) : 0}`} title={cell ? `${cell.day}: ${cell.count}` : ""} />; })}</div>)}</div>
           <div className="heat-legend"><span>{TX("少", "sedikit", "less", uiLang)}</span><i className="heat l0"/><i className="heat l1"/><i className="heat l2"/><i className="heat l3"/><i className="heat l4"/><span>{TX("多", "banyak", "more", uiLang)}</span></div>
         </div>
         <div className="chart-card"><div><h3>{uiLang === "zh" ? "最近 7 天" : uiLang === "id" ? "7 hari terakhir" : "Last 7 days"}</h3></div><div className="bars">{last7.map((d,i)=><span key={i}><i style={{height:`${Math.max(4, Math.round(d.count / last7max * 100))}%`}}/><small>{d.label}</small></span>)}</div></div>
