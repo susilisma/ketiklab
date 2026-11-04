@@ -96,7 +96,6 @@
  "史前": "prehistoric",
  "种族": "racial",
  "放射性": "radioactive",
- "娱乐": "recreational",
  "宗教事务所": "religious affairs office",
  "视网膜": "retinal",
  "吃饱": "satiate",
@@ -202,5 +201,11 @@
  "自由的": "free",
  "位于": "situate",
  "凝化": "curdling",
- "抽出器": "extractor"
+ "抽出器": "extractor",
+ "常见": "usual",
+ "侦查": "investigate",
+ "诉讼案件": "litigation",
+ "招待": "entertain",
+ "装潢": "decoration",
+ "拐带": "kidnap"
 }
