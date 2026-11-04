@@ -148,20 +148,24 @@ if (!takeWords.length && !takeReading.length) {
 
 const batchPath = join(ROOT, "queue", "_promote-batch.json");
 writeFileSync(batchPath, JSON.stringify({ words: takeWords, readings: takeReading }));
-
-const out = execFileSync(process.execPath, [join(ROOT, "scripts", "append-batch.mjs"), batchPath], { encoding: "utf8" });
-console.log(out);
-rmSync(batchPath, { force: true });
+const appendBatch = (dry) => JSON.parse(execFileSync(process.execPath,
+  [join(ROOT, "scripts", "append-batch.mjs"), ...(dry ? ["--dry-run"] : []), batchPath], { encoding: "utf8" }));
 
 // a row that failed validation (a typo in a hand-reviewed category or level, a missing
 // field) is not promoted; draining it anyway would delete it from the queue on a green
-// run, so the run fails and the queue is left as it was for someone to fix
-const summary = JSON.parse(out);
-const invalid = [...(summary.skipReasons?.words ?? []), ...(summary.skipReasons?.readings ?? [])].filter((r) => !r.startsWith("dup-"));
+// run, so the run fails and the queue is left as it was for someone to fix. The verdict
+// comes from a dry run: the real run used to go first, so one bad row left the valid rows
+// already appended to words.json under a message that said the queue was untouched
+const check = appendBatch(true);
+const invalid = [...(check.skipReasons?.words ?? []), ...(check.skipReasons?.readings ?? [])].filter((r) => !r.startsWith("dup-"));
 if (invalid.length) {
+  rmSync(batchPath, { force: true });
   console.error(`promote: ${invalid.length} queued row(s) failed validation (${[...new Set(invalid)].join(", ")}); the queue is left untouched`);
   process.exit(1);
 }
+const summary = appendBatch(false);
+console.log(JSON.stringify(summary, null, 2));
+rmSync(batchPath, { force: true });
 // a duplicate is drained on a green run (the queue must move forward), so it is announced:
 // a hand-written row whose secondary sense matched a live sense used to vanish in silence
 for (const r of [...(summary.skipReasons?.words ?? []), ...(summary.skipReasons?.readings ?? [])]) {
