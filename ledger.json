@@ -24,7 +24,7 @@
    "priority": "P1",
    "status": "needs-owner",
    "commit": "c215271, c6a6b33, d490583",
-   "reason": "脚本门槛两次收紧后，沙箱实跑的批次仍约 1/5 错（lack→kemauan、resemble→bersamaan、eminent→terbilang）；候选池也只剩 27 词。日程已停，手动跑后需人工审 queue/words.json。在线词条门槛复核清单见 reports/gloss-candidates-2026-09-15.md",
+   "reason": "脚本门槛两次收紧后，沙箱实跑的批次仍约 1/5 错（lack→kemauan、resemble→bersamaan、eminent→terbilang）；候选池也只剩 27 词。日程已停，手动跑后需人工审 queue/words.json。在线词条门槛复核清单见 reports/gloss-candidates-2026-09-15.md ｜ 11-05 复验仍在：Daily word batch 保持暂停，今日未 dispatch",
    "date": "2026-09-15"
   },
   {
@@ -195,7 +195,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "已确认只影响云端且下一次推送自愈；彻底修需 version 列（schema 变更，主人定） ｜ 11-04 复验仍在：D 代码",
+   "reason": "已确认只影响云端且下一次推送自愈；彻底修需 version 列（schema 变更，主人定） ｜ 11-04 复验仍在：D 代码 ｜ 11-05 复验仍在：D 代码",
    "date": "2026-09-15"
   },
   {
@@ -294,7 +294,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "无渲染影响，本次未动 ｜ 10-15 F2 复验仍在：member 导航字符串「会员 / Anggota / Membership」与 View 类型仍在 bundle 中（不渲染） ｜ 11-04 复验仍在：B",
+   "reason": "无渲染影响，本次未动 ｜ 10-15 F2 复验仍在：member 导航字符串「会员 / Anggota / Membership」与 View 类型仍在 bundle 中（不渲染） ｜ 11-04 复验仍在：B ｜ 11-05 复验仍在：B：bundle 会员 / Anggota / Membership 各 1，不渲染",
    "date": "2026-10-15"
   },
   {
@@ -527,7 +527,7 @@
    "title": "「重置进度」只清本地，云端合并会把进度还回来；文案「仅保存在本设备」登录后不成立",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "合并语义下无法删云端；改文案或加「同时清空云端」由主人定",
+   "reason": "合并语义下无法删云端；改文案或加「同时清空云端」由主人定 ｜ 11-05 复验仍在：D：resetProgress 仅本地",
    "date": "2026-09-15",
    "commit": ""
   },
@@ -626,7 +626,7 @@
    "title": "首页/og/manifest 的「开源」修饰整个网站，而数据（含托福表）非开放授权",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "许可措辞属主人；可改为「代码开源」",
+   "reason": "许可措辞属主人；可改为「代码开源」 ｜ 11-05 复验仍在：B：「开源」仍修饰整站",
    "date": "2026-09-15",
    "commit": ""
   },
@@ -1086,7 +1086,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "仍未动（队列为空）",
+   "reason": "仍未动（队列为空） ｜ 11-05 复验仍在：E：cost/benefit 仍被接受",
    "date": "2026-10-31"
   },
   {
@@ -1104,7 +1104,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "1 行",
+   "reason": "1 行 ｜ 11-05 复验仍在：E：6 行",
    "date": "2026-09-16"
   },
   {
@@ -1113,7 +1113,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "4d965a1",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：缓存步与 zh 工作流相同、权限/触发不变；缺词典仍在 build-en-dicts.py:141 报 wn.Error；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入 ｜ 10-16 F5 复验仍在",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：缓存步与 zh 工作流相同、权限/触发不变；缺词典仍在 build-en-dicts.py:141 报 wn.Error；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入 ｜ 10-16 F5 复验仍在 ｜ 11-05 复验仍在：E：10-01 分支 4d965a1 从未合入 main",
    "date": "2026-10-31"
   },
   {
@@ -1194,7 +1194,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 8 行：报错而非退化 ｜ 11-04 复验仍在：C：404 → 日常高频 82 章不过滤、无提示",
+   "reason": "约 8 行：报错而非退化 ｜ 11-04 复验仍在：C：404 → 日常高频 82 章不过滤、无提示 ｜ 11-05 复验仍在：C：404 → 1626 词 / 82 章无提示",
    "date": "2026-09-16"
   },
   {
@@ -1392,7 +1392,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 13 行 globals.css：拆 --on-purple 令牌、浅色 --purple 改 #6558e6；F6 10-01 复核仍在 ｜ 10-16 F5 复验仍在（.zh-go / .acct-btn.primary / 档位数字 / 计划环 3.25:1，SPACE kbd 2.94:1） ｜ 10-23 L / F5 复验仍在（.zh-go / .acct-btn.primary / 活动档位数字 3.25:1） ｜ 10-24 L 复测 3.25:1 未变 ｜ 11-04 复验仍在：E / L：深色 3.25:1 不变（主人项）",
+   "reason": "约 13 行 globals.css：拆 --on-purple 令牌、浅色 --purple 改 #6558e6；F6 10-01 复核仍在 ｜ 10-16 F5 复验仍在（.zh-go / .acct-btn.primary / 档位数字 / 计划环 3.25:1，SPACE kbd 2.94:1） ｜ 10-23 L / F5 复验仍在（.zh-go / .acct-btn.primary / 活动档位数字 3.25:1） ｜ 10-24 L 复测 3.25:1 未变 ｜ 11-04 复验仍在：E / L：深色 3.25:1 不变（主人项） ｜ 11-05 复验仍在：B：.zh-go / .acct-btn.primary / .lang-modal-save / .week .today / 档位数字 3.25:1",
    "date": "2026-10-24"
   },
   {
@@ -1662,7 +1662,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "清理 13 键（重建脚本不会再生成）；对用户无影响 ｜ 11-04 复验仍在：E：13 个不变",
+   "reason": "清理 13 键（重建脚本不会再生成）；对用户无影响 ｜ 11-04 复验仍在：E：13 个不变 ｜ 11-05 复验仍在：E：13 不变",
    "date": "2026-09-21"
   },
   {
@@ -1716,7 +1716,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "ZhSteps 加 onActivity 接 setRunning，暂停时 blur 框 ｜ 10-27 A：打拼音键与选字已通过 onResume 启动时钟、暂停后下一键恢复并判分（与拉丁框一致）；认读仍不开钟；剩余为打磨；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示",
+   "reason": "ZhSteps 加 onActivity 接 setRunning，暂停时 blur 框 ｜ 10-27 A：打拼音键与选字已通过 onResume 启动时钟、暂停后下一键恢复并判分（与拉丁框一致）；认读仍不开钟；剩余为打磨；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示 ｜ 11-05 C：基本消失，仅剩 认读 SPACE 开钟的残留，归入 pause-inert-on-ladder-rungs",
    "date": "2026-10-31"
   },
   {
@@ -1815,7 +1815,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "4 处 aria-label ｜ 10-27 B：对话框已有 role=dialog aria-modal aria-labelledby；搜索框 / 阅读框 / 拼音框仍只靠 placeholder ｜ 11-04 复验仍在：B：搜索框 / 阅读框 / 拼音框仍只靠 placeholder",
+   "reason": "4 处 aria-label ｜ 10-27 B：对话框已有 role=dialog aria-modal aria-labelledby；搜索框 / 阅读框 / 拼音框仍只靠 placeholder ｜ 11-04 复验仍在：B：搜索框 / 阅读框 / 拼音框仍只靠 placeholder ｜ 11-05 复验仍在：B：搜索框 :2873、阅读框 :2957、拼音框 ZhSteps:343 仍只靠 placeholder",
    "date": "2026-10-27"
   },
   {
@@ -2112,7 +2112,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "seed 混入每次挂载的 nonce；未在浏览器确认 ｜ 10-16 F3 复验仍在（答案位 28/26/26/20 %；同章相邻卡可出现完全相同的四选项） ｜ 10-23 F3 复验仍在（seed = 长度 + codePoint） ｜ 10-29 C 复验仍在 ｜ 11-04 复验仍在：C",
+   "reason": "seed 混入每次挂载的 nonce；未在浏览器确认 ｜ 10-16 F3 复验仍在（答案位 28/26/26/20 %；同章相邻卡可出现完全相同的四选项） ｜ 10-23 F3 复验仍在（seed = 长度 + codePoint） ｜ 10-29 C 复验仍在 ｜ 11-04 复验仍在：C ｜ 11-05 复验仍在：C：刷新同序；答案位 27.8/24.2/27.3/20.6 %",
    "date": "2026-10-31"
   },
   {
@@ -2434,10 +2434,10 @@
    "fingerprint": "promote-validation-failure-leaves-words-json-appended",
    "title": "promote.mjs 先真跑 append-batch 再读校验结果：一行无效时有效行已追加进 words.json 却说「队列未动」并 exit 1（GitHub 上 runner 丢弃，本地跑会脏）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "b88ec9b",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入 ｜ 11-04 复验仍在：E 在副本复现（1 合法 + 1 坏 category → exit 1 但 words.json 3879 → 3880）；09-25 分支的修复提交 b88ec9b 已不能套用，需重写",
-   "date": "2026-09-25"
+   "status": "fixed",
+   "commit": "0907299",
+   "reason": "promote.mjs 先 --dry-run 校验、全过才真追加；V1 副本 30/30（1 合法 + 1 坏行 → exit 1 且 0 文件变、无批次残留；合法全追加 drained changed=true；dup 放行并 ::warning；--dry-run 不动文件；无到期 changed=false；手清队列时钟 / readings 时钟 / WORDS_PER_RUN=1 / 坏 reading 行）；合入 main",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "manual-flush-nonnumeric-count-deploys-nothing",
@@ -2452,10 +2452,10 @@
    "fingerprint": "bad-queue-row-blocks-rebuild-deploy",
    "title": "队列含无效行时 promote 也在 workflow_run 上跑并失败，重建的词库不会部署且运行报的是队列错",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "183a80a",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after），在分支 claude/daily-2026-09-25（Build check #30 成功、0 注解），受每次 12 项上限未合入 main，明日合入 ｜ 11-04 复验仍在：E 代码阅读",
-   "date": "2026-09-25"
+   "status": "fixed",
+   "commit": "0aac2ad",
+   "reason": "site.yml checkout/setup/promote 步只在 schedule 与 workflow_dispatch 跑，workflow_run 直达 gate（go=true）；V1 逐事件推演 + YAML 解析；合入 main（GitHub 侧待下次重建实证）",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "build-job-keeps-write-token-during-npm-install",
@@ -2643,7 +2643,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "sinkronisasi；Title Case；arti bahasa Indonesia；统一英式或美式 ｜ 10-16 F2 复验仍在（favourites/favorites、practise/practice、licence、Word Lists / WORD COLLECTIONS / Exam libraries 混用） ｜ 10-23 F2 复验仍在（favourite 28 / favorite 19、practise 13 / practice 58） ｜ 10-24 F2 复验仍在（favourite 27 / favorite 33，practise 13 / practice 88） ｜ 11-04 复验仍在：B：另有 Tersinkron. / Sinkron terakhir / Reset progres；favourite 45 vs favorite 35、practise 21 vs practice 20",
+   "reason": "sinkronisasi；Title Case；arti bahasa Indonesia；统一英式或美式 ｜ 10-16 F2 复验仍在（favourites/favorites、practise/practice、licence、Word Lists / WORD COLLECTIONS / Exam libraries 混用） ｜ 10-23 F2 复验仍在（favourite 28 / favorite 19、practise 13 / practice 58） ｜ 10-24 F2 复验仍在（favourite 27 / favorite 33，practise 13 / practice 88） ｜ 11-04 复验仍在：B：另有 Tersinkron. / Sinkron terakhir / Reset progres；favourite 45 vs favorite 35、practise 21 vs practice 20 ｜ 11-05 复验仍在：B：favourite 48 / favorite 21、practise 7 / practice 27",
    "date": "2026-10-24"
   },
   {
@@ -2652,7 +2652,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "2575ff6 + 471dcc3",
-   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：新步只在非 push 且未 promote 时跑；两次运行幂等；gate/promote/build/deploy 步字节不变；补丁 471dcc3：坏 history.json → 警告 exit 0；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入 ｜ 10-16 F5 复验仍在（history.json 停在 09-15） ｜ 10-29 E 代码复验仍在，history.json 无漂移",
+   "reason": "已修好并验证（作者脚本 + 独立校验者 before/after）：VX1：新步只在非 push 且未 promote 时跑；两次运行幂等；gate/promote/build/deploy 步字节不变；补丁 471dcc3：坏 history.json → 警告 exit 0；在分支 claude/daily-2026-10-01（Build check #41–#48 成功、0 注解），受每次 12 项上限未合入 main，下次合入 ｜ 10-16 F5 复验仍在（history.json 停在 09-15） ｜ 10-29 E 代码复验仍在，history.json 无漂移 ｜ 11-05 复验仍在：E：无漂移；10-01 分支补丁未合",
    "date": "2026-10-31"
   },
   {
@@ -2697,7 +2697,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "同步框并显示「请切换到中文输入法」提示 ｜ 10-16 F1 复验仍在（拉丁字母即时被清空，无提示） ｜ 11-04 复验仍在：C",
+   "reason": "同步框并显示「请切换到中文输入法」提示 ｜ 10-16 F1 复验仍在（拉丁字母即时被清空，无提示） ｜ 11-04 复验仍在：C ｜ 11-05 复验仍在：C",
    "date": "2026-10-16"
   },
   {
@@ -2706,7 +2706,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "ZhSteps 引入 keyClick / errorBeep ｜ 11-04 复验仍在：C：只有 打拼音 / 选汉字 有提示音",
+   "reason": "ZhSteps 引入 keyClick / errorBeep ｜ 11-04 复验仍在：C：只有 打拼音 / 选汉字 有提示音 ｜ 11-05 复验仍在：C：对错键 0 振荡器、通过 2 个",
    "date": "2026-09-25"
   },
   {
@@ -2778,7 +2778,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "无用户影响；重建脚本或手动清理 ｜ 11-04 复验仍在：E：无引用汉字键 45（昨 43）+ 仅次义 22（昨 19）",
+   "reason": "无用户影响；重建脚本或手动清理 ｜ 11-04 复验仍在：E：无引用汉字键 45（昨 43）+ 仅次义 22（昨 19） ｜ 11-05 复验仍在：E：无引用 45 + 仅次义 22；今日改义后再钉 6 个旧首义（常见 侦查 诉讼案件 招待 装潢 拐带）",
    "date": "2026-09-25"
   },
   {
@@ -3030,7 +3030,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "改为按词头全局钉住需改 build-en-dicts.py 套用逻辑，约 5 行",
+   "reason": "改为按词头全局钉住需改 build-en-dicts.py 套用逻辑，约 5 行 ｜ 11-05 复验仍在：E",
    "date": "2026-09-29"
   },
   {
@@ -3471,7 +3471,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 发现、V 确认（代码）。修法：常驻一个 <p aria-live=\"polite\"> 容器填文字（role 放在条件渲染的 <p> 上不可靠） ｜ 10-16 F4 复验仍在 ｜ 11-04 复验仍在：B：全站 0 个 live region",
+   "reason": "F2 发现、V 确认（代码）。修法：常驻一个 <p aria-live=\"polite\"> 容器填文字（role 放在条件渲染的 <p> 上不可靠） ｜ 10-16 F4 复验仍在 ｜ 11-04 复验仍在：B：全站 0 个 live region ｜ 11-05 复验仍在：B：全站 0 个 live region",
    "date": "2026-10-16"
   },
   {
@@ -3786,7 +3786,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2 发现，当前不触发 ｜ 11-04 复验仍在：D 代码",
+   "reason": "F2 发现，当前不触发 ｜ 11-04 复验仍在：D 代码 ｜ 11-05 复验仍在：D：Account.tsx:487/606",
    "date": "2026-10-05"
   },
   {
@@ -3975,7 +3975,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "D 10-06；需 append-batch / build-trio-queue 写 toned|plain|level 并一次回填 ｜ 10-16 D：1,267 首义无条目（App.tsx 注释仍 975），全部有行内 pinyin ｜ 10-29 E 复验：1286 首义无 zh-pinyin 键，全部有内联 pinyin",
+   "reason": "D 10-06；需 append-batch / build-trio-queue 写 toned|plain|level 并一次回填 ｜ 10-16 D：1,267 首义无条目（App.tsx 注释仍 975），全部有行内 pinyin ｜ 10-29 E 复验：1286 首义无 zh-pinyin 键，全部有内联 pinyin ｜ 11-05 复验仍在：C：1264（昨 1286）",
    "date": "2026-10-29"
   },
   {
@@ -4182,7 +4182,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah ｜ 10-08 F2 再复现，另有 README.md:60 与 build-seo-pages.py:62/71/82/90 的「Kamus:」 ｜ 10-16 F2 复验仍在（App.tsx:2103,2201,2204,2213-2226 六处 kamus） ｜ 10-23 F2 复验仍在 ｜ 10-24 F2 复验仍在（Kamus ujian ×3 等） ｜ 11-04 复验仍在：B：6 处 kamus 渲染",
+   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah ｜ 10-08 F2 再复现，另有 README.md:60 与 build-seo-pages.py:62/71/82/90 的「Kamus:」 ｜ 10-16 F2 复验仍在（App.tsx:2103,2201,2204,2213-2226 六处 kamus） ｜ 10-23 F2 复验仍在 ｜ 10-24 F2 复验仍在（Kamus ujian ×3 等） ｜ 11-04 复验仍在：B：6 处 kamus 渲染 ｜ 11-05 复验仍在：B：8 处 kamus + README:60",
    "date": "2026-10-24"
   },
   {
@@ -4216,10 +4216,10 @@
    "fingerprint": "seo-page-inline-link-targets",
    "title": "静态 SEO 页正文内链 17 px、「打开练习 →」20 px（WCAG 2.5.8 行内豁免）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "L；只有「打开练习 →」值得做成按钮",
-   "date": "2026-10-07"
+   "status": "fixed",
+   "commit": "10a407b",
+   "reason": "「打开练习 →」随 10a407b 成 ≥ 40 px 目标；正文行内链接按 WCAG 2.5.8 行内豁免不动",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "usphone-empty-string-rows",
@@ -4227,7 +4227,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "D/VD；应用当假值，无害；build-en-dicts.py 可改为省略键 ｜ 10-23：ee36449 合入后下次重建 23 行可得音标，27 行仍空 ｜ 11-04 复验仍在：E：50 行不变",
+   "reason": "D/VD；应用当假值，无害；build-en-dicts.py 可改为省略键 ｜ 10-23：ee36449 合入后下次重建 23 行可得音标，27 行仍空 ｜ 11-04 复验仍在：E：50 行不变 ｜ 11-05 复验仍在：E：50 不变",
    "date": "2026-10-23"
   },
   {
@@ -4344,7 +4344,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示 ｜ 10-29 C 复验仍在；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示 ｜ 11-04 复验仍在：C：时钟冻结，下一键 / 选字 / SPACE 判分并恢复，无遮罩",
+   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示 ｜ 10-29 C 复验仍在；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示 ｜ 11-04 复验仍在：C：时钟冻结，下一键 / 选字 / SPACE 判分并恢复，无遮罩 ｜ 11-05 复验仍在：C：残留——暂停后盲打一键恢复并判分、无遮罩",
    "date": "2026-10-31"
   },
   {
@@ -4387,10 +4387,10 @@
    "fingerprint": "seo-static-page-link-targets-small",
    "title": "静态 SEO 页「打开练习 →」83×20、nav.more 链接 17 px 高、页眉 34 px（390 px 触屏 JS 关闭）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-12 L/F5：「打开练习 →」已 143×50；页眉链接 107×34、nav.more 17px、页脚 16px 仍小 ｜ 10-15 F5 复验仍在：页眉 107×34、nav.more 17 px、页脚 16 px ｜ 10-16 F5 复验仍在（390 触屏 16 个 <44px 链接） ｜ 11-04 复验仍在：L：无 JS 静态页 39/39 格仍小（打开练习 83×20、页眉 107×34、nav.more 17 px、页脚 16 px）；L 提出约 4 行 CSS 修法（build-seo-pages.py:217/308/315/316）",
-   "date": "2026-10-16"
+   "status": "fixed",
+   "commit": "10a407b",
+   "reason": "build-seo-pages.py：页眉 padding 3px、nav.more / 页脚 / 打开练习 / lib / 语言链接 inline-block + 竖向 padding ≥ 40 px；V1 390 宽无 JS：<40 px 链接 618/753 → 6/753（余 6 个在 public/index.html 根页，另立项）；43 页文本 / href 一致；L 最终矩阵静态页 41/41",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "stale-slipon-on-chapter-repick-and-mistake-practice",
@@ -5046,7 +5046,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "VA：先判 zh/id/en，再把 in/ms/*-ID 映射 id（en-ID、zh-ID 不能被 -ID 抢走）；未知语言回落英文与否待主人 ｜ 11-04 复验仍在：B locale.js：ms-MY / jv-ID / su-ID → 中文界面",
+   "reason": "VA：先判 zh/id/en，再把 in/ms/*-ID 映射 id（en-ID、zh-ID 不能被 -ID 抢走）；未知语言回落英文与否待主人 ｜ 11-04 复验仍在：B locale.js：ms-MY / jv-ID / su-ID → 中文界面 ｜ 11-05 复验仍在：B locale.js：ms-MY / ms / jv-ID / su-ID → zh",
    "date": "2026-10-12"
   },
   {
@@ -5091,7 +5091,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "V4：currentSession 3s 回退返回 pending 或读存储显示「仍在登录」提示 ｜ 10-15 F4 复验仍在：0.5–9 s 显示登录表单，期间 6 次 refresh 重试 ｜ 10-16 F4 复验仍在（12 s 内 7 次 refresh） ｜ 11-04 复验仍在：D s4.js：3.4 s 显示登录表单，20 s 内 7 次 refresh",
+   "reason": "V4：currentSession 3s 回退返回 pending 或读存储显示「仍在登录」提示 ｜ 10-15 F4 复验仍在：0.5–9 s 显示登录表单，期间 6 次 refresh 重试 ｜ 10-16 F4 复验仍在（12 s 内 7 次 refresh） ｜ 11-04 复验仍在：D s4.js：3.4 s 显示登录表单，20 s 内 7 次 refresh ｜ 11-05 复验仍在：D h3：3.6 s 显示登录表单",
    "date": "2026-10-16"
   },
   {
@@ -5577,7 +5577,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "今日 4 个旧首义键保留（结束 亦为词典词头），新首义补了 4 条；无引用汉字键仍 39 + 4 ｜ 11-04 复验仍在：E；今日再钉 3 个旧首义",
+   "reason": "今日 4 个旧首义键保留（结束 亦为词典词头），新首义补了 4 条；无引用汉字键仍 39 + 4 ｜ 11-04 复验仍在：E；今日再钉 3 个旧首义 ｜ 11-05 复验仍在：E：同上",
    "date": "2026-10-31"
   },
   {
@@ -5676,7 +5676,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-16 V2 指出，既有竞态 ｜ 10-29 V1：经 online 重试也可到达，双 POST 均为 A∪B，数据一致 ｜ 11-04 复验仍在：D：路径未变",
+   "reason": "10-16 V2 指出，既有竞态 ｜ 10-29 V1：经 online 重试也可到达，双 POST 均为 A∪B，数据一致 ｜ 11-04 复验仍在：D：路径未变 ｜ 11-05 复验仍在：D 代码",
    "date": "2026-10-31"
   },
   {
@@ -5946,7 +5946,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-20 F3 观察，未计入；可接受",
+   "reason": "10-20 F3 观察，未计入；可接受 ｜ 11-05 复验仍在：C：3 次选错无跳过",
    "date": "2026-10-20"
   },
   {
@@ -6063,7 +6063,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-23 F3 量测（t4c-fast.cjs）；疑为红闪设计，快打者会丢键；是否缩短闪烁或缓冲按键由主人定 ｜ 10-24 F1 复验仍在（if (wrongFlash) return） ｜ 11-04 复验仍在：A",
+   "reason": "10-23 F3 量测（t4c-fast.cjs）；疑为红闪设计，快打者会丢键；是否缩短闪烁或缓冲按键由主人定 ｜ 10-24 F1 复验仍在（if (wrongFlash) return） ｜ 11-04 复验仍在：A ｜ 11-05 复验仍在：A：x 后 60 ms 的 hello 被丢",
    "date": "2026-10-24"
   },
   {
@@ -6342,7 +6342,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "校验者 V3 复现；修法需给 linkThisDevice 加存活回调，或超时提示改为「请求仍可能在后台完成」；低价值 ｜ 10-29 V1 复验仍在（15.7 s 错误后 23.5 s 落地） ｜ 11-04 复验仍在：D s5.js：15.3 s 没有响应 → 22.3 s 已从云端恢复",
+   "reason": "校验者 V3 复现；修法需给 linkThisDevice 加存活回调，或超时提示改为「请求仍可能在后台完成」；低价值 ｜ 10-29 V1 复验仍在（15.7 s 错误后 23.5 s 落地） ｜ 11-04 复验仍在：D s5.js：15.3 s 没有响应 → 22.3 s 已从云端恢复 ｜ 11-05 复验仍在：D k1：15.1 s 报错 → 21.7 s reload",
    "date": "2026-10-29"
   },
   {
@@ -6448,10 +6448,10 @@
    "fingerprint": "site-workflow-run-side-branch-redeploys-main",
    "title": "在非 main 分支 dispatch 的重建工作流成功后，workflow_run 在默认分支语境触发 site.yml，promote 在 main 上跑且 go=true，main 被无变化地重建重部署（未检查 workflow_run.head_branch）",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "10-27 E 代码阅读，需 GitHub 复现；无害的同树重部署 ｜ 11-04 复验仍在：E 代码阅读",
-   "date": "2026-10-31"
+   "status": "fixed",
+   "commit": "3e8f8ca",
+   "reason": "promote job if 加 workflow_run.head_branch == main；V1 推演：只有侧分支 dispatch 的重建不再重部署 main，其余事件不变；合入 main",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "sw-activate-vs-inflight-swr-orphan-cache",
@@ -6549,7 +6549,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "C 浏览器复现，无误判；与 strict-flash-lockout-drops-fast-keys 同类 ｜ 10-29 C 复验仍在 ｜ 11-04 复验仍在：C",
+   "reason": "C 浏览器复现，无误判；与 strict-flash-lockout-drops-fast-keys 同类 ｜ 10-29 C 复验仍在 ｜ 11-04 复验仍在：C ｜ 11-05 复验仍在：C：100 ms 丢、600 ms 过",
    "date": "2026-10-31"
   },
   {
@@ -6576,7 +6576,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "与 account-messages-not-announced 同类；是否加 role=status 由主人定",
+   "reason": "与 account-messages-not-announced 同类；是否加 role=status 由主人定 ｜ 11-05 复验仍在：B",
    "date": "2026-10-28"
   },
   {
@@ -6747,7 +6747,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "10-29 V3 注；抛光，与 .language 一致 ｜ 11-04 复验仍在：D 代码 globals.css:187",
+   "reason": "10-29 V3 注；抛光，与 .language 一致 ｜ 11-04 复验仍在：D 代码 globals.css:187 ｜ 11-05 复验仍在：D：globals.css:187",
    "date": "2026-10-29"
   },
   {
@@ -7080,17 +7080,17 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "V4 备注，两版相同；持久化需写 localStorage，非最小改动 ｜ 11-04 复验仍在：A 代码复验",
+   "reason": "V4 备注，两版相同；持久化需写 localStorage，非最小改动 ｜ 11-04 复验仍在：A 代码复验 ｜ 11-05 复验仍在：A：收藏 please 03/6 复习 ★ 刷新 → thank 03/7",
    "date": "2026-11-01"
   },
   {
    "fingerprint": "start-button-on-settings-starts-clock-no-card",
    "title": "页眉 开始 在每个视图都在：设置页点 开始 时钟走而无卡片",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "V3 备注，既有行为，与 start-button-on-finish-card 同族 ｜ 11-04 复验仍在：A：症状变化——时钟不再在设置页走，但 running 仍 true，回学习页为 .app.focused 遮罩卡；最小修法 start() 内 view !== learn 时 setView(learn) 后 return",
-   "date": "2026-11-01"
+   "status": "fixed",
+   "commit": "49625b9",
+   "reason": "start() 在非学习视图 setView(learn) 后 return；V3 start-button.js HEAD 24/24（基线 11/24）：7 个视图按 开始 → 学习页、不计时、无 .focused、下一键判分并开钟；学习页 开始/暂停、完成卡、?lib、首访对话框不变；合入 main",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "first-link-read-vs-other-device-push-last-writer-wins",
@@ -7350,7 +7350,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "L 观察；可考虑 60 卡首页 + 显示更多 ｜ 11-04 复验仍在：L：375 宽 300 卡单列，文档高 55.7–56.6 k px",
+   "reason": "L 观察；可考虑 60 卡首页 + 显示更多 ｜ 11-04 复验仍在：L：375 宽 300 卡单列，文档高 55.7–56.6 k px ｜ 11-05 复验仍在：L：375 宽文档高 56.5 k px",
    "date": "2026-11-03"
   },
   {
@@ -7377,7 +7377,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "A 追踪；非最小改动 ｜ 11-04 复验仍在：A",
+   "reason": "A 追踪；非最小改动 ｜ 11-04 复验仍在：A ｜ 11-05 复验仍在：A：zh-pinyin.json 延迟 1.5 s，页眉 en → zh 整应用换加载屏",
    "date": "2026-11-03"
   },
   {
@@ -7386,7 +7386,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "A 追踪；按打字文本去重需同步 wordValue 的用处 ｜ 11-04 复验仍在：A；A 的补丁（typedValue 去重）会让 full / very / because 的平行行退出练习（en 3879 → 3876），改为需主人决定",
+   "reason": "A 追踪；按打字文本去重需同步 wordValue 的用处 ｜ 11-04 复验仍在：A；A 的补丁（typedValue 去重）会让 full / very / because 的平行行退出练习（en 3879 → 3876），改为需主人决定 ｜ 11-05 复验仍在：A：full / full (after eating) 仍两张卡，需主人",
    "date": "2026-11-03"
   },
   {
@@ -7438,28 +7438,145 @@
    "fingerprint": "heatmap-cells-title-only-no-text-alternative",
    "title": "学习日历 91 个 <i title> 格子只有 title，无文本替代",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "B 发现；修法：每格 aria-label 或整表 role=img + 文本摘要；受 12 项上限未做",
-   "date": "2026-11-04"
+   "status": "fixed",
+   "commit": "e57ed78",
+   "reason": "学习日历 role=img + 三语 aria-label（13 周活跃天数 / 词数）；V1 三语名称正确、91 格 title 保留、0 警告；合入 main",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "own-language-names-no-lang-attr",
    "title": "语言对话框卡片「中文 / 中文界面」、发音详情「中文 · 0.8×」、阅读筛选按钮等自语言名无 lang 属性",
    "priority": "P3",
-   "status": "deferred",
-   "commit": "",
-   "reason": "B 发现；与 peek-button-and-pinyin-lines-no-lang 同类，受 12 项上限未做",
-   "date": "2026-11-04"
+   "status": "fixed",
+   "commit": "b1f1018",
+   "reason": "对话框卡片名 / uiDesc / defDesc、发音详情、阅读筛选按钮、语言 option 加 lang；Setting.detail 取 ReactNode；V1 三语 + 首访对话框复核、保存仍写 ketiklab-langs v2；合入 main",
+   "date": "2026-11-05"
   },
   {
    "fingerprint": "gloss-candidates-2026-11-04",
    "title": "3200–3599 双读后的未改项：3268 ulcer borok（R1 tukak，VG KEEP）；边缘行 liberalize / resettle / truffle / rupiah / catwalk / bolster / predilection / calcareous / bilge / crowding / dynamo / contemporaneous / stagnate / gnarled / coiling / anemic",
    "priority": "释义",
+   "status": "fixed",
+   "commit": "",
+   "reason": "见 reports/gloss-changes-2026-11-04.md；明日 3600–3878 双读 ｜ 11-05 3600–3878 双读完成（d5db37a 17 处），3268 ulcer R2 再提 tukak、VG 再判 KEEP",
+   "date": "2026-11-04"
+  },
+  {
+   "fingerprint": "prevnext-words-and-language-badges-no-lang",
+   "title": "‹ 上一词 / 下一词 › 与 中 / ID / EN 徽标无 lang（App.tsx:2802, 2867, 2932）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "09e524d",
+   "reason": "B 发现并修；V1：prevnext span 与徽标 lang 与条目语言一致，页眉其余不变；合入 main",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "language-select-glyph-read-aloud",
+   "title": "页眉语言 select 旁的装饰字 文 被读屏朗读（App.tsx:2718）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "f46a897",
+   "reason": "B 发现并修：aria-hidden；V1：combobox 名称仍为 t.language、narrowRow 宽度逻辑不变；合入 main",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "lib-link-dismissed-dialog-returns-every-visit",
+   "title": "zh 区域访客经落地页 /?ui=zh&lib=en-core（无 learn=）关闭对话框并练习后，每次访问对话框都回来（App.tsx:797/:983）",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "c7f08d3",
+   "reason": "A 复现（lib-dialog.js）并修：列表语言无保存选择时记入 ketiklab-learn（与 ?learn= 一致）；V3 lib-learn.js：基线复现、HEAD 消失，?learn= 仍优先、已保存 ketiklab-langs 者不动、ketiklab-langs 从不在此写、再访在 manifest 到达前即 en + hello 且不拉 zh-pinyin.json；合入 main",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "review-before-saved-dict-arrives-forgets-dict",
+   "title": "慢网下在保存的词典文件到达前 开始复习 → 文件被丢且 ketiklab-source 被写成 trio，退出复习与下次访问都落到主题词（App.tsx:814/:1842/:2610）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "6ccb19e + 61b1cbf",
+   "reason": "A 复现（review-drops-dict.js，en-core 延迟 2.5 s）并修：复习中保留文件，exitReview 打开，复习内词界不开；V3 review-late-dict.js S1–S9 过、S10 发现残留（见 late-dict-reopens-over-list-chosen-during-review）已补修 61b1cbf；合入 main",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "late-dict-reopens-over-list-chosen-during-review",
+   "title": "6ccb19e 残留：复习中真选了别的列表（词库格 / ★ / 主题类别）后 退出复习 仍打开保留的词典，卡片与 ketiklab-source 不一致（App.tsx:2628）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "61b1cbf",
+   "reason": "V3 S10 复现；修：保留时记下当时的 ketiklab-source，只在未变时打开；V3 第二轮复验（见报告）；合入 main",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "mistakes-list-shared-word-two-rows",
+   "title": "错词本 dueEntries 按键折叠：污染 列两行（pollution / contamination），都开同一卡，复习只服一次（App.tsx:1738）",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "A 复现（dups.js）；两行释义不同，按练习值折叠会丢一条释义——列两行还是折叠由主人定",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "late-dictionary-one-frame-stale-index",
+   "title": "保存的词典文件晚于 words.json 到达时，列表先以主题列表的下标画一帧（07/20）再由 [sourceKey] 效应改为 04/20（App.tsx:1062）",
+   "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "见 reports/gloss-changes-2026-11-04.md；明日 3600–3878 双读",
-   "date": "2026-11-04"
+   "reason": "A 观察，仅截图可见；useLayoutEffect 可去，价值低",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "seo-language-switcher-links-no-lang",
+   "title": "静态 SEO 页的 中文 / Bacaan / Readings 语言切换链接有 hreflang 无 lang（build-seo-pages.py:335/:221）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "B 发现（seo-leaks.js）；与 own-language-names-no-lang-attr 同类，约 2 行",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "root-page-links-small",
+   "title": "public/index.html 根页「English →」76×20 与「GitHub」52×20 两个链接不足 40 px（无 JS 时）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V1 在 10a407b 复核中发现（脚本只改生成页，根页在 public/）；约 2 行 inline-block + padding",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "promote-queue-not-a-list-typeerror",
+   "title": "queue/words.json 为 {} 时 promote.mjs:111 抛 TypeError 栈而非一句错误（运行照样失败，不写文件）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "E 发现；2 行守卫，纯提示文案",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "migration-collapsed-stars-keep-dead-text",
+   "title": "键迁移把两颗星并到一个键（招待 + 娱乐 → trio:entertain）时收藏项保留第一颗星的旧文本 招待（favItems 不刷新 text）",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V2 N1 观察，既有机制；无丢失",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "grid-stale-learn-skips-dialog-once",
+   "title": "✕ 后在词库格选 zh-core（zh 界面 zh 学习、无释义语言）：挂载时的对话框检查读到过期的 ketiklab-learn（en），少问一次；下次访问 c7f08d3 已把 ketiklab-learn 改为 zh 再问",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "V3 grid-stale-learn.js 观察；基线更差（?learn=en 永不再问 / ?lib 每次都问）；非回归",
+   "date": "2026-11-05"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-11-05",
+   "title": "3600–3878 双读后 VG KEEP 的 35 行（见 reports/gloss-changes-2026-11-05.md）；V2 对已改 probable → mungkin 有保留（认为 kemungkinan besar 更准）、electric 建议 elektrik 保持唯一",
+   "priority": "释义",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "全库 0–3878 双读已收尾；是否按 V2 保留意见回改 probable 由主人定",
+   "date": "2026-11-05"
   }
  ]
 }
