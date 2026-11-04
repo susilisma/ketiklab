@@ -2506,6 +2506,10 @@ export default function Home() {
   // the click moved focus to the button; refocusing the input would run its onFocus,
   // which sets running again, so only a start gives the focus back
   function start() {
+    // the button sits in the header of every view: pressed on the settings page it set `running`
+    // with no card on screen (the clock sits out other views, but the learn view then opened in
+    // focus mode behind its veil); from another view it opens the practice card instead
+    if (view !== "learn") { setView("learn"); return; }
     // the boxes are blurred as well: Safari and Firefox on macOS do not move focus to a
     // clicked button, so the box kept grading the letters typed while "paused" and the
     // next finished word quietly resumed the clock
