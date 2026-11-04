@@ -2801,7 +2801,7 @@ export default function Home() {
         </div>
         {/* 选汉字 draws its distractors from the neighbouring words: printing them here gave one away */}
         {/* nor under dictation: the next word, printed in full, was the answer one word early */}
-        {!(practiceLang === "zh" && rung === "choose") && !(dictation !== "off" && !zhLadder) && <div className="prevnext"><span>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>}
+        {!(practiceLang === "zh" && rung === "choose") && !(dictation !== "off" && !zhLadder) && <div className="prevnext"><span lang={prevItem ? htmlLang(prevItem.lang) : undefined}>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span lang={nextItem ? htmlLang(nextItem.lang) : undefined}>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>}
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
           <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
@@ -2866,7 +2866,7 @@ export default function Home() {
           <div className="library-section-title"><b>{TX("考试词库", "Kamus ujian", "Exam libraries", uiLang)}</b><span>{dicts.reduce((a, d) => a + d.length, 0)} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"}</span></div>
           <div className="dict-grid">
             {dictOrder.map(d => <button key={d.id} className={source === d.id ? "dict-card active" : "dict-card"} onClick={() => selectDict(d)}>
-              <span className={`piece-language ${d.lang}`}>{d.lang === "id" ? "ID" : d.lang === "zh" ? "中" : "EN"}</span>
+              <span className={`piece-language ${d.lang}`} lang={htmlLang(d.lang)}>{d.lang === "id" ? "ID" : d.lang === "zh" ? "中" : "EN"}</span>
               <div><b>{dictName(d)}</b><p>{dictDesc(d)}</p><small>{d.length} {uiLang === "id" ? "kata" : uiLang === "zh" ? "词" : "words"} · {coverageNote(d)}</small></div>
               {source === d.id && <em>✓</em>}
             </button>)}
@@ -2931,7 +2931,7 @@ export default function Home() {
                   </button>
                   {open && <div className="reading-group-items">
                     {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} onClick={() => chooseReading(piece.id)}>
-                      <span className={`piece-language ${piece.lang}`}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
+                      <span className={`piece-language ${piece.lang}`} lang={htmlLang(piece.lang)}>{piece.lang === "en" ? "EN" : piece.lang === "id" ? "ID" : "中"}</span>
                       <div lang={htmlLang(piece.lang)}><small>{piece.genre} · {piece.era}</small><b>{piece.title}</b><em>{piece.author}</em></div>
                     </button>)}
                   </div>}
