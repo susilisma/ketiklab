@@ -823,7 +823,14 @@ export default function Home() {
             // it bumped sourceReq too, and the saved dictionary was dropped with "trio" written over the
             // saved source — 退出复习 landed on the topic words and so did every later visit. It waits for
             // exitReview instead, which opens it as the next word boundary opens a held dictionary below
-            if (sourceReq.current) { if (reviewRef.current) lateDict.current = held; else persistSource(sourceRef.current); return; }
+            // ...unless a list was really chosen while it waited (the library grid, ★, a topic category:
+            // each persists its own source at once, a review start never does): the hold then stands
+            // down, and the choice stays, instead of opening over it at 退出复习
+            if (sourceReq.current) {
+              if (reviewRef.current) { const atHold = readSource(); lateDict.current = () => readSource() === atHold ? held() : false; }
+              else persistSource(sourceRef.current);
+              return;
+            }
             if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return; }
             // the file came after words.json and the learner is already typing a topic word: the
             // list used to be swapped under the card there and then, the half-typed word replaced
@@ -2344,6 +2351,7 @@ export default function Home() {
     resetWordRun();
     autoSpokenWord.current = null;
   }
+  function readSource() { try { return localStorage.getItem("ketiklab-source"); } catch { return null; } }
   function persistSource(id: string) {
     try { localStorage.setItem("ketiklab-source", id); } catch { /* ignore */ }
   }
