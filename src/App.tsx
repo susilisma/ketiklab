@@ -815,11 +815,16 @@ export default function Home() {
             // card, a topic word: every choice bumps sourceReq): the list in hand is what the next visit
             // reopens, not the saved one that was dropped here without a word; or changed the learning
             // language (the dialog, or changeLanguage before the manifest named this list's language)
-            if (sourceReq.current) { persistSource(sourceRef.current); return; }
-            if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return; }
             // remembered once it has loaded: a ?lib= that could not be fetched used to be
             // saved as the source, and every later visit fell back to the topic words in silence
             const apply = () => { if (linked) persistSource(d.id); setDictWords(data); setSource(d.id); };
+            const held = () => { if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return false; } apply(); return true; };
+            // a review session is not a choice of list: started before this file arrived (a slow network),
+            // it bumped sourceReq too, and the saved dictionary was dropped with "trio" written over the
+            // saved source — 退出复习 landed on the topic words and so did every later visit. It waits for
+            // exitReview instead, which opens it as the next word boundary opens a held dictionary below
+            if (sourceReq.current) { if (reviewRef.current) lateDict.current = held; else persistSource(sourceRef.current); return; }
+            if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return; }
             // the file came after words.json and the learner is already typing a topic word: the
             // list used to be swapped under the card there and then, the half-typed word replaced
             // and its letters wiped. The dictionary takes over at the next word boundary instead
@@ -828,7 +833,7 @@ export default function Home() {
             // was not picked (a zh learner's ?lib=en-core, saved by an earlier visit) opens, as it does
             // when nothing was typed. It says whether it opened: the boundary used to return either way,
             // so the word just passed was neither counted nor left behind until it was typed a second time
-            if (cardTouched()) { lateDict.current = () => { if (langPicked.current && d.lang !== langRef.current) { if (!linked) persistSource("trio"); return false; } apply(); return true; }; return; }
+            if (cardTouched()) { lateDict.current = held; return; }
             apply();
           // the file of this one list could not be fetched: the banner names it and its retry
           // fetches it again (selectDict); it used to be reported as the whole set of exam
@@ -1843,7 +1848,9 @@ export default function Home() {
     // boundary after one of them drops it and persists the topic words, as any choice does; a
     // reload from the card still opens it, the saved source being untouched until then
     const atEnd = (index % Math.max(learnItems.length, 1)) === learnItems.length - 1;
-    if (lateDict.current && !atEnd) {
+    // not inside a review: its words are not the list's, and the review's own bump of sourceReq
+    // would write the topic words over the saved dictionary here (exitReview opens it instead)
+    if (lateDict.current && !atEnd && !reviewKeys) {
       const open = lateDict.current; lateDict.current = null;
       if (!sourceReq.current) {
         if (open()) {
@@ -2616,6 +2623,9 @@ export default function Home() {
   // its own saved chapter and word, not at the one the review started from — which 下一章
   // then wrote over the real position
   function exitReview() {
+    // the saved dictionary whose file arrived during the review opens now (the [sourceKey] effect then
+    // places its own chapter and word); a language picked meanwhile leaves it, as at a word boundary
+    if (lateDict.current) { const open = lateDict.current; lateDict.current = null; open(); }
     setReviewKeys(null); setReviewDueTotal(0);
     let ch = savedChapter(sourceKey);
     // the finish card the review was started over comes back, with its tally, when the list, the
