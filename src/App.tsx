@@ -794,7 +794,11 @@ export default function Home() {
           // a first visit from that page is a visit to learn that list's language — and so is the
           // return visit of a learner who closed the dialog on it: the English list came back with
           // the select and the dialog on 中文 (a ?learn= link still names its own language)
-          if ((linked || !ENTRY.learn) && !localStorage.getItem("ketiklab-langs")) setLang(d.lang);
+          // ...and that language is remembered on the device as a ?learn= link's is (ketiklab-learn): the
+          // next visit starts in the browser's language until the manifest names the list's again, and the
+          // dialog this learner had closed came back on every visit, since at mount no meaning language
+          // could be worked out for a zh interface learning zh (the landing pages link ?ui=zh&lib=en-core)
+          if ((linked || !ENTRY.learn) && !localStorage.getItem("ketiklab-langs")) { setLang(d.lang); try { localStorage.setItem("ketiklab-learn", d.lang); } catch { /* ignore */ } }
           // ...or the dialog was saved while the list was still on its way, with the learning row
           // left as pre-filled: that row only said 中文 because the link had not named its language
           // yet, so the save kept 中文 and the English list then opened under it (select, settings
