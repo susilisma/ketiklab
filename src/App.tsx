@@ -823,11 +823,12 @@ export default function Home() {
             // it bumped sourceReq too, and the saved dictionary was dropped with "trio" written over the
             // saved source — 退出复习 landed on the topic words and so did every later visit. It waits for
             // exitReview instead, which opens it as the next word boundary opens a held dictionary below
-            // ...unless a list was really chosen while it waited (the library grid, ★, a topic category:
-            // each persists its own source at once, a review start never does): the hold then stands
-            // down, and the choice stays, instead of opening over it at 退出复习
+            // ...unless a list was really chosen since this visit saved it (the library grid, ★, a topic
+            // category: each persists its own source at once, a review start never does — before the
+            // review or while the file waited): the hold then stands down, and the choice stays,
+            // instead of opening over it at 退出复习
             if (sourceReq.current) {
-              if (reviewRef.current) { const atHold = readSource(); lateDict.current = () => readSource() === atHold ? held() : false; }
+              if (reviewRef.current) lateDict.current = () => readSource() === savedSource ? held() : false;
               else persistSource(sourceRef.current);
               return;
             }
