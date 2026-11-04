@@ -167,11 +167,16 @@ def hreflang_links(path_for):
     return "\n".join(out)
 
 
-def lib_list(lang, lib_rows):
+# a link in a list is a touch target: 40 px tall with the padding (the text itself is 17 px)
+TAP = "display:inline-block;min-width:40px;padding:10px 0"
+
+
+def lib_list(lang, lib_rows, style=""):
     """The library links of a page: the manifest rows, then Words by Topic — its three pages are in the
     sitemap and were otherwise linked from nowhere, so a crawler never reached them."""
-    links = [f'<a href="/{lang}/lib/{r["id"]}/">{esc(lib_name(r, lang))}</a>' for r in lib_rows]
-    links.append(f'<a href="/{lang}/lib/trio/">{esc(T["trio"][lang])}</a>')
+    st = f' style="{style}"' if style else ""
+    links = [f'<a href="/{lang}/lib/{r["id"]}/"{st}>{esc(lib_name(r, lang))}</a>' for r in lib_rows]
+    links.append(f'<a href="/{lang}/lib/trio/"{st}>{esc(T["trio"][lang])}</a>')
     return " · ".join(links)
 
 
@@ -200,14 +205,14 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
     h = re.sub(r'\s*<meta property="og:locale:alternate" content="[^"]*" />', "", h)
     h = sub1(r'(<meta property="og:locale" content="[^"]*" />)', lambda m: m.group(1) + "".join(f'\n    <meta property="og:locale:alternate" content="{OG_LOCALE[o]}" />' for o in others), h, "og:locale (alternates)")
     h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head>")
-    lib_links = lib_list(lang, lib_rows)
+    lib_links = lib_list(lang, lib_rows, TAP)
     block = (
         f'<main style="max-width:720px;margin:0 auto;padding:48px 24px;font-family:Inter,\'PingFang SC\',\'Microsoft YaHei\',sans-serif;line-height:1.7">\n'
         f'        <h1 style="font-size:28px;margin:0 0 8px">{esc(T["h1"][lang])} — KetikLab</h1>\n'
         f'        <p lang="{HTML_LANG[lang]}">{esc(fmt("para", lang, **c))}</p>\n'
-        f'        <p><a href="/?ui={lang}" style="color:#7165eb;font-weight:700">{esc(T["open"][lang])} →</a></p>\n'
-        f'        <p style="color:var(--muted,#62657a);font-size:14px"><b>{esc(T["libs"][lang])}:</b> {lib_links} · <a href="/{lang}/readings/">{esc(T["readings"][lang])} ({n_readings})</a></p>\n'
-        f'        <p style="color:var(--muted,#62657a);font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
+        f'        <p><a href="/?ui={lang}" style="color:#7165eb;font-weight:700;{TAP}">{esc(T["open"][lang])} →</a></p>\n'
+        f'        <p style="color:var(--muted,#62657a);font-size:14px"><b>{esc(T["libs"][lang])}:</b> {lib_links} · <a href="/{lang}/readings/" style="{TAP}">{esc(T["readings"][lang])} ({n_readings})</a></p>\n'
+        f'        <p style="color:var(--muted,#62657a);font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}" style="{TAP}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
         f"      </main>"
     )
     h = sub1(r'<main style="[^"]*">.*?</main>', lambda m: block, h, "crawlable <main>", re.S)
@@ -218,7 +223,7 @@ def root_page(index_html, n_readings):
     h = strip_hreflang(index_html)
     h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head> (root)")
     # index.html's <main> already links the three language pages; the build adds each language's readings page
-    links = " · ".join(f'<a href="/{l}/readings/" hreflang="{HTML_LANG[l]}" style="color:#7165eb">{esc(T["readings"][l])}</a>' for l in LANGS)
+    links = " · ".join(f'<a href="/{l}/readings/" hreflang="{HTML_LANG[l]}" style="color:#7165eb;{TAP}">{esc(T["readings"][l])}</a>' for l in LANGS)
     if "/zh/readings/" not in h:
         h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:var(--muted,#62657a);font-size:14px">{links} ({n_readings})</p>' + m.group(1), h, "</main> (root)")
     return h
@@ -305,15 +310,15 @@ def meaning_column(lang, row, entries):
 CSS = (
     "*{box-sizing:border-box}body{margin:0;background:#f6f7fb;color:#1c1d26;font:16px/1.65 Inter,'PingFang SC','Microsoft YaHei',sans-serif}"
     "header{display:flex;align-items:center;gap:12px;padding:18px 24px;border-bottom:1px solid #e6e6ef;background:#fff}"
-    "header a{color:inherit;text-decoration:none;font-weight:800}header i{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#7165eb;color:#fff;font:700 13px Inter,sans-serif;font-style:normal}"
+    "header a{color:inherit;text-decoration:none;font-weight:800;padding:3px 0}header i{display:inline-grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#7165eb;color:#fff;font:700 13px Inter,sans-serif;font-style:normal}"
     "main{max-width:960px;margin:0 auto;padding:36px 24px 64px}h1{font-size:30px;margin:0 0 10px;line-height:1.25}.lead{color:#62657a;margin:0 0 22px}"
     ".cta{display:inline-block;background:#7165eb;color:#fff;text-decoration:none;font-weight:700;padding:12px 22px;border-radius:12px;margin:6px 0 28px}"
     ".wrap{overflow-x:auto;background:#fff;border:1px solid #e6e6ef;border-radius:14px}table{border-collapse:collapse;width:100%;min-width:560px}"
     "th,td{padding:9px 14px;border-bottom:1px solid #f0f0f5;text-align:left;vertical-align:top}th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#62657a;background:#fafafd}"
     "td.w{font-weight:700;white-space:nowrap}td.p{color:#7165eb;white-space:nowrap}"
     "td .tag{display:inline-block;margin-right:4px;padding:0 6px;border-radius:6px;background:#f0effd;color:#5b52c9;font-size:12px}td .none{color:#62657a;font-size:14px}"
-    "nav.more{margin-top:34px;color:#62657a;font-size:14px;line-height:2}nav.more a{color:#7165eb;text-decoration:none}"
-    "footer{color:#62657a;font-size:13px;padding:24px;text-align:center}footer a{color:#7165eb;text-decoration:none}"
+    "nav.more{margin-top:34px;color:#62657a;font-size:14px;line-height:2}nav.more a{color:#7165eb;text-decoration:none;display:inline-block;min-width:40px;padding:6px 0}"
+    "footer{color:#62657a;font-size:13px;padding:24px;text-align:center}footer a{color:#7165eb;text-decoration:none;display:inline-block;min-width:40px;padding:10px 2px}"
     "@media(max-width:640px){main{padding:24px 14px 48px}h1{font-size:24px}th,td{padding:8px 10px}}"
 )
 
