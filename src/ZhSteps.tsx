@@ -336,6 +336,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     <input
       ref={box}
       className="zh-typebox"
+      lang="zh-Latn"
       value={typed}
       inputMode="text"
       // the example is no topic word: "shi xian" was the answer to the first 打拼音 card every
