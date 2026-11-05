@@ -1204,6 +1204,13 @@ export default function Home() {
       }
       if (!alive || !mounted.current) return;
       const upgrade = (f: PracticeItem): PracticeItem => {
+        // a favourite starred under a first sense that has since been re-glossed kept typing
+        // the retired word (位置 for site): its text follows the word its key names, as the
+        // review and the 错词本 do; the star then matches the card again (isFav goes by text)
+        if (!f.dict) {
+          const w = byEn.get(trioEn(f.key) ?? f.key);
+          if (w) { const cur = trioItem(w, f.lang); if (cur.text !== f.text) return { ...f, text: cur.text, sub: cur.sub, example: cur.example, glosses: trioGlosses(w, f.lang) }; }
+        }
         if (f.glosses) return f;
         if (!f.dict) { const w = byEn.get(trioEn(f.key) ?? f.key); return w ? { ...f, glosses: trioGlosses(w, f.lang) } : f; }
         const d = dictOf(f), e = d && dictCache.current.get(d.id)?.find(x => x.name === f.key);
