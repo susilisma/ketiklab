@@ -57,6 +57,16 @@ export function zhStepHint(step: ZhStep, ui: UiLang) {
 // English learner used to pay for it on the first screen. `needed` only ever turns on — once
 // a Chinese word is in play the fetch starts and everything behaves as before, one round
 // trip later. It stays on for the rest of the session, so switching back is instant.
+// a first visit fetches the map before the worker is in charge of the page, so the worker never
+// sees the request and nothing stores it: offline the next day, the ladder rated every word level 4.
+// Once the worker takes the page over, the same request is made through it, which stores what the
+// server revalidates (a 304 costs no transfer). The map stays unfetched for learners who never need it.
+function keepOffline(url: string) {
+  const sw = typeof navigator !== "undefined" ? navigator.serviceWorker : undefined;
+  if (!sw || sw.controller) return;
+  sw.addEventListener("controllerchange", () => { fetch(url, { cache: "no-cache" }).catch(() => {}); }, { once: true });
+}
+
 export function useZhMap(base: string, needed = true) {
   const [map, setMap] = useState<Record<string, string>>({});
   // the ladder filters by level and every word is level 4 without the map: the caller waits
@@ -68,7 +78,7 @@ export function useZhMap(base: string, needed = true) {
     let alive = true;
     fetch(base + "zh-pinyin.json")
       .then(r => (r.ok ? r.json() : {}))
-      .then(d => { if (alive) { setMap(d || {}); setSettled(true); } })
+      .then(d => { if (alive) { setMap(d || {}); setSettled(true); } keepOffline(base + "zh-pinyin.json"); })
       .catch(() => { if (alive) setSettled(true); });
     return () => { alive = false; };
   }, [base, needed]);
