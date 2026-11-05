@@ -2269,9 +2269,11 @@ export default function Home() {
   // page does. The dictionary may be the open one, the one whose file could not be fetched (its
   // banner and retry opened the English list under 中文), or the saved one still on its way (it
   // arrived a moment later and opened under the new language, and the reload kept it). A review
-  // session is its own list and keeps its place, as with a rung change. True when the list was left.
+  // session is its own list (reviewItems) and keeps its place: the source underneath it moves to
+  // the topic words all the same, so 退出复习 lands there and not on the foreign dictionary — the
+  // [sourceKey] effect and the position write sit a review out, and a saved file held for the
+  // exit opens only while the saved source is unchanged (831). True when the list was left.
   function leaveForeignDict(next: Lang): boolean {
-    if (reviewRef.current) return false;
     const dicts = dictsRef.current, src = sourceRef.current;
     const saved = (() => { try { return localStorage.getItem("ketiklab-source"); } catch { return null; } })();
     const d = dicts.find(x => x.id === src) ?? dictLoadErrorRef.current ?? (sharesChapterKey(src) ? dicts.find(x => x.id === saved) : undefined);
