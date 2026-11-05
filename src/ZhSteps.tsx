@@ -147,9 +147,12 @@ type Props = {
   // a key typed into the pinyin box: the App starts (or resumes) the clock, as its own box
   // does on its first key — after Escape the next key was graded on a card still "paused"
   onResume: () => void;
+  // whether the next word's box may take focus by itself: false while the App holds the card
+  // paused (暂停 pressed inside the done window, Escape), as for its own box
+  canFocus?: () => boolean;
 };
 
-export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave, onResume }: Props) {
+export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave, onResume, canFocus }: Props) {
   const keptKey = `${step}\u0000${word}\u0000${plain}`;
   const [typed, setTyped] = useState(() => kept.key === keptKey ? kept.typed : "");
   const [wrong, setWrong] = useState(() => kept.key === keptKey ? kept.wrong : 0);
@@ -171,7 +174,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   // ENTERs was no longer kept across a view switch
   const end = (fn: () => boolean | void) => { const key = kept.key; over.current = true; kept.key = ""; if (fn() === false) { over.current = false; kept.key = key; } };
   // not while a dialog is open: the box would pull the focus out from under it
-  useEffect(() => { if (step === "pinyin" && active) setTimeout(() => box.current?.focus(), 20); }, [step, word, active]);
+  useEffect(() => { if (step === "pinyin" && active) setTimeout(() => { if (canFocus?.() ?? true) box.current?.focus(); }, 20); }, [step, word, active]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const grade = (value: string) => {
     // the typing gets the "ve" → "ue" fold only where the target itself has "ue"
