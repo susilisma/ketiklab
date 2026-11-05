@@ -59,12 +59,20 @@ export function zhStepHint(step: ZhStep, ui: UiLang) {
 // trip later. It stays on for the rest of the session, so switching back is instant.
 // a first visit fetches the map before the worker is in charge of the page, so the worker never
 // sees the request and nothing stores it: offline the next day, the ladder rated every word level 4.
-// Once the worker takes the page over, the same request is made through it, which stores what the
-// server revalidates (a 304 costs no transfer). The map stays unfetched for learners who never need it.
-function keepOffline(url: string) {
+// Once the worker has taken the page over — whether before or after the map arrived — the same
+// request is made through it, which stores what the server revalidates (a 304 costs no transfer).
+// A page the worker controlled from the start needs nothing: its request already went through.
+// The map stays unfetched for learners who never need it.
+function uncontrolled() {
   const sw = typeof navigator !== "undefined" ? navigator.serviceWorker : undefined;
-  if (!sw || sw.controller) return;
-  sw.addEventListener("controllerchange", () => { fetch(url, { cache: "no-cache" }).catch(() => {}); }, { once: true });
+  return !!sw && !sw.controller;
+}
+function keepOffline(url: string, wasUncontrolled: boolean) {
+  const sw = typeof navigator !== "undefined" ? navigator.serviceWorker : undefined;
+  if (!sw || !wasUncontrolled) return;
+  const again = () => { fetch(url, { cache: "no-cache" }).catch(() => {}); };
+  if (sw.controller) again();
+  else sw.addEventListener("controllerchange", again, { once: true });
 }
 
 export function useZhMap(base: string, needed = true) {
@@ -76,9 +84,10 @@ export function useZhMap(base: string, needed = true) {
   useEffect(() => {
     if (!needed) return;
     let alive = true;
+    const wasUncontrolled = uncontrolled();
     fetch(base + "zh-pinyin.json")
       .then(r => (r.ok ? r.json() : {}))
-      .then(d => { if (alive) { setMap(d || {}); setSettled(true); } keepOffline(base + "zh-pinyin.json"); })
+      .then(d => { if (alive) { setMap(d || {}); setSettled(true); } keepOffline(base + "zh-pinyin.json", wasUncontrolled); })
       .catch(() => { if (alive) setSettled(true); });
     return () => { alive = false; };
   }, [base, needed]);
