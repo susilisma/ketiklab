@@ -561,10 +561,12 @@ export function Account({ uiLang, name, onName }: {
           </button>
         </div>
         {syncedAt && <p className="acct-note">{T("上次同步 ", "Sinkron terakhir ", "Last synced ", uiLang)}{syncedAt}</p>}
-        {noteText && <p className="acct-ok">{noteText}</p>}
-        {msg && <p className="acct-ok">{msg}</p>}
-        {urlErr && <p className="acct-err">{linkError(urlErr, uiLang)}</p>}
-        {err && <p className="acct-err">{err}</p>}
+        <div aria-live="polite">
+          {noteText && <p className="acct-ok">{noteText}</p>}
+          {msg && <p className="acct-ok">{msg}</p>}
+          {urlErr && <p className="acct-err">{linkError(urlErr, uiLang)}</p>}
+          {err && <p className="acct-err">{err}</p>}
+        </div>
       </div>
       <p className="acct-note">
         {T("登录后，学习记录、错词本、收藏和连续天数会跟着账号走，换手机也在。",
@@ -617,10 +619,12 @@ export function Account({ uiLang, name, onName }: {
       {mode === "in" && <button className="acct-link" onClick={forgot}>
         {T("忘记密码？", "Lupa kata sandi?", "Forgot password?", uiLang)}
       </button>}
-      {noteText && <p className="acct-ok">{noteText}</p>}
-      {msg && <p className="acct-ok">{msg}</p>}
-      {urlErr && <p className="acct-err">{linkError(urlErr, uiLang)}</p>}
-      {err && <p className="acct-err">{err}</p>}
+      <div aria-live="polite">
+        {noteText && <p className="acct-ok">{noteText}</p>}
+        {msg && <p className="acct-ok">{msg}</p>}
+        {urlErr && <p className="acct-err">{linkError(urlErr, uiLang)}</p>}
+        {err && <p className="acct-err">{err}</p>}
+      </div>
     </div>
     <p className="acct-note">
       {T("不登录也能练。登录只是为了让记录跟着你换设备。",
