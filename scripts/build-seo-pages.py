@@ -212,7 +212,7 @@ def language_page(index_html, lang, lib_rows, n_readings, c):
         f'        <p lang="{HTML_LANG[lang]}">{esc(fmt("para", lang, **c))}</p>\n'
         f'        <p><a href="/?ui={lang}" style="color:#7165eb;font-weight:700;{TAP}">{esc(T["open"][lang])} →</a></p>\n'
         f'        <p style="color:var(--muted,#62657a);font-size:14px"><b>{esc(T["libs"][lang])}:</b> {lib_links} · <a href="/{lang}/readings/" style="{TAP}">{esc(T["readings"][lang])} ({n_readings})</a></p>\n'
-        f'        <p style="color:var(--muted,#62657a);font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}" style="{TAP}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
+        f'        <p style="color:var(--muted,#62657a);font-size:14px">' + " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}" lang="{HTML_LANG[l]}" style="{TAP}">{T["lang_names"][l]}</a>' for l in LANGS) + "</p>\n"
         f"      </main>"
     )
     h = sub1(r'<main style="[^"]*">.*?</main>', lambda m: block, h, "crawlable <main>", re.S)
@@ -223,7 +223,7 @@ def root_page(index_html, n_readings):
     h = strip_hreflang(index_html)
     h = sub1(r"</head>", hreflang_links(lambda l: f"/{l}/") + "\n  </head>", h, "</head> (root)")
     # index.html's <main> already links the three language pages; the build adds each language's readings page
-    links = " · ".join(f'<a href="/{l}/readings/" hreflang="{HTML_LANG[l]}" style="color:#7165eb;{TAP}">{esc(T["readings"][l])}</a>' for l in LANGS)
+    links = " · ".join(f'<a href="/{l}/readings/" hreflang="{HTML_LANG[l]}" lang="{HTML_LANG[l]}" style="color:#7165eb;{TAP}">{esc(T["readings"][l])}</a>' for l in LANGS)
     if "/zh/readings/" not in h:
         h = sub1(r"(\s*</main>)", lambda m: f'\n        <p style="color:var(--muted,#62657a);font-size:14px">{links} ({n_readings})</p>' + m.group(1), h, "</main> (root)")
     return h
@@ -337,7 +337,7 @@ def static_page(lang, title, desc, path, body, alt_path_for, lib_rows, n_reading
         + hreflang_links(alt_path_for).replace("    <", "<") + f"\n<style>{CSS}</style>\n</head>\n"
     )
     libs_nav = lib_list(lang, lib_rows)
-    langs_nav = " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS)
+    langs_nav = " · ".join(f'<a href="/{l}/" hreflang="{HTML_LANG[l]}" lang="{HTML_LANG[l]}">{T["lang_names"][l]}</a>' for l in LANGS)
     tail = (
         f'<nav class="more"><b>{esc(T["libs"][lang])}:</b> {libs_nav} · <a href="/{lang}/readings/">{esc(T["readings"][lang])} ({n_readings})</a><br>{langs_nav}</nav>\n</main>\n'
         f'<footer><a href="/{lang}/">KetikLab</a> · <a href="https://github.com/susilisma/ketiklab">GitHub</a></footer>\n</body>\n</html>\n'
