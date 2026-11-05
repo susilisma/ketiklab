@@ -98,6 +98,9 @@ const readJson = (p, fallback) => {
 
 const qWords = readJson(Q_WORDS, []);
 const qReads = readJson(Q_READS, []);
+for (const [name, q] of [["queue/words.json", qWords], ["queue/readings.json", qReads]]) {
+  if (!Array.isArray(q)) { console.error(`promote: ${name} must hold a JSON array, not ${q === null ? "null" : typeof q}; nothing promoted`); process.exit(1); }
+}
 const state = readJson(STATE, {});
 
 const now = Date.now();
