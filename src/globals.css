@@ -204,7 +204,7 @@
 .global-toggle.on{background:var(--purple-soft);color:var(--purple);border-color:color-mix(in srgb,var(--purple) 30%,transparent)}
 /* the badge is absolutely positioned on the headword's first line, so the card reserves that line for it */
 .vocab-card:has(.res-src){padding-top:44px}
-.res-src{position:absolute;right:14px;top:13px;font-size:9px;font-weight:800;letter-spacing:.3px;color:var(--purple);background:var(--purple-soft);border-radius:7px;padding:3px 7px;max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.res-src{position:absolute;right:14px;top:13px;font-size:9px;font-weight:800;letter-spacing:.3px;color:var(--purple);background:var(--purple-soft);border-radius:7px;padding:3px 7px;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .res-src.id{color:#1b6b4e;background:#e1f6ec}
 .res-src.zh{color:#8a5a0e;background:#fff0d7}
 .dark .res-src.id{color:#6ddba5;background:#1f4a37}
