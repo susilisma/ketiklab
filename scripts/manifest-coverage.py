@@ -31,6 +31,8 @@ def coverage(entries, lang):
     }
 
 def annotate(manifest, data_dir=DATA):
+    if not isinstance(manifest, list):
+        sys.exit(f"manifest-coverage: manifest.json must hold a JSON array of libraries, not {type(manifest).__name__}")
     for row in manifest:
         with open(os.path.join(data_dir, row["file"]), encoding="utf-8") as f:
             row["coverage"] = coverage(json.load(f), row["lang"])
