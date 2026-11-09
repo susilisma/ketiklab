@@ -460,7 +460,7 @@ export default function Home() {
     // 实现 and 自信. It is also the roomiest list on every rung of the Chinese ladder.
     try { const c = localStorage.getItem("ketiklab-category") || ""; return (CATEGORIES as string[]).includes(c) ? c as WordFilter : "daily"; } catch { return "daily"; }
   });
-  const [mistakes, setMistakes] = useState<string[]>(() => Array.isArray(savedState?.mistakes) ? savedState.mistakes.filter(validMistakeKey) : []);
+  const [mistakes, setMistakes] = useState<string[]>(() => Array.isArray(savedState?.mistakes) ? savedState.mistakes.filter(validMistakeKey).slice(0, 30) : []);
   const [readingLang, setReadingLang] = useState<ReadingLang>("all");
   const [openReadingGroup, setOpenReadingGroup] = useState<string | null>(null);
   const [readingId, setReadingId] = useState("");
@@ -912,7 +912,7 @@ export default function Home() {
         // the display name too: renamed on the account page of another tab, this tab's sidebar and
         // account card kept the old name until a reload (the push read storage, so nothing was lost)
         else if (e.key === "ketiklab-name") setProfileName(e.newValue);
-        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey) : []); }
+        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey).slice(0, 30) : []); }
         // the languages too: this tab's next writeLangs (a meaning pick, a learning-language change)
         // carried its own copy of all three fields, and wrote the other tab's fresh choice back
         else if (e.key === "ketiklab-langs") {
