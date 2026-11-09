@@ -325,7 +325,7 @@ const foldTypography = (s: string) => s.replace(/[\u2018\u2019\u02BC]/g, "'").re
 // box then stayed full and dead to every key but ENTER
 function cleanFavorites(f: unknown): PracticeItem[] {
   const str = (v: unknown) => v === undefined || typeof v === "string";
-  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })).filter((p, i, a) => a.findIndex(q => q.lang === p.lang && q.key === p.key) === i) : [];
+  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })).filter((p, i, a) => a.findIndex(q => q.lang === p.lang && q.key === p.key) === i) : [];
 }
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
