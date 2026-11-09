@@ -2075,7 +2075,11 @@ export default function Home() {
       try {
         const data = JSON.parse(String(reader.result));
         if (data.app !== "ketiklab") throw new Error("bad file");
-        if (data.local && typeof data.local === "object") for (const [k, v] of Object.entries(data.local)) if (BACKUP_KEYS.has(k) && typeof v === "string" && storable(k, v)) localStorage.setItem(k, v);
+        // each value in its own try: one the browser refuses (a 12 MB string over the quota) used to end the loop
+        // half-way with 文件格式不对 and no reload, and the in-memory state then wrote over the keys that had landed.
+        // The rest still lands, the refusal is named, and the page reloads as on every other import
+        let storageLost = false;
+        if (data.local && typeof data.local === "object") for (const [k, v] of Object.entries(data.local)) if (BACKUP_KEYS.has(k) && typeof v === "string" && storable(k, v)) try { localStorage.setItem(k, v); } catch { storageLost = true; }
         // the review ladder lives in IndexedDB; a refused write there used to be swallowed and
         // the page reloaded with an empty ladder and no word about it
         let reviewsLost = false;
@@ -2083,6 +2087,7 @@ export default function Home() {
         // the imported data may be in the old key shape, whatever this device had already done
         try { localStorage.removeItem("ketiklab-keys"); } catch { /* ignore */ }
         if (reviewsLost) alert(TX("设置和进度已导入，但复习记录没有恢复：浏览器拒绝了数据库写入，请重试一次。", "Pengaturan dan progres sudah diimpor, tetapi jadwal pengulangan tidak dipulihkan: browser menolak penulisan basis data. Coba sekali lagi.", "Settings and progress were imported, but the review schedule was not restored: the browser refused the database write. Try once more.", uiLang));
+        if (storageLost) alert(TX("有些值没有导入：浏览器拒绝了存储写入（文件里某个值太大），其余已导入。", "Sebagian nilai tidak diimpor: browser menolak penulisan penyimpanan (ada nilai yang terlalu besar di file). Sisanya sudah diimpor.", "Some values were not imported: the browser refused the storage write (a value in the file is too large). The rest was imported.", uiLang));
         window.location.reload();
       } catch { alert(TX("导入失败：文件格式不对", "Impor gagal: format file tidak valid", "Import failed: invalid file", uiLang)); }
     };
