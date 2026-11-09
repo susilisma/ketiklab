@@ -168,7 +168,7 @@ def hreflang_links(path_for):
 
 
 # a link in a list is a touch target: 40 px tall with the padding (the text itself is 17 px)
-TAP = "display:inline-block;min-width:40px;padding:10px 0"
+TAP = "display:inline-block;min-width:40px;padding:10px 6px;margin:0 -6px"
 
 
 def lib_list(lang, lib_rows, style=""):
@@ -317,7 +317,7 @@ CSS = (
     "th,td{padding:9px 14px;border-bottom:1px solid #f0f0f5;text-align:left;vertical-align:top}th{font-size:12px;letter-spacing:.06em;text-transform:uppercase;color:#62657a;background:#fafafd}"
     "td.w{font-weight:700;white-space:nowrap}td.p{color:#7165eb;white-space:nowrap}"
     "td .tag{display:inline-block;margin-right:4px;padding:0 6px;border-radius:6px;background:#f0effd;color:#5b52c9;font-size:12px}td .none{color:#62657a;font-size:14px}"
-    "nav.more{margin-top:34px;color:#62657a;font-size:14px;line-height:2}nav.more a{color:#7165eb;text-decoration:none;display:inline-block;min-width:40px;padding:6px 0}"
+    "nav.more{margin-top:34px;color:#62657a;font-size:14px;line-height:2}nav.more a{color:#7165eb;text-decoration:none;display:inline-block;min-width:40px;padding:6px 6px;margin:0 -6px}"
     "footer{color:#62657a;font-size:13px;padding:24px;text-align:center}footer a{color:#7165eb;text-decoration:none;display:inline-block;min-width:40px;padding:10px 2px}"
     "@media(max-width:640px){main{padding:24px 14px 48px}h1{font-size:24px}th,td{padding:8px 10px}}"
 )
