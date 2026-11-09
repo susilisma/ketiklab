@@ -1192,9 +1192,14 @@ export default function Home() {
   // rest; the stored dict name was localized, so it is matched in all three languages.
   // Dictionaries are fetched for this only while the favourites are being practised.
   useEffect(() => {
-    if (!words.length || !favorites.some(f => !f.glosses)) return;
-    let alive = true;
+    if (!words.length) return;
     const byEn = new Map(words.map(w => [w.en, w]));
+    // a topic favourite whose text is no longer the word its key names (a re-glossed first
+    // sense): every favourite starred since glosses exist carries them, so the glossless test
+    // alone let the re-gloss branch below go unreached for the realistic shape
+    const staleText = (f: PracticeItem) => { if (f.dict) return false; const w = byEn.get(trioEn(f.key) ?? f.key); return !!w && trioItem(w, f.lang).text !== f.text; };
+    if (!favorites.some(f => !f.glosses || staleText(f))) return;
+    let alive = true;
     const dictOf = (f: PracticeItem) => f.dict ? dicts.find(d => d.lang === f.lang && (d.id === f.dictId || [d.name, d.name_id, d.name_en].includes(f.dict))) : undefined;
     (async () => {
       if (source === "fav") for (const d of dicts) {
