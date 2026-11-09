@@ -1819,7 +1819,13 @@ export default function Home() {
       const utterance = new SpeechSynthesisUtterance(text);
       utterance.lang = voiceLang;
       utterance.rate = .8;
-      const matchingVoice = synth.getVoices().find(voice => voice.lang.toLowerCase().startsWith(voiceLang.slice(0, 2).toLowerCase()));
+      // the voice of the exact locale first (zh-CN, en-US): the first voice of the bare language
+      // could be zh-TW or en-GB on a device that ships both, and Mandarin then came out in a
+      // Taiwanese voice and the American headword in a British one
+      const voices = synth.getVoices();
+      const wanted = voiceLang.toLowerCase().replace("_", "-");
+      const matchingVoice = voices.find(voice => voice.lang.toLowerCase().replace("_", "-") === wanted)
+        || voices.find(voice => voice.lang.toLowerCase().startsWith(wanted.slice(0, 2)));
       if (matchingVoice) utterance.voice = matchingVoice;
       utterance.onstart = () => { started = true; setSpeakingWord(text); setSpeechBlocked(false); };
       utterance.onend = () => { if (speechRequest.current === requestId) setSpeakingWord(null); };
