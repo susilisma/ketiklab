@@ -59,6 +59,12 @@ const zhSet = new Set(words.flatMap(zhSenses));
 const HAN_SENSE = /^[\u3400-\u9fff]+$/;
 const badZh = (zh) => { const s = String(zh).split("；").map((x) => x.trim()); return !s[0] || s.some((x, i) => !x || s.indexOf(x) !== i); };
 const badZhChars = (zh) => String(zh).split("；").some((x) => !HAN_SENSE.test(x.trim()));
+// what the practice input accepts for en / id (App.tsx TYPEABLE): "cost/benefit" or a stray "ÿ" made a card
+// that could only be skipped as a miss. A row's trailing note ("full (after eating)") is not typed
+// (App.tsx trioItem strips it), so it is stripped here too before the test
+const TYPEABLE_LATIN = /^[a-zA-Z0-9 '\-\.&]+$/;
+const noteless = (s) => s.replace(/\s*\([^)]*\)\s*$/, "");
+const badLatin = (en, id) => !TYPEABLE_LATIN.test(noteless(en)) || !TYPEABLE_LATIN.test(noteless(id));
 const readIdSet = new Set(readings.map((r) => r.id));
 const readTA = new Set(readings.map((r) => (r.title + "|" + r.author).toLowerCase()));
 
@@ -74,6 +80,7 @@ function materializeWord(w) {
     if (!LEVELS.has(level)) return { err: "bad-level" };
     if (badZh(zh)) return { err: "bad-zh-senses" };
     if (badZhChars(zh)) return { err: "bad-zh-charset" };
+    if (badLatin(en, id)) return { err: "untypeable-en-or-id" };
     // the tuple form carries no example text; inventing one filled the library with one sentence
     return { obj: { en, id, zh, category, level, source: DEFAULT_SOURCE, examples: {} } };
   }
@@ -90,6 +97,7 @@ function materializeWord(w) {
   if (!LEVELS.has(level)) return { err: "bad-level" };
   if (badZh(zh)) return { err: "bad-zh-senses" };
   if (badZhChars(zh)) return { err: "bad-zh-charset" };
+  if (badLatin(en, id)) return { err: "untypeable-en-or-id" };
   // keep whichever languages the batch supplied; the card skips a missing row
   const ex = {};
   if (examples) for (const k of ["en", "id", "zh"]) {
