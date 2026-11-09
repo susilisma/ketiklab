@@ -22,6 +22,7 @@ import argparse
 import io
 import json
 import os
+import re
 import sys
 
 sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
@@ -46,7 +47,8 @@ def clean(value):
 
 def learn_word(w, lang):
     # the Chinese field can list alternative forms ("实现；达到"); the first is the one practised and the one pinyin spells
-    return clean(w.get(lang)).split("；")[0].strip() if lang == "zh" else clean(w.get(lang))
+    # an English headword's trailing note ("full (after eating)") is not typed in the app (App.tsx trioItem) and belongs on no card front
+    return clean(w.get(lang)).split("；")[0].strip() if lang == "zh" else re.sub(r"\s*\([^)]*\)\s*$", "", clean(w.get(lang)))
 
 
 def export(words, name, lang, pron, meaning):
