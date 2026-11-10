@@ -371,7 +371,7 @@ const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s)
 // both into the cloud row and keep them there, so canonical(cloud) always held progress the
 // device "lacked" and 云端有更多 never cleared, 合并到本机 or not. The same rule is applied here.
 function isLang(x: unknown): x is "zh" | "id" | "en" { return x === "zh" || x === "id" || x === "en"; }
-const validKey = (k: string) => k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":")));
+const validKey = (k: string) => k !== "" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 const mistakes = (v: unknown): string[] => strings(v).filter(validKey);
 /** The two lists in turns, each turn taking its side's next key not placed yet: a key the
  *  other side already placed is skipped rather than re-emitted at this side's rank, so

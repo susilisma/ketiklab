@@ -135,7 +135,7 @@ const trioEn = (key: string) => key.startsWith(TRIO) ? key.slice(TRIO.length) : 
 let migratingKeys = false;
 // a 错词本 key is "<key>" or "<lang>:<key>": one with another prefix (a hand-edited backup)
 // opened the word as wordValue(w, "fr"), blanked the page and saved learn "fr"
-const validMistakeKey = (k: unknown): k is string => typeof k === "string" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
+const validMistakeKey = (k: unknown): k is string => typeof k === "string" && k !== "" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 // 错词本 keys 开始复习 retired because no dictionary resolves them: device-local, read by cloud.ts
 // so a push drops them from the cloud copy too instead of bringing them back; a new miss lifts one
 const RETIRED_KEY = "ketiklab-retired";
