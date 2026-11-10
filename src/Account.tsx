@@ -579,10 +579,10 @@ export function Account({ uiLang, name, onName }: {
   return <div className="acct">
     <div className="acct-card">
       <div className="acct-tabs">
-        <button className={mode === "in" ? "on" : ""} onClick={() => { setMode("in"); setErr(""); }}>
+        <button className={mode === "in" ? "on" : ""} aria-pressed={mode === "in"} onClick={() => { setMode("in"); setErr(""); }}>
           {T("登录", "Masuk", "Sign in", uiLang)}
         </button>
-        <button className={mode === "up" ? "on" : ""} onClick={() => { setMode("up"); setErr(""); }}>
+        <button className={mode === "up" ? "on" : ""} aria-pressed={mode === "up"} onClick={() => { setMode("up"); setErr(""); }}>
           {T("注册", "Daftar", "Sign up", uiLang)}
         </button>
       </div>
