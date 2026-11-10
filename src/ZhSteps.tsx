@@ -94,16 +94,19 @@ export function useZhMap(base: string, needed = true) {
   return { map, settled: settled || !needed };
 }
 
+// a map value is "toned|plain|level"; anything else (a number in a hand-edited or corrupt file)
+// is treated as a missing entry rather than thrown at — v.split on a number blanked the page
+const entry = (map: Record<string, string>, word: string) => { const v = map[word]; return typeof v === "string" ? v : ""; };
 export function zhToned(map: Record<string, string>, word: string) {
-  const v = map[word];
+  const v = entry(map, word);
   return v ? v.split("|")[0] : "";
 }
 export function zhPlain(map: Record<string, string>, word: string) {
-  const v = map[word];
+  const v = entry(map, word);
   return v ? v.split("|")[1] : "";
 }
 export function zhLevel(map: Record<string, string>, word: string) {
-  const v = map[word];
+  const v = entry(map, word);
   return v ? Number(v.split("|")[2]) || 4 : 4;
 }
 
