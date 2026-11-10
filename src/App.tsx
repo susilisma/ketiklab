@@ -330,9 +330,12 @@ function cleanFavorites(f: unknown): PracticeItem[] {
   const seen = new Set<string>();
   return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
 }
+// a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
+// page printed and the persisting effect wrote back as null, so the next load read 0
+const finiteCount = (v: unknown) => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
-  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number") clean[k] = n;
+  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number" && Number.isFinite(n)) clean[k] = n;
   return clean;
 }
 const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
@@ -454,8 +457,8 @@ export default function Home() {
   const [savedState] = useState(() => {
     try { const v: unknown = JSON.parse(localStorage.getItem("ketiklab-state") || "null"); return v && typeof v === "object" ? v as { correct?: unknown; attempts?: unknown; mistakes?: unknown } : null; } catch { return null; }
   });
-  const [correct, setCorrect] = useState(() => Number(savedState?.correct) || 0);
-  const [attempts, setAttempts] = useState(() => Number(savedState?.attempts) || 0);
+  const [correct, setCorrect] = useState(() => finiteCount(savedState?.correct));
+  const [attempts, setAttempts] = useState(() => finiteCount(savedState?.attempts));
   const [seconds, setSeconds] = useState(0);
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState<WordFilter>(() => {
@@ -915,7 +918,7 @@ export default function Home() {
         // the display name too: renamed on the account page of another tab, this tab's sidebar and
         // account card kept the old name until a reload (the push read storage, so nothing was lost)
         else if (e.key === "ketiklab-name") setProfileName(e.newValue);
-        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(Number(v?.correct) || 0); setAttempts(Number(v?.attempts) || 0); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey).slice(0, 30) : []); }
+        else if (e.key === "ketiklab-state") { const v = JSON.parse(e.newValue); setCorrect(finiteCount(v?.correct)); setAttempts(finiteCount(v?.attempts)); setMistakes(Array.isArray(v?.mistakes) ? v.mistakes.filter(validMistakeKey).slice(0, 30) : []); }
         // the languages too: this tab's next writeLangs (a meaning pick, a learning-language change)
         // carried its own copy of all three fields, and wrote the other tab's fresh choice back
         else if (e.key === "ketiklab-langs") {

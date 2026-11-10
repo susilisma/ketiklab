@@ -364,7 +364,7 @@ export function replaceLocal(blob: ProgressBlob) {
 function parsed(v: unknown): unknown { if (typeof v !== "string") return null; try { return JSON.parse(v); } catch { return null; } }
 function record(v: unknown): Record<string, unknown> { const p = parsed(v); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; }
 function list(v: unknown): unknown[] { const p = parsed(v); return Array.isArray(p) ? p : []; }
-const count = (v: unknown) => (typeof v === "number" && v > 0 ? v : 0);
+const count = (v: unknown) => (typeof v === "number" && Number.isFinite(v) && v > 0 ? v : 0);
 const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s): s is string => typeof s === "string");
 // the device drops a 错词本 key with a prefix that is no language of ours, and a star whose lang is
 // none (App's validMistakeKey and cleanFavorites: a hand-edited backup); the merge used to carry
