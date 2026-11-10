@@ -294,9 +294,12 @@ const BACKUP_KEYS = new Set([...SYNCED_KEYS, "ketiklab-category", "ketiklab-zh-s
 // pollution and contamination are both 污染, course and curriculum both 课程. The data keeps
 // the right word on both rows (a gloss is not made worse to keep it unique); the list a
 // learner types through holds that word once, so the same card never comes round twice.
+// A row with no value in this language is dropped too: it was kept, and at 输入法 (the one rung
+// that does not go through the pinyin map) showed a blank card that only ENTER could leave,
+// writing a lapse and a 错词本 entry for a word that does not exist.
 function practisedOnce(list: Word[], lang: Lang) {
   const seen = new Set<string>();
-  return list.filter(w => { const v = wordValue(w, lang); if (!v || seen.has(v)) return !v; seen.add(v); return true; });
+  return list.filter(w => { const v = wordValue(w, lang); if (!v || seen.has(v)) return false; seen.add(v); return true; });
 }
 
 function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, step: ZhStep, cat: WordFilter) {
