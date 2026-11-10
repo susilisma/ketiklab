@@ -315,6 +315,10 @@ function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, ste
 // 输入法, so "第 3 章" is not the same 20 words in both.
 // the reader's texts and a keyboard: ’ ‘ ʼ → ', “ ” → ", – — → -
 const foldTypography = (s: string) => s.replace(/[\u2018\u2019\u02BC]/g, "'").replace(/[\u201C\u201D]/g, '"').replace(/[\u2013\u2014]/g, "-");
+// the reader's lines also carry a poet's accent (sunnèd, wreathèd) that no US or Indonesian
+// keyboard types: the grave is folded away on both sides, one precomposed letter to one plain
+// letter, so the letter colouring stays aligned. Headwords have no accents and keep foldTypography.
+const foldReading = (s: string) => foldTypography(s).normalize("NFD").replace(/[\u0300-\u036F]/g, "");
 // stored values are shape-checked: a hand-edited backup that put "{}" here would otherwise
 // throw at favorites.some(...) on every load until site data is cleared. Every field the card
 // renders as text must be text: an object in sub/meaning/example/def (a hand-edited backup, a
@@ -1722,7 +1726,7 @@ export default function Home() {
   // the texts keep their typographic marks (summer’s day, Dickinson's dashes); a keyboard
   // types ' " -, so the line is graded with both sides folded — 24 of the 47 English pieces
   // could not be finished by typing, and one had no key for — at all
-  const readingTargetF = foldTypography(readingTarget), readingTypedF = foldTypography(readingTyped);
+  const readingTargetF = foldReading(readingTarget), readingTypedF = foldReading(readingTyped);
   const readingLineDone = readingTypedF === readingTargetF;
   const readingAccuracy = readingTyped.length
     ? Math.round(readingTypedF.split("").filter((character, i) => character === readingTargetF[i]).length / readingTyped.length * 100)
@@ -2744,7 +2748,7 @@ export default function Home() {
   }
   function submitReading(typedNow?: string) {
     readingAuto.current++;
-    if (foldTypography(typedNow ?? readingTyped) !== readingTargetF) return;
+    if (foldReading(typedNow ?? readingTyped) !== readingTargetF) return;
     if (readingLine === reading.lines.length - 1) { setReadingDone(true); setReadingActive(false); return; }
     setReadingLine(line => line + 1); setReadingTyped("");
     setTimeout(() => readingInput.current?.focus(), 30);
@@ -3015,7 +3019,7 @@ export default function Home() {
                   {readingTarget.split("").map((character, i) => <span key={`${character}-${i}`} className={readingTyped[i] ? (readingTypedF[i] === readingTargetF[i] ? "right" : "wrong") : i === readingTyped.length ? "cursor" : ""}>{character}</span>)}
                 </div>
                 <div className="reading-input-wrap">
-                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (foldTypography(v) === readingTargetF) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={TX("照着上方文字输入……", "Ketik baris di atas…", "Type the line above…", uiLang)} aria-label={TX("照着上方文字输入", "Ketik baris di atas", "Type the line above", uiLang)} spellCheck={false} />
+                  <textarea ref={readingInput} value={readingTyped} onFocus={() => setReadingActive(true)} onChange={e => { const v = e.target.value.replace(/\n/g,""); setReadingTyped(v); if (foldReading(v) === readingTargetF) { const tk = ++readingAuto.current; window.setTimeout(() => { if (readingAuto.current === tk) submitReading(v); }, 220); } }} onKeyDown={e => { if (e.key === "Enter") { e.preventDefault(); submitReading(); }}} placeholder={TX("照着上方文字输入……", "Ketik baris di atas…", "Type the line above…", uiLang)} aria-label={TX("照着上方文字输入", "Ketik baris di atas", "Type the line above", uiLang)} spellCheck={false} />
                   <button className={readingLineDone ? "ready" : ""} onClick={() => submitReading()} disabled={!readingLineDone}>{t.nextLine} <span>↵</span></button>
                 </div>
                 {readingTyped && !readingLineDone && <p className="typing-help">{t.typingHelp}</p>}
