@@ -265,9 +265,13 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   }, [step, word, onPass, active]);
 
   /* step 3 — options: correct answer plus three same-level distractors */
+  // a nonce per mount (App remounts the card per word and repetition): the four options and the
+  // answer's slot were a pure function of the word, so a retried word, a second device and the
+  // next session showed the same card, and the answer sat in slot 1 on 28 % of the daily cards
+  const nonce = useRef(Math.floor(Math.random() * 0x7fffffff)).current;
   const options = useMemo(() => {
     const others = Array.from(new Set(pool.filter(w => w && w !== word)));
-    const seed = word.length + (word.codePointAt(0) || 0);
+    const seed = word.length + (word.codePointAt(0) || 0) + nonce;
     // the stride must be coprime with the pool size or the walk keeps landing on the same slots
     // (a pool of 35, 70, 105… words — a favourites list or a review of 36 Chinese words — divides
     // by both 7 and 5, and the walk then saw only seven slots: 12 of the first 36 topic words got
@@ -287,8 +291,11 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       }
     }
     const all = [word, ...picks];
-    return all.sort((a, b) => ((seed + a.charCodeAt(0)) % 7) - ((seed + b.charCodeAt(0)) % 7));
-  }, [pool, word]);
+    // Fisher–Yates on the seed: the mod-7 sort tied often and, being stable, left the answer first
+    let s = seed >>> 0; const rnd = () => { s = (s * 1664525 + 1013904223) >>> 0; return s / 0x100000000; };
+    for (let i = all.length - 1; i > 0; i--) { const j = Math.floor(rnd() * (i + 1)); [all[i], all[j]] = [all[j], all[i]]; }
+    return all;
+  }, [pool, word, nonce]);
 
   const pick = (o: string) => {
     if (picked === word) return;
