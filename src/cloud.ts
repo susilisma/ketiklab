@@ -106,8 +106,12 @@ function tidyUrl() {
   if (keepHash) return;
   try { if (/#(access_token|error)|#$/.test(location.href)) history.replaceState(null, "", location.pathname + location.search); } catch { /* ignore */ }
 }
+// auth-js validates a stored session by the presence of its keys only: a hand-edited
+// sb-*-auth-token with "user": null passed, and the account panel's session.user.email then
+// blanked the page on every visit until site data was cleared. A session without a user is none.
+export const withUser = (s: Session | null) => (s && s.user ? s : null);
 supabase.auth.onAuthStateChange((event, s) => {
-  session = s;
+  session = withUser(s);
   if (event === "PASSWORD_RECOVERY") { recovery = true; ss.set(RECOVERY_KEY, "1"); }
   if (event === "SIGNED_IN" || event === "PASSWORD_RECOVERY") keepHash = false;
   // a sign-out from another tab ends a password recovery too, or the form stayed up
@@ -143,7 +147,7 @@ export function signedInAs(uid: string): boolean { return session?.user.id === u
 export async function currentSession(): Promise<Session | null> {
   // offline with an expired token auth-js retries the refresh for ~25 s before answering; the panel shows what is
   // known after 3 s, and onAuthStateChange (Account.tsx) delivers the session when the refresh later succeeds
-  const got = supabase.auth.getSession().then(({ data }) => data.session ?? null, () => null);
+  const got = supabase.auth.getSession().then(({ data }) => withUser(data.session ?? null), () => null);
   return Promise.race([got, new Promise<Session | null>(r => setTimeout(() => r(session), 3000))]);
 }
 

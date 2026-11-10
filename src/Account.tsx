@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { Session } from "@supabase/supabase-js";
 import {
-  supabase, currentSession, signIn, signUp, signOut, resetPassword, updatePassword,
+  supabase, currentSession, withUser, signIn, signUp, signOut, resetPassword, updatePassword,
   loadProfile, saveName, pushProgress, linkThisDevice, applyMerged, collectLocal, linkedUid, linkDevice,
   recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, signedInAs, type SyncNote,
 } from "./cloud";
@@ -214,7 +214,7 @@ export function Account({ uiLang, name, onName }: {
     currentSession().then(s => { if (alive) { setSession(s); setReady(true); } });
     const { data } = supabase.auth.onAuthStateChange((e, s) => {
       if (!alive) return;
-      setSession(s);
+      setSession(withUser(s));
       if (e === "PASSWORD_RECOVERY") setRecovering(true);
       if (e === "SIGNED_OUT") setRecovering(false);
     });
