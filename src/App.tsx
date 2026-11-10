@@ -303,8 +303,10 @@ function practisedOnce(list: Word[], lang: Lang) {
 }
 
 function buildLadder(all: Word[], zhMap: Record<string, string>, lang: Lang, step: ZhStep, cat: WordFilter) {
-  const inCatAll = practisedOnce(cat === "all" ? all : all.filter(item => item.category === cat), lang);
-  if (lang !== "zh" || step === "hanzi") return { list: inCatAll, broad: false };
+  const inCat0 = practisedOnce(cat === "all" ? all : all.filter(item => item.category === cat), lang);
+  // a category with nothing practisable (hand-edited rows without a value) widens to the whole list
+  const inCatAll = inCat0.length ? inCat0 : practisedOnce(all, lang);
+  if (lang !== "zh" || step === "hanzi") return { list: inCatAll, broad: !inCat0.length };
   const cap = zhMaxLevel(step);
   const byLevel = (a: Word, b: Word) => zhLevel(zhMap, a.zh.split("；")[0]) - zhLevel(zhMap, b.zh.split("；")[0]);
   const inCat = inCatAll.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap);
@@ -1562,6 +1564,17 @@ export default function Home() {
   const chapterItems = activeItems.slice(chapterSafe * 20, chapterSafe * 20 + 20);
   const learnItems = (reviewItems && reviewItems.length) ? reviewItems : (chapterItems.length ? chapterItems : activeItems);
   const item = learnItems[index % Math.max(learnItems.length, 1)] || learnItems[0];
+  // nothing to practise at all (a hand-edited words.json whose rows have no value in this
+  // language, now that practisedOnce leaves such rows out): the same screen as a file that
+  // failed to load, instead of item.text throwing below. Every hook ran above the ready gate.
+  if (!item) {
+    return <div className={dark ? "app dark" : "app"}>
+      <div className="loading-screen">
+        <span className="loading-mark">KL</span>
+        <p>{TX("内容加载失败，请刷新页面重试。", "Gagal memuat konten. Muat ulang halaman untuk mencoba lagi.", "Couldn't load content. Please reload the page to try again.", uiLang)}</p>
+      </div>
+    </div>;
+  }
   // 认读 only shows the word and schedules nothing, so a review held on that rung would never
   // clear a single due word: inside a review it is practised one rung up, as 打拼音, while the
   // rung the learner chose stays theirs (开始复习 used to write 打拼音 to ketiklab-zh-step, even
