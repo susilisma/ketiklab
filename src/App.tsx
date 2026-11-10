@@ -335,7 +335,7 @@ function cleanFavorites(f: unknown): PracticeItem[] {
   // one row per lang:key through a Set, not findIndex over the whole list: 50 000 rows (a hand-made backup or
   // a cloud row) took 40 s on every load; and never more rows than stars can make (toggleFav caps at 500)
   const seen = new Set<string>();
-  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "" })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
+  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || LANGUAGE_META[p.lang].voice })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
 }
 // a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
 // page printed and the persisting effect wrote back as null, so the next load read 0
@@ -1667,7 +1667,10 @@ export default function Home() {
     // a list of one or two words whose length no topic word shares still gets its four options
     return pool.length >= 4 ? pool : pool.concat(ladderWords.concat(words).map(w => wordValue(w, "zh")).filter(z => z && !have.has(z)).slice(0, 40));
   })();
-  const targetVoice = item.voice;
+  // a favourite from before rows carried a voice (an old cloud blob, a hand-edited backup) has none:
+  // speak() read voiceLang.toLowerCase() on it, and 打拼音 speaks before it passes, so the last
+  // letter threw and the word could never be finished — the language's voice stands in
+  const targetVoice = item.voice || LANGUAGE_META[item.lang].voice;
   const targetKey = `${source}:${item.key}`;
   const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
   // English is the one interface language that inflects: "1 days" / "1 words" read as errors
@@ -1919,7 +1922,7 @@ export default function Home() {
         autoSpokenWord.current = `${source}:${nx.key}`;
         // a sidebar click in the moment after the last letter moves to another view: the
         // next word is still served there, but it is not read aloud over the library page
-        window.setTimeout(() => { if (viewRef.current === "learn") speak(nx.text, nx.voice); }, 160);
+        window.setTimeout(() => { if (viewRef.current === "learn") speak(nx.text, nx.voice || LANGUAGE_META[nx.lang].voice); }, 160);
       }
       setTimeout(() => { if (!pausedByButton.current && !leftByKey.current) input.current?.focus(); }, 20);
     }
