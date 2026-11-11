@@ -544,7 +544,12 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     // same reason: replaceLocal(cloud) alone cleared them, and the panel came back in another
     // language with the first-visit dialog
     const own = Object.fromEntries(Object.entries(raw).filter(([k]) => !PROGRESS_KEYS.includes(k) && k !== "ketiklab-chapters" && k !== "ketiklab-name"));
-    const next: ProgressBlob = { ...own, ...cloud };
+    // ...and so does a key whose cloud value cannot be stored (a "null" or "[]" under
+    // ketiklab-langs, which rows once held): replaceLocal removed the device's own value before
+    // applyLocal left the cloud one out, so the choice was gone and the first-visit dialog met the
+    // learner after the reload, where the merge path kept it
+    const usable = Object.fromEntries(Object.entries(cloud).filter(([k, v]) => typeof v === "string" && storable(k, v)));
+    const next: ProgressBlob = { ...own, ...usable };
     if (profileName) next["ketiklab-name"] = profileName;
     // signed out (another tab) while the row was being read: the device stays as it is
     if (!signedInAs(userId)) return "same";
