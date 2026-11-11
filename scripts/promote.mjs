@@ -19,7 +19,7 @@
  * - Promoted items leave the queue whether appended or skipped as duplicates,
  *   so the queue always drains forward.
  * - Writes "changed=true|false" to $GITHUB_OUTPUT for the workflow.
- * - Pass --dry-run to print the plan and touch nothing.
+ * - Pass --dry-run to print the plan and the validation verdict and touch nothing.
  */
 import { readFileSync, writeFileSync, appendFileSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
@@ -125,10 +125,6 @@ const setOutput = (changed) => {
   if (process.env.GITHUB_OUTPUT) appendFileSync(process.env.GITHUB_OUTPUT, `changed=${changed}\n`);
 };
 
-if (DRY_RUN) {
-  console.log("--dry-run: nothing written");
-  process.exit(0);
-}
 
 // a queue emptied by hand (its rows deleted in a commit) never went through a release
 // that drained it, so its clock kept running: refilled later, the next hourly run paid
@@ -141,6 +137,7 @@ const stopped = { words: stop(state.words, qWords.length), readings: stop(state.
 if (!takeWords.length && !takeReading.length) {
   console.log("nothing due this run — no promotion");
   const changed = stopped.words !== state.words || stopped.readings !== state.readings;
+  if (DRY_RUN) { console.log(changed ? "--dry-run: would stop the clock of a queue that was emptied by hand; nothing written" : "--dry-run: nothing written"); process.exit(0); }
   if (changed) {
     writeFileSync(STATE, JSON.stringify(stopped, null, 1) + "\n");
     console.log("stopped the clock of a queue that was emptied by hand");
@@ -165,6 +162,14 @@ if (invalid.length) {
   rmSync(batchPath, { force: true });
   console.error(`promote: ${invalid.length} queued row(s) failed validation (${[...new Set(invalid)].join(", ")}); the queue is left untouched`);
   process.exit(1);
+}
+// a dry run used to stop before this check, so it reported green on a queue the real run
+// then refused; it now carries the same verdict and only then stops, having written nothing
+if (DRY_RUN) {
+  rmSync(batchPath, { force: true });
+  console.log(JSON.stringify(check, null, 2));
+  console.log("--dry-run: nothing written");
+  process.exit(0);
 }
 const summary = appendBatch(false);
 console.log(JSON.stringify(summary, null, 2));
