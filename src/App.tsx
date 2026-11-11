@@ -431,9 +431,12 @@ export default function Home() {
   // a learning language picked in this session (here, in the dialog or in another tab): the
   // saved dictionary still on its way must not open under a language it is not for
   const langPicked = useRef(false);
-  // the topic words and the favourites change list with the learning language under one
-  // chapter key; a dictionary is the same list in every language, so its chapter is kept
-  const sharesChapterKey = (src: string) => src === "trio" || src === "fav";
+  // the topic words change list with the learning language under one chapter key, so their
+  // run starts over; a dictionary is the same list in every language and keeps its chapter,
+  // and so are the favourites (favItems holds every starred word whatever the language is):
+  // they used to be reset with the topic words, and changing the language mid-chapter put the
+  // card back on word 1 and wrote that place
+  const sharesChapterKey = (src: string) => src === "trio";
   // the dialog was saved with its learning row untouched while a ?lib= link's list had not yet
   // named the language the row should have shown: the manifest handler lets the link name it
   const linkedLearnPending = useRef(false);
