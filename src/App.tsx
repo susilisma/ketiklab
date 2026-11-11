@@ -3144,7 +3144,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
         <h3>🖥 {mt.ui}</h3>
         <p>{mt.uiDesc}</p>
         <div className="lang-cards">
-          {LANG_CARDS.map(c => <button key={c.code} ref={c.code === initialUi ? first : undefined} className={ui === c.code ? "lang-card active" : "lang-card"} onClick={() => { uiTouched.current = true; setUi(c.code); }}>
+          {LANG_CARDS.map(c => <button key={c.code} ref={c.code === initialUi ? first : undefined} className={ui === c.code ? "lang-card active" : "lang-card"} aria-pressed={ui === c.code} onClick={() => { uiTouched.current = true; setUi(c.code); }}>
             <b lang={htmlLang(c.code)}>{c.name}</b><small lang={htmlLang(c.code)}>{c.uiDesc}</small>{ui === c.code && <span>{mt.selected}</span>}
           </button>)}
         </div>
@@ -3153,7 +3153,7 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
         <h3>⌨ {mt.learn}</h3>
         <p>{mt.learnDesc}</p>
         <div className="lang-cards">
-          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} onClick={() => { learnTouched.current = true; setLearn(c.code); }}>
+          {LANG_CARDS.map(c => <button key={c.code} className={learn === c.code ? "lang-card active" : "lang-card"} aria-pressed={learn === c.code} onClick={() => { learnTouched.current = true; setLearn(c.code); }}>
             <b lang={htmlLang(c.code)}>{c.name}</b><small>{c.learnDesc[ui]}</small>{learn === c.code && <span>{mt.selected}</span>}
           </button>)}
         </div>
@@ -3162,10 +3162,10 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
         <h3>🌐 {mt.def}</h3>
         <p>{mt.defDesc}{def === null && <b> · {mt.defRequired}</b>}</p>
         <div className="lang-cards">
-          {LANG_CARDS.map(c => <button key={c.code} className={def === c.code ? "lang-card active" : "lang-card"} disabled={c.code === learn} onClick={() => setPicked(c.code)}>
+          {LANG_CARDS.map(c => <button key={c.code} className={def === c.code ? "lang-card active" : "lang-card"} aria-pressed={def === c.code} disabled={c.code === learn} onClick={() => setPicked(c.code)}>
             <b lang={htmlLang(c.code)}>{c.name}</b>{c.code === learn ? <small>{mt.defSame}</small> : <small lang={htmlLang(c.code)}>{c.defDesc}</small>}{def === c.code && <span>{mt.selected}</span>}
           </button>)}
-          <button className={def === "none" ? "lang-card active" : "lang-card"} onClick={() => setPicked("none")}>
+          <button className={def === "none" ? "lang-card active" : "lang-card"} aria-pressed={def === "none"} onClick={() => setPicked("none")}>
             <b>{mt.none}</b><small>{mt.noneDesc}</small>{def === "none" && <span>{mt.selected}</span>}
           </button>
         </div>
