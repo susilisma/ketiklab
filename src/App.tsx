@@ -3009,7 +3009,7 @@ export default function Home() {
                 const open = openReadingGroup === group.id;
                 return <div className={open ? "reading-group open" : "reading-group"} key={group.id}>
                   <button type="button" className="reading-group-head" aria-expanded={open} onClick={() => setOpenReadingGroup(open ? null : group.id)}>
-                    <span>{group.label}</span><em>{group.items.length}<i className="reading-chevron">▾</i></em>
+                    <span lang={readingLang === "all" ? undefined : htmlLang(readingLang)}>{group.label}</span><em>{group.items.length}<i className="reading-chevron">▾</i></em>
                   </button>
                   {open && <div className="reading-group-items">
                     {group.items.map(piece => <button key={piece.id} className={piece.id === reading.id ? "active" : ""} aria-current={piece.id === reading.id ? "true" : undefined} onClick={() => chooseReading(piece.id)}>
