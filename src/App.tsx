@@ -1070,7 +1070,8 @@ export default function Home() {
   const readChapters = (): Record<string, unknown> => {
     try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
   };
-  const savedChapter = (key: string) => Math.max(0, Math.floor(Number(readChapters()[key])) || 0);
+  // a synced or hand-edited 1e999 came through Math.floor(Infinity) || 0 as Infinity
+  const savedChapter = (key: string) => { const n = Math.floor(Number(readChapters()[key])); return Number.isFinite(n) && n > 0 ? n : 0; };
   // the word within the chapter, kept per list in its own key (ketiklab-position, this device
   // only): the chapter came back after a reload but the learner was put on its first word
   // again, 04/20 → 01/20, and the words already passed came round once more
@@ -1167,8 +1168,15 @@ export default function Home() {
     const n = activeItemsRef.current.slice(chapter * 20, chapter * 20 + 20).length;
     // the list is here but the saved chapter lies past its end (the favourites shrank elsewhere, the
     // chapter key synced and the position key not): the card shows the last chapter, and a position
-    // saved for another chapter is word 1 — it used to be applied there, word 4 of 5 with 1–3 unseen
-    if (!n) { if (activeItemsRef.current.length) { clampPosition.current = false; setIndex(0); } return; }
+    // saved for another chapter is word 1 — it used to be applied there, word 4 of 5 with 1–3 unseen.
+    // The chapter itself is set and written to the last one: it stayed at the stale number (the
+    // slice already clamped the view), so the position was written under it and every reload
+    // landed on word 1 again until a chapter button was pressed
+    if (!n) {
+      const len = activeItemsRef.current.length;
+      if (len) { clampPosition.current = false; const last = Math.ceil(len / 20) - 1; setIndex(0); setChapter(last); writeChapter(sourceKey, last); }
+      return;
+    }
     clampPosition.current = false;
     if (index >= n) setIndex(n - 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
