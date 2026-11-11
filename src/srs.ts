@@ -109,7 +109,10 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
     if (!correct) { step = -1; dueAt = now + RELAPSE_DELAY; }
     // a correct answer before the word is due (a retried chapter, a repeated word) is
     // not a recall from memory, so it keeps the rung and the date it already has
-    else if (existing && existing.dueAt > now) { step = prevStep; dueAt = existing.dueAt; kept = true; }
+    // ...read as a number: a row hand-written into the store with a string date compared as one
+    // here and in getStats but never in getDueKeys (the index sorts strings after numbers), so the
+    // badge counted a word the session never found; the string was also written back untouched
+    else if (existing && Number.isFinite(Number(existing.dueAt)) && Number(existing.dueAt) > now) { step = prevStep; dueAt = Number(existing.dueAt); kept = true; }
     else { step = Math.min(prevStep + 1, INTERVALS.length - 1); dueAt = now + INTERVALS[step] * DAY; }
     written = {
       en,
