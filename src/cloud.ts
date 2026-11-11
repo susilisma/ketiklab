@@ -548,7 +548,9 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
     // ketiklab-langs, which rows once held): replaceLocal removed the device's own value before
     // applyLocal left the cloud one out, so the choice was gone and the first-visit dialog met the
     // learner after the reload, where the merge path kept it
-    const usable = Object.fromEntries(Object.entries(cloud).filter(([k, v]) => typeof v === "string" && storable(k, v)));
+    // ...in canonical form (mergeProgress(x, x)): the row went in raw where the merge path clamps
+    // its counters, so attempts −1 showed −300 % accuracy and 1e999 chapters sat in storage
+    const usable = Object.fromEntries(Object.entries(mergeProgress(cloud, cloud)).filter(([k, v]) => typeof v === "string" && storable(k, v)));
     const next: ProgressBlob = { ...own, ...usable };
     if (profileName) next["ketiklab-name"] = profileName;
     // signed out (another tab) while the row was being read: the device stays as it is
