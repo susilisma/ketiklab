@@ -187,8 +187,13 @@ export async function signOut() {
   // a live token it drops the session itself before returning the error): 退出登录 was pressed, so the session goes
   // from this device either way. Dropped from storage and the page reloaded; the sign-out mark stays, and the next
   // load tries the server again. Without this the card came back in silence and the next tick synced on.
+  // ...and bounded like every other request (15 s): a revocation that never answered held the
+  // card on 正在退出… with the session kept and the next tick syncing on
   let failed = false;
-  try { failed = !!(await supabase.auth.signOut()).error; } catch { failed = true; }
+  try {
+    const res = await Promise.race([supabase.auth.signOut(), new Promise<{ error: unknown }>(r => setTimeout(() => r({ error: new Error("timeout") }), 15000))]);
+    failed = !!res.error;
+  } catch { failed = true; }
   const key = `sb-${new URL(SUPABASE_URL).hostname.split(".")[0]}-auth-token`;
   try { if (failed && localStorage.getItem(key)) { localStorage.removeItem(key); location.reload(); } } catch { /* ignore */ }
 }
