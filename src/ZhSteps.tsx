@@ -1,4 +1,5 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
+import { errorBeep, keyClick } from "./sounds";
 
 export type ZhStep = "read" | "pinyin" | "choose" | "hanzi";
 export type UiLang = "zh" | "id" | "en";
@@ -197,9 +198,13 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     // l/n + v is accepted when the target goes on with "ue" at that point
     const onItsWay = /[ln]v$/.test(v) && target.startsWith(v.slice(0, -1) + "ue");
     if (target.startsWith(v) || onItsWay) {
+      // the App's box clicks on every accepted letter and buzzes on a wrong one; the ladder had
+      // only the chime, so a learner with the sound on heard nothing until the word passed
+      if (v.length > typed.length) keyClick();
       setTyped(v);
       if (v.length === target.length && v.length > 0) { onSpeak(); end(onPass); }
     } else {
+      errorBeep();
       onMiss();
       setWrong(n => n + 1);
       // roll back to what was right so far — never to a slice of the target: a paste or
@@ -305,7 +310,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     onResume();
     setPicked(o);
     if (o === word) { onSpeak(); onPass(); }
-    else { onMiss(); setTimeout(() => setPicked(null), 420); }
+    else { errorBeep(); onMiss(); setTimeout(() => setPicked(null), 420); }
   };
   const pickRef = useRef(pick); pickRef.current = pick;
   // 1–4 pick the option in that position, as an IME candidate row does: a keyboard user had to
