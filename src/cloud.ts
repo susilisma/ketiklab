@@ -211,7 +211,11 @@ export async function loadProfile(userId: string): Promise<Profile | null | unde
   const { data, error } = await supabase
     .from("profiles").select("id,name").eq("id", userId).maybeSingle();
   if (error) return undefined;
-  return (data as Profile) ?? null;
+  if (!data) return null;
+  // a name that is no string (a row written by hand or by another client) reached
+  // profileName.trim() in the App and emptied #root on every visit to the panel
+  const row = data as { name?: unknown };
+  return { ...(data as Profile), name: typeof row.name === "string" ? row.name : "" };
 }
 
 // The query builders resolve with { error } rather than throwing; the writes here
