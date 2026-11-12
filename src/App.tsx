@@ -342,13 +342,14 @@ function cleanFavorites(f: unknown): PracticeItem[] {
 }
 // a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
 // page printed and the persisting effect wrote back as null, so the next load read 0
-// and a negative or fractional one (a hand-edited backup or a cloud row written before count()
-// clamped them) was printed as "-3" and "-150% Accuracy", then persisted and pushed: read as
-// cloud.ts count() reads it — a whole number above zero, else 0
-const finiteCount = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.trunc(n) : 0; };
+// and a negative one (a hand-edited backup or a cloud row written before count() clamped it)
+// was printed as "-3" and "-150% Accuracy", then persisted and pushed: read exactly as
+// cloud.ts count() reads it — above zero as it is, else 0 — so that the device's copy and the
+// cloud's canonical form agree (a day kept at 0 here and dropped there would show 云端有更多 for good)
+const finiteCount = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : 0; };
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
-  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number" && Number.isFinite(n) && n > 0) clean[k] = Math.trunc(n);
+  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number" && Number.isFinite(n)) clean[k] = n > 0 ? n : 0;
   return clean;
 }
 const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
