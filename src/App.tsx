@@ -2888,7 +2888,11 @@ export default function Home() {
             pool={zhPool}
             uiLang={uiLang}
             active={!showLangSetup}
-            onPass={finishWord}
+            // a pass is the learner's move as a key into a box is: after 暂停 on a 认读 card, SPACE
+            // advanced with pausedByButton still set, so the next Latin word mounted unfocused behind
+            // its veil with the clock stopped while the header said it was running (the pinyin and
+            // 选汉字 rungs resume through onResume before they pass)
+            onPass={() => { pausedByButton.current = false; leftByKey.current = false; finishWord(); }}
             onSkip={skipWord}
             onMiss={() => { if (finishing.current || hadWrong.current) return; noteSlip(); setWrongCountWord(n => n + 1); }}
             onSpeak={() => speak()}
