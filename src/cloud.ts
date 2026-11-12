@@ -439,8 +439,11 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // merge kept it, one of the 500 slots gone for good
       // ...and every body field the device checks (cleanFavorites in App.tsx): a star whose sub, voice or
       // a gloss is not text was dropped on the device and kept here, so 云端有更多 never cleared either
-      const text = (v: unknown) => v === undefined || typeof v === "string";
-      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string" && (f as { text: string }).text.trim() !== "" && (f as { text: string }).text.length <= 200 && ["dict", "dictId", "sub", "meaning", "example", "def", "voice"].every(k => text((f as Record<string, unknown>)[k])) && (() => { const g = (f as { glosses?: unknown }).glosses; return g === undefined || !!g && typeof g === "object" && Object.values(g).every(v => typeof v === "string"); })();
+      // ...and never longer than a card can hold: a 6 MB example in a cloud star made applyLocal's
+      // write exceed the storage quota, which it swallows, so the device noted "merged" and showed
+      // 云端有更多 again on every load, for good
+      const text = (v: unknown) => v === undefined || typeof v === "string" && v.length <= 2000;
+      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string" && (f as { text: string }).text.trim() !== "" && (f as { text: string }).text.length <= 200 && ["dict", "dictId", "sub", "meaning", "example", "def", "voice"].every(k => text((f as Record<string, unknown>)[k])) && (() => { const g = (f as { glosses?: unknown }).glosses; return g === undefined || !!g && typeof g === "object" && Object.values(g).every(v => typeof v === "string" && v.length <= 2000); })();
       const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
       out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));

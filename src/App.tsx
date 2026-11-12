@@ -333,11 +333,12 @@ const foldReading = (s: string) => foldTypography(s).normalize("NFD").replace(/[
 // the same favourite twice in a row (a hand-edited backup) does not remount the 打拼音 rung, whose
 // box then stayed full and dead to every key but ENTER
 function cleanFavorites(f: unknown): PracticeItem[] {
-  const str = (v: unknown) => v === undefined || typeof v === "string";
+  // and no body field longer than a card can hold (cloud.ts merges with the same bound)
+  const str = (v: unknown) => v === undefined || typeof v === "string" && v.length <= 2000;
   // one row per lang:key through a Set, not findIndex over the whole list: 50 000 rows (a hand-made backup or
   // a cloud row) took 40 s on every load; and never more rows than stars can make (toggleFav caps at 500)
   const seen = new Set<string>();
-  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string"))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || LANGUAGE_META[p.lang].voice })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
+  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string" && v.length <= 2000))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || LANGUAGE_META[p.lang].voice })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
 }
 // a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
 // page printed and the persisting effect wrote back as null, so the next load read 0
