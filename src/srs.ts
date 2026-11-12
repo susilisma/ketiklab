@@ -24,7 +24,9 @@ const RELAPSE_DELAY = 10 * 60 * 1000; // 10 minutes
 // the trio word in any language or an English or Indonesian dictionary
 // headword, so it stays as it is, invisible to the counts, until the same word
 // is answered under its new key and inherits it (see recordReview).
-const keyed = (en: string) => en.includes(":");
+// a row whose key is no string at all (a hand-edited backup) threw inside getStats and
+// getDueKeys, and the callers swallowed it: one such row hid every real row from the badge
+const keyed = (en: unknown): en is string => typeof en === "string" && en.includes(":");
 const HANZI = /^[㐀-鿿]+$/;
 // a count read back from a row: a number, or a string that spells one, else 0. Rows upgraded
 // before merged() guarded its sums carry NaN (or a hand-edited backup a string) and every
@@ -132,7 +134,9 @@ export type SrsStats = { due: number; learning: number; mastered: number; total:
 
 export async function getStats(now = Date.now()): Promise<SrsStats> {
   const all = (await db.reviews.toArray()).filter((r) => keyed(r.en));
-  const due = all.filter((r) => r.dueAt <= now).length;
+  // a string dueAt never comes back from the index getDueKeys reads (5b4246c rewrites it on the
+  // next answer): counted here it was a badge of 1 with nothing to review
+  const due = all.filter((r) => typeof r.dueAt === "number" && r.dueAt <= now).length;
   const mastered = all.filter((r) => r.step >= 4).length;
   const learning = all.length - mastered;
   return { due, learning, mastered, total: all.length };
