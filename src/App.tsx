@@ -341,10 +341,13 @@ function cleanFavorites(f: unknown): PracticeItem[] {
 }
 // a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
 // page printed and the persisting effect wrote back as null, so the next load read 0
-const finiteCount = (v: unknown) => { const n = Number(v); return Number.isFinite(n) ? n : 0; };
+// and a negative or fractional one (a hand-edited backup or a cloud row written before count()
+// clamped them) was printed as "-3" and "-150% Accuracy", then persisted and pushed: read as
+// cloud.ts count() reads it — a whole number above zero, else 0
+const finiteCount = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? Math.trunc(n) : 0; };
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
-  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number" && Number.isFinite(n)) clean[k] = n;
+  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number" && Number.isFinite(n) && n > 0) clean[k] = Math.trunc(n);
   return clean;
 }
 const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
@@ -1071,7 +1074,8 @@ export default function Home() {
     try { const p: unknown = JSON.parse(localStorage.getItem("ketiklab-chapters") || "{}"); return p && typeof p === "object" && !Array.isArray(p) ? p as Record<string, unknown> : {}; } catch { return {}; }
   };
   // a synced or hand-edited 1e999 came through Math.floor(Infinity) || 0 as Infinity
-  const savedChapter = (key: string) => { const n = Math.floor(Number(readChapters()[key])); return Number.isFinite(n) && n > 0 ? n : 0; };
+  // and a boolean (Number(true) = 1) opened chapter 2: only a number or a string that spells one
+  const savedChapter = (key: string) => { const raw = readChapters()[key]; const n = typeof raw === "number" || typeof raw === "string" ? Math.floor(Number(raw)) : 0; return Number.isFinite(n) && n > 0 ? n : 0; };
   // the word within the chapter, kept per list in its own key (ketiklab-position, this device
   // only): the chapter came back after a reload but the learner was put on its first word
   // again, 04/20 → 01/20, and the words already passed came round once more
@@ -1696,7 +1700,8 @@ export default function Home() {
   // letter threw and the word could never be finished — the language's voice stands in
   const targetVoice = item.voice || LANGUAGE_META[item.lang].voice;
   const targetKey = `${source}:${item.key}`;
-  const accuracy = attempts ? Math.round(correct / attempts * 100) : 100;
+  // never above 100: a row with more correct answers than attempts printed 250 %
+  const accuracy = attempts ? Math.min(100, Math.round(correct / attempts * 100)) : 100;
   // English is the one interface language that inflects: "1 days" / "1 words" read as errors
   const enOne = (n: number, one: string, many: string) => uiLang === "en" && n === 1 ? one : many;
   function seededVisible(i: number): boolean {
