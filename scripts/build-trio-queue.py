@@ -220,6 +220,9 @@ def load(path, fallback):
         # overwritten with the new rows and the hand-reviewed batch lost
         return fallback
 
+NOTE = re.compile(r"\s*\([^)]*\)\s*$")
+
+
 def index(rows):
     en, idn, zh = set(), set(), set()
     for r in rows:
@@ -227,7 +230,9 @@ def index(rows):
             e, i, z = r[0], r[1], r[2]
         else:
             e, i, z = r.get("en", ""), r.get("id", ""), r.get("zh", "")
-        en.add(str(e).lower()); idn.add(str(i).lower())
+        # without a trailing "(note)": the App types the text before it, so a row that differs
+        # from a live one only by its note would give two cards the same word (append-batch.mjs)
+        en.add(NOTE.sub("", str(e)).lower()); idn.add(NOTE.sub("", str(i)).lower())
         for part in str(z).split("；"):
             if part.strip():
                 zh.add(part.strip())

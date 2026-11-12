@@ -44,9 +44,13 @@ const newReadings = Array.isArray(batch.readings) ? batch.readings : [];
 const words = JSON.parse(readFileSync(WORDS_JSON, "utf8"));
 const readings = JSON.parse(readFileSync(READINGS_JSON, "utf8"));
 
-// existing keys
-const enSet = new Set(words.map((w) => String(w.en).toLowerCase()));
-const idSet = new Set(words.map((w) => String(w.id).toLowerCase()));
+// existing keys — compared without a trailing "(note)": the App types the text before the note
+// ("full (after eating)" asks for "full"), so a row whose id or en differs from a live one only by
+// its note gives two cards the same word to type
+const noteless = (s) => s.replace(/\s*\([^)]*\)\s*$/, "");
+const typedKey = (s) => noteless(String(s)).toLowerCase();
+const enSet = new Set(words.map((w) => typedKey(w.en)));
+const idSet = new Set(words.map((w) => typedKey(w.id)));
 // every Chinese sense, not the whole field: the practice word is the first sense, and
 // "污染；弄脏" next to a live "污染" gives two cards the same word to type
 const zhSenses = (w) => String(w.zh).split("；").map((x) => x.trim()).filter(Boolean);
@@ -63,7 +67,6 @@ const badZhChars = (zh) => String(zh).split("；").some((x) => !HAN_SENSE.test(x
 // that could only be skipped as a miss. A row's trailing note ("full (after eating)") is not typed
 // (App.tsx trioItem strips it), so it is stripped here too before the test
 const TYPEABLE_LATIN = /^[a-zA-Z0-9 '\-\.&]+$/;
-const noteless = (s) => s.replace(/\s*\([^)]*\)\s*$/, "");
 const badLatin = (en, id) => !TYPEABLE_LATIN.test(noteless(en)) || !TYPEABLE_LATIN.test(noteless(id));
 const readIdSet = new Set(readings.map((r) => r.id));
 const readTA = new Set(readings.map((r) => (r.title + "|" + r.author).toLowerCase()));
@@ -117,7 +120,7 @@ const bEn = new Set(), bId = new Set(), bZh = new Set();
 for (const raw of newWords) {
   const { obj, err } = materializeWord(raw);
   if (err) { skip.words.push(err); continue; }
-  const kEn = obj.en.toLowerCase(), kId = obj.id.toLowerCase();
+  const kEn = typedKey(obj.en), kId = typedKey(obj.id);
   const kZh = zhSenses(obj);
   // the reason names the row: promote.mjs prints a duplicate as a warning, since a drained
   // row is gone from the queue and "promoted: 0" in the log was all that said so
