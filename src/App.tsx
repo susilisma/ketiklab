@@ -2840,9 +2840,12 @@ export default function Home() {
           </button>}
           <button className={isFav ? "fav-btn on" : "fav-btn"} onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); toggleFav(); }} aria-label={isFav ? TX("取消收藏", "Hapus dari favorit", "Remove from favorites", uiLang) : TX("收藏", "Tambah ke favorit", "Add to favorites", uiLang)}>{isFav ? "★" : "☆"}</button>
           {loopTimes > 1 && <div className="loop-dots">{Array.from({ length: loopTimes }, (_, li) => <i key={li} className={li <= loopIx ? "on" : ""} />)}</div>}
-          {practiceLang === "zh" && (rung === "read" || rung === "choose") &&
-            <p className={rung === "choose" ? "zh-annot solo" : "zh-annot"} lang="zh-Latn"
-               onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
+          {/* on 选汉字 the hanzi stay out of the DOM (they are the answer), so the pinyin line is the
+              card's heading there: without one the learn view had no h1 at that rung */}
+          {practiceLang === "zh" && rung === "read" &&
+            <p className="zh-annot" lang="zh-Latn" onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</p>}
+          {practiceLang === "zh" && rung === "choose" &&
+            <h1 className="zh-annot solo" lang="zh-Latn" onClick={e => { e.stopPropagation(); speak(); }}>{zhToneText || "—"}</h1>}
           {!(practiceLang === "zh" && rung === "choose") && <h1 className={`target-word ${practiceLang === "zh" ? "zh" : practiceLang} ${wrongFlash ? "shake" : ""}`} lang={htmlLang(practiceLang)} style={wordScale < 1 ? { "--word-scale": wordScale } as React.CSSProperties : undefined}>{targetWord.split("").map((letter,i)=><Fragment key={i}><span className={`${typed[i] ? ((practiceLang === "zh" ? typed[i] === letter : typed[i].toLowerCase() === letter.toLowerCase()) ? "letter right" : "letter wrong") : "letter"}${letterVisible(i) ? "" : " masked"}`}>{letter === " " ? "\u00a0" : letter}</span>{/* the space is a no-break space so its span keeps its width at a line end, and
               the <wbr> after it is the only break opportunity: without one, overflow-wrap:anywhere
               splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
@@ -2898,7 +2901,8 @@ export default function Home() {
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
           <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
-          <h2>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${finishedChapter + 1} 章` : uiLang === "id" ? `Bab ${finishedChapter + 1}` : `Chapter ${finishedChapter + 1}`}</h2>
+          {/* the card replaces the practice word, so its title is the view's h1 */}
+          <h1>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${finishedChapter + 1} 章` : uiLang === "id" ? `Bab ${finishedChapter + 1}` : `Chapter ${finishedChapter + 1}`}</h1>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
           <div><b>{Math.max(0, Math.round((chDone - chWrongKeys.length) / Math.max(chDone, 1) * 100))}%</b><small>{t.accuracy}</small><b>{String(Math.floor(chElapsed / 60)).padStart(2, "0")}:{String(chElapsed % 60).padStart(2, "0")}</b><small>{t.timeUsed}</small></div>
           {/* the one moment the learner has earned a reason to come back: the first correct answer
