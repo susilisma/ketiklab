@@ -2851,7 +2851,13 @@ export default function Home() {
               splits a phrase in the middle of a word (pelayan / an) */}{letter === " " && <wbr />}</Fragment>)}</h1>}
           {/* the pronunciation line is in the word's language ("普通话 · nǐ hǎo"); one that ends in the interface-language
               call to action ("American English · ketuk untuk mendengar") is mixed and keeps the page language */}
-          {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined} lang={stripHear(item.sub) === item.sub ? htmlLang(item.lang) : undefined}>{item.sub}</p>}
+          {!zhLadder && <p className={pronHidden ? "phonetic pron-hidden" : "phonetic"} aria-hidden={pronHidden || undefined} lang={stripHear(item.sub) === item.sub ? htmlLang(item.lang) : undefined}>{stripHear(item.sub) === item.sub ? item.sub : (() => {
+            // the mixed line keeps the page language, but "American English" and the gloss before and
+            // after the call to action are in the word's language: a Chinese voice read the name as Chinese
+            const hear = " · " + TX("点击播放标准发音", "ketuk untuk mendengar", "tap to hear pronunciation", uiLang);
+            const i = item.sub.indexOf(hear); const before = item.sub.slice(0, i), after = item.sub.slice(i + hear.length);
+            return <><span lang={htmlLang(item.lang)}>{before}</span>{hear}{after && <span lang={htmlLang(item.lang)}>{after}</span>}</>;
+          })()}</p>}
           {/* the meaning sits right under the word stack; the ladder pills come after it */}
           {(itemMeaningLang !== "none" || (itemExtras.length > 0 && (extrasShown || meaningHidden))) && <div className="meanings">
             {itemMeaningLang === "none" ? (meaningHidden ? peekButton(peekLabel) : null)
