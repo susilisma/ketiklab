@@ -3017,7 +3017,9 @@ export default function Home() {
         </div>
 
         <div className="reading-layout">
-          <aside className="reading-library">
+          {/* a section, not an aside: a complementary landmark nested in main is announced as a
+              top-level region of the page it is not */}
+          <section className="reading-library" aria-label={t.classics}>
             <div className="reading-library-title"><b>{t.classics}</b><span>{readings.filter(piece => readingLang === "all" || piece.lang === readingLang).length} {t.pieces}</span></div>
             <div className="reading-list">
               {readingGroups.map(group => {
@@ -3035,7 +3037,7 @@ export default function Home() {
                 </div>;
               })}
             </div>
-          </aside>
+          </section>
 
           <article className="typing-reader">
             <div className="reader-top">
