@@ -243,7 +243,11 @@ export async function saveProgress(userId: string, data: ProgressBlob) {
   // rejects: refused here instead, before anything is sent
   if (session?.user.id !== userId) throw new Error("not signed in as this account");
   const { error } = await supabase.from("progress").upsert({ user_id: userId, data }, { onConflict: "user_id" });
-  if (error) throw Object.assign(new Error(error.message), { code: error.code });
+  // a gateway's HTML page (a 200 or a 5xx that is no PostgREST JSON) arrives whole in
+  // error.message, and the panel's keyword matching read "expired" or "network error" out of
+  // it and told the learner to request a new link or check the connection: such a body is
+  // named for what it is, as a refused read already is ("cloud read failed")
+  if (error) throw Object.assign(new Error(/<[a-z!/]/i.test(error.message) ? "cloud write failed" : error.message), { code: error.code });
 }
 
 /** Keys we mirror to the cloud. Everything else stays device-local on purpose. */

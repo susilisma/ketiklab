@@ -76,6 +76,7 @@ function humanError(e: unknown, l: Lang): string {
   // before the "cloud read failed" line: a read refused for the same reason carries that prefix
   if (ae.code === "PGRST301" || m.includes("jwt expired") || m.includes("jwt") && m.includes("invalid") || m.includes("session missing"))
     return T("登录已过期，这次没有同步。请重新登录。", "Sesi masuk sudah kedaluwarsa; tidak jadi disinkronkan. Masuk lagi.", "Your sign-in has expired, so nothing was synced. Sign in again.", l);
+  if (m.includes("cloud write failed")) return serverTrouble(ae.code);
   if (m.includes("cloud read failed"))
     return T("暂时读不到云端记录，没有改动任何数据，请稍后再试。",
              "Data cloud belum bisa dibaca. Tidak ada yang diubah — coba lagi nanti.",
