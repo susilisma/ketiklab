@@ -568,6 +568,10 @@ export default function Home() {
   // older choice sees the mismatch and drops its result instead of applying it
   const sourceReq = useRef(0);
   const isComposing = useRef(false);
+  // Latin letters reaching the 输入法 box outside a composition (no Chinese input method on):
+  // they were dropped in silence and the learner typed on into nothing — a short notice instead
+  const [imeHint, setImeHint] = useState(false);
+  const imeHintTimer = useRef(0);
   // what the box holds, for the window-level key handler that has no render to read it from
   const typedRef = useRef("");
   // The IME box is uncontrolled and is only synced to `typed` between compositions.
@@ -2256,6 +2260,10 @@ export default function Home() {
     // Never let the buffer grow past the target: extra keystrokes are simply
     // ignored, the way every other typing trainer behaves.
     let kept = practiceLang === "zh" ? raw.replace(/[^㐀-鿿]/g, "") : raw.replace(/[^a-zA-Z0-9 '\-\.&]/g, "");
+    if (practiceLang === "zh" && !isComposing.current && /[a-zA-Z]/.test(raw)) {
+      setImeHint(true); window.clearTimeout(imeHintTimer.current);
+      imeHintTimer.current = window.setTimeout(() => setImeHint(false), 2500);
+    } else if (kept.length) { setImeHint(false); }
     // after a second slip the box keeps the right prefix (实 of 实现), and an IME then commits the
     // whole word again behind it (实实现): graded as an over-long commit, it flashed red on every
     // try until the learner deleted the prefix or committed only the rest — a whole-word commit
@@ -2919,7 +2927,8 @@ export default function Home() {
             canFocus={() => !pausedByButton.current && !leftByKey.current}
           /> : <>
           <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} defaultValue="" onChange={e=>{ if (!(e.nativeEvent as InputEvent).isComposing) isComposing.current = false; handleType(e.target.value); }} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; pausedByButton.current = false; leftByKey.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>{ setTypingFocus(false); setReveal(false); }} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
-          <p className="hint">{TX("直接敲键盘", "Langsung ketik", "Just type", uiLang)} <span>·</span> {inputMode === "soft" ? TX("打错按退格改", "salah? tekan Backspace", "Backspace fixes a mistake", uiLang) : TX("打错自动回退", "salah = mundur otomatis", "a mistake rolls back", uiLang)} &nbsp;&nbsp; ENTER <span>·</span> {TX("跳过", "lewati", "skip", uiLang)} &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> {TX("重播发音", "ulang suara", "replay", uiLang)}</p>
+          {imeHint ? <p className="hint ime-hint">{TX("请切换到中文输入法再输入", "Beralih dulu ke metode input Mandarin", "Switch to a Chinese input method first", uiLang)}</p> :
+          <p className="hint">{TX("直接敲键盘", "Langsung ketik", "Just type", uiLang)} <span>·</span> {inputMode === "soft" ? TX("打错按退格改", "salah? tekan Backspace", "Backspace fixes a mistake", uiLang) : TX("打错自动回退", "salah = mundur otomatis", "a mistake rolls back", uiLang)} &nbsp;&nbsp; ENTER <span>·</span> {TX("跳过", "lewati", "skip", uiLang)} &nbsp;&nbsp; {"CTRL+SPACE"} <span>·</span> {TX("重播发音", "ulang suara", "replay", uiLang)}</p>}
           </>}
           {wrongCountWord >= 3 && <button className="skip-btn" onMouseDown={e => e.preventDefault()} onClick={e => { e.stopPropagation(); skipWord(); }}>{uiLang === "zh" ? "跳过这个词" : uiLang === "id" ? "Lewati kata ini" : "Skip this word"} →</button>}
         </div>
