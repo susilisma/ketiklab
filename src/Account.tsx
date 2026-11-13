@@ -262,7 +262,9 @@ export function Account({ uiLang, name, onName }: {
       if (prof) {
         if (alive) setProfName(prof.name || "");
         if (prof.name && !untrusted) onName(prof.name);
-        else if (!prof.name && name.trim() && !untrusted) await saveName(uid, name.trim()).catch(() => { /* the sync below reports an outage */ });
+        // bounded like the profile read above it: a write that never answered held the mount
+        // here for good — no 同步中, no sync, no word of it
+        else if (!prof.name && name.trim() && !untrusted) await withinSyncWait(saveName(uid, name.trim())).catch(() => { /* the sync below reports an outage */ });
       }
       try {
         // a device linked to another account, reached by a session from a link: the note
