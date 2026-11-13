@@ -97,7 +97,7 @@
 
 .ime-input{position:relative;display:block;width:min(430px,88%);margin:26px auto 0;padding:13px 18px;font-size:23px;line-height:1.35;text-align:center;letter-spacing:.1em;border:2px solid var(--line);border-radius:14px;background:var(--bg);color:var(--text);outline:none;opacity:1;height:auto;transition:.15s}
 .ime-input::placeholder{font-size:15px;letter-spacing:.04em;color:var(--muted);opacity:1}
-.hint.ime-hint{color:var(--purple)}
+.hint.ime-hint{color:var(--text)}
 .ime-input:focus{border-color:var(--purple);background:var(--surface);box-shadow:0 0 0 4px var(--purple-soft)}
 @media(max-width:640px){.ime-input{font-size:19px;padding:11px 14px}}
 @keyframes word-shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}50%{transform:translateX(6px)}75%{transform:translateX(-4px)}}
@@ -291,6 +291,8 @@
 .app.focused .mode-row,.app.focused .prevnext,.app.focused .hint{display:none}
 /* a session that lost the focus without a pause keeps running under the "press any key to continue" pill, which sits at the card's foot: the hint line gives it that room again, or it lay over the meaning line (and over the 输入法 box) */
 .app.focused .word-card:has(.type-veil) .hint{display:block}
+/* the 输入法 notice is for the learner typing, which is exactly when focus mode hides the hint line */
+.app.focused .word-card .hint.ime-hint{display:block}
 .app.focused .meanings{max-width:560px}
 .mode-sep{display:inline-block;width:1px;height:14px;background:var(--line);margin:0 6px}
 /* ---- softer "press any key" hint: no blur, word stays readable ---- */
