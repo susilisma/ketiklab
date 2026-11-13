@@ -1234,7 +1234,11 @@ export default function Home() {
   // rest; the stored dict name was localized, so it is matched in all three languages.
   // Dictionaries are fetched for this only while the favourites are being practised.
   useEffect(() => {
-    if (!words.length) return;
+    // not before the render passes the `if (!ready)` gate below: trioItem is declared after
+    // it, so a render that returned early (words here, the Chinese level map still on its
+    // way) left it uninitialised, and this effect, scheduled by that render, threw a
+    // ReferenceError and blanked the page for a Chinese learner with a glossless favourite
+    if (!words.length || (lang === "zh" && !zhMapSettled)) return;
     const byEn = new Map(words.map(w => [w.en, w]));
     // a topic favourite whose text is no longer the word its key names (a re-glossed first
     // sense): every favourite starred since glosses exist carries them, so the glossless test
@@ -1267,7 +1271,8 @@ export default function Home() {
       setFavorites(list => { const next = list.map(upgrade); return next.some((f, i) => f !== list[i]) ? next : list; });
     })();
     return () => { alive = false; };
-  }, [favorites, words, dicts, source]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [favorites, words, dicts, source, lang, zhMapSettled]);
 
   // Until 2026-10 a topic word was keyed "<lang>:<en>", the shape a dictionary entry uses,
   // so practising the Indonesian "udara" wrote its ladder, its star and its 错词本 entry
