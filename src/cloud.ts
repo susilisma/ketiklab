@@ -230,7 +230,10 @@ export async function saveName(userId: string, name: string) {
 export async function loadProgress(userId: string): Promise<{ ok: true; data: ProgressBlob | null } | { ok: false; error: string }> {
   const { data, error } = await supabase
     .from("progress").select("data").eq("user_id", userId).maybeSingle();
-  if (error) return { ok: false, error: error.message };
+  // a gateway's HTML page arrives whole in error.message (as on a write, saveProgress): the
+  // panel's keyword matching read "offline for maintenance" or "JWT" out of it and told the
+  // learner to check the connection or sign in again; named for what it is instead
+  if (error) return { ok: false, error: /<[a-z!/]/i.test(error.message) ? "html body" : error.message };
   const row: unknown = data;
   const blob: unknown = typeof row === "object" && row !== null ? (row as { data?: unknown }).data : null;
   const filled = typeof blob === "object" && blob !== null && !Array.isArray(blob) && Object.keys(blob).length > 0;
