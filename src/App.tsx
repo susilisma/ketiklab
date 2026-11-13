@@ -1688,20 +1688,25 @@ export default function Home() {
   // length): 票 alone among 19 two-character words was the one short option on its card, and
   // its length gave it away (43 of the 2342 cards over the five category filters). A length
   // with fewer than four words is filled from the rung's list first, then from all topic words
+  // and never a word read exactly like the answer: 权利 sat beside 权力 (both quán lì, chapter 3 of
+  // 学习) on a sixth of that card's mounts, and with no meaning language chosen the card showed
+  // only "quán lì" and both — a pick between them was a coin toss that buzzed and wrote a lapse
   const zhPool = (() => {
-    const pool = zhOwn.slice(), have = new Set(pool), count = new Map<number, number>();
+    const tone = zhToned(zhMap, targetWord);
+    const homophone = (z: string) => !!tone && z !== targetWord && zhToned(zhMap, z) === tone;
+    const pool = zhOwn.filter(z => !homophone(z)), have = new Set(zhOwn), count = new Map<number, number>();
     const lenOf = (z: string) => Array.from(z).length;
     for (const z of pool) count.set(lenOf(z), (count.get(lenOf(z)) || 0) + 1);
     const short = new Set(Array.from(count).filter(([, n]) => n < 4).map(([len]) => len));
     for (const w of short.size ? ladderWords.concat(words) : []) {
       if (!short.size) break;
       const z = wordValue(w, "zh"), n = lenOf(z);
-      if (!z || have.has(z) || !short.has(n)) continue;
+      if (!z || have.has(z) || !short.has(n) || homophone(z)) continue;
       pool.push(z); have.add(z); count.set(n, (count.get(n) || 0) + 1);
       if ((count.get(n) || 0) >= 4) short.delete(n);
     }
     // a list of one or two words whose length no topic word shares still gets its four options
-    return pool.length >= 4 ? pool : pool.concat(ladderWords.concat(words).map(w => wordValue(w, "zh")).filter(z => z && !have.has(z)).slice(0, 40));
+    return pool.length >= 4 ? pool : pool.concat(ladderWords.concat(words).map(w => wordValue(w, "zh")).filter(z => z && !have.has(z) && !homophone(z)).slice(0, 40));
   })();
   // a favourite from before rows carried a voice (an old cloud blob, a hand-edited backup) has none:
   // speak() read voiceLang.toLowerCase() on it, and 打拼音 speaks before it passes, so the last
