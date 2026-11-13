@@ -1150,6 +1150,12 @@ export default function Home() {
       const pos = chapterFinished ? 0 : nextPos.current ?? index % 20;
       const cur = m[sourceKey] as { ch?: unknown; pos?: unknown } | undefined;
       if (cur && typeof cur === "object" && cur.ch === chapter && cur.pos === pos) return;
+      // another tab (or the installed app beside a browser tab) moved this list to another chapter:
+      // neither key is in the storage listener, and this tab's write, under its own chapter, left
+      // the stored chapter and position disagreeing — the next visit opened the other tab's chapter
+      // at word 1, both places lost. The chapter saved last wins its word too; this tab's word stays
+      // on its card until it writes a chapter of its own (every in-tab chapter change writes first)
+      if (savedChapter(sourceKey) !== chapter) return;
       m[sourceKey] = { ch: chapter, pos };
       localStorage.setItem("ketiklab-position", JSON.stringify(m));
     } catch { /* ignore */ }
