@@ -609,7 +609,12 @@ async function autoPush() {
   const local = collectLocal();
   if (canon(local) === lastPushed) return;
   pushing = true;
-  try { await pushProgress(uid, local); } catch { /* the next tick retries */ } finally { pushing = false; }
+  // bounded: one request that never answered (a tab left in the background on a dropped
+  // connection) kept `pushing` set for the life of the page, and every later change stayed on
+  // the device in silence. A late answer still lands, as a sync's does; only the flag is freed
+  let t = 0;
+  const wait = new Promise<never>((_, reject) => { t = window.setTimeout(() => reject(new Error("sync timed out")), 15000); });
+  try { await Promise.race([pushProgress(uid, local), wait]); } catch { /* the next tick retries */ } finally { window.clearTimeout(t); pushing = false; }
 }
 setInterval(autoPush, 60000);
 // Another tab re-linked this device (signed out and in as someone else, "use the cloud
