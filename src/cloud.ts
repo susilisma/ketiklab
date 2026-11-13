@@ -494,7 +494,7 @@ let lastPushed = "";
 /** Read the cloud copy, merge this device into it, write it back if that changed
  *  anything. Reports whether the cloud holds progress this device does not.
  *  Throws when either request fails; nothing is written after a failed read. */
-export async function pushProgress(userId: string, own?: ProgressBlob, wait = true) {
+export async function pushProgress(userId: string, own?: ProgressBlob, wait = true, wanted: () => boolean = () => true) {
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
   const cloud = await normalized(r.data ?? {}, wait);
@@ -505,6 +505,9 @@ export async function pushProgress(userId: string, own?: ProgressBlob, wait = tr
   // written over the row as read, not in its place: the row is one upsert, and a key this build
   // does not know (a setting a newer build added, pushed by the learner's other device) used to
   // be dropped from the account by the next push of a device still running the cached old build
+  // a push superseded while its read hung (autoPush gave up on it and pushed again) writes
+  // nothing: its row and its copy of the device are both older than what landed since
+  if (!wanted()) return { merged, cloudHasMore: false };
   if (!sameBlob(merged, cloud) || !sameBlob(cloud, r.data ?? {})) await saveProgress(userId, { ...r.data, ...merged });
   lastPushed = canon(local);
   return { merged, cloudHasMore: !coversProgress(local, cloud) };
@@ -602,7 +605,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
 // Nothing in App pushes, so the cloud copy is refreshed from here: once a minute
 // when something changed, and when the tab goes to the background. Only for a
 // device linked to the signed-in account, so a stranger's data is never uploaded.
-let pushing = false;
+let pushing = false, pushGen = 0;
 async function autoPush() {
   const uid = session?.user.id;
   if (!uid || pushing || linkedUid() !== uid) return;
@@ -612,9 +615,12 @@ async function autoPush() {
   // bounded: one request that never answered (a tab left in the background on a dropped
   // connection) kept `pushing` set for the life of the page, and every later change stayed on
   // the device in silence. A late answer still lands, as a sync's does; only the flag is freed
+  // ...and a late answer lands only while no later push has started: the first read coming back
+  // after a second push had landed wrote its stale merge over the newer row for a tick
+  const gen = ++pushGen;
   let t = 0;
   const wait = new Promise<never>((_, reject) => { t = window.setTimeout(() => reject(new Error("sync timed out")), 15000); });
-  try { await Promise.race([pushProgress(uid, local), wait]); } catch { /* the next tick retries */ } finally { window.clearTimeout(t); pushing = false; }
+  try { await Promise.race([pushProgress(uid, local, true, () => gen === pushGen), wait]); } catch { /* the next tick retries */ } finally { window.clearTimeout(t); pushing = false; }
 }
 setInterval(autoPush, 60000);
 // Another tab re-linked this device (signed out and in as someone else, "use the cloud
