@@ -310,7 +310,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
     onResume();
     setPicked(o);
     if (o === word) { onSpeak(); onPass(); }
-    else { errorBeep(); onMiss(); setTimeout(() => setPicked(null), 420); }
+    // the wrong pick's own clear only: a right pick inside the 420 ms lost its green and the
+    // guard above reopened, so a further click on the passed card buzzed and flashed red
+    else { errorBeep(); onMiss(); setTimeout(() => setPicked(p => (p === o ? null : p)), 420); }
   };
   const pickRef = useRef(pick); pickRef.current = pick;
   // 1–4 pick the option in that position, as an IME candidate row does: a keyboard user had to
