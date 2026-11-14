@@ -228,12 +228,17 @@ export async function saveName(userId: string, name: string) {
 /** Whole-progress blob; one row per account. "No row yet" and "could not ask" are
  *  kept apart: the first lets a device upload over the account, the second must not. */
 export async function loadProgress(userId: string): Promise<{ ok: true; data: ProgressBlob | null } | { ok: false; error: string }> {
-  const { data, error } = await supabase
-    .from("progress").select("data").eq("user_id", userId).maybeSingle();
+  const { data, error, count } = await supabase
+    .from("progress").select("data", { count: "exact" }).eq("user_id", userId).maybeSingle();
   // a gateway's HTML page arrives whole in error.message (as on a write, saveProgress): the
   // panel's keyword matching read "offline for maintenance" or "JWT" out of it and told the
   // learner to check the connection or sign in again; named for what it is instead
   if (error) return { ok: false, error: /<[a-z!/]/i.test(error.message) ? "html body" : error.message };
+  // a 200 with an empty body or a bare `null` (a gateway's or a captive portal's, never
+  // PostgREST's) parses to no row at all, and "no row yet" let linkThisDevice upload this
+  // device's copy over the account's row. PostgREST's own answer carries Content-Range, so
+  // the row count is 0 or 1; an answer without one did not come from the table
+  if (count !== 0 && count !== 1) return { ok: false, error: "empty body" };
   const row: unknown = data;
   const blob: unknown = typeof row === "object" && row !== null ? (row as { data?: unknown }).data : null;
   const filled = typeof blob === "object" && blob !== null && !Array.isArray(blob) && Object.keys(blob).length > 0;
