@@ -396,7 +396,15 @@ const strings = (v: unknown): string[] => (Array.isArray(v) ? v : []).filter((s)
 // both into the cloud row and keep them there, so canonical(cloud) always held progress the
 // device "lacked" and 云端有更多 never cleared, 合并到本机 or not. The same rule is applied here.
 function isLang(x: unknown): x is "zh" | "id" | "en" { return x === "zh" || x === "id" || x === "en"; }
-const validKey = (k: string) => k !== "" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
+// ...and never longer than a key can be (lang:trio:headword, under 80 chars in every list): a
+// hand-made row carrying a 300 000-char key passed the prefix test, and the device's write of
+// the merged list exceeded the storage quota, which applyLocal swallows — "merged", then
+// 云端有更多 on every load, for good. The bounds below (KEY_CHARS, DAY_KEY, DAYS_MAX, FAV_BYTES)
+// are the device's too (validMistakeKey, cleanDayCounts and cleanFavorites in App.tsx), so the
+// two sides keep agreeing on what the row holds.
+export const KEY_CHARS = 200, DAYS_MAX = 4000, FAV_BYTES = 1_000_000;
+export const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/;
+const validKey = (k: string) => k !== "" && k.length <= KEY_CHARS && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 const mistakes = (v: unknown): string[] => strings(v).filter(validKey);
 /** The two lists in turns, each turn taking its side's next key not placed yet: a key the
  *  other side already placed is skipped rather than re-emitted at this side's rank, so
@@ -413,6 +421,13 @@ function turns(a: string[], b: string[]): string[] {
   return out;
 }
 
+/** The longest prefix of `rows` whose JSON stays within `max` chars: the side on top comes first
+ *  in the merge, so what is cut is the other side's oldest stars, never this device's own. */
+export function withinBytes<T>(rows: T[], max: number): T[] {
+  let used = 1; // "[" — then each row plus its "," or the closing "]"
+  for (let i = 0; i < rows.length; i++) { used += JSON.stringify(rows[i]).length + 1; if (used > max) return rows.slice(0, i); }
+  return rows;
+}
 /** What makes a favourite the same star on every device: its language and key, not its gloss text. */
 const favId = (f: unknown) => `${(f as { lang?: unknown })?.lang}:${(f as { key?: unknown })?.key}`;
 
@@ -431,8 +446,10 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
         mistakes: turns(mistakes(y.mistakes), mistakes(x.mistakes)).slice(0, 30),
       });
     } else if (k === "ketiklab-days") {
+      // a day is a YYYY-MM-DD key (todayStr in App.tsx), and the newest DAYS_MAX of them: a row
+      // holding 200 000 made-up keys was within every field bound and over the storage quota
       const x = record(a), y = record(b), m: Record<string, number> = {};
-      for (const d of Object.keys({ ...x, ...y }).sort()) m[d] = Math.max(count(x[d]), count(y[d]));
+      for (const d of Object.keys({ ...x, ...y }).filter(d => DAY_KEY.test(d)).sort().slice(-DAYS_MAX)) m[d] = Math.max(count(x[d]), count(y[d]));
       out[k] = JSON.stringify(m);
     } else if (k === "ketiklab-chapters") {
       // a position in a list, not a tally: per list the side on top wins (this device on every
@@ -455,10 +472,13 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // write exceed the storage quota, which it swallows, so the device noted "merged" and showed
       // 云端有更多 again on every load, for good
       const text = (v: unknown) => v === undefined || typeof v === "string" && v.length <= 2000;
-      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && typeof (f as { text?: unknown }).text === "string" && (f as { text: string }).text.trim() !== "" && (f as { text: string }).text.length <= 200 && ["dict", "dictId", "sub", "meaning", "example", "def", "voice"].every(k => text((f as Record<string, unknown>)[k])) && (() => { const g = (f as { glosses?: unknown }).glosses; return g === undefined || !!g && typeof g === "object" && Object.values(g).every(v => typeof v === "string" && v.length <= 2000); })();
+      // ...and its key as bounded as a 错词本 key, its glosses keyed by our three languages alone
+      // (so three at most), and the list as a whole under FAV_BYTES: 500 stars each within its
+      // field bounds still made a 7 MB value, over the quota the same way
+      const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && (f as { key: string }).key.length <= KEY_CHARS && typeof (f as { text?: unknown }).text === "string" && (f as { text: string }).text.trim() !== "" && (f as { text: string }).text.length <= 200 && ["dict", "dictId", "sub", "meaning", "example", "def", "voice"].every(k => text((f as Record<string, unknown>)[k])) && (() => { const g = (f as { glosses?: unknown }).glosses; return g === undefined || !!g && typeof g === "object" && Object.entries(g).every(([l, v]) => isLang(l) && typeof v === "string" && v.length <= 2000); })();
       const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
-      out[k] = JSON.stringify(turns(x, y).slice(0, 500).map(id => rows.get(id)));
+      out[k] = JSON.stringify(withinBytes(turns(x, y).slice(0, 500).map(id => rows.get(id)), FAV_BYTES));
     } else {
       out[k] = typeof b === "string" ? b : a;
     }

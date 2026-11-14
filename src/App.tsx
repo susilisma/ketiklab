@@ -3,7 +3,7 @@ import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, Di
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats, type ReviewRecord } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
-import { onAccountWanted, setProgressNormalizer, storable, SYNCED_KEYS, type ProgressBlob } from "./cloud";
+import { onAccountWanted, setProgressNormalizer, storable, withinBytes, SYNCED_KEYS, KEY_CHARS, DAYS_MAX, DAY_KEY, FAV_BYTES, type ProgressBlob } from "./cloud";
 import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 // first Chinese senses that were re-glossed since topic words were keyed by the hanzi typed
 // (old sense → English headword): a hanzi-era row like zh:直走 names no current word, and
@@ -135,7 +135,7 @@ const trioEn = (key: string) => key.startsWith(TRIO) ? key.slice(TRIO.length) : 
 let migratingKeys = false;
 // a 错词本 key is "<key>" or "<lang>:<key>": one with another prefix (a hand-edited backup)
 // opened the word as wordValue(w, "fr"), blanked the page and saved learn "fr"
-const validMistakeKey = (k: unknown): k is string => typeof k === "string" && k !== "" && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
+const validMistakeKey = (k: unknown): k is string => typeof k === "string" && k !== "" && k.length <= KEY_CHARS && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 // 错词本 keys 开始复习 retired because no dictionary resolves them: device-local, read by cloud.ts
 // so a push drops them from the cloud copy too instead of bringing them back; a new miss lifts one
 const RETIRED_KEY = "ketiklab-retired";
@@ -333,12 +333,14 @@ const foldReading = (s: string) => foldTypography(s).normalize("NFD").replace(/[
 // the same favourite twice in a row (a hand-edited backup) does not remount the 打拼音 rung, whose
 // box then stayed full and dead to every key but ENTER
 function cleanFavorites(f: unknown): PracticeItem[] {
-  // and no body field longer than a card can hold (cloud.ts merges with the same bound)
+  // and no body field longer than a card can hold, no key longer than KEY_CHARS, glosses keyed by our
+  // languages alone, and the list as a whole within FAV_BYTES (cloud.ts merges with the same bounds,
+  // measured on the rows as stored, before the defaults below are filled in)
   const str = (v: unknown) => v === undefined || typeof v === "string" && v.length <= 2000;
   // one row per lang:key through a Set, not findIndex over the whole list: 50 000 rows (a hand-made backup or
   // a cloud row) took 40 s on every load; and never more rows than stars can make (toggleFav caps at 500)
   const seen = new Set<string>();
-  return Array.isArray(f) ? f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.values(p.glosses).every(v => typeof v === "string" && v.length <= 2000))); }).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || LANGUAGE_META[p.lang].voice })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
+  return Array.isArray(f) ? withinBytes(f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && p.key.length <= KEY_CHARS && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.entries(p.glosses).every(([l, v]) => isLang(l) && typeof v === "string" && v.length <= 2000))); }), FAV_BYTES).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || LANGUAGE_META[p.lang].voice })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
 }
 // a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
 // page printed and the persisting effect wrote back as null, so the next load read 0
@@ -349,7 +351,8 @@ function cleanFavorites(f: unknown): PracticeItem[] {
 const finiteCount = (v: unknown) => { const n = Number(v); return Number.isFinite(n) && n > 0 ? n : 0; };
 function cleanDayCounts(dc: unknown): Record<string, number> {
   const clean: Record<string, number> = {};
-  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const [k, n] of Object.entries(dc)) if (typeof n === "number" && Number.isFinite(n)) clean[k] = n > 0 ? n : 0;
+  // a day is a YYYY-MM-DD key (todayStr), the newest DAYS_MAX of them — the bound the cloud merge applies
+  if (dc && typeof dc === "object" && !Array.isArray(dc)) for (const k of Object.keys(dc).filter(k => DAY_KEY.test(k)).sort().slice(-DAYS_MAX)) { const n = dc[k as keyof typeof dc]; if (typeof n === "number" && Number.isFinite(n)) clean[k] = n > 0 ? n : 0; }
   return clean;
 }
 const trioChapterKey = (cat: WordFilter, lang: Lang, step: ZhStep) =>
