@@ -402,7 +402,7 @@ function isLang(x: unknown): x is "zh" | "id" | "en" { return x === "zh" || x ==
 // 云端有更多 on every load, for good. The bounds below (KEY_CHARS, DAY_KEY, DAYS_MAX, FAV_BYTES)
 // are the device's too (validMistakeKey, cleanDayCounts and cleanFavorites in App.tsx), so the
 // two sides keep agreeing on what the row holds.
-export const KEY_CHARS = 200, DAYS_MAX = 4000, FAV_BYTES = 1_000_000;
+export const KEY_CHARS = 200, DAYS_MAX = 4000, FAV_BYTES = 1_000_000, LISTS_MAX = 500, SETTING_CHARS = 2000;
 export const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/;
 const validKey = (k: string) => k !== "" && k.length <= KEY_CHARS && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 const mistakes = (v: unknown): string[] => strings(v).filter(validKey);
@@ -455,8 +455,12 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       // a position in a list, not a tally: per list the side on top wins (this device on every
       // push, so a list restarted from chapter 1 stays there; max() put the old chapter back on
       // every merge), and a list only one side has opened keeps its place
+      // ...for at most LISTS_MAX lists named within KEY_CHARS, the side on top's own lists first
+      // (a few dozen exist): 150 000 made-up lists were a 6.8 MB value, over the storage quota
+      // like the favourites above
       const x = record(a), y = record(b), m: Record<string, number> = {};
-      for (const d of Object.keys({ ...x, ...y }).sort()) m[d] = count(typeof y[d] === "number" ? y[d] : x[d]);
+      const named = (r: Record<string, unknown>) => Object.keys(r).filter(d => d.length <= KEY_CHARS).sort();
+      for (const d of turns(named(y), named(x)).slice(0, LISTS_MAX).sort()) m[d] = count(typeof y[d] === "number" ? y[d] : x[d]);
       out[k] = JSON.stringify(m);
     } else if (k === "ketiklab-fav") {
       // in turns, like the 错词本: appending one list to the other let a device at the 500 cap
@@ -480,7 +484,10 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       const x = ids(b), y = ids(a);
       out[k] = JSON.stringify(withinBytes(turns(x, y).slice(0, 500).map(id => rows.get(id)), FAV_BYTES));
     } else {
-      out[k] = typeof b === "string" ? b : a;
+      // a setting is a short string (a mode name, a language pair, a 24-char name): one longer
+      // than SETTING_CHARS is no setting of ours and is left out rather than written and pushed
+      const setting = (v: unknown): v is string => typeof v === "string" && v.length <= SETTING_CHARS;
+      if (setting(b)) out[k] = b; else if (setting(a)) out[k] = a;
     }
   }
   return out;
