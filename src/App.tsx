@@ -561,6 +561,12 @@ export default function Home() {
   // where the session clock stood when the chapter began: its difference is the time
   // shown on the finish card, so pauses and time in other views do not count
   const chapterStart = useRef(0);
+  // the run a "comes back tomorrow" count belongs to: recordReview's row lands after the
+  // IndexedDB commit, and a learner who pressed 下一章 (or 练习错词, or left the review) in that
+  // gap got the previous run's +1 on the new card. Every reset of the count moves the run on,
+  // and a row from an earlier run is not counted.
+  const tomorrowRun = useRef(0);
+  const resetTomorrow = (n = 0) => { tomorrowRun.current++; setChTomorrow(n); };
   const secondsRef = useRef(0);
   const pendingIndex = useRef<number | null>(null);
   // the chapter that goes with pendingIndex: gotoDictWord / gotoTrioWord / practiceWord write it to
@@ -643,7 +649,7 @@ export default function Home() {
   // every path that starts a list from its first word: the chapter's tally, its finish
   // card and its clock start over too — choosing the list that is already open used to
   // reset the index alone, so the old finish card stayed up or the tally ran to 25 / 20
-  const resetChapterRun = () => { finishedBeforeReview.current = null; setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
+  const resetChapterRun = () => { finishedBeforeReview.current = null; setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); setWrongCountWord(0); chapterStart.current = secondsRef.current; };
   // choosing a list anew is a fresh run: a slip remembered on its first word (whose lapse is
   // already written) must not grade the new run's perfect answer as missed. Not for a
   // language change, which also resets the chapter but keeps the slip by design.
@@ -977,8 +983,8 @@ export default function Home() {
   };
   // only a row this answer scheduled: a word answered before it was due keeps the date it had
   // (srs.ts), and a chapter retried straight after a clean run counted all 20 a second time
-  const noteScheduled = (r: { dueAt: number; kept?: boolean } | null) => {
-    if (!r || r.kept) return;
+  const noteScheduled = (r: { dueAt: number; kept?: boolean } | null, run: number) => {
+    if (!r || r.kept || run !== tomorrowRun.current) return;
     const inHours = (r.dueAt - Date.now()) / 3600000;
     if (inHours > 12 && inHours <= 36) setChTomorrow(n => n + 1);
   };
@@ -1132,7 +1138,7 @@ export default function Home() {
     pendingChapter.current = null;
     setChapter(ch);
     finishedBeforeReview.current = null;
-    setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); setWrongCountWord(0);
+    setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     skipPositionWrite.current = true;
     if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; pendingChapter.current = null; }
@@ -2007,7 +2013,7 @@ export default function Home() {
     // recall and schedules none.
     const recognizeOnly = practiceLang === "zh" && rung === "read";
     if (!cleanRun && !lapseRecorded.current && !slipped) { lapseRecorded.current = true; recordReview(wordId, false, undefined, legacyId).then(refreshSrs).catch(() => {}); }
-    else if (lastRep && cleanRun && !recognizeOnly) recordReview(wordId, true, undefined, legacyId).then(r => { noteScheduled(r); refreshSrs(); }).catch(() => {});
+    else if (lastRep && cleanRun && !recognizeOnly) { const run = tomorrowRun.current; recordReview(wordId, true, undefined, legacyId).then(r => { noteScheduled(r, run); refreshSrs(); }).catch(() => {}); }
     if (lastRep) { setAttempts(n => n + 1); if (cleanRun) setCorrect(n => n + 1); setSessionWords(n => n + 1); bumpToday(); }
     // the position moves on now, as the timer will (the chapter's last word ends it: word 1, as
     // the finish card's write says); a review keeps no position, its write effect sits it out
@@ -2203,7 +2209,7 @@ export default function Home() {
       localStorage.setItem("ketiklab-chapters", JSON.stringify(m));
     } catch { /* ignore */ }
     finishedBeforeReview.current = null;
-    setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); setWrongCountWord(0);
+    setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     // a new run of the chapter, like choosing the list anew: a slip remembered on its first
     // word (lapse already written) must not grade the run's perfect answer as missed — when
@@ -2229,7 +2235,7 @@ export default function Home() {
       // this session holds the chapter's missed words, not the due list: the earlier review's
       // total would otherwise be printed under it as "复习模式 · 2 / 5"
       setReviewRefs(refs); setReviewKeys(refs.map(r => r.key)); setReviewDueTotal(0);
-      setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
+      setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); chapterStart.current = secondsRef.current;
       setIndex(0); setTyped(""); resetWordRun(); autoSpokenWord.current = null;
       setRunning(true);
       setTimeout(() => input.current?.focus(), 30);
@@ -2530,7 +2536,7 @@ export default function Home() {
     const ch = Math.floor(gi / 20);
     writeChapter(sourceKey, ch); setChapter(ch);
     finishedBeforeReview.current = null;
-    setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); setWrongCountWord(0);
+    setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     pendingIndex.current = null; pendingChapter.current = null;
     // the word asked for may be the one just slipped on (错词本 练习 →, the library card): a
@@ -2616,7 +2622,7 @@ export default function Home() {
       if (!refs.length || req !== sourceReq.current) return;
       keepFinishCard();
       setReviewRefs(refs); setReviewKeys(refs.map(r => r.key)); setReviewDueTotal(0);
-      setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
+      setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); chapterStart.current = secondsRef.current;
       setIndex(0); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
       setView("learn"); setRunning(true);
       setTimeout(() => input.current?.focus(), 40);
@@ -2718,7 +2724,7 @@ export default function Home() {
     setReviewRefs(refs);
     // the keys the resolved items keep: two keys for one word were counted as "1 / 2" otherwise
     setReviewKeys(refs.map(r => r.key));
-    setChapterFinished(false); setChDone(0); setChTomorrow(0); setChWrongKeys([]); chapterStart.current = secondsRef.current;
+    setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); chapterStart.current = secondsRef.current;
     // the slip remembered for the word at index 0 belongs to the list it happened in: kept, a
     // review that opens on the same word graded its perfect answer as a miss (setIndex(0)
     // while index is 0 does not run the [index] reset)
@@ -2754,7 +2760,7 @@ export default function Home() {
     const n = activeItems.slice(ch * 20, ch * 20 + 20).length;
     if (n && pos >= n) pos = n - 1;
     setChapter(ch);
-    setChapterFinished(restore); setChDone(restore ? kept.done : 0); setChWrongKeys(restore ? kept.wrong : []); setChTomorrow(restore ? kept.tomorrow : 0);
+    setChapterFinished(restore); setChDone(restore ? kept.done : 0); setChWrongKeys(restore ? kept.wrong : []); resetTomorrow(restore ? kept.tomorrow : 0);
     // the card has no word to type, so the clock stops as it does when a chapter ends
     if (restore) { setFinishedChapter(kept.chapter); setChElapsed(kept.elapsed); setRunning(false); }
     chapterStart.current = secondsRef.current;
