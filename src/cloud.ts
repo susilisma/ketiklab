@@ -214,8 +214,11 @@ export async function loadProfile(userId: string): Promise<Profile | null | unde
   if (!data) return null;
   // a name that is no string (a row written by hand or by another client) reached
   // profileName.trim() in the App and emptied #root on every visit to the panel
+  // ...and a name is at most the 24 characters the field takes: a row written by another client
+  // put a 100 000-char name in the sidebar and in ketiklab-name (the field's maxLength only
+  // limits typing), and the next push left it out while the device kept showing it
   const row = data as { name?: unknown };
-  return { ...(data as Profile), name: typeof row.name === "string" ? row.name : "" };
+  return { ...(data as Profile), name: typeof row.name === "string" ? row.name.slice(0, NAME_CHARS) : "" };
 }
 
 // The query builders resolve with { error } rather than throwing; the writes here
@@ -403,6 +406,8 @@ function isLang(x: unknown): x is "zh" | "id" | "en" { return x === "zh" || x ==
 // are the device's too (validMistakeKey, cleanDayCounts and cleanFavorites in App.tsx), so the
 // two sides keep agreeing on what the row holds.
 export const KEY_CHARS = 200, DAYS_MAX = 4000, FAV_BYTES = 1_000_000, LISTS_MAX = 500, SETTING_CHARS = 2000;
+/** A profile name: the account field takes 24 characters, and a longer one read from a row is cut there. */
+export const NAME_CHARS = 24;
 export const DAY_KEY = /^\d{4}-\d{2}-\d{2}$/;
 const validKey = (k: string) => k !== "" && k.length <= KEY_CHARS && (k.indexOf(":") < 0 || isLang(k.slice(0, k.indexOf(":"))));
 const mistakes = (v: unknown): string[] => strings(v).filter(validKey);
@@ -574,7 +579,7 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   const r = await loadProgress(userId);
   if (!r.ok) throw new Error("cloud read failed: " + r.error);
   const cloud = await normalized(r.data ?? {});
-  profileName ??= typeof cloud["ketiklab-name"] === "string" ? cloud["ketiklab-name"] : "";
+  profileName ??= typeof cloud["ketiklab-name"] === "string" ? cloud["ketiklab-name"].slice(0, NAME_CHARS) : "";
   // through the same decision as in pushProgress: a device whose own key migration is still
   // fetching a dictionary would otherwise upload the old shape beside the cloud's new one
   const raw = collectLocal();
