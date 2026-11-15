@@ -638,6 +638,9 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
 // when something changed, and when the tab goes to the background. Only for a
 // device linked to the signed-in account, so a stranger's data is never uploaded.
 let pushing = false, pushGen = 0;
+/** A ticket for one push: true while no later push (the panel's or autoPush's) has started, so a push
+ *  whose read came back late neither writes its stale merge nor reports over the newer push. */
+export function pushTicket(): () => boolean { const g = ++pushGen; return () => g === pushGen; }
 async function autoPush() {
   const uid = session?.user.id;
   if (!uid || pushing || linkedUid() !== uid) return;
@@ -649,10 +652,10 @@ async function autoPush() {
   // the device in silence. A late answer still lands, as a sync's does; only the flag is freed
   // ...and a late answer lands only while no later push has started: the first read coming back
   // after a second push had landed wrote its stale merge over the newer row for a tick
-  const gen = ++pushGen;
+  const wanted = pushTicket();
   let t = 0;
   const wait = new Promise<never>((_, reject) => { t = window.setTimeout(() => reject(new Error("sync timed out")), 15000); });
-  try { await Promise.race([pushProgress(uid, local, true, () => gen === pushGen), wait]); } catch { /* the next tick retries */ } finally { window.clearTimeout(t); pushing = false; }
+  try { await Promise.race([pushProgress(uid, local, true, wanted), wait]); } catch { /* the next tick retries */ } finally { window.clearTimeout(t); pushing = false; }
 }
 setInterval(autoPush, 60000);
 // Another tab re-linked this device (signed out and in as someone else, "use the cloud

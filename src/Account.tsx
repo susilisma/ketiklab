@@ -3,7 +3,7 @@ import type { Session } from "@supabase/supabase-js";
 import {
   supabase, currentSession, withUser, signIn, signUp, signOut, resetPassword, updatePassword,
   loadProfile, saveName, pushProgress, linkThisDevice, applyMerged, collectLocal, linkedUid, linkDevice,
-  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, signedInAs, type SyncNote,
+  recoveryPending, finishRecovery, noteAfterReload, takeNote, takeUrlError, sessionTyped, finishPendingRestore, signedInAs, pushTicket, type SyncNote,
 } from "./cloud";
 
 type Lang = "zh" | "id" | "en";
@@ -284,10 +284,12 @@ export function Account({ uiLang, name, onName }: {
           // ...and a late answer that succeeded takes the wait's error down with it: the card kept
           // saying 同步没有响应 after the row had been written, until the next visit
           let late = false;
-          const push = pushProgress(uid);
-          push.then(r => { if (!alive) return; setCloudNewer(r.cloudHasMore); if (late) { setErr(""); setSyncedAt(stamp()); } }).catch(() => { /* the capped await reports it */ });
+          // superseded by a later push (立即同步, autoPush): neither its stale write nor its stale report
+          const wanted = pushTicket();
+          const push = pushProgress(uid, undefined, true, wanted);
+          push.then(r => { if (!alive || !wanted()) return; setCloudNewer(r.cloudHasMore); if (late) { setErr(""); setSyncedAt(stamp()); } }).catch(() => { /* the capped await reports it */ });
           try { await withinSyncWait(push); } catch (e3) { late = true; throw e3; }
-          if (!alive) return;
+          if (!alive || !wanted()) return;
         } else {
           if (alive) { setErr(""); setMsg(syncingText(uiLang)); }
           const done = await withinSyncWait(linkThisDevice(uid, "merge", prof?.name || "", () => alive));
@@ -400,13 +402,15 @@ export function Account({ uiLang, name, onName }: {
       // the push goes on past the 15 s wait and still lands (see the mount push above): a late success on a
       // device linked to this account clears the wait's error, or 同步没有响应 stood over a sync that had landed
       let late = false;
-      const push = pushProgress(uid, blob);
-      push.then(r => { if (late && signedInAs(uid) && linkedUid() === uid) { setErr(""); setCloudNewer(r.cloudHasMore); setSyncedAt(stamp()); } }).catch(() => { /* the capped await reports it */ });
+      const wanted = pushTicket();
+      const push = pushProgress(uid, blob, true, wanted);
+      push.then(r => { if (late && wanted() && signedInAs(uid) && linkedUid() === uid) { setErr(""); setCloudNewer(r.cloudHasMore); setSyncedAt(stamp()); } }).catch(() => { /* the capped await reports it */ });
       const { merged, cloudHasMore } = await withinSyncWait(push).catch((e3: unknown) => { late = true; throw e3; });
       // signed out in another tab while the read was in flight: the cloud already matched, so the
       // push wrote nothing and ended here — and printed 已同步 under the sign-in form (the effect
       // that re-runs on the sign-out had already cleared the card's messages)
-      if (!signedInAs(uid)) { setMsg(""); return; }
+      // ...or superseded by a later push, which wrote and reports instead
+      if (!signedInAs(uid) || !wanted()) { setMsg(""); return; }
       if (own) { onName(own); setProfName(own); }
       else if (unknown) { const n = typeof merged["ketiklab-name"] === "string" ? merged["ketiklab-name"] : ""; onName(n); setProfName(n); }
       else if (name.trim()) await withinSyncWait(saveName(uid, name.trim()));
@@ -425,7 +429,7 @@ export function Account({ uiLang, name, onName }: {
     setErr(""); setMsg(syncingText(uiLang)); setBusy(true);
     try {
       const before = collectLocal();
-      const { merged } = await withinSyncWait(pushProgress(session.user.id, before));
+      const { merged } = await withinSyncWait(pushProgress(session.user.id, before, true, pushTicket()));
       // same as linkThisDevice: a word typed during the push is on this device but not in
       // `merged`, so the merge is redone over what localStorage holds now before it is applied
       applyMerged(merged, before, true); noteAfterReload("merged"); window.location.reload();
