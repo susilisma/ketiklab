@@ -3,7 +3,7 @@ import type { Lang, MeaningLang, Word, WordCategory, ReadingPiece, DictEntry, Di
 import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, resetAll, getAllRecords, restoreRecords, REVIEW_CAP, type SrsStats, type ReviewRecord } from "./srs";
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
-import { onAccountWanted, setProgressNormalizer, storable, withinBytes, SYNCED_KEYS, KEY_CHARS, DAYS_MAX, DAY_KEY, FAV_BYTES, type ProgressBlob } from "./cloud";
+import { onAccountWanted, setProgressNormalizer, storable, withinBytes, starBytes, storedStar, SYNCED_KEYS, KEY_CHARS, DAYS_MAX, DAY_KEY, FAV_BYTES, type ProgressBlob } from "./cloud";
 import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 // first Chinese senses that were re-glossed since topic words were keyed by the hanzi typed
 // (old sense → English headword): a hanzi-era row like zh:直走 names no current word, and
@@ -340,7 +340,7 @@ function cleanFavorites(f: unknown): PracticeItem[] {
   // one row per lang:key through a Set, not findIndex over the whole list: 50 000 rows (a hand-made backup or
   // a cloud row) took 40 s on every load; and never more rows than stars can make (toggleFav caps at 500)
   const seen = new Set<string>();
-  return Array.isArray(f) ? withinBytes(f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && p.key.length <= KEY_CHARS && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.entries(p.glosses).every(([l, v]) => isLang(l) && typeof v === "string" && v.length <= 2000))); }), FAV_BYTES).map((p: PracticeItem) => ({ ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || LANGUAGE_META[p.lang].voice })).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
+  return Array.isArray(f) ? withinBytes(f.filter((x: unknown) => { const p = x as PracticeItem; return !!x && typeof x === "object" && typeof p.key === "string" && p.key.length <= KEY_CHARS && typeof p.text === "string" && p.text.trim() !== "" && p.text.length <= 200 && isLang(p.lang) && str(p.sub) && str(p.meaning) && str(p.example) && str(p.def) && str(p.voice) && str(p.dict) && str(p.dictId) && (p.glosses === undefined || (!!p.glosses && typeof p.glosses === "object" && Object.entries(p.glosses).every(([l, v]) => isLang(l) && typeof v === "string" && v.length <= 2000))); }), FAV_BYTES, starBytes).map(p => storedStar(p as PracticeItem)).filter(p => { const id = `${p.lang}:${p.key}`; if (seen.has(id)) return false; seen.add(id); return true; }).slice(0, 500) : [];
 }
 // a count read from storage: 1e999 in a hand-edited backup parses to Infinity, which the statistics
 // page printed and the persisting effect wrote back as null, so the next load read 0

@@ -423,11 +423,19 @@ function turns(a: string[], b: string[]): string[] {
 
 /** The longest prefix of `rows` whose JSON stays within `max` chars: the side on top comes first
  *  in the merge, so what is cut is the other side's oldest stars, never this device's own. */
-export function withinBytes<T>(rows: T[], max: number): T[] {
+export function withinBytes<T>(rows: T[], max: number, size: (r: T) => number = r => JSON.stringify(r).length): T[] {
   let used = 1; // "[" — then each row plus its "," or the closing "]"
-  for (let i = 0; i < rows.length; i++) { used += JSON.stringify(rows[i]).length + 1; if (used > max) return rows.slice(0, i); }
+  for (let i = 0; i < rows.length; i++) { used += size(rows[i]) + 1; if (used > max) return rows.slice(0, i); }
   return rows;
 }
+/** A star as the device stores it (cleanFavorites fills sub, meaning and voice before the list is written
+ *  back): both sides measure FAV_BYTES on this shape, or 500 cloud stars at 997 k chars passed the merge,
+ *  grew to 1 016 k on the device, and the next push cut 9 of them in silence. */
+const VOICE = { zh: "zh-CN", id: "id-ID", en: "en-US" } as const;
+export function storedStar<T extends { lang: "zh" | "id" | "en"; sub?: string; meaning?: string; voice?: string }>(p: T): T & { sub: string; meaning: string; voice: string } {
+  return { ...p, sub: p.sub ?? "", meaning: p.meaning ?? "", voice: p.voice || VOICE[p.lang] };
+}
+export const starBytes = (f: unknown) => JSON.stringify(storedStar(f as { lang: "zh" | "id" | "en" })).length;
 /** What makes a favourite the same star on every device: its language and key, not its gloss text. */
 const favId = (f: unknown) => `${(f as { lang?: unknown })?.lang}:${(f as { key?: unknown })?.key}`;
 
@@ -482,7 +490,7 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
       const star = (f: unknown): f is { lang: string; key: string } => !!f && typeof f === "object" && isLang((f as { lang?: unknown }).lang) && typeof (f as { key?: unknown }).key === "string" && (f as { key: string }).key.length <= KEY_CHARS && typeof (f as { text?: unknown }).text === "string" && (f as { text: string }).text.trim() !== "" && (f as { text: string }).text.length <= 200 && ["dict", "dictId", "sub", "meaning", "example", "def", "voice"].every(k => text((f as Record<string, unknown>)[k])) && (() => { const g = (f as { glosses?: unknown }).glosses; return g === undefined || !!g && typeof g === "object" && Object.entries(g).every(([l, v]) => isLang(l) && typeof v === "string" && v.length <= 2000); })();
       const ids = (v: unknown) => list(v).filter(star).map(f => { const id = favId(f); if (!rows.has(id)) rows.set(id, f); return id; });
       const x = ids(b), y = ids(a);
-      out[k] = JSON.stringify(withinBytes(turns(x, y).slice(0, 500).map(id => rows.get(id)), FAV_BYTES));
+      out[k] = JSON.stringify(withinBytes(turns(x, y).slice(0, 500).map(id => rows.get(id)), FAV_BYTES, starBytes));
     } else {
       // a setting is a short string (a mode name, a language pair, a 24-char name): one longer
       // than SETTING_CHARS is no setting of ours and is left out rather than written and pushed
