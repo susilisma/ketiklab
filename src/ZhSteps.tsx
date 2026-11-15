@@ -76,6 +76,19 @@ function keepOffline(url: string, wasUncontrolled: boolean) {
   else sw.addEventListener("controllerchange", again, { once: true });
 }
 
+// a 200 whose body is not the map — a captive portal's or proxy's JSON, an error object, a bare
+// string, an array — used to be stored as it parsed: it has keys, so stepForWord's empty-map
+// guard let it through while zhLevel rated every word 4, and a level-1 word opened from the
+// library climbed the rung to 输入法 and persisted it. Only "toned|plain|level" entries are kept;
+// a body with none is the empty map, which the app treats like a failed fetch.
+const ENTRY_SHAPE = /^[^|]+\|[^|]+\|[1-4]$/;
+function asZhMap(d: unknown): Record<string, string> {
+  if (!d || typeof d !== "object" || Array.isArray(d)) return {};
+  const out: Record<string, string> = {};
+  for (const [k, v] of Object.entries(d as Record<string, unknown>)) if (typeof v === "string" && ENTRY_SHAPE.test(v)) out[k] = v;
+  return out;
+}
+
 export function useZhMap(base: string, needed = true) {
   const [map, setMap] = useState<Record<string, string>>({});
   // the ladder filters by level and every word is level 4 without the map: the caller waits
@@ -88,7 +101,7 @@ export function useZhMap(base: string, needed = true) {
     const wasUncontrolled = uncontrolled();
     fetch(base + "zh-pinyin.json")
       .then(r => (r.ok ? r.json() : {}))
-      .then(d => { if (alive) { setMap(d || {}); setSettled(true); } keepOffline(base + "zh-pinyin.json", wasUncontrolled); })
+      .then(d => { if (alive) { setMap(asZhMap(d)); setSettled(true); } keepOffline(base + "zh-pinyin.json", wasUncontrolled); })
       .catch(() => { if (alive) setSettled(true); });
     return () => { alive = false; };
   }, [base, needed]);
