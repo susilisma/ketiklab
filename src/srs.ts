@@ -97,15 +97,16 @@ export async function recordReview(en: string, correct: boolean, now = Date.now(
     // the same word under its old bare key: inherit its ladder position when this
     // key has none yet, else merge it in as renameRecords would (deleted outright, the bare
     // row's answers were lost), and drop the old row either way so it cannot stay due forever
-    // ...and only for a key whose bare form is what the learner typed: a topic word's bare key was
-    // its typed text, which is the English headword in the English list alone — looked up for
-    // "zh:trio:allusion" too, the Latin row "allusion" (English or Indonesian practice from before
-    // keys carried a language) was absorbed into the Chinese word and deleted, its ladder adopted
-    // and the Chinese learner's first answer marked `kept` (not scheduled, not counted on the card)
+    // ...not for a Chinese topic word: its bare key was the hanzi typed (prefixed "zh:" by the v2
+    // upgrade above and moved by renameRecords), while the English and Indonesian lists keyed the
+    // same word by its English headword — so for "zh:trio:allusion" the Latin row "allusion" can
+    // only be another language's practice, and it used to be absorbed into the Chinese word and
+    // deleted, its ladder adopted and the Chinese learner's first answer marked `kept` (not
+    // scheduled, not counted on the finish card)
     const i = en.indexOf(":");
     if (i >= 0) {
       const rest = en.slice(i + 1);
-      const bare = rest.startsWith("trio:") ? (en.slice(0, i) === "en" ? rest.slice(5) : "") : rest;
+      const bare = rest.startsWith("trio:") ? (en.slice(0, i) === "zh" ? "" : rest.slice(5)) : rest;
       const old = bare ? await db.reviews.get(bare) : undefined;
       if (old) { await db.reviews.delete(old.en); existing = existing ? merged(old, existing, en) : { ...old, en }; }
     }
