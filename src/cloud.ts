@@ -226,7 +226,9 @@ export async function loadProfile(userId: string): Promise<Profile | null | unde
 // The query builders resolve with { error } rather than throwing; the writes here
 // throw instead, so a caller's "saved" message can only follow a clean write.
 export async function saveName(userId: string, name: string) {
-  const { error } = await supabase.from("profiles").upsert({ id: userId, name }, { onConflict: "id" });
+  // cut where it is read (loadProfile) and where it is written: a name an older build stored on this
+  // device beyond the field's 24 characters went to the profiles row whole
+  const { error } = await supabase.from("profiles").upsert({ id: userId, name: name.slice(0, NAME_CHARS) }, { onConflict: "id" });
   if (error) throw Object.assign(new Error(error.message), { code: error.code }); // the code lets Account word it (humanError)
 }
 
@@ -501,8 +503,12 @@ export function mergeProgress(base: ProgressBlob, over: ProgressBlob): ProgressB
     } else {
       // a setting is a short string (a mode name, a language pair, a 24-char name): one longer
       // than SETTING_CHARS is no setting of ours and is left out rather than written and pushed
+      // ...and the name is cut to the field's 24 characters here too, not only when the profiles row is
+      // read: a first link into an account whose row carried a 2000-char ketiklab-name and no profile
+      // showed, stored and pushed those 2000 characters on
       const setting = (v: unknown): v is string => typeof v === "string" && v.length <= SETTING_CHARS;
-      if (setting(b)) out[k] = b; else if (setting(a)) out[k] = a;
+      const v = setting(b) ? b : setting(a) ? a : undefined;
+      if (v !== undefined) out[k] = k === "ketiklab-name" ? v.slice(0, NAME_CHARS) : v;
     }
   }
   return out;
