@@ -1075,6 +1075,10 @@ export default function Home() {
   const ladderNarrowed = source === "trio" && !ladder.broad && ladderWords.length < activeWords.length;
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
   const wordByEn = useMemo(() => new Map(words.map(w => [w.en, w])), [words]);
+  // a topic word's reading when zh-pinyin.json has no entry for it (1247 first senses): the card's
+  // own reading line falls back to the row's pinyin, and the 选汉字 homophone exclusion must read
+  // the same way — 蜜蜂 (no entry) sat beside 密封 under one "mì fēng", a coin toss that buzzed
+  const zhRowPinyin = useMemo(() => { const m = new Map<string, string>(); for (const w of words) { const z = wordValue(w, "zh"); if (z && w.pinyin && !m.has(z)) m.set(z, w.pinyin); } return m; }, [words]);
   // the topic word a key names, or nothing when the key belongs to a dictionary
   const trioOf = (key: string) => { const en = trioEn(key); return en ? wordByEn.get(en) : undefined; };
 
@@ -1710,8 +1714,9 @@ export default function Home() {
   // 学习) on a sixth of that card's mounts, and with no meaning language chosen the card showed
   // only "quán lì" and both — a pick between them was a coin toss that buzzed and wrote a lapse
   const zhPool = (() => {
-    const tone = zhToned(zhMap, targetWord);
-    const homophone = (z: string) => !!tone && z !== targetWord && zhToned(zhMap, z) === tone;
+    const toneOf = (z: string) => zhToned(zhMap, z) || zhRowPinyin.get(z) || "";
+    const tone = toneOf(targetWord) || zhToneText;
+    const homophone = (z: string) => !!tone && z !== targetWord && toneOf(z) === tone;
     const pool = zhOwn.filter(z => !homophone(z)), have = new Set(zhOwn), count = new Map<number, number>();
     const lenOf = (z: string) => Array.from(z).length;
     for (const z of pool) count.set(lenOf(z), (count.get(lenOf(z)) || 0) + 1);
