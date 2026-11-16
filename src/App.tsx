@@ -2225,9 +2225,12 @@ export default function Home() {
   function retryChapter() { setChapterTo(chapterSafe); }
   function nextChapter() { setChapterTo(chapterSafe + 1 >= chapterCount ? 0 : chapterSafe + 1); }
   // the chapter's finish card, when a review is started over it, for exitReview to put back
+  // ...and a review started over a review (练习错词 on the review's own card) keeps what the first
+  // one kept: it used to null it, and 退出复习 landed on word 1 of the chapter with no card
   function keepFinishCard() {
-    finishedBeforeReview.current = chapterFinished && !reviewKeys ? { key: sourceKey, lang, chapter: chapterSafe, done: chDone, wrong: chWrongKeys, elapsed: chElapsed, tomorrow: chTomorrow } : null;
-    if (!reviewKeys) wordBeforeReview.current = { key: sourceKey, id: wordId };
+    if (reviewKeys) return;
+    finishedBeforeReview.current = chapterFinished ? { key: sourceKey, lang, chapter: chapterSafe, done: chDone, wrong: chWrongKeys, elapsed: chElapsed, tomorrow: chTomorrow } : null;
+    wordBeforeReview.current = { key: sourceKey, id: wordId };
   }
   function practiceChapterWrong() {
     if (!chWrongKeys.length) return;
