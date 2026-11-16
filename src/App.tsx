@@ -1132,7 +1132,12 @@ export default function Home() {
   const [judged, setJudged] = useState(0);
   // the list as rendered, for the effect above: activeItems itself is derived further down
   const activeItemsRef = useRef<PracticeItem[]>([]);
-  const clampPosition = useRef(false);
+  // the chapter and position the [sourceKey] effect restored before the list was here, for the
+  // clamp effect below: it used to read `chapter` and `index` from its own render, and when the
+  // list arrived in the same commit (a saved dictionary resolving with setSource) it saw the old
+  // list's chapter 0, found 20 words there and gave up — the stale chapter 999 then stood, the
+  // view clamped to the last chapter but the position written under 999 and words 1–5 never shown
+  const clampAt = useRef<{ ch: number; pos: number } | null>(null);
   // restore chapter per source, and reset the chapter run when switching source/category
   useEffect(() => {
     // a review session is its own list: picking another rung or learning language
@@ -1149,9 +1154,9 @@ export default function Home() {
     else {
       // a list that lost words since the position was saved: its last word, not a wrap-round;
       // a list still on its way (words.json, a dictionary file) is clamped when it arrives
-      const inChapter = activeItemsRef.current.slice(ch * 20, ch * 20 + 20).length;
-      clampPosition.current = !inChapter;
-      setIndex(inChapter ? Math.min(savedPosition(sourceKey, ch), inChapter - 1) : savedPosition(sourceKey, ch));
+      const inChapter = activeItemsRef.current.slice(ch * 20, ch * 20 + 20).length, pos = savedPosition(sourceKey, ch);
+      clampAt.current = inChapter ? null : { ch, pos };
+      setIndex(inChapter ? Math.min(pos, inChapter - 1) : pos);
     }
     setTyped("");
     resetWordRun();
@@ -1193,8 +1198,9 @@ export default function Home() {
   // the restored position meets its list only now (words.json, a dictionary file or the
   // favourites arrived after the [sourceKey] effect): past the chapter's end, its last word
   useEffect(() => {
-    if (!clampPosition.current || reviewKeys) return;
-    const n = activeItemsRef.current.slice(chapter * 20, chapter * 20 + 20).length;
+    const at = clampAt.current;
+    if (!at || reviewKeys) return;
+    const n = activeItemsRef.current.slice(at.ch * 20, at.ch * 20 + 20).length;
     // the list is here but the saved chapter lies past its end (the favourites shrank elsewhere, the
     // chapter key synced and the position key not): the card shows the last chapter, and a position
     // saved for another chapter is word 1 — it used to be applied there, word 4 of 5 with 1–3 unseen.
@@ -1203,11 +1209,11 @@ export default function Home() {
     // landed on word 1 again until a chapter button was pressed
     if (!n) {
       const len = activeItemsRef.current.length;
-      if (len) { clampPosition.current = false; const last = Math.ceil(len / 20) - 1; setIndex(0); setChapter(last); writeChapter(sourceKey, last); }
+      if (len) { clampAt.current = null; const last = Math.ceil(len / 20) - 1; setIndex(0); setChapter(last); writeChapter(sourceKey, last); }
       return;
     }
-    clampPosition.current = false;
-    if (index >= n) setIndex(n - 1);
+    clampAt.current = null;
+    if (at.pos >= n) setIndex(n - 1);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [words, dictWords, favorites, zhMap, chapter]);
 
