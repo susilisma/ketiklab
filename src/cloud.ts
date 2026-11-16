@@ -181,7 +181,9 @@ export async function signOut() {
   // so an outage does not hold the sign-out; offline, the data stays here as before.
   const uid = session?.user.id;
   if (uid && linkedUid() === uid) {
-    try { await Promise.race([pushProgress(uid, undefined, false), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
+    // ...and with a ticket like every other push: a mount read still held when 退出登录 was pressed came
+    // back after this write and wrote its stale merge over it, dropping a star another device had just pushed
+    try { await Promise.race([pushProgress(uid, undefined, false, pushTicket()), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ }
   }
   // offline with a token past its expiry auth-js cannot refresh and returns the error with the session kept (with
   // a live token it drops the session itself before returning the error): 退出登录 was pressed, so the session goes
