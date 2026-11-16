@@ -82,7 +82,7 @@ T = {
     "no_meaning": {"zh": "暂无释义", "id": "tanpa arti", "en": "no meaning"},
     "missing": {"zh": "暂无{label}", "id": "{label} belum tersedia", "en": "No {label} yet"},
     "only": {"zh": "这个词库只有{label}。", "id": "Kamus ini hanya punya {label}.", "en": "This list has {label}s only."},
-    "cols_trio": {"zh": ("印尼语", "中文释义"), "id": ("Mandarin", "Pinyin", "Arti"), "en": ("Chinese", "Pinyin", "English")},
+    "cols_trio": {"zh": ("印尼语", "中文释义"), "id": ("Mandarin", "Pinyin", "Arti Bahasa Indonesia"), "en": ("Chinese", "Pinyin", "English")},
     "cols_read": {"zh": ("篇名", "作者", "年代", "语言", "开头"), "id": ("Judul", "Penulis", "Era", "Bahasa", "Baris pertama"), "en": ("Title", "Author", "Era", "Language", "Opening line")},
     "read_desc": {
         "zh": "{n} 篇朗读，逐句照着输入：{pd} 篇公共领域经典作品，中文、印尼语、英语各有，另有本站原创练习短文。",
