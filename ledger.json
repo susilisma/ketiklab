@@ -1194,8 +1194,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 8 行：报错而非退化 ｜ 11-04 复验仍在：C：404 → 日常高频 82 章不过滤、无提示 ｜ 11-05 复验仍在：C：404 → 1626 词 / 82 章无提示 ｜ 11-06 复验仍在：C zhmap-404.js：404 / 500 / 网络错误 / 坏 JSON → 1625 词 82 章无提示；C 给出 7 行「报错屏」修法，但整应用报错会挡住不需要地图的词典 / 输入法档，横幅更合适——是否改为错误屏由主人定；1d237c5 已消除最常见触发（安装后离线） ｜ 11-09 复验仍在：C zhmap-404 30/30 断言静默退化（404/500/坏 JSON/null/数组）；打拼音 档位时卡片显输入法框（plainPy 空） ｜ 11-11 复验仍在：C 404 / 坏 JSON / 中断 → 1625 词无横幅，打拼音 daily 显输入法框｜11-12 C 复验仍在（主人项第 4） ｜ 11-14 复验仍在：C H3（404 → 1624 行无提示） ｜ 11-15 复验仍在：C：404 / 坏 JSON → 82 章 vs 12 无提示 ｜ 11-17 复验仍在：C",
-   "date": "2026-09-16"
+   "reason": "约 8 行：报错而非退化 ｜ 11-04 复验仍在：C：404 → 日常高频 82 章不过滤、无提示 ｜ 11-05 复验仍在：C：404 → 1626 词 / 82 章无提示 ｜ 11-06 复验仍在：C zhmap-404.js：404 / 500 / 网络错误 / 坏 JSON → 1625 词 82 章无提示；C 给出 7 行「报错屏」修法，但整应用报错会挡住不需要地图的词典 / 输入法档，横幅更合适——是否改为错误屏由主人定；1d237c5 已消除最常见触发（安装后离线） ｜ 11-09 复验仍在：C zhmap-404 30/30 断言静默退化（404/500/坏 JSON/null/数组）；打拼音 档位时卡片显输入法框（plainPy 空） ｜ 11-11 复验仍在：C 404 / 坏 JSON / 中断 → 1625 词无横幅，打拼音 daily 显输入法框｜11-12 C 复验仍在（主人项第 4） ｜ 11-14 复验仍在：C H3（404 → 1624 行无提示） ｜ 11-15 复验仍在：C：404 / 坏 JSON → 82 章 vs 12 无提示 ｜ 11-17 复验仍在：C；11-18 复验仍在，非琐碎 P3，留账",
+   "date": "2026-11-18"
   },
   {
    "fingerprint": "review-single-word-zhsteps-dead",
@@ -6549,8 +6549,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "C 浏览器复现，无误判；与 strict-flash-lockout-drops-fast-keys 同类 ｜ 10-29 C 复验仍在 ｜ 11-04 复验仍在：C ｜ 11-05 复验仍在：C：100 ms 丢、600 ms 过 ｜ 11-06 复验仍在：C：100 ms 再提交丢弃，350 ms 后通过 ｜ 11-09 复验仍在：C 100 ms 丢 350 ms 过 ｜ 11-11 复验仍在：C 100 ms 丢、350 ms 过｜11-12 A 复验仍在 ｜11-13 C 复验仍在 ｜ 11-14 复验仍在：C R4 ｜ 11-15 复验仍在：C：100 ms 再提交丢弃 ｜ 11-17 复验仍在：A/C",
-   "date": "2026-10-31"
+   "reason": "C 浏览器复现，无误判；与 strict-flash-lockout-drops-fast-keys 同类 ｜ 10-29 C 复验仍在 ｜ 11-04 复验仍在：C ｜ 11-05 复验仍在：C：100 ms 丢、600 ms 过 ｜ 11-06 复验仍在：C：100 ms 再提交丢弃，350 ms 后通过 ｜ 11-09 复验仍在：C 100 ms 丢 350 ms 过 ｜ 11-11 复验仍在：C 100 ms 丢、350 ms 过｜11-12 A 复验仍在 ｜11-13 C 复验仍在 ｜ 11-14 复验仍在：C R4 ｜ 11-15 复验仍在：C：100 ms 再提交丢弃 ｜ 11-17 复验仍在：A/C；11-18 复验仍在，非琐碎 P3，留账",
+   "date": "2026-11-18"
   },
   {
    "fingerprint": "reload-in-done-window-replays-counted-word",
@@ -8367,8 +8367,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "D s2b 复现；修法需面板推送期间让 autoPush 让路且不能因挂起读取永久阻塞 autoPush，留账",
-   "date": "2026-11-17"
+   "reason": "D s2b 复现；修法需面板推送期间让 autoPush 让路且不能因挂起读取永久阻塞 autoPush，留账；11-18 复验仍在，非琐碎 P3，留账",
+   "date": "2026-11-18"
   },
   {
    "fingerprint": "push-ticket-per-tab-stale-write",
@@ -8376,8 +8376,8 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "D s5 两构建同；可经 localStorage 共享代计数，彻底修需 version 列（主人项）",
-   "date": "2026-11-17"
+   "reason": "D s5 两构建同；可经 localStorage 共享代计数，彻底修需 version 列（主人项）；11-18 复验仍在，非琐碎 P3，留账",
+   "date": "2026-11-18"
   },
   {
    "fingerprint": "cloud-name-cut-only-on-profile-read",
@@ -8477,6 +8477,114 @@
    "commit": "",
    "reason": "V2 残余；一次性、下次面板访问自愈，留账",
    "date": "2026-11-17"
+  },
+  {
+   "fingerprint": "ci-typecheck-global-diagnostic-reported-as-zero",
+   "title": "ci.yml 类型检查步骤只识别 file(line,col) 形式的诊断：全局诊断（TS6046/TS5058/TS18003）或 tsc 无法启动时打印「0 type error(s)」并绿灯无注解",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "a082b4b",
+   "reason": "E-1；本地复现四种情形（--target es2、-p 不存在、文件错、干净）后改为同时注解 ^error TSnnnn: 行、计数覆盖两种形式、无诊断的非零退出也注解",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "zh-choose-fill-fixed-chapter1-distractors",
+   "title": "选汉字 某长度不足四词时从阶梯首词起补足到四：第 1 章以外每张一/三/四字卡都带同样三个第 1 章词（对不起 ×40、请 ×28、是 ×19），每次挂载、每台设备相同，学习者知道它们从不是答案",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "c282a0f",
+   "reason": "C-1；补足起点按答案哈希、补到 8 个；第 5 章 数 五次挂载 1 组选项 → 4 组；C dist 3/3 仍过",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "signout-push-flag-cleared-by-inflight-autopush",
+   "title": "退出登录 时已在途的 autoPush 在 finally 清掉 3b34aa5 借用的 pushing，随后的标签页隐藏再起一个 autoPush 拿到更新票据，退出推送在写入前返回——最后一分钟仍只留在设备",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "56e2124",
+   "reason": "D-1；退出推送改持自己的 signOutPush 标志，autoPush 同样让路；模拟 5/5 复现（退出后 0 次写入 → 1 次含最后一次错误）；s1–s12 不变",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "progress-upsert-bodyless-200-counted-as-written",
+   "title": "progress upsert 收到无体 200（网关/强制门户，与 dbf8d9d 防的读取同类）被当作写成功：已同步 + 上次同步 + lastPushed 置位，行未变，autoPush 不再重试直到下次变化",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "D-2；修法需在 upsert 上要 count=exact（或 status===201）并在 count≠1 时抛错——沙箱无法对真实 Supabase/PostgREST 核对 POST 的 Content-Range 形状，判断错了会拒绝线上每一次写入（P1 回归）；dbf8d9d 的读取侧同样仍未线上核对，等主人线上确认后一并处理；下次真实数据变化即自愈",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "zh-choose-five-glyph-option-wraps-mid-word",
+   "title": "选汉字 五字词（可行性研究 及同长干扰项）在 117–133 px 选项列里词中折行（可行性研 / 究），768 以上全部视口与 375 皆然",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "c46453f",
+   "reason": "L-1；网格放宽到 min(640px,92%)，含五字选项的卡加 .long 类用 21px/3px 内边距；375/768/1024/1280/1920 选项高 98 → 64（单行），四字卡不变 24px",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "meaning-pick-option-light-popup-in-dark",
+   "title": "深色模式下 .meaning-pick option 仍是浅色弹出列表（#171822/#fff），其它 select 的 option 已有 .dark 规则",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "3e24856",
+   "reason": "F-1；并入 .dark … option 规则",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "zh-ui-mixed-corner-brackets-and-ellipsis",
+   "title": "中文界面 4 处「」与 1 处 “” 混用、1 处 …… 与 13 处 … 混用",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "57adb61",
+   "reason": "F-2；统一为 “” 与 …（GB/T 15834）；印尼语/英语臂未动",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "gloss-changes-2026-11-18",
+   "title": "320 行盲读（种子 20261118）后改 7 行 zh：multimedia 删 多媒体传输、coil 线圈 领首、electrolyte 电解质 领首、galactic 银河系→银河的、tournament 锦标赛 领首（与 championship 共享）、stare 凝视 领首、virtuous 有德行的 领首",
+   "priority": "释义",
+   "status": "fixed",
+   "commit": "e5506d9",
+   "reason": "R1/R2 独立双读 + VG 裁定 7 处 AGREE；5 个退役首义钉入 zh-renames（v4.239→v4.244）；见 reports/gloss-changes-2026-11-18.md",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-11-18",
+   "title": "320 行双读（seed 20261118）未改候选：VG KEEP 19 字段（dependent variable、purposive sampling、laundry detergent zh、spill、owe、small food stall 小食摊、galangal、in fact、current、mild、cookie、meltdown、indicative、blooming、extractor、curio、selected 所选、merely）；OWNER 4（Idulfitri 大写、ulcer tukak 第五次收敛、evening petang/傍晚→malam/晚上 会与 night 全同、foray 商务义 涉足 + id 待定）；SPLIT fry 油炸（两读者同三义、领首不同：炸 vs 煎）",
+   "priority": "释义",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "单读者或主人保留行；见 reports/gloss-changes-2026-11-18.md",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "gloss-detergen-kbbi-spelling",
+   "title": "#492 detergent id deterjen、#885 laundry detergent id deterjen cucian：KBBI 词头为 detergen，deterjen 为 bentuk tidak baku",
+   "priority": "释义",
+   "status": "fixed",
+   "commit": "57042d4",
+   "reason": "R2 标记 + V1 独立确认同一拼写；只改拼写（#885 限定词 cucian vs V1 建议 pakaian 留主人）；idSyllables 以生成器分音器重算；键为英文词头，无迁移",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "reading-list-restored-piece-group-folded",
+   "title": "openReadings 恢复篇目与行但不开组：刷新后阅读列表全部折叠，aria-current 在折叠组内",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "6ecd7a0",
+   "reason": "B-1；恢复时打开 lang:<篇目语言> 组；首访无保存仍不开组；B s9 15/15、V1 readgroup.js 复核",
+   "date": "2026-11-18"
+  },
+  {
+   "fingerprint": "reading-filter-jump-leaves-genre-groups-folded",
+   "title": "changeReadingFilter 切到不含当前篇目的语言时跳到首篇但 setOpenReadingGroup(null)：8 个体裁组全部折叠，当前篇目在折叠组内",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "b7bef57",
+   "reason": "V1-1；跳转时打开 genre:<首篇体裁> 组；V1 readgroup.js 「after filter zh」open [五言绝句] currentInOpen 1",
+   "date": "2026-11-18"
   }
  ]
 }
