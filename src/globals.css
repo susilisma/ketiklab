@@ -79,7 +79,7 @@
 
 .zh-go{border:0;border-radius:999px;background:var(--purple);color:#fff;font-size:15px;font-weight:700;padding:13px 30px;display:flex;align-items:center;gap:11px;box-shadow:var(--shadow)}
 .zh-go i{font-style:normal;font-size:10px;letter-spacing:.1em;border:1px solid rgba(255,255,255,.55);border-radius:6px;padding:3px 8px;opacity:.9}
-.zh-options{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;width:min(560px,92%)}
+.zh-options{display:grid;grid-template-columns:repeat(4,1fr);gap:13px;width:min(640px,92%)}
 .zh-options button{border:2px solid var(--line);background:var(--surface);color:var(--text);border-radius:16px;padding:19px 8px;font-size:27px;font-family:"Noto Serif SC","Songti SC",serif;transition:.15s}
 .zh-options button:hover{border-color:var(--purple);transform:translateY(-2px)}
 .zh-options button.ok{border-color:#22aa72;background:#e6f8f0;color:#12603f}
@@ -219,6 +219,7 @@
 .word-card.zh-compact .zh-tip{margin:0}
 .word-card.zh-compact .zh-options{gap:10px}
 .word-card.zh-compact .zh-options button{padding:14px 8px;font-size:24px}
+.word-card .zh-options.long button{padding:14px 3px;font-size:21px}
 .word-card.zh-compact .zh-pinbox{gap:13px}
 .word-card.zh-compact .ime-input{margin-top:14px}
 .word-card.zh-compact .hint{margin-top:14px}

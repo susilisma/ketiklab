@@ -360,7 +360,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   if (step === "choose") {
     return <div className="zh-step">
       {/* the choices are hanzi whatever the interface language: a screen reader reads them as Chinese */}
-      <div className="zh-options" lang="zh-CN">
+      {/* a five-glyph option (可行性研究 and its same-length distractors) wrapped mid-word in the
+          117 px column a 768 px screen gives four options; the card with one shrinks its glyphs */}
+      <div className={options.some(o => Array.from(o).length >= 5) ? "zh-options long" : "zh-options"} lang="zh-CN">
         {options.map((o, i) => <button
           key={o}
           className={picked === o ? (o === word ? "ok" : "no") : ""}
