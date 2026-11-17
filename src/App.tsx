@@ -2830,8 +2830,10 @@ export default function Home() {
     // the piece in hand stays, with its group open, while the filter still holds it: every
     // filter click used to jump to the first piece and drop the lines already typed
     if (code === "all" || reading.lang === code) { setOpenReadingGroup(code === "all" ? `lang:${reading.lang}` : `genre:${reading.genre}`); return; }
-    setOpenReadingGroup(null);
+    // ...and the first piece of the new language opens with its genre group, as the restore and
+    // the same-language filter do: it was marked current inside a folded group
     const first = readings.find(pc => pc.lang === code);
+    setOpenReadingGroup(first ? `genre:${first.genre}` : null);
     if (first && first.id !== readingId) chooseReading(first.id);
   }
   function chooseReading(id: string) {
