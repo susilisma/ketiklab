@@ -978,7 +978,9 @@ export default function Home() {
     setReadings(r);
     const saved = readSavedReading();
     const kept = saved && r.find(pc => pc.id === saved.id);
-    if (kept) { setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); }
+    // ...with its group open, as a filter click keeps it: the restored piece was marked current
+    // inside a folded group, and the list showed nothing of where the learner had been
+    if (kept) { setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); setOpenReadingGroup(`lang:${kept.lang}`); }
     else if (r.length) setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id);
   };
   // only a row this answer scheduled: a word answered before it was due keeps the date it had
