@@ -185,8 +185,11 @@ export async function signOut() {
     // back after this write and wrote its stale merge over it, dropping a star another device had just pushed.
     // autoPush stands aside meanwhile (the tab hidden right after 退出登录 fires it): taking the newer
     // ticket, it ended this push before its write, and its own write was refused once the session was gone
-    pushing = true;
-    try { await Promise.race([pushProgress(uid, undefined, false, pushTicket()), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ } finally { pushing = false; }
+    // ...under a flag of its own: borrowing autoPush's `pushing`, an autoPush already in flight when
+    // 退出登录 was pressed (the minute tick on a slow read) cleared it in its finally, the tab hide that
+    // followed started another autoPush, and this push returned before its write all the same
+    signOutPush = true;
+    try { await Promise.race([pushProgress(uid, undefined, false, pushTicket()), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ } finally { signOutPush = false; }
   }
   // offline with a token past its expiry auth-js cannot refresh and returns the error with the session kept (with
   // a live token it drops the session itself before returning the error): 退出登录 was pressed, so the session goes
@@ -661,13 +664,13 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
 // Nothing in App pushes, so the cloud copy is refreshed from here: once a minute
 // when something changed, and when the tab goes to the background. Only for a
 // device linked to the signed-in account, so a stranger's data is never uploaded.
-let pushing = false, pushGen = 0;
+let pushing = false, signOutPush = false, pushGen = 0;
 /** A ticket for one push: true while no later push (the panel's or autoPush's) has started, so a push
  *  whose read came back late neither writes its stale merge nor reports over the newer push. */
 export function pushTicket(): () => boolean { const g = ++pushGen; return () => g === pushGen; }
 async function autoPush() {
   const uid = session?.user.id;
-  if (!uid || pushing || linkedUid() !== uid) return;
+  if (!uid || pushing || signOutPush || linkedUid() !== uid) return;
   const local = collectLocal();
   if (canon(local) === lastPushed) return;
   pushing = true;
