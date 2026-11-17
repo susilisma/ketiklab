@@ -547,7 +547,7 @@ export function Account({ uiLang, name, onName }: {
             </>
           : linkOnly
           ? <p className="acct-note">
-              {T("你是通过邮件里的链接登录的。确认这是你的账号后，点「立即同步」把这台设备上的学习记录加入账号。",
+              {T("你是通过邮件里的链接登录的。确认这是你的账号后，点“立即同步”把这台设备上的学习记录加入账号。",
                  "Kamu masuk lewat tautan di email. Kalau ini memang akunmu, tekan “Sinkronkan sekarang” untuk menggabungkan data di perangkat ini ke akun.",
                  "You signed in through an emailed link. If this is your account, press “Sync now” to add this device's progress to it.", uiLang)}
             </p>
