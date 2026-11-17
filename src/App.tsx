@@ -1727,12 +1727,18 @@ export default function Home() {
     const lenOf = (z: string) => Array.from(z).length;
     for (const z of pool) count.set(lenOf(z), (count.get(lenOf(z)) || 0) + 1);
     const short = new Set(Array.from(count).filter(([, n]) => n < 4).map(([len]) => len));
-    for (const w of short.size ? ladderWords.concat(words) : []) {
+    // the walk starts at a slot of the answer's own, not at the rung's first word: filled to
+    // exactly four from the front, every short card past chapter 1 carried the same three
+    // chapter-1 words (对不起 on 40 cards, 请 on 28) on every mount and device, and a learner
+    // soon knew they were never the answer. A short length is filled to eight so the card's
+    // per-mount pick has something to choose from.
+    const from = short.size && ladderWords.length ? Array.from(targetWord).reduce((h, c) => (h * 31 + (c.codePointAt(0) || 0)) >>> 0, 7) % ladderWords.length : 0;
+    for (const w of short.size ? ladderWords.slice(from).concat(ladderWords.slice(0, from), words) : []) {
       if (!short.size) break;
       const z = wordValue(w, "zh"), n = lenOf(z);
       if (!z || have.has(z) || !short.has(n) || homophone(z)) continue;
       pool.push(z); have.add(z); count.set(n, (count.get(n) || 0) + 1);
-      if ((count.get(n) || 0) >= 4) short.delete(n);
+      if ((count.get(n) || 0) >= 8) short.delete(n);
     }
     // a list of one or two words whose length no topic word shares still gets its four options
     return pool.length >= 4 ? pool : pool.concat(ladderWords.concat(words).map(w => wordValue(w, "zh")).filter(z => z && !have.has(z) && !homophone(z)).slice(0, 40));
