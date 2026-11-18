@@ -2456,8 +2456,13 @@ export default function Home() {
       // visit from /en/readings/ opened on the Chinese default while the dialog was up
       if (!readingTyped && readingLine === 0 && reading && reading.lang !== learn) {
         const first = readings.find(pc => pc.lang === learn);
-        // ...with its group open under the current filter, as the filter buttons leave it
-        if (first) { setReadingId(first.id); setOpenReadingGroup(readingLang === "all" ? `lang:${first.lang}` : `genre:${first.genre}`); }
+        // ...with its group open, as the filter buttons leave it; a filter on another language
+        // cannot show the piece at all, so it steps back to all the readings first
+        if (first) {
+          const wide = readingLang === "all" || readingLang !== learn;
+          if (wide && readingLang !== "all") setReadingLang("all");
+          setReadingId(first.id); setOpenReadingGroup(wide ? `lang:${first.lang}` : `genre:${first.genre}`);
+        }
       }
     }
     writeLangs(ui, learn, byLearn);
