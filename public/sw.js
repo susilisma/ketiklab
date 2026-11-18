@@ -69,7 +69,10 @@ self.addEventListener("activate", (e) => {
       if (await mine.match(u)) continue;
       // bounded: the page this worker just took over queues every fetch until activate
       // settles, so a stalled download here must not hold the app for minutes
-      try { const res = await fetch(u, { signal: AbortSignal.timeout(8000) }); if (res.ok) await mine.put(u, res); } catch { /* offline already: the next online open fills it */ }
+      // ...and revalidated at the server like every other data fetch (see the SWR branch below):
+      // the default mode answered from the HTTP cache for ten minutes after a deploy, so a worker
+      // activating in that window could store the old words.json as the fresh copy
+      try { const res = await fetch(u, { cache: "no-cache", signal: AbortSignal.timeout(8000) }); if (res.ok) await mine.put(u, res); } catch { /* offline already: the next online open fills it */ }
     }
     await self.clients.claim();
   })());
