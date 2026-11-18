@@ -47,7 +47,7 @@ jobs:
             | sed -E -e 's/%/%25/g' -e 's/^/::warning title=tsc::/' || true
           n=$(grep -cE '(^|: )error TS[0-9]+:' tsc.log || true)
           if [ "$n" = 0 ]; then
-            echo "::warning title=tsc::tsc exited non-zero without a diagnostic: $(head -c 300 tsc.log | tr '\n' ' ')"
+            echo "::warning title=tsc::tsc exited non-zero without a diagnostic: $(head -c 300 tsc.log | tr '\n' ' ' | sed 's/%/%25/g')"
           fi
           echo "$n type error(s), annotated above"
 
