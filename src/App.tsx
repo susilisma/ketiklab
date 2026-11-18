@@ -981,7 +981,8 @@ export default function Home() {
     // ...with its group open, as a filter click keeps it: the restored piece was marked current
     // inside a folded group, and the list showed nothing of where the learner had been
     if (kept) { setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); setOpenReadingGroup(`lang:${kept.lang}`); }
-    else if (r.length) setReadingId((r.find(pc => pc.lang === langRef.current) ?? r[0]).id);
+    // the default piece too: it was marked current inside a folded group on the first open
+    else if (r.length) { const first = r.find(pc => pc.lang === langRef.current) ?? r[0]; setReadingId(first.id); setOpenReadingGroup(`lang:${first.lang}`); }
   };
   // only a row this answer scheduled: a word answered before it was due keeps the date it had
   // (srs.ts), and a chapter retried straight after a clean run counted all 20 a second time
@@ -2446,7 +2447,8 @@ export default function Home() {
       // visit from /en/readings/ opened on the Chinese default while the dialog was up
       if (!readingTyped && readingLine === 0 && reading && reading.lang !== learn) {
         const first = readings.find(pc => pc.lang === learn);
-        if (first) setReadingId(first.id);
+        // ...with its group open under the current filter, as the filter buttons leave it
+        if (first) { setReadingId(first.id); setOpenReadingGroup(readingLang === "all" ? `lang:${first.lang}` : `genre:${first.genre}`); }
       }
     }
     writeLangs(ui, learn, byLearn);
