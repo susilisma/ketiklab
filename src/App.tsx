@@ -842,7 +842,16 @@ export default function Home() {
           // before the save, and the saved choice is rewritten with it
           else if (linked && linkedLearnPending.current) {
             linkedLearnPending.current = false;
-            try { const cur = readLangs(localStorage.getItem("ketiklab-langs") || ""); if (cur.learn !== d.lang) { setLang(d.lang); writeLangs(cur.ui, d.lang, cur.byLearn); } } catch { /* ignore */ }
+            // ...and the rewritten choice is held to the same rule as a saved one: when the renamed
+            // learning language has no meaning language (en interface learning en), the dialog comes
+            // back for that choice now, as the storage listener does, instead of on the next load
+            try {
+              const cur = readLangs(localStorage.getItem("ketiklab-langs") || "");
+              if (cur.learn !== d.lang) {
+                setLang(d.lang); writeLangs(cur.ui, d.lang, cur.byLearn);
+                if (!cur.byLearn[d.lang] && !defaultDef(cur.ui, d.lang, browserTag())) setShowLangSetup(true);
+              }
+            } catch { /* ignore */ }
           }
           loadDict(d).then((data: DictEntry[]) => {
             if (!mounted.current) return;
