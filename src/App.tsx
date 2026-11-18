@@ -1087,7 +1087,7 @@ export default function Home() {
   const ladderNarrowed = source === "trio" && !ladder.broad && ladderWords.length < activeWords.length;
   const filtered = useMemo(() => activeWords.filter(w => `${w.en} ${w.id} ${w.zh}`.toLowerCase().includes(search.toLowerCase())), [activeWords, search]);
   const wordByEn = useMemo(() => new Map(words.map(w => [w.en, w])), [words]);
-  // a topic word's reading when zh-pinyin.json has no entry for it (1247 first senses): the card's
+  // a topic word's reading when zh-pinyin.json has no entry for it (about 1,200 first senses): the card's
   // own reading line falls back to the row's pinyin, and the 选汉字 homophone exclusion must read
   // the same way — 蜜蜂 (no entry) sat beside 密封 under one "mì fēng", a coin toss that buzzed
   const zhRowPinyin = useMemo(() => { const m = new Map<string, string>(); for (const w of words) { const z = wordValue(w, "zh"); if (z && w.pinyin && !m.has(z)) m.set(z, w.pinyin); } return m; }, [words]);
@@ -1671,7 +1671,7 @@ export default function Home() {
   // 选汉字 hides the hanzi and asks for it: the Chinese example sentence contains that very
   // word, so on that rung it is not shown (the other extra lines carry no hanzi to give away)
   const itemExtras = extrasFor(item).filter(x => !(practiceLang === "zh" && rung === "choose" && x.kind === "example"));
-  // 1286 trio first senses have no zh-pinyin entry; the ladder filters them out but
+  // about 1,200 trio first senses have no zh-pinyin entry; the ladder filters them out but
   // favourites do not, so fall back to the word's own (toned) pinyin
   // the plain pinyin any item is graded against at 打拼音 (empty when it has none): the next
   // word's needs it too, to know whether that word's rung holds its speech
