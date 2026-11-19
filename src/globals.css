@@ -219,7 +219,10 @@
 .word-card.zh-compact .zh-tip{margin:0}
 .word-card.zh-compact .zh-options{gap:10px}
 .word-card.zh-compact .zh-options button{padding:14px 8px;font-size:24px}
-.word-card .zh-options.long button{padding:14px 3px;font-size:21px}
+.word-card .zh-options.long{grid-template-columns:repeat(2,1fr)}
+.word-card .zh-options.long button{padding:14px 3px;font-size:19px}
+.word-card .zh-options.xlong button{font-size:18px}
+@media(max-width:640px){.word-card .zh-options.xlong{grid-template-columns:1fr}}
 .word-card.zh-compact .zh-pinbox{gap:13px}
 .word-card.zh-compact .ime-input{margin-top:14px}
 .word-card.zh-compact .hint{margin-top:14px}
