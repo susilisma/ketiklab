@@ -146,7 +146,10 @@ export const pinyinCarry = { current: "" };
 // Written as they change and read back by the instance that mounts for the same word and rung;
 // a pass or a skip ends them, and the App drops them with the carry when it moves to another word
 const kept = { key: "", typed: "", wrong: 0 };
-export function dropPinyinCarry() { pinyinCarry.current = ""; kept.key = ""; }
+// a SPACE on the 认读 rung that landed inside the done window of the word just passed: at most one,
+// replayed on the next word as the pinyin letters are — it used to be dropped, and the card did not move
+const spaceCarry = { current: false };
+export function dropPinyinCarry() { pinyinCarry.current = ""; kept.key = ""; spaceCarry.current = false; }
 const foldPinyin = (s: string) => s.normalize("NFD").toLowerCase().split(UMLAUT_U).join("v").replace(/[^a-z]/g, "");
 
 // lüe/nüe are the one ü case every IME also takes as lue/nue (no other syllable
@@ -163,7 +166,8 @@ type Props = {
   pool: string[];
   uiLang: UiLang;
   active: boolean;
-  onPass: () => void;
+  // false when the pass was not taken (a SPACE inside the App's 320 ms window on 认读)
+  onPass: () => boolean | void;
   // false when the skip was not taken (a bounced ENTER inside the App's 320 ms window)
   onSkip: () => boolean | void;
   onMiss: () => void;
@@ -276,11 +280,22 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       // a button that was merely clicked still lets SPACE advance
       if (t && t.closest("[role=dialog], input, textarea, select, [contenteditable=true]")) return;
       if (t && t !== document.body && !t.classList.contains("zh-go") && t.closest("button, a, [role=button]") && !byPointer.current) return;
-      e.preventDefault(); onPass();
+      e.preventDefault(); if (onPass() === false) spaceCarry.current = true;
     };
     window.addEventListener("keydown", on);
     return () => { window.removeEventListener("keydown", on); };
   }, [step, word, onPass, active]);
+  // ...and the carried press passes the word that mounts next, the same call it would have made
+  // after the window; a rung or list change drops it with the pinyin carry (dropPinyinCarry), and
+  // so does this component going away (a chapter finished inside the window), so a later first
+  // word is never passed by a press meant for the one before
+  useLayoutEffect(() => {
+    if (step !== "read" || !active || !spaceCarry.current) return;
+    spaceCarry.current = false;
+    onPass();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [word, step]);
+  useEffect(() => () => { spaceCarry.current = false; }, []);
 
   /* step 3 — options: correct answer plus three same-level distractors */
   // a nonce per mount (App remounts the card per word and repetition): the four options and the

@@ -2989,7 +2989,9 @@ export default function Home() {
             // advanced with pausedByButton still set, so the next Latin word mounted unfocused behind
             // its veil with the clock stopped while the header said it was running (the pinyin and
             // 选汉字 rungs resume through onResume before they pass)
-            onPass={() => { pausedByButton.current = false; leftByKey.current = false; finishWord(); }}
+            // false inside the 320 ms done window of the word before: the 认读 rung carries that
+            // press to the next word, as 打拼音 carries its letters (the press was dropped)
+            onPass={() => { pausedByButton.current = false; leftByKey.current = false; if (finishing.current) return false; finishWord(); }}
             onSkip={skipWord}
             onMiss={() => { if (finishing.current || hadWrong.current) return; noteSlip(); setWrongCountWord(n => n + 1); }}
             onSpeak={() => speak()}
