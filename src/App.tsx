@@ -548,6 +548,9 @@ export default function Home() {
   const veiledRef = useRef(false);
   const targetRef = useRef("");
   const readingInput = useRef<HTMLTextAreaElement>(null);
+  // the piece on screen was picked by the app (openReadings' default, a filter's jump), not
+  // clicked in the list by the learner
+  const readingDefaulted = useRef(false);
   const autoSpokenWord = useRef<string | null>(null);
   const speechRequest = useRef(0);
   const autoAdvance = useRef(0);
@@ -989,10 +992,32 @@ export default function Home() {
     const kept = saved && r.find(pc => pc.id === saved.id);
     // ...with its group open, as a filter click keeps it: the restored piece was marked current
     // inside a folded group, and the list showed nothing of where the learner had been
-    if (kept) { setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); setOpenReadingGroup(`lang:${kept.lang}`); }
+    if (kept) { readingDefaulted.current = false; setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); setOpenReadingGroup(`lang:${kept.lang}`); }
     // the default piece too: it was marked current inside a folded group on the first open
-    else if (r.length) { const first = r.find(pc => pc.lang === langRef.current) ?? r[0]; setReadingId(first.id); setOpenReadingGroup(`lang:${first.lang}`); }
+    else if (r.length) { const first = r.find(pc => pc.lang === langRef.current) ?? r[0]; readingDefaulted.current = true; setReadingId(first.id); setOpenReadingGroup(`lang:${first.lang}`); }
   };
+  // a reading not yet begun follows the learning language, as it does on load — on every path
+  // that changes it, not only the dialog's save: the readings arrive before the manifest, so a
+  // first visit from the landing page's ?ui=zh&lib=en-core link had defaulted to 登鹳雀楼 by the
+  // time the manifest named English, and the header select left Sonnet 18 under 中文. Only a
+  // default the learner never touched moves; a piece chosen from the list stays, as it always did
+  // (the reading state is read through a ref: the effect runs on a change of language, not on
+  // a filter's jump to a piece of another language, which it would have undone at once)
+  const readingNow = useRef({ id: readingId, typed: readingTyped, line: readingLine, filter: readingLang });
+  readingNow.current = { id: readingId, typed: readingTyped, line: readingLine, filter: readingLang };
+  useEffect(() => {
+    const { id, typed, line, filter } = readingNow.current;
+    if (!readingDefaulted.current || typed || line) return;
+    const cur = readings.find(pc => pc.id === id);
+    if (!cur || cur.lang === lang) return;
+    const first = readings.find(pc => pc.lang === lang);
+    if (!first) return;
+    // ...with its group open, as the filter buttons leave it; a filter on another language
+    // cannot show the piece at all, so it steps back to all the readings first
+    const wide = filter === "all" || filter !== lang;
+    if (wide && filter !== "all") setReadingLang("all");
+    setReadingId(first.id); setOpenReadingGroup(wide ? `lang:${first.lang}` : `genre:${first.genre}`);
+  }, [lang, readings]);
   // only a row this answer scheduled: a word answered before it was due keeps the date it had
   // (srs.ts), and a chapter retried straight after a clean run counted all 20 a second time
   const noteScheduled = (r: { dueAt: number; kept?: boolean } | null, run: number) => {
@@ -2452,18 +2477,8 @@ export default function Home() {
       setTyped(""); resetWordRun();
       autoSpokenWord.current = null;
       setSpeakingWord(null);
-      // a reading not yet begun follows the language just chosen, as it does on load: a first
-      // visit from /en/readings/ opened on the Chinese default while the dialog was up
-      if (!readingTyped && readingLine === 0 && reading && reading.lang !== learn) {
-        const first = readings.find(pc => pc.lang === learn);
-        // ...with its group open, as the filter buttons leave it; a filter on another language
-        // cannot show the piece at all, so it steps back to all the readings first
-        if (first) {
-          const wide = readingLang === "all" || readingLang !== learn;
-          if (wide && readingLang !== "all") setReadingLang("all");
-          setReadingId(first.id); setOpenReadingGroup(wide ? `lang:${first.lang}` : `genre:${first.genre}`);
-        }
-      }
+      // a reading not yet begun follows the language just chosen: the [lang, readings] effect
+      // above openReadings moves the untouched default, here as on the header select
     }
     writeLangs(ui, learn, byLearn);
     setShowLangSetup(false);
@@ -2850,9 +2865,11 @@ export default function Home() {
     // the same-language filter do: it was marked current inside a folded group
     const first = readings.find(pc => pc.lang === code);
     setOpenReadingGroup(first ? `genre:${first.genre}` : null);
-    if (first && first.id !== readingId) chooseReading(first.id);
+    // the filter picked this piece, not the learner: a change of learning language still moves it
+    if (first && first.id !== readingId) { chooseReading(first.id); readingDefaulted.current = true; }
   }
   function chooseReading(id: string) {
+    readingDefaulted.current = false;
     setReadingId(id); setReadingLine(0); setReadingTyped(""); setReadingSeconds(0); setReadingActive(false); setReadingDone(false);
     setTimeout(() => readingInput.current?.focus(), 30);
   }
