@@ -1694,9 +1694,14 @@ export default function Home() {
   const nextItem = learnItems[(index + 1) % Math.max(learnItems.length, 1)];
   const targetWord = item.text;
   // a single unhyphenated token longer than 13 letters (heteroskedastisitas) does
-  // not fit the card at the base size and broke mid-word; the word is scaled to fit
-  const longestToken = practiceLang === "zh" ? 0 : Math.max(0, ...targetWord.split(/[ -]/).map(tk => tk.length));
-  const wordScale = longestToken > 13 ? 13 / longestToken : 1;
+  // not fit the card at the base size and broke mid-word; the word is scaled to fit.
+  // Chinese has no tokens: the two nine-glyph headwords (合作社与中小企业局) wrap on a
+  // phone where eight fit (375 px: 8 × 37 = 298 of 311), so nine and more scale by the
+  // same rule — the stylesheet applies it to the hanzi sizes on phones only, the one
+  // place they did not fit
+  const longestToken = practiceLang === "zh" ? Array.from(targetWord).length : Math.max(0, ...targetWord.split(/[ -]/).map(tk => tk.length));
+  const fitLetters = practiceLang === "zh" ? 8 : 13;
+  const wordScale = longestToken > fitLetters ? fitLetters / longestToken : 1;
   const itemMeaningLang = meaningFor(item.lang);
   const itemMeaning = resolveMeaning(item);
   // 选汉字 hides the hanzi and asks for it: the Chinese example sentence contains that very

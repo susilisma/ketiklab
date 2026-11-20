@@ -424,6 +424,8 @@ button.profile:hover>i{color:var(--purple)}
 .word-card h1.target-word.id{letter-spacing:.05em}
 .word-card h1.target-word.zh{font-size:var(--word-zh);line-height:1.2;letter-spacing:.16em}
 .word-card.zh-compact h1.target-word.zh{font-size:var(--word-zh-ladder)}
+/* a nine-glyph headword wrapped mid-word on a phone (App.tsx wordScale, 8 glyphs fit); wider screens hold it at full size */
+@media(max-width:640px){.word-card h1.target-word.zh{font-size:calc(var(--word-zh) * var(--word-scale,1))}.word-card.zh-compact h1.target-word.zh{font-size:calc(var(--word-zh-ladder) * var(--word-scale,1))}}
 .word-count{top:20px;left:max(clamp(12px,3vw,27px),calc(50% - 300px))}.sound{top:16px;right:max(clamp(12px,3vw,27px),calc(50% - 300px));width:40px;height:40px}.fav-btn{top:16px;right:max(calc(clamp(12px,3vw,27px) + 48px),calc(50% - 252px));width:40px;height:40px}.loop-dots{top:40px;left:max(clamp(12px,3vw,27px),calc(50% - 300px))}
 /* in flow above the word, below the 16-56px button band: absolute at 62px sat on the first line of a narrow card; relative keeps its z-index above the veil */
 .speech-unlock{position:relative;display:inline-block;margin:8px 0 10px}
