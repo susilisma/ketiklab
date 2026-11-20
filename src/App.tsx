@@ -992,7 +992,10 @@ export default function Home() {
     const kept = saved && r.find(pc => pc.id === saved.id);
     // ...with its group open, as a filter click keeps it: the restored piece was marked current
     // inside a folded group, and the list showed nothing of where the learner had been
-    if (kept) { readingDefaulted.current = false; setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); setOpenReadingGroup(`lang:${kept.lang}`); }
+    // ...and a stored piece the learner only looked at (written with auto, no line typed) is
+    // still the default: it kept following the learning language within one load, and the
+    // restore made it the learner's choice on the next, so a header change moved it no more
+    if (kept) { readingDefaulted.current = saved.auto && saved.line === 0; setReadingId(kept.id); setReadingLine(Math.min(saved.line, kept.lines.length - 1)); setOpenReadingGroup(`lang:${kept.lang}`); }
     // the default piece too: it was marked current inside a folded group on the first open
     else if (r.length) { const first = r.find(pc => pc.lang === langRef.current) ?? r[0]; readingDefaulted.current = true; setReadingId(first.id); setOpenReadingGroup(`lang:${first.lang}`); }
   };
@@ -1149,12 +1152,12 @@ export default function Home() {
     if (v && typeof v === "object") { const p = v as { ch?: unknown; pos?: unknown }; return Number(p.ch) === ch ? clampPos(p.pos) : 0; }
     return clampPos(v);
   };
-  const readSavedReading = (): { id: string; line: number } | null => {
+  const readSavedReading = (): { id: string; line: number; auto: boolean } | null => {
     try {
       const p: unknown = JSON.parse(localStorage.getItem("ketiklab-reading") || "null");
       if (!p || typeof p !== "object" || Array.isArray(p)) return null;
-      const { id, line } = p as { id?: unknown; line?: unknown };
-      return typeof id === "string" && id ? { id, line: Math.max(0, Math.floor(Number(line)) || 0) } : null;
+      const { id, line, auto } = p as { id?: unknown; line?: unknown; auto?: unknown };
+      return typeof id === "string" && id ? { id, line: Math.max(0, Math.floor(Number(line)) || 0), auto: auto === true } : null;
     } catch { return null; }
   };
   // the restore below sets the index from storage; the write effect after it must not first
@@ -1230,7 +1233,10 @@ export default function Home() {
     if (!readingId) return;
     if (view === "articles") readingSeen.current = true;
     if (!readingSeen.current) return;
-    try { localStorage.setItem("ketiklab-reading", JSON.stringify({ id: readingId, line: readingDone ? 0 : readingLine })); } catch { /* ignore */ }
+    // auto marks a piece the app picked (the default, a filter's jump) and the learner has not
+    // chosen or typed in: the restore keeps it following the learning language
+    const auto = readingDefaulted.current && !readingLine && !readingDone;
+    try { localStorage.setItem("ketiklab-reading", JSON.stringify(auto ? { id: readingId, line: 0, auto } : { id: readingId, line: readingDone ? 0 : readingLine })); } catch { /* ignore */ }
   }, [readingId, readingLine, readingDone, view]);
   // the restored position meets its list only now (words.json, a dictionary file or the
   // favourites arrived after the [sourceKey] effect): past the chapter's end, its last word
