@@ -223,6 +223,8 @@
 .word-card .zh-options.long button{padding:14px 3px;font-size:19px}
 .word-card .zh-options.xlong button{font-size:18px}
 @media(max-width:640px){.word-card .zh-options.xlong{grid-template-columns:1fr}}
+/* four glyphs beside the sidebar (641–727 px, four 90–107 px columns): 4×19+6+4 = 86 fits where 4×24+8+4 = 108 wrapped */
+@media(min-width:641px) and (max-width:727px){.word-card.zh-compact .zh-options.four button{padding:14px 3px;font-size:19px}}
 .word-card.zh-compact .zh-pinbox{gap:13px}
 .word-card.zh-compact .ime-input{margin-top:14px}
 .word-card.zh-compact .hint{margin-top:14px}

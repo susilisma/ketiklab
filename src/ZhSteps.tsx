@@ -383,8 +383,11 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       {/* a five-glyph option (可行性研究 and its same-length distractors) wrapped mid-word in the
           90–115 px column four options get beside the sidebar (641–760 px), and six glyphs up to
           850 px: a card with one lays its options in two columns with smaller glyphs; seven glyphs
-          and more (25 first senses) go smaller still, and one per row on a phone */}
-      <div className={glyphs >= 7 ? "zh-options long xlong" : glyphs >= 5 ? "zh-options long" : "zh-options"} lang="zh-CN">
+          and more (25 first senses) go smaller still, and one per row on a phone; four glyphs
+          (交通堵塞 and its distractors) keep the four columns but need 108 px at 24 px, more than
+          the 90–107 px they get beside the sidebar between 641 and 727 px — the state of the first
+          card and of a paused one — so they shrink to 19 px in that band only */}
+      <div className={glyphs >= 7 ? "zh-options long xlong" : glyphs >= 5 ? "zh-options long" : glyphs === 4 ? "zh-options four" : "zh-options"} lang="zh-CN">
         {options.map((o, i) => <button
           key={o}
           className={picked === o ? (o === word ? "ok" : "no") : ""}
