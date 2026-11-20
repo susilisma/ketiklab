@@ -289,9 +289,13 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   // after the window; a rung or list change drops it with the pinyin carry (dropPinyinCarry), and
   // so does this component going away (a chapter finished inside the window), so a later first
   // word is never passed by a press meant for the one before
+  // ...unless the learner paused inside that window (暂停 or Escape after the press): the App's
+  // own carry and the pinyin box stop for pausedByButton / leftByKey, and this one did not, so
+  // the replay passed a card on a paused page and put the clock back on through finishWord
   useLayoutEffect(() => {
     if (step !== "read" || !active || !spaceCarry.current) return;
     spaceCarry.current = false;
+    if (!(canFocus?.() ?? true)) return;
     onPass();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [word, step]);
