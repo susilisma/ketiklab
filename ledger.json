@@ -204,7 +204,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "理论风险、无实证；改 workflow 结构建议主人确认 ｜ 11-14 复验仍在：E ｜ 11-15 复验仍在：E：site.yml:101-103 / 132-134",
+   "reason": "理论风险、无实证；改 workflow 结构建议主人确认 ｜ 11-14 复验仍在：E ｜ 11-15 复验仍在：E：site.yml:101-103 / 132-134 ｜2026-11-21 复验仍在",
    "date": "2026-09-15"
   },
   {
@@ -294,7 +294,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "无渲染影响，本次未动 ｜ 10-15 F2 复验仍在：member 导航字符串「会员 / Anggota / Membership」与 View 类型仍在 bundle 中（不渲染） ｜ 11-04 复验仍在：B ｜ 11-05 复验仍在：B：bundle 会员 / Anggota / Membership 各 1，不渲染 ｜ 11-06 复验仍在：B ｜ 11-09 复验仍在：B bundle 会员 / Anggota / Membership 各 1 不渲染 ｜ 11-11 复验仍在：B ｜ 11-14 复验仍在：B ｜ 11-15 复验仍在：B：bundle 会员 / Anggota / Membership 各 1 不渲染 ｜ 11-17 复验仍在：B ｜ 11-19 复验仍在：B/F：View 含 member，UI.member/prompt/chapter 无读取，bundle 各 1 处 ｜ 11-20 复验仍在：B 代码/复现",
+   "reason": "无渲染影响，本次未动 ｜ 10-15 F2 复验仍在：member 导航字符串「会员 / Anggota / Membership」与 View 类型仍在 bundle 中（不渲染） ｜ 11-04 复验仍在：B ｜ 11-05 复验仍在：B：bundle 会员 / Anggota / Membership 各 1，不渲染 ｜ 11-06 复验仍在：B ｜ 11-09 复验仍在：B bundle 会员 / Anggota / Membership 各 1 不渲染 ｜ 11-11 复验仍在：B ｜ 11-14 复验仍在：B ｜ 11-15 复验仍在：B：bundle 会员 / Anggota / Membership 各 1 不渲染 ｜ 11-17 复验仍在：B ｜ 11-19 复验仍在：B/F：View 含 member，UI.member/prompt/chapter 无读取，bundle 各 1 处 ｜ 11-20 复验仍在：B 代码/复现 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -509,7 +509,7 @@
    "title": "「今日待复习」实为「此刻到期」（srs.ts getStats）",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "改文案或按当天结束计算，由主人定｜10-07 F3 场景 I 再复现（22:00 练 08:00 开为 0）",
+   "reason": "改文案或按当天结束计算，由主人定｜10-07 F3 场景 I 再复现（22:00 练 08:00 开为 0） ｜2026-11-21 复验仍在",
    "date": "2026-09-15",
    "commit": ""
   },
@@ -581,7 +581,7 @@
    "title": "系统深色模式首访仍浅色（只认 ketiklab-dark）",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "2 行；是否跟随系统由主人定｜11-12 L 复验仍在 ｜ 11-15 复验仍在：B/L：源与产物 0 处 prefers-color-scheme；colorScheme:dark 模拟仍浅色；无处声称跟随系统 ｜ 11-17 复验仍在：B",
+   "reason": "2 行；是否跟随系统由主人定｜11-12 L 复验仍在 ｜ 11-15 复验仍在：B/L：源与产物 0 处 prefers-color-scheme；colorScheme:dark 模拟仍浅色；无处声称跟随系统 ｜ 11-17 复验仍在：B ｜2026-11-21 复验仍在",
    "date": "2026-09-15",
    "commit": ""
   },
@@ -626,7 +626,7 @@
    "title": "首页/og/manifest 的「开源」修饰整个网站，而数据（含托福表）非开放授权",
    "priority": "P3",
    "status": "needs-owner",
-   "reason": "许可措辞属主人；可改为「代码开源」 ｜ 11-05 复验仍在：B：「开源」仍修饰整站 ｜ 11-14 复验仍在：B ｜ 11-17 复验仍在：B",
+   "reason": "许可措辞属主人；可改为「代码开源」 ｜ 11-05 复验仍在：B：「开源」仍修饰整站 ｜ 11-14 复验仍在：B ｜ 11-17 复验仍在：B ｜2026-11-21 复验仍在",
    "date": "2026-09-15",
    "commit": ""
   },
@@ -969,7 +969,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "1 行 scope:\"local\"，但「退出是否退出所有设备」是产品决定 ｜11-13 D 复验仍在 ｜ 11-14 复验仍在：D s1",
+   "reason": "1 行 scope:\"local\"，但「退出是否退出所有设备」是产品决定 ｜11-13 D 复验仍在 ｜ 11-14 复验仍在：D s1 ｜2026-11-21 复验仍在",
    "date": "2026-09-16"
   },
   {
@@ -996,7 +996,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "按设备分桶再求和约 20 行，属数据模型改动 ｜ 11-14 复验仍在：D h8（max）",
+   "reason": "按设备分桶再求和约 20 行，属数据模型改动 ｜ 11-14 复验仍在：D h8（max） ｜2026-11-21 复验仍在",
    "date": "2026-09-16"
   },
   {
@@ -1005,7 +1005,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "3 行：未绑定路径保留本机 ketiklab-langs ｜ 10-15 F4 单测复验仍在（cloud.ts:448-449） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 复验仍在（S2），建议改需要主人：applyMerged 注明「首次绑定取账号设置」，ketiklab-langs 是同步键，新设备都过强制对话框，若本机优先则账号语言永不到新设备；窄修法：仅当云端行无 ketiklab-langs 时取本机｜11-12 D 复验仍在 ｜11-13 D 复验仍在 ｜ 11-14 复验仍在：D f2",
+   "reason": "3 行：未绑定路径保留本机 ketiklab-langs ｜ 10-15 F4 单测复验仍在（cloud.ts:448-449） ｜ 10-16 F4 复验仍在 ｜ 10-23 F4 复验仍在 ｜ 10-24 F4 复验仍在（S2），建议改需要主人：applyMerged 注明「首次绑定取账号设置」，ketiklab-langs 是同步键，新设备都过强制对话框，若本机优先则账号语言永不到新设备；窄修法：仅当云端行无 ketiklab-langs 时取本机｜11-12 D 复验仍在 ｜11-13 D 复验仍在 ｜ 11-14 复验仍在：D f2 ｜2026-11-21 复验仍在",
    "date": "2026-10-31"
   },
   {
@@ -1167,7 +1167,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "「不给偷看计分」是设计原则，但打拼音档的 TAB 是看答案；是否例外由主人定；提示文字也未说明 ENTER 跳过与 TAB 计错 ｜ 11-14 复验仍在：C R2 ｜ 11-17 复验仍在：A",
+   "reason": "「不给偷看计分」是设计原则，但打拼音档的 TAB 是看答案；是否例外由主人定；提示文字也未说明 ENTER 跳过与 TAB 计错 ｜ 11-14 复验仍在：C R2 ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-09-16"
   },
   {
@@ -1194,7 +1194,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 8 行：报错而非退化 ｜ 11-04 复验仍在：C：404 → 日常高频 82 章不过滤、无提示 ｜ 11-05 复验仍在：C：404 → 1626 词 / 82 章无提示 ｜ 11-06 复验仍在：C zhmap-404.js：404 / 500 / 网络错误 / 坏 JSON → 1625 词 82 章无提示；C 给出 7 行「报错屏」修法，但整应用报错会挡住不需要地图的词典 / 输入法档，横幅更合适——是否改为错误屏由主人定；1d237c5 已消除最常见触发（安装后离线） ｜ 11-09 复验仍在：C zhmap-404 30/30 断言静默退化（404/500/坏 JSON/null/数组）；打拼音 档位时卡片显输入法框（plainPy 空） ｜ 11-11 复验仍在：C 404 / 坏 JSON / 中断 → 1625 词无横幅，打拼音 daily 显输入法框｜11-12 C 复验仍在（主人项第 4） ｜ 11-14 复验仍在：C H3（404 → 1624 行无提示） ｜ 11-15 复验仍在：C：404 / 坏 JSON → 82 章 vs 12 无提示 ｜ 11-17 复验仍在：C；11-18 复验仍在，非琐碎 P3，留账 ｜ 11-19 复验仍在：C：404 → 认读 82 章无横幅，打拼音 显输入法框 ｜ 11-20 复验仍在：C s6：404 → 82 章无提示、打拼音显输入法框",
+   "reason": "约 8 行：报错而非退化 ｜ 11-04 复验仍在：C：404 → 日常高频 82 章不过滤、无提示 ｜ 11-05 复验仍在：C：404 → 1626 词 / 82 章无提示 ｜ 11-06 复验仍在：C zhmap-404.js：404 / 500 / 网络错误 / 坏 JSON → 1625 词 82 章无提示；C 给出 7 行「报错屏」修法，但整应用报错会挡住不需要地图的词典 / 输入法档，横幅更合适——是否改为错误屏由主人定；1d237c5 已消除最常见触发（安装后离线） ｜ 11-09 复验仍在：C zhmap-404 30/30 断言静默退化（404/500/坏 JSON/null/数组）；打拼音 档位时卡片显输入法框（plainPy 空） ｜ 11-11 复验仍在：C 404 / 坏 JSON / 中断 → 1625 词无横幅，打拼音 daily 显输入法框｜11-12 C 复验仍在（主人项第 4） ｜ 11-14 复验仍在：C H3（404 → 1624 行无提示） ｜ 11-15 复验仍在：C：404 / 坏 JSON → 82 章 vs 12 无提示 ｜ 11-17 复验仍在：C；11-18 复验仍在，非琐碎 P3，留账 ｜ 11-19 复验仍在：C：404 → 认读 82 章无横幅，打拼音 显输入法框 ｜ 11-20 复验仍在：C s6：404 → 82 章无提示、打拼音显输入法框 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -1392,7 +1392,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "约 13 行 globals.css：拆 --on-purple 令牌、浅色 --purple 改 #6558e6；F6 10-01 复核仍在 ｜ 10-16 F5 复验仍在（.zh-go / .acct-btn.primary / 档位数字 / 计划环 3.25:1，SPACE kbd 2.94:1） ｜ 10-23 L / F5 复验仍在（.zh-go / .acct-btn.primary / 活动档位数字 3.25:1） ｜ 10-24 L 复测 3.25:1 未变 ｜ 11-04 复验仍在：E / L：深色 3.25:1 不变（主人项） ｜ 11-05 复验仍在：B：.zh-go / .acct-btn.primary / .lang-modal-save / .week .today / 档位数字 3.25:1 ｜ 11-06 复验仍在：B：3.25:1 不变 ｜ 11-09 复验仍在：B 深色 .zh-go / .acct-btn.primary / 计划环 / 档位数字 3.25:1 ｜ 11-11 复验仍在：L 令牌不变｜11-12 L / B 复验仍在（3.25:1；.zh-go i 2.94 暗 / 3.90 亮） ｜11-13 L 深色截图可见，未重测 ｜ 11-14 复验仍在：E（暗 3.25 / 光 4.41） ｜ 11-15 复验仍在：B axe：深色 3.25、浅色 4.4，2116 节点无新对比度族 ｜ 11-17 复验仍在：B/L ｜ 11-19 复验仍在：F：深色 3.25、浅色 4.41 不变 ｜ 11-20 复验仍在：F/L：3.25:1 不变",
+   "reason": "约 13 行 globals.css：拆 --on-purple 令牌、浅色 --purple 改 #6558e6；F6 10-01 复核仍在 ｜ 10-16 F5 复验仍在（.zh-go / .acct-btn.primary / 档位数字 / 计划环 3.25:1，SPACE kbd 2.94:1） ｜ 10-23 L / F5 复验仍在（.zh-go / .acct-btn.primary / 活动档位数字 3.25:1） ｜ 10-24 L 复测 3.25:1 未变 ｜ 11-04 复验仍在：E / L：深色 3.25:1 不变（主人项） ｜ 11-05 复验仍在：B：.zh-go / .acct-btn.primary / .lang-modal-save / .week .today / 档位数字 3.25:1 ｜ 11-06 复验仍在：B：3.25:1 不变 ｜ 11-09 复验仍在：B 深色 .zh-go / .acct-btn.primary / 计划环 / 档位数字 3.25:1 ｜ 11-11 复验仍在：L 令牌不变｜11-12 L / B 复验仍在（3.25:1；.zh-go i 2.94 暗 / 3.90 亮） ｜11-13 L 深色截图可见，未重测 ｜ 11-14 复验仍在：E（暗 3.25 / 光 4.41） ｜ 11-15 复验仍在：B axe：深色 3.25、浅色 4.4，2116 节点无新对比度族 ｜ 11-17 复验仍在：B/L ｜ 11-19 复验仍在：F：深色 3.25、浅色 4.41 不变 ｜ 11-20 复验仍在：F/L：3.25:1 不变 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -1662,7 +1662,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "清理 13 键（重建脚本不会再生成）；对用户无影响 ｜ 11-04 复验仍在：E：13 个不变 ｜ 11-05 复验仍在：E：13 不变 ｜ 11-06 复验仍在：E：13 ｜ 11-09 复验仍在：E 13 不变 ｜ 11-11 复验仍在：E / C 13 不变｜11-12 E/C 复验仍在（13 键） ｜ 11-14 复验仍在：C/E 13 ｜ 11-15 复验仍在：C/E：13 键不变 ｜ 11-17 复验仍在：C/E ｜ 11-19 复验仍在：E：13 个非汉字键不变 ｜ 11-20 复验仍在：E/C：13 键不变",
+   "reason": "清理 13 键（重建脚本不会再生成）；对用户无影响 ｜ 11-04 复验仍在：E：13 个不变 ｜ 11-05 复验仍在：E：13 不变 ｜ 11-06 复验仍在：E：13 ｜ 11-09 复验仍在：E 13 不变 ｜ 11-11 复验仍在：E / C 13 不变｜11-12 E/C 复验仍在（13 键） ｜ 11-14 复验仍在：C/E 13 ｜ 11-15 复验仍在：C/E：13 键不变 ｜ 11-17 复验仍在：C/E ｜ 11-19 复验仍在：E：13 个非汉字键不变 ｜ 11-20 复验仍在：E/C：13 键不变 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -3201,7 +3201,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F5 发现、V1 用自建云端状态确认（覆盖 ketiklab-langs / category，补写 input/extra-meanings/meaning-visibility/hide-pron/fav 默认值；进度键 max/union 不丢）。方向属同步语义（既有 first-link-cloud-langs-override-fresh-choice 提的是反方向）；若保持「首次绑定云端优先」，修法是 pushNow 在 !linked 时走 linkThisDevice(uid,\"merge\",profName) ｜11-13 D 复验仍在",
+   "reason": "F5 发现、V1 用自建云端状态确认（覆盖 ketiklab-langs / category，补写 input/extra-meanings/meaning-visibility/hide-pron/fav 默认值；进度键 max/union 不丢）。方向属同步语义（既有 first-link-cloud-langs-override-fresh-choice 提的是反方向）；若保持「首次绑定云端优先」，修法是 pushNow 在 !linked 时走 linkThisDevice(uid,\"merge\",profName) ｜11-13 D 复验仍在 ｜2026-11-21 复验仍在",
    "date": "2026-09-30"
   },
   {
@@ -3975,7 +3975,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "D 10-06；需 append-batch / build-trio-queue 写 toned|plain|level 并一次回填 ｜ 10-16 D：1,267 首义无条目（App.tsx 注释仍 975），全部有行内 pinyin ｜ 10-29 E 复验：1286 首义无 zh-pinyin 键，全部有内联 pinyin ｜ 11-05 复验仍在：C：1264（昨 1286） ｜ 11-06 复验仍在：C/E：1264 不变 ｜ 11-09 复验：C/E 1261 行 / 1253 首义无等级（昨 1264），全部有行内拼音，0 不可打 ｜ 11-11 复验：C 1256 行 / 1248 首义无等级（daily 536 / study 516 / business 160 / indonesia 44），全部有内联 pinyin，0 个打拼音不可打｜11-12 C/E 复验仍在：1248 / 1256，无新增 ｜11-13 C 复验 1245 个主题首义无条目 ｜ 11-14 复验仍在：C/E（1251 行 / 1243 首义） ｜ 11-15 复验仍在：C：1251 行 / 1243 首义无表项，0 行无行内拼音 ｜ 11-17 复验仍在：C/E ｜ 11-19 复验仍在：C/E：1237 行 / 1229 首义无条目（14010e6 后），全部有行内 pinyin ｜ 11-20 复验仍在：C：1237 行 / 1229 首义无条目（今日 +6 条目后待复算）",
+   "reason": "D 10-06；需 append-batch / build-trio-queue 写 toned|plain|level 并一次回填 ｜ 10-16 D：1,267 首义无条目（App.tsx 注释仍 975），全部有行内 pinyin ｜ 10-29 E 复验：1286 首义无 zh-pinyin 键，全部有内联 pinyin ｜ 11-05 复验仍在：C：1264（昨 1286） ｜ 11-06 复验仍在：C/E：1264 不变 ｜ 11-09 复验：C/E 1261 行 / 1253 首义无等级（昨 1264），全部有行内拼音，0 不可打 ｜ 11-11 复验：C 1256 行 / 1248 首义无等级（daily 536 / study 516 / business 160 / indonesia 44），全部有内联 pinyin，0 个打拼音不可打｜11-12 C/E 复验仍在：1248 / 1256，无新增 ｜11-13 C 复验 1245 个主题首义无条目 ｜ 11-14 复验仍在：C/E（1251 行 / 1243 首义） ｜ 11-15 复验仍在：C：1251 行 / 1243 首义无表项，0 行无行内拼音 ｜ 11-17 复验仍在：C/E ｜ 11-19 复验仍在：C/E：1237 行 / 1229 首义无条目（14010e6 后），全部有行内 pinyin ｜ 11-20 复验仍在：C：1237 行 / 1229 首义无条目（今日 +6 条目后待复算） ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -4182,7 +4182,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah ｜ 10-08 F2 再复现，另有 README.md:60 与 build-seo-pages.py:62/71/82/90 的「Kamus:」 ｜ 10-16 F2 复验仍在（App.tsx:2103,2201,2204,2213-2226 六处 kamus） ｜ 10-23 F2 复验仍在 ｜ 10-24 F2 复验仍在（Kamus ujian ×3 等） ｜ 11-04 复验仍在：B：6 处 kamus 渲染 ｜ 11-05 复验仍在：B：8 处 kamus + README:60 ｜ 11-09 复验仍在：B App.tsx 2762–2930 十处 kamus ｜ 11-11 复验仍在：B 11 处 kamus｜11-12 B 复验仍在 ｜ 11-15 复验仍在：B：App.tsx 2852–3035 9 处 kamus + SEO/README ｜ 11-17 复验仍在：B ｜ 11-19 复验仍在：F：kamus 11 处 vs Daftar Kata 6 / Koleksi Kosakata 1 ｜ 11-20 复验仍在：F 代码/复现",
+   "reason": "F2；建议 Daftar kata ujian / Semua daftar kata / Kata yang salah ｜ 10-08 F2 再复现，另有 README.md:60 与 build-seo-pages.py:62/71/82/90 的「Kamus:」 ｜ 10-16 F2 复验仍在（App.tsx:2103,2201,2204,2213-2226 六处 kamus） ｜ 10-23 F2 复验仍在 ｜ 10-24 F2 复验仍在（Kamus ujian ×3 等） ｜ 11-04 复验仍在：B：6 处 kamus 渲染 ｜ 11-05 复验仍在：B：8 处 kamus + README:60 ｜ 11-09 复验仍在：B App.tsx 2762–2930 十处 kamus ｜ 11-11 复验仍在：B 11 处 kamus｜11-12 B 复验仍在 ｜ 11-15 复验仍在：B：App.tsx 2852–3035 9 处 kamus + SEO/README ｜ 11-17 复验仍在：B ｜ 11-19 复验仍在：F：kamus 11 处 vs Daftar Kata 6 / Koleksi Kosakata 1 ｜ 11-20 复验仍在：F 代码/复现 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -4299,7 +4299,7 @@
    "priority": "P2",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F1 发现、V1 复验 HOLDS；修法 1 行 finishWord `if (lastRep && !recognizeOnly)`（setSessionWords 只喂 WPM）；代码无注释表明有意计数；属「认读计数」待定项 ｜11-13 C 复验仍在（主人项） ｜ 11-17 复验仍在：A",
+   "reason": "F1 发现、V1 复验 HOLDS；修法 1 行 finishWord `if (lastRep && !recognizeOnly)`（setSessionWords 只喂 WPM）；代码无注释表明有意计数；属「认读计数」待定项 ｜11-13 C 复验仍在（主人项） ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-10-08"
   },
   {
@@ -4344,7 +4344,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示 ｜ 10-29 C 复验仍在；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示 ｜ 11-04 复验仍在：C：时钟冻结，下一键 / 选字 / SPACE 判分并恢复，无遮罩 ｜ 11-05 复验仍在：C：残留——暂停后盲打一键恢复并判分、无遮罩 ｜ 11-06 复验仍在：C：三档暂停后 SPACE / 键 / 选项仍判分并恢复 ｜ 11-09 复验仍在：C 三档暂停后仍收答案并恢复时钟 ｜ 11-11 复验仍在：C 三档 暂停 后仍判分并恢复｜11-12 C 复验仍在 ｜11-13 A 复验：三档暂停后仍收答案（无遮罩）但 打拼音/选汉字 错答先经 onResume 恢复时钟、与 Latin 框「任意键恢复」一致；认读 档的不一致随 f2cb48b 消失；剩余「暂停不拦答案」为设计问题 ｜ 11-14 复验仍在：C R2 ｜ 11-15 复验仍在：C：三档 暂停 后仍判分并恢复 ｜ 11-17 复验仍在：A/C ｜ 11-19 复验仍在：C：暂停后 打拼音 下一键被判分并恢复、选汉字 可选、认读 SPACE 推进 ｜ 11-20 复验仍在：C s1/s2",
+   "reason": "F1 发现、V1 复验；V1：ZhSteps 只在认读 keydown 与打拼音 autofocus 读 active，拼音 onChange 与选字按钮不读，需各处理器尊重 active + blur + 1337 门控；App 输入框在阶梯档不渲染，pausedByButton 不会被清 ｜ 10-15 F1：拉丁框暂停后同样任意键即恢复并判分，阶梯档只少了遮罩与提示；非判分 bug，P3 打磨（阶梯档暂停时加遮罩） ｜ 10-16 F1 复验仍在 ｜ 10-23 F1：3d36559 后打拼音框首键恢复时钟与头部，暂停中判分的不一致在该档消失；选汉字档仍在 ｜ 10-24 F1：选汉字暂停后点选即恢复（随 patches/2026-10-24/0001）；残留：暂停的梯档卡片无遮罩 / 提示 ｜ 10-29 C 复验仍在；10-31 C 复验：认读 已开钟（SPACE 后 00:01），暂停按钮冻结时钟、下一键恢复；剩余只是暂停卡无蒙层 / 提示 ｜ 11-04 复验仍在：C：时钟冻结，下一键 / 选字 / SPACE 判分并恢复，无遮罩 ｜ 11-05 复验仍在：C：残留——暂停后盲打一键恢复并判分、无遮罩 ｜ 11-06 复验仍在：C：三档暂停后 SPACE / 键 / 选项仍判分并恢复 ｜ 11-09 复验仍在：C 三档暂停后仍收答案并恢复时钟 ｜ 11-11 复验仍在：C 三档 暂停 后仍判分并恢复｜11-12 C 复验仍在 ｜11-13 A 复验：三档暂停后仍收答案（无遮罩）但 打拼音/选汉字 错答先经 onResume 恢复时钟、与 Latin 框「任意键恢复」一致；认读 档的不一致随 f2cb48b 消失；剩余「暂停不拦答案」为设计问题 ｜ 11-14 复验仍在：C R2 ｜ 11-15 复验仍在：C：三档 暂停 后仍判分并恢复 ｜ 11-17 复验仍在：A/C ｜ 11-19 复验仍在：C：暂停后 打拼音 下一键被判分并恢复、选汉字 可选、认读 SPACE 推进 ｜ 11-20 复验仍在：C s1/s2 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -4353,7 +4353,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "10-14 F3 t2 复验仍在（TAB 市场 → s-1 l1 + 错词本） ｜11-13 C 复验仍在（主人项） ｜ 11-17 复验仍在：A",
+   "reason": "10-14 F3 t2 复验仍在（TAB 市场 → s-1 l1 + 错词本） ｜11-13 C 复验仍在（主人项） ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-10-14"
   },
   {
@@ -4452,7 +4452,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F2 复现；若要链接生效需改 ?learn= 语义或让主题页 CTA 走 ?lib=trio&learn=id 路线 ｜ 11-14 复验仍在：A H10（按文档行为） ｜ 11-17 复验仍在：A",
+   "reason": "F2 复现；若要链接生效需改 ?learn= 语义或让主题页 CTA 走 ?lib=trio&learn=id 路线 ｜ 11-14 复验仍在：A H10（按文档行为） ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-10-09"
   },
   {
@@ -4623,7 +4623,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F2 复现（en-US、ui=en、learn zh→en）；二选一：changeLanguage 在 !defByLearn[next] && !defaultDef 时 setShowLangSetup(true)，或 ketiklab-langs 已存在时 restore effect 不开对话框 ｜ 11-17 复验仍在：A",
+   "reason": "F2 复现（en-US、ui=en、learn zh→en）；二选一：changeLanguage 在 !defByLearn[next] && !defaultDef 时 setShowLangSetup(true)，或 ketiklab-langs 已存在时 restore effect 不开对话框 ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-10-10"
   },
   {
@@ -5469,7 +5469,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F5-2 发现；SHA 在沙箱内无法解析（API 只开本仓库），且改动触及部署链，由主人定",
+   "reason": "F5-2 发现；SHA 在沙箱内无法解析（API 只开本仓库），且改动触及部署链，由主人定 ｜2026-11-21 复验仍在",
    "date": "2026-10-14"
   },
   {
@@ -5559,7 +5559,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "10-15 D-1 integrity FAIL；规则取舍属主人（保留专名大写还是改规则） ｜ 10-16 D 复验仍在（恰 30，全为专名/缩写）｜11-12 E/V2/VG 复验仍在（30 行，主人项） ｜11-13 E 复验仍在（恰 30，无新增）；R1/R2 都标 2101 BPJS Kesehatan，VG 判 OWNER ｜ 11-14 E/C 复验仍在（恰 30）；R1/R2 本轮都标 1862 SPT masa / 1880 UMP / 1203 subsidi BBM / 1144 Hari Kemerdekaan（R2 另标 791 surat pengantar RT），展开形见 gloss-changes-2026-11-14.md，VG 判 OWNER ｜ 11-15 复验仍在：R1/R2：1881 UMK 标 OWNER-CAPS ｜ 11-17 复验仍在：E",
+   "reason": "10-15 D-1 integrity FAIL；规则取舍属主人（保留专名大写还是改规则） ｜ 10-16 D 复验仍在（恰 30，全为专名/缩写）｜11-12 E/V2/VG 复验仍在（30 行，主人项） ｜11-13 E 复验仍在（恰 30，无新增）；R1/R2 都标 2101 BPJS Kesehatan，VG 判 OWNER ｜ 11-14 E/C 复验仍在（恰 30）；R1/R2 本轮都标 1862 SPT masa / 1880 UMP / 1203 subsidi BBM / 1144 Hari Kemerdekaan（R2 另标 791 surat pengantar RT），展开形见 gloss-changes-2026-11-14.md，VG 判 OWNER ｜ 11-15 复验仍在：R1/R2：1881 UMK 标 OWNER-CAPS ｜ 11-17 复验仍在：E ｜2026-11-21 复验仍在",
    "date": "2026-10-16"
   },
   {
@@ -5739,7 +5739,7 @@
    "priority": "P2",
    "status": "needs-owner",
    "commit": "",
-   "reason": "10-16 F2 发现（index.html:19/26/37/52/64-66，build-seo-pages.py:42-49/57-59，README.md:3/37/56）；建议三语改为\"代码开源\"措辞（约 8 行）；属主人文案｜11-12 B 复验仍在（主人项） ｜11-13 B 复验仍在 ｜ 11-14 复验仍在：B ｜ 11-17 复验仍在：B",
+   "reason": "10-16 F2 发现（index.html:19/26/37/52/64-66，build-seo-pages.py:42-49/57-59，README.md:3/37/56）；建议三语改为\"代码开源\"措辞（约 8 行）；属主人文案｜11-12 B 复验仍在（主人项） ｜11-13 B 复验仍在 ｜ 11-14 复验仍在：B ｜ 11-17 复验仍在：B ｜2026-11-21 复验仍在",
    "date": "2026-10-16"
   },
   {
@@ -6054,7 +6054,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "10-23 F2-N1 probe.cjs P4 两建一致；链接的语言是否应丢弃未保存的列表属产品决定 ｜ 11-17 复验仍在：A",
+   "reason": "10-23 F2-N1 probe.cjs P4 两建一致；链接的语言是否应丢弃未保存的列表属产品决定 ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-10-23"
   },
   {
@@ -7395,7 +7395,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "V1 备注：按练习值去重的直接结果，是否接受由主人定",
+   "reason": "V1 备注：按练习值去重的直接结果，是否接受由主人定 ｜2026-11-21 复验仍在",
    "date": "2026-11-03"
   },
   {
@@ -7845,7 +7845,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "C hunt2.cjs 复现；卡片诚实不承诺；改法 1 行 existing.step >= 0 会改变完成卡承诺——设计项｜11-12 C 复验仍在（主人项） ｜ 11-14 复验仍在：C srs-unit ｜ 11-17 复验仍在：A",
+   "reason": "C hunt2.cjs 复现；卡片诚实不承诺；改法 1 行 existing.step >= 0 会改变完成卡承诺——设计项｜11-12 C 复验仍在（主人项） ｜ 11-14 复验仍在：C srs-unit ｜ 11-17 复验仍在：A ｜2026-11-21 复验仍在",
    "date": "2026-11-11"
   },
   {
@@ -8106,7 +8106,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "B 发现；措辞与 open-source 主人项绑定，建议站名前置（如 KetikLab — Typing practice: Chinese (pinyin), English or Indonesian，66 字） ｜ 11-14 复验仍在：B（/id/ 93、/en/ 90） ｜ 11-17 复验仍在：B",
+   "reason": "B 发现；措辞与 open-source 主人项绑定，建议站名前置（如 KetikLab — Typing practice: Chinese (pinyin), English or Indonesian，66 字） ｜ 11-14 复验仍在：B（/id/ 93、/en/ 90） ｜ 11-17 复验仍在：B ｜2026-11-21 复验仍在",
    "date": "2026-11-13"
   },
   {
@@ -8439,7 +8439,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "E 发现；是否补 idSyllables（需人工核对切分）由主人定 ｜ 11-20 复验仍在：E：113 缺 / 53 可分",
+   "reason": "E 发现；是否补 idSyllables（需人工核对切分）由主人定 ｜ 11-20 复验仍在：E：113 缺 / 53 可分 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -8448,7 +8448,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "E 发现；零视觉，与 type-floor 死声明同类，留账 ｜ 11-19 复验仍在：E/F：同上下文 4 对、忽略上下文 20 条 ｜ 11-20 复验仍在：E：14 对",
+   "reason": "E 发现；零视觉，与 type-floor 死声明同类，留账 ｜ 11-19 复验仍在：E/F：同上下文 4 对、忽略上下文 20 条 ｜ 11-20 复验仍在：E：14 对 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -8646,7 +8646,7 @@
    "priority": "P3",
    "status": "needs-owner",
    "commit": "",
-   "reason": "F-1；会员隐藏决定覆盖组件，未覆盖该数据文件；是否删除 public/data/pay.json 与 sw.js 规则由主人定",
+   "reason": "F-1；会员隐藏决定覆盖组件，未覆盖该数据文件；是否删除 public/data/pay.json 与 sw.js 规则由主人定 ｜2026-11-21 复验仍在",
    "date": "2026-11-19"
   },
   {
@@ -8718,7 +8718,7 @@
    "priority": "P3",
    "status": "deferred",
    "commit": "",
-   "reason": "L 观察，疑为设计（SEO 页只链 view=articles）；若要支持约 3 行 App.tsx:184；留账",
+   "reason": "L 观察，疑为设计（SEO 页只链 view=articles）；若要支持约 3 行 App.tsx:184；留账 ｜2026-11-21 复验仍在",
    "date": "2026-11-20"
   },
   {
@@ -8738,6 +8738,105 @@
    "commit": "",
    "reason": "VG.md §2–§4；带旗项下轮优先复读",
    "date": "2026-11-20"
+  },
+  {
+   "fingerprint": "zh-read-space-carry-overrides-pause",
+   "title": "认读 档：完成窗口内携带的 SPACE 在下一词挂载时无条件重放 onPass，窗口内按 暂停/Escape 后暂停被撤销、多过一张、时钟继续（14360e7 的副作用）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "323c8fc",
+   "reason": "ZhSteps 重放效应改为先问 canFocus（pausedByButton/leftByKey），暂停则丢弃携带；V1 t1-carry：双击+暂停@90ms 03/20、按钮 Start、时钟 00:00 不走",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "finish-card-status-says-press-any-key",
+   "title": "完成卡显示期间 session-meta 仍写 按任意键开始 / Ketuk untuk mulai / PRESS ANY KEY TO START，而 any-key 处理器在 chapterFinished 时直接返回，按键无效",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "6fb05c2",
+   "reason": "增加 chapterFinished 分支：本章完成 / Bab selesai / Chapter complete，复习模式为 复习完成 / Pengulangan selesai / Review complete；V1 t6/t6b 四种分支（桌面、zh 界面、coarse 375、coarse 1024、复习）全部正确",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "zh-choose-four-glyph-wraps-beside-sidebar",
+   "title": "选汉字 四字选项在侧栏可见的 641–727 px 带（首卡、暂停后）四列 90–107 px，4×24+8+4=108 不够而词中折行（交通堵塞 / 尽管如此 / 除此之外 / 十字路口，≤3 级 54 个首义）；3e7f398 只在计时中（侧栏隐藏）量过",
+   "priority": "P2",
+   "status": "fixed",
+   "commit": "32c2361",
+   "reason": "四字卡加 four 类，仅 641–727 媒体查询内 19px / 14px 3px 内边距（86 ≤ 90）；C t1-real2 真数据 641/700/724 一行 h61、728+ 一行 24px h68；V1 判 P3（曝露仅该带）",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "zh-choose-six-glyph-wraps-at-320",
+   "title": "选汉字 六字 long 选项在 320 px（两列 115 px）需 124 px 而折行（纳税人识别号 等 56 个 4 级首义，经收藏/复习可达）；3e7f398 从 360 起量",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "5f420b9",
+   "reason": "≤344 px long 选项 17px（114 ≤ 115），保持两列；V1 实测 1fr 单列方案会把第四个选项推到 568 px 折叠线下（659 > 568），故改 17px：六字/五字 320×568 两列 h58、底 524/499 < 568",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "reading-kept-at-line-0-stops-following-language",
+   "title": "6286761 只在一次加载内有效：打开 阅读 即把默认篇目写成 {id,line:0}，下次加载 kept 分支置 readingDefaulted=false，页眉切语言后默认篇目不再跟随（看过一次 Sonnet 18 的英语学习者切 中文 后仍开 Sonnet 18）",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "4bff18a",
+   "reason": "存储值在 app 选的篇目（默认或过滤器跳转）且未打字时带 auto:true，恢复时按默认处理；列表点选与已打字篱目照旧；旧值无标记按已选处理；V1 t2b c2/e 跟随、B t1-readings D 点选的 春晓 经切语言与刷新不动、B t4-restore c2 visit2AfterZh 登鹳雀楼",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "zh-nine-char-headword-wraps-mid-word-375",
+   "title": "长词缩放对中文关闭，两个九字词头（合作社与中小企业局、投资与一站式服务局）在 375×812 / 360 / 320 / 414 认读·打拼音·输入法 词中折行成两行（八字可容）；未裁切",
+   "priority": "P3",
+   "status": "fixed",
+   "commit": "fa230c0",
+   "reason": "zh 按字数计，超过 8 字按 8/n 缩放；样式只在 ≤640 把 --word-scale 乘进 --word-zh / --word-zh-ladder；V1 t5b：九字 375 一行 29.6px、320×568 一行 24.9px，八字不变；L layout 158/158",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "zh-read-steady-cadence-drops-every-sixth-press",
+   "title": "认读 携带槽为单布尔：稳定 250 ms 节奏连按时窗口自下一词挂载起算（≈322–325 ms），每 5–6 次有一按落在已持有携带的窗口而被丢（6 按 → 进 5 张）；14360e7 前同节奏丢一半",
+   "priority": "P3",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "A t1b-timing 实测；提交说明写明「至多携带一次」为设计上限；若要改需携带计数 ≤2 或窗口从原按键起算。主人定是否接受",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "cloud-row-keeps-nonstring-setting-forever",
+   "title": "云端行里已知同步键的非字符串值（如 \"ketiklab-loop\": 3）被 mergeProgress 丢弃但每次写入从 r.data 原样展开回去，直到某台设备持有该键字符串值再推送才消失；无用户可见影响",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "D s5 PARTS=e 复现；修法为展开 r.data 时只保留 SYNCED_KEYS 之外的键；触及同步路径且无可见影响，留账",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "sources-md-omits-metadata-files",
+   "title": "SOURCES.md 未列 history.json / manifest.json（元数据，无第三方内容）与 pay.json",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "E check.py WARN；非授权缺口，仅当主人希望 SOURCES.md 为完整目录清单时补",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "dup-pairs-partner-unnamed-in-gloss-changes-1103",
+   "title": "6 个有意重复对（id kemacetan / lembut；zh 不安的 / 烟弹 / 吧 / 嘛）只在 11-03 日报第 55 行整体记录，gloss-changes-*.md 的表 2 未点名对方词头",
+   "priority": "P3",
+   "status": "deferred",
+   "commit": "",
+   "reason": "E 文档瑕疵；今日报告起 gloss-changes 对共享值点名双方（suci ↔ hallowed）",
+   "date": "2026-11-21"
+  },
+  {
+   "fingerprint": "gloss-candidates-2026-11-21",
+   "title": "334 行双读（seed 20261121 + 昨日带旗 14 行）未改候选：OWNER 17 字段——885 laundry detergent id（两读者裸 detergen，与 #492 detergent 同值）/ zh（R2 洗衣粉；洗衣液，最小改 洗衣液；洗衣粉）、907 e-Samsat（R1 e-samsat / R2 samsat elektronik，大写集）、1150 KITAP 与 1881 UMK（两读者同给 kartu izin tinggal tetap / upah minimum kabupaten，大写集）、1533 hotspot（两读者 hotspot，借词规则第 3 轮）、1614 backpacker（两读者 turis ransel，第 3 轮）、1752 x-ray（两读者同三义领首不一，最小改删 放射线）、2522 dental（两读者 gigi，R2 WRONG，借词组）、2887 omission zh+id（R2 遗漏；省略；疏忽 + penghilangan）、2890 legalize（两读者 melegalkan，KBBI 定义 melegalkan = mengesahkan）、3074 rupture（两读者 robekan）、3178 overdo、3268 ulcer（R2 tukak 第 6 读）、3384 liberalize（两读者 meliberalisasi）、3684 thinking（R2 思考；思维；想法，建议领首 想法）；SPLIT 907 zh（电子车辆管理服务）、1481 grill zh（烤 / 烧烤 先后）；KEEP ★ 84 near、699 indemnity、1117 satay、1343 numb、2158 taxable entrepreneur、2170 employment insurance scheme、2706 bomber、3213 consular、3317 angelic、3844 amusement",
+   "priority": "释义",
+   "status": "needs-owner",
+   "commit": "",
+   "reason": "G/VG.md §2–§4；带旗项下轮优先复读",
+   "date": "2026-11-21"
   }
  ]
 }
