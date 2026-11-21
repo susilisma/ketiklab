@@ -112,8 +112,16 @@ const MEANING_NAME: Record<Lang, Record<Lang, string>> = {
 };
 
 function browserTag(): string {
-  // "in" is the legacy code some Android WebViews still report for Indonesian
-  try { const tag = (navigator.language || "").slice(0, 2).toLowerCase(); return tag === "in" ? "id" : tag; } catch { return ""; }
+  // "in" is the legacy code some Android WebViews still report for Indonesian; a browser set to
+  // Malay or to another language of Indonesia (jv-ID, su-ID, ms-MY) belongs to a reader of
+  // Indonesian, not of Chinese, which is where every language outside our three used to land.
+  // en-ID and zh-ID keep their own language: the region never outranks one of ours
+  try {
+    const raw = (navigator.language || "").toLowerCase(), tag = raw.slice(0, 2);
+    if (tag === "in" || tag === "ms" || tag === "jv" || tag === "su") return "id";
+    if (!isLang(tag) && /^[a-z]+-id(?![a-z])/.test(raw)) return "id";
+    return tag;
+  } catch { return ""; }
 }
 const isLang = (x: unknown): x is Lang => x === "zh" || x === "id" || x === "en";
 // stands in while readings.json is still on its way, or after it failed: every field the
