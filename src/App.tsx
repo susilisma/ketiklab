@@ -1198,7 +1198,9 @@ export default function Home() {
     setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); setWrongCountWord(0);
     chapterStart.current = secondsRef.current;
     skipPositionWrite.current = true;
-    if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; pendingChapter.current = null; }
+    // a position handed over directly is final: a clamp left behind by a list that never
+    // arrived must not fire when this one does
+    if (pendingIndex.current != null) { setIndex(pendingIndex.current); pendingIndex.current = null; pendingChapter.current = null; clampAt.current = null; }
     else {
       // a list that lost words since the position was saved: its last word, not a wrap-round;
       // a list still on its way (words.json, a dictionary file) is clamped when it arrives
