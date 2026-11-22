@@ -1773,8 +1773,8 @@ export default function Home() {
   // and of every length the list holds, at least four words (the answer and three of its own
   // length): 票 alone among 19 two-character words was the one short option on its card, and
   // its length gave it away (43 of the 2342 cards over the five category filters). A length
-  // with fewer than four words is filled from the rung's list first, then from all topic words
-  // and never a word read exactly like the answer: 权利 sat beside 权力 (both quán lì, chapter 3 of
+  // with fewer than four words is filled from the rung's list first, then from the topic words
+  // within the rung's level, then from all topic words, and never a word read exactly like the answer: 权利 sat beside 权力 (both quán lì, chapter 3 of
   // 学习) on a sixth of that card's mounts, and with no meaning language chosen the card showed
   // only "quán lì" and both — a pick between them was a coin toss that buzzed and wrote a lapse
   const zhPool = (() => {
@@ -1791,7 +1791,12 @@ export default function Home() {
     // soon knew they were never the answer. A short length is filled to eight so the card's
     // per-mount pick has something to choose from.
     const from = short.size && ladderWords.length ? Array.from(targetWord).reduce((h, c) => (h * 31 + (c.codePointAt(0) || 0)) >>> 0, 7) % ladderWords.length : 0;
-    for (const w of short.size ? ladderWords.slice(from).concat(ladderWords.slice(0, from), words) : []) {
+    // past the rung's own list the fill prefers topic words the rung admits (zhLevel at or under its
+    // cap), so a level-1 card does not carry a level-4 or unlevelled distractor while a same-level
+    // one exists; words beyond the cap are the last resort, as the ZhSteps comment says
+    const cap = zhMaxLevel(zhStep);
+    const within = short.size ? words.filter(w => zhLevel(zhMap, w.zh.split("；")[0]) <= cap) : [];
+    for (const w of short.size ? ladderWords.slice(from).concat(ladderWords.slice(0, from), within, words) : []) {
       if (!short.size) break;
       const z = wordValue(w, "zh"), n = lenOf(z);
       if (!z || have.has(z) || !short.has(n) || homophone(z)) continue;
