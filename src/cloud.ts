@@ -241,6 +241,14 @@ export async function saveName(userId: string, name: string) {
 /** Whole-progress blob; one row per account. "No row yet" and "could not ask" are
  *  kept apart: the first lets a device upload over the account, the second must not. */
 export async function loadProgress(userId: string): Promise<{ ok: true; data: ProgressBlob | null } | { ok: false; error: string }> {
+  // the read has the write's guard (saveProgress): with no session auth-js sends the request
+  // under the anonymous key, and the row policy answers it with an empty 200 whose Content-Range
+  // says 0 rows — "no row yet" to the count check below, so 只用云端记录 wiped the device and
+  // linked it to an account whose row was never read, and the panel said the records had been
+  // swapped in. getSession is what the request would use: a token it can still refresh passes,
+  // one it cannot (GoTrue down past the expiry) is "could not ask"
+  const live = await supabase.auth.getSession().then(({ data }) => withUser(data.session ?? null), () => null);
+  if (live?.user.id !== userId) return { ok: false, error: "session missing" };
   const { data, error, count } = await supabase
     .from("progress").select("data", { count: "exact" }).eq("user_id", userId).maybeSingle();
   // a gateway's HTML page arrives whole in error.message (as on a write, saveProgress): the
