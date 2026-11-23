@@ -3004,7 +3004,11 @@ export default function Home() {
             {extrasShown && itemExtras.map(x => <span key={`${x.kind}:${x.label}`} className={`meaning-extra ${x.kind}`}><small>{x.label}</small><span lang={htmlLang(x.lang)}>{x.text}</span></span>)}
           </div>}
           {practiceLang === "zh" && <div className="zh-ladder" onClick={e => e.stopPropagation()}>
-            {ZH_STEPS.map(st => <button key={st.id} className={rung === st.id ? "on" : ""} aria-pressed={rung === st.id} disabled={!!reviewKeys && st.id === "read"} onClick={() => { if (finishing.current) return; setZhStep(st.id); setTyped(""); resetWordRun(); }}>
+            {ZH_STEPS.map(st => <button key={st.id} className={rung === st.id ? "on" : ""} aria-pressed={rung === st.id} disabled={!!reviewKeys && st.id === "read"} onClick={() => { if (finishing.current) return; setZhStep(st.id); setTyped(""); resetWordRun();
+              // the 打拼音 box focuses itself on mount; the 输入法 box did not, so a pill pressed with
+              // the clock running left a veiled card ("press any key to continue") inside focus mode
+              // with the header still saying 暂停 — the box is focused as 开始 focuses it
+              if (runningRef.current) setTimeout(() => (input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox"))?.focus(), 20); }}>
               <i>{st.num}</i>{uiLang === "zh" ? st.zh : uiLang === "id" ? st.idn : st.en}
             </button>)}
           </div>}
