@@ -19,7 +19,6 @@
  "活跃": "breezy",
  "田园": "bucolic",
  "官僚": "bureaucratic",
- "橱柜": "cabinet",
  "石灰质": "calcareous",
  "心脏": "cardiac",
  "天上": "celestial",
@@ -193,7 +192,6 @@
  "抢夺": "looting",
  "好不好": "urging particle",
  "就这样吧": "emphasis particle",
- "要是": "what if",
  "已收集": "collected",
  "化妆品": "makeup",
  "烟弹仓": "pod",
@@ -258,5 +256,10 @@
  "定期合同": "fixed term contract",
  "附近": "near",
  "妊娠": "pregnancy",
- "敲门": "knock"
+ "敲门": "knock",
+ "赔偿责任": "indemnity",
+ "要不": "what if",
+ "固定物": "fixture",
+ "滑行": "slither",
+ "偎依": "cuddle"
 }
