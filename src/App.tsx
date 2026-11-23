@@ -740,8 +740,10 @@ export default function Home() {
         e.preventDefault();
         // on an untouched card the veil says "press any key to start / continue": ENTER is that
         // key, not a skip that files a word the learner never tried as a miss and an SRS lapse —
-        // also with the clock running, after 开始 and a click on the page took the focus away
-        if (!(input.current ? typedRef.current : box.value)) { box.focus(); return; }
+        // also with the clock running, after 开始 and a click on the page took the focus away.
+        // A paused card says "continue" too, whatever is in the box: with letters typed, Escape
+        // and then ENTER skipped the half-typed word, filed it in the mistakes and wrote a lapse
+        if (!runningRef.current || !(input.current ? typedRef.current : box.value)) { box.focus(); return; }
         if (!e.repeat) skipRef.current(); return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
