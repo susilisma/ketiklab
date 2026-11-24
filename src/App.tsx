@@ -742,8 +742,12 @@ export default function Home() {
         // key, not a skip that files a word the learner never tried as a miss and an SRS lapse —
         // also with the clock running, after 开始 and a click on the page took the focus away.
         // A paused card says "continue" too, whatever is in the box: with letters typed, Escape
-        // and then ENTER skipped the half-typed word, filed it in the mistakes and wrote a lapse
-        if (!runningRef.current || !(input.current ? typedRef.current : box.value)) { box.focus(); return; }
+        // and then ENTER skipped the half-typed word, filed it in the mistakes and wrote a lapse.
+        // The App box is reached here only when it is blurred, and a blurred App card is always
+        // behind its veil, which says "continue" whatever the clock does: a click away from the
+        // card (the metrics strip, the empty page) left the clock running, and ENTER on a card
+        // promising "press any key to continue" skipped the half-typed word with a lapse too
+        if (input.current || !runningRef.current || !box.value) { box.focus(); return; }
         if (!e.repeat) skipRef.current(); return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
