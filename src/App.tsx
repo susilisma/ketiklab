@@ -2726,7 +2726,8 @@ export default function Home() {
     // clicked button, so the box kept grading the letters typed while "paused" and the
     // next finished word quietly resumed the clock
     if (running) { pausedByButton.current = true; setRunning(false); input.current?.blur(); document.querySelector<HTMLElement>(".zh-typebox")?.blur(); return; }
-    // the finish card has no word to type: 开始 would only start the clock on nothing
+    // the finish card has no word to type: 开始 would only start the clock on nothing (the
+    // button is disabled there, so a click that lands anyway changes nothing)
     if (chapterFinished) return;
     // the 打拼音 box too: after 暂停 the 开始 button left it unfocused (no caret, and on a phone no
     // keyboard) until the next key, which the window handler above sends in — a phone has no such key
@@ -2941,7 +2942,7 @@ export default function Home() {
         <div className="header-actions">
           <button className="round" onClick={() => setDark(v => !v)} aria-label={dark ? TX("浅色模式", "Mode terang", "Light mode", uiLang) : TX("深色模式", "Mode gelap", "Dark mode", uiLang)}>{dark ? "☀" : "☾"}</button>
           <label className="language"><span aria-hidden="true">文</span><select key={narrowRow ? "narrow" : "wide"} value={lang} onChange={e => changeLanguage(e.target.value as Lang)} aria-label={t.language}><option value="zh" lang="zh-CN">中文</option><option value="id" lang="id">{/* a select is as wide as its longest option: on a phone the long name took 154px and squeezed the word-list button to 16–27px; the key remounts the select when the row narrows, since Chromium keeps the width it measured from the long option when only the option text changes (landscape → portrait) */}{narrowRow ? "Indonesia" : "Bahasa Indonesia"}</option><option value="en" lang="en">English</option></select></label>
-          <button className={running ? "primary running" : "primary"} onClick={start}>{running ? t.pause : t.start}<span>→</span></button>
+          <button className={running ? "primary running" : "primary"} onClick={start} disabled={view === "learn" && chapterFinished && !running}>{running ? t.pause : t.start}<span>→</span></button>
         </div>
       </header>
 
