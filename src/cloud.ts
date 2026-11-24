@@ -188,8 +188,16 @@ export async function signOut() {
     // ...under a flag of its own: borrowing autoPush's `pushing`, an autoPush already in flight when
     // 退出登录 was pressed (the minute tick on a slow read) cleared it in its finally, the tab hide that
     // followed started another autoPush, and this push returned before its write all the same
+    // ...and the panel's mount push does not stand aside: 退出登录 pressed while the panel still
+    // waited on its profile read, the mount push started afterwards with the newer ticket, this
+    // push came back from its read superseded and wrote nothing, and the mount push's own write
+    // was refused once the session was gone — nothing written, and the next account's 只用云端记录
+    // dropped the device's last minute. So the ticket is taken before the flag goes up, and a push
+    // that starts while it is up shares the ticket (pushTicket): it can neither end this push nor be
+    // ended by it, and its write either lands before the logout with the same device state or is refused
+    const wanted = pushTicket();
     signOutPush = true;
-    try { await Promise.race([pushProgress(uid, undefined, false, pushTicket()), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ } finally { signOutPush = false; }
+    try { await Promise.race([pushProgress(uid, undefined, false, wanted), new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), 5000))]); } catch { /* not pushed: nothing lost on this device */ } finally { signOutPush = false; }
   }
   // offline with a token past its expiry auth-js cannot refresh and returns the error with the session kept (with
   // a live token it drops the session itself before returning the error): 退出登录 was pressed, so the session goes
@@ -674,8 +682,9 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
 // device linked to the signed-in account, so a stranger's data is never uploaded.
 let pushing = false, signOutPush = false, pushGen = 0;
 /** A ticket for one push: true while no later push (the panel's or autoPush's) has started, so a push
- *  whose read came back late neither writes its stale merge nor reports over the newer push. */
-export function pushTicket(): () => boolean { const g = ++pushGen; return () => g === pushGen; }
+ *  whose read came back late neither writes its stale merge nor reports over the newer push.
+ *  While a sign-out push is in flight the ticket is its own, shared (see signOut). */
+export function pushTicket(): () => boolean { const g = signOutPush ? pushGen : ++pushGen; return () => g === pushGen; }
 async function autoPush() {
   const uid = session?.user.id;
   if (!uid || pushing || signOutPush || linkedUid() !== uid) return;
