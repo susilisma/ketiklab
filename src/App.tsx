@@ -1273,8 +1273,12 @@ export default function Home() {
     }
     clampAt.current = null;
     if (at.pos >= n) setIndex(n - 1);
+    // sourceKey too: a list switched to inside the session (a rung pill, 我的收藏, a category tab)
+    // whose saved chapter lies past its end and equals the chapter already current changed none
+    // of the other deps, so the clamp the [sourceKey] effect left never fired — the run opened
+    // at the stale position with the first words never served, and wrote the stale chapter back
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [words, dictWords, favorites, zhMap, chapter]);
+  }, [words, dictWords, favorites, zhMap, chapter, sourceKey]);
 
   // before paint, not after: a wrong key that lands between the new word's render and a
   // passive effect was reset away, and the next wrong key on that word wrote a second lapse
