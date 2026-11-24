@@ -207,7 +207,10 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
   // ENTERs was no longer kept across a view switch
   const end = (fn: () => boolean | void) => { const key = kept.key; over.current = true; kept.key = ""; if (fn() === false) { over.current = false; kept.key = key; } };
   // not while a dialog is open: the box would pull the focus out from under it
-  useEffect(() => { if (step === "pinyin" && active) setTimeout(() => { if (canFocus?.() ?? true) box.current?.focus(); }, 20); }, [step, word, active]); // eslint-disable-line react-hooks/exhaustive-deps
+  // the card's own focus on mount is no gesture: the clock waits for the first letter, as it
+  // always did, while a focus the learner gives the box (a click, ENTER on a paused card) resumes
+  const autoFocus = useRef(false);
+  useEffect(() => { if (step === "pinyin" && active) setTimeout(() => { if (canFocus?.() ?? true) { autoFocus.current = true; box.current?.focus(); autoFocus.current = false; } }, 20); }, [step, word, active]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const grade = (value: string) => {
     // the typing gets the "ve" → "ue" fold only where the target itself has "ue"
@@ -425,6 +428,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       // learner meets (实现 opens 商务 and the whole collection), spelled out under its own box
       placeholder={T(uiLang, "用键盘打拼音，例如 zhong wen", "ketik pinyin, mis. zhong wen", "type the pinyin, e.g. zhong wen")}
       aria-label={T(uiLang, "拼音", "pinyin", "pinyin")}
+      // a click into the box after Escape left the clock stopped and the status at 按任意键继续
+      // until the first letter, unlike the App box, which resumes on focus
+      onFocus={() => { if (!autoFocus.current) onResume(); }}
       onChange={e => {
         onResume();
         if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += e.target.value.slice(typed.length); return; }
