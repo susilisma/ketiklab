@@ -4,7 +4,7 @@ import { recordReview, getStats, getDueKeys, deleteRecords, renameRecords, reset
 import { keyClick, errorBeep, successChime, setSoundProfile, initSoundPref, type SoundProfile } from "./sounds";
 import { Account } from "./Account";
 import { onAccountWanted, setProgressNormalizer, storable, withinBytes, starBytes, storedStar, SYNCED_KEYS, KEY_CHARS, DAYS_MAX, DAY_KEY, FAV_BYTES, type ProgressBlob } from "./cloud";
-import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
+import { ZhSteps, ZH_STEPS, dropPinyinCarry, pinyinCarry, resumeFocus, useZhMap, zhToned, zhPlain, zhLevel, zhMaxLevel, type ZhStep } from "./ZhSteps";
 // first Chinese senses that were re-glossed since topic words were keyed by the hanzi typed
 // (old sense → English headword): a hanzi-era row like zh:直走 names no current word, and
 // without this map it was retired as an orphan by 开始复习. Grows with each re-gloss.
@@ -747,7 +747,7 @@ export default function Home() {
         // behind its veil, which says "continue" whatever the clock does: a click away from the
         // card (the metrics strip, the empty page) left the clock running, and ENTER on a card
         // promising "press any key to continue" skipped the half-typed word with a lapse too
-        if (input.current || !runningRef.current || !box.value) { box.focus(); return; }
+        if (input.current || !runningRef.current || !box.value) { resumeFocus.at = Date.now(); box.focus(); return; }
         if (!e.repeat) skipRef.current(); return;
       }
       if (e.ctrlKey || e.metaKey || e.altKey || (e.key.length !== 1 && e.key !== "Process")) return;
@@ -2447,8 +2447,10 @@ export default function Home() {
       if (holdSpeech && autoSpokenWord.current !== targetKey) { autoSpokenWord.current = targetKey; speak(targetWord, targetVoice); }
       return;
     }
-    // a held key auto-repeats ~30/s and each repeat was a skip with a recorded lapse
-    if (event.key === "Enter") { event.preventDefault(); if (!event.repeat) skipWord(); return; }
+    // a held key auto-repeats ~30/s and each repeat was a skip with a recorded lapse; and the
+    // second of two quick ENTERs after a pause landed here, in the box the first had just
+    // refocused, and skipped the half-typed word the first was meant to continue
+    if (event.key === "Enter") { event.preventDefault(); if (!event.repeat && Date.now() - resumeFocus.at >= 320) skipWord(); return; }
     if (event.key === " " && (event.ctrlKey || event.metaKey)) {
       event.preventDefault(); speak(targetWord, targetVoice); return;
     }

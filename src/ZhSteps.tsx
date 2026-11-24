@@ -140,6 +140,9 @@ const UMLAUT_U = "u" + String.fromCharCode(0x308);
 // Shared with App's carry for Latin words, so letters typed on across a boundary between a pinyin
 // word and an English or Indonesian one (a mixed review or favourites list) reach the next word.
 export const pinyinCarry = { current: "" };
+// when the App's window ENTER handler last refocused a box to continue a paused card: an ENTER
+// that reaches the box within 320 ms of it is the same gesture bouncing, not a skip
+export const resumeFocus = { at: 0 };
 // the letters typed into the 打拼音 box so far, with the misses counted on them: the learn view
 // unmounts with its ZhSteps, so 词库 and back emptied the box ("sh" of 实现 gone, the pinyin revealed
 // after two misses hidden again) while the App's own box, whose letters are App state, kept them.
@@ -441,7 +444,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         // unlike the App box's Shift+TAB
         if (e.key === "Tab" && e.shiftKey) onLeave();
         if (e.key === "Escape") { onLeave(); box.current?.blur(); }
-        if (e.key === "Enter") { e.preventDefault(); if (!e.repeat) end(onSkip); }
+        if (e.key === "Enter") { e.preventDefault(); if (!e.repeat && Date.now() - resumeFocus.at >= 320) end(onSkip); }
       }}
       // the box centres its text, so a click (or a tap) back into it put the caret before or inside
       // the letters already typed, and the next letter was graded there — "shi", a click, "xian"
