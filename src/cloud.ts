@@ -248,7 +248,7 @@ export async function saveName(userId: string, name: string) {
 
 /** Whole-progress blob; one row per account. "No row yet" and "could not ask" are
  *  kept apart: the first lets a device upload over the account, the second must not. */
-export async function loadProgress(userId: string): Promise<{ ok: true; data: ProgressBlob | null } | { ok: false; error: string }> {
+export async function loadProgress(userId: string): Promise<{ ok: true; data: ProgressBlob | null } | { ok: false; error: string; code?: string }> {
   // the read has the write's guard (saveProgress): with no session auth-js sends the request
   // under the anonymous key, and the row policy answers it with an empty 200 whose Content-Range
   // says 0 rows — "no row yet" to the count check below, so 只用云端记录 wiped the device and
@@ -262,7 +262,10 @@ export async function loadProgress(userId: string): Promise<{ ok: true; data: Pr
   // a gateway's HTML page arrives whole in error.message (as on a write, saveProgress): the
   // panel's keyword matching read "offline for maintenance" or "JWT" out of it and told the
   // learner to check the connection or sign in again; named for what it is instead
-  if (error) return { ok: false, error: /<[a-z!/]/i.test(error.message) ? "html body" : error.message };
+  // ...with PostgREST's code: a token refused after a signing-key rotation comes back as PGRST301
+  // with a message that does not say "JWT" (JWSError …), and without the code the panel told the
+  // learner to try again later, when only signing in again helps — as a refused write already says
+  if (error) return { ok: false, error: /<[a-z!/]/i.test(error.message) ? "html body" : error.message, code: error.code };
   // a 200 with an empty body or a bare `null` (a gateway's or a captive portal's, never
   // PostgREST's) parses to no row at all, and "no row yet" let linkThisDevice upload this
   // device's copy over the account's row. PostgREST's own answer carries Content-Range, so
@@ -575,7 +578,7 @@ let lastPushed = "";
  *  Throws when either request fails; nothing is written after a failed read. */
 export async function pushProgress(userId: string, own?: ProgressBlob, wait = true, wanted: () => boolean = () => true) {
   const r = await loadProgress(userId);
-  if (!r.ok) throw new Error("cloud read failed: " + r.error);
+  if (!r.ok) throw Object.assign(new Error("cloud read failed: " + r.error), { code: r.code });
   const cloud = await normalized(r.data ?? {}, wait);
   // this device's copy goes through the same decision, read after the wait above: while its
   // own migration still waits for a dictionary, the old shape would otherwise be pushed
@@ -611,7 +614,7 @@ export function finishPendingRestore(): boolean {
 // profileName null: the profile could not be read, so the name the account's row carries stands in
 export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName: string | null = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
   const r = await loadProgress(userId);
-  if (!r.ok) throw new Error("cloud read failed: " + r.error);
+  if (!r.ok) throw Object.assign(new Error("cloud read failed: " + r.error), { code: r.code });
   const cloud = await normalized(r.data ?? {});
   profileName ??= typeof cloud["ketiklab-name"] === "string" ? cloud["ketiklab-name"].slice(0, NAME_CHARS) : "";
   // through the same decision as in pushProgress: a device whose own key migration is still
