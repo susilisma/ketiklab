@@ -282,7 +282,7 @@ export async function saveProgress(userId: string, data: ProgressBlob) {
   // bound) reached here with no session and went out as the anonymous key, which the row policy
   // rejects: refused here instead, before anything is sent
   if (session?.user.id !== userId) throw new Error("not signed in as this account");
-  const { error } = await supabase.from("progress").upsert({ user_id: userId, data }, { onConflict: "user_id" });
+  const { error, status } = await supabase.from("progress").upsert({ user_id: userId, data }, { onConflict: "user_id" });
   // a gateway's HTML page (a 200 or a 5xx that is no PostgREST JSON) arrives whole in
   // error.message, and the panel's keyword matching read "expired" or "network error" out of
   // it and told the learner to request a new link or check the connection: such a body is
@@ -291,7 +291,8 @@ export async function saveProgress(userId: string, data: ProgressBlob) {
   // a gateway's 429 ("API rate limit exceeded") matched the e-mail sending limit's wording there,
   // telling the learner about mail that was never involved; named, it is "server trouble" with
   // the code, after the sign-in and row-policy wordings that still read the message itself
-  if (error) throw Object.assign(new Error("cloud write failed: " + (/<[a-z!/]/i.test(error.message) ? "html body" : error.message)), { code: error.code });
+  // (a gateway's refusal carries no PostgREST code: the HTTP status stands in, so the banner says which)
+  if (error) throw Object.assign(new Error("cloud write failed: " + (/<[a-z!/]/i.test(error.message) ? "html body" : error.message)), { code: error.code || (status >= 400 ? String(status) : undefined) });
 }
 
 /** Keys we mirror to the cloud. Everything else stays device-local on purpose. */
