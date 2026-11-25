@@ -284,7 +284,11 @@ export async function saveProgress(userId: string, data: ProgressBlob) {
   // error.message, and the panel's keyword matching read "expired" or "network error" out of
   // it and told the learner to request a new link or check the connection: such a body is
   // named for what it is, as a refused read already is ("cloud read failed")
-  if (error) throw Object.assign(new Error(/<[a-z!/]/i.test(error.message) ? "cloud write failed" : error.message), { code: error.code });
+  // ...and every refused write carries that name: PostgREST's message went to the panel bare, and
+  // a gateway's 429 ("API rate limit exceeded") matched the e-mail sending limit's wording there,
+  // telling the learner about mail that was never involved; named, it is "server trouble" with
+  // the code, after the sign-in and row-policy wordings that still read the message itself
+  if (error) throw Object.assign(new Error("cloud write failed: " + (/<[a-z!/]/i.test(error.message) ? "html body" : error.message)), { code: error.code });
 }
 
 /** Keys we mirror to the cloud. Everything else stays device-local on purpose. */
