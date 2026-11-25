@@ -183,9 +183,12 @@ type Props = {
   // whether the next word's box may take focus by itself: false while the App holds the card
   // paused (暂停 pressed inside the done window, Escape), as for its own box
   canFocus?: () => boolean;
+  // whether the clock is running: ENTER in the box of a card whose status line says "press any
+  // key to start / continue" is that key, as it is for the App box, not the skip
+  isRunning?: () => boolean;
 };
 
-export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave, onResume, canFocus }: Props) {
+export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSkip, onMiss, onSpeak, onLeave, onResume, canFocus, isRunning }: Props) {
   const keptKey = `${step}\u0000${word}\u0000${plain}`;
   const [typed, setTyped] = useState(() => kept.key === keptKey ? kept.typed : "");
   const [wrong, setWrong] = useState(() => kept.key === keptKey ? kept.wrong : 0);
@@ -450,7 +453,18 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         // unlike the App box's Shift+TAB
         if (e.key === "Tab" && e.shiftKey) onLeave();
         if (e.key === "Escape") { onLeave(); box.current?.blur(); }
-        if (e.key === "Enter") { e.preventDefault(); if (!e.repeat && Date.now() - resumeFocus.at >= 320) end(onSkip); }
+        // ...but not on a card whose clock is stopped: the box takes the focus by itself on mount
+        // (the clock waits, above), so the first card and the first card after 下一章 stood at
+        // 按任意键开始 / 继续 with the focus already inside — and ENTER, "any key" by that promise,
+        // skipped the word the learner never tried, wrote an SRS lapse and filed it in the 错词本.
+        // The App's window handler makes that ENTER the start key for a blurred box; the focused
+        // box gets the same here, with the 320 ms bounce guard the handler sets
+        if (e.key === "Enter") {
+          e.preventDefault();
+          if (e.repeat) return;
+          if (!(isRunning?.() ?? true)) { resumeFocus.at = Date.now(); onResume(); return; }
+          if (Date.now() - resumeFocus.at >= 320) end(onSkip);
+        }
       }}
       // the box centres its text, so a click (or a tap) back into it put the caret before or inside
       // the letters already typed, and the next letter was graded there — "shi", a click, "xian"

@@ -3044,6 +3044,7 @@ export default function Home() {
             onLeave={() => { leftByKey.current = true; setRunning(false); }}
             onResume={() => { pausedByButton.current = false; leftByKey.current = false; setRunning(true); }}
             canFocus={() => !pausedByButton.current && !leftByKey.current}
+            isRunning={() => runningRef.current}
           /> : <>
           <input ref={input} key={practiceLang} lang={practiceLang === "zh" ? "zh-CN" : practiceLang} placeholder={practiceLang === "zh" ? TX("请用拼音输入", "Ketik lewat pinyin", "Type through pinyin", uiLang) : ""} className={practiceLang === "zh" ? "ime-input" : "ghost-input"} defaultValue="" onChange={e=>{ if (!(e.nativeEvent as InputEvent).isComposing) isComposing.current = false; handleType(e.target.value); }} onCompositionStart={e=>{ isComposing.current = true; compStartLen.current = e.currentTarget.value.length; }} onCompositionEnd={e=>{ isComposing.current = false; handleType(e.currentTarget.value); }} onKeyDown={handleGhostKeys} onKeyUp={e => { if (e.key === "Tab") setReveal(false); }} onFocus={()=>{ isComposing.current = false; pausedByButton.current = false; leftByKey.current = false; setTypingFocus(true); setRunning(true); }} onBlur={()=>{ setTypingFocus(false); setReveal(false); }} autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false} aria-label={PROMPTS[uiLang][practiceLang]} />
           {imeHint ? <p className="hint ime-hint">{TX("请切换到中文输入法再输入", "Beralih dulu ke metode input Mandarin", "Switch to a Chinese input method first", uiLang)}</p> :
