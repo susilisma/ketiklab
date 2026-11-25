@@ -3068,7 +3068,7 @@ export default function Home() {
           {(() => {
             const back = chTomorrow;
             const goal = `${Math.min(todayCount, DAILY_GOAL)}/${DAILY_GOAL}`;
-            const streak = streakDays > 1 ? (uiLang === "zh" ? ` · 连续 ${streakDays} 天` : uiLang === "id" ? ` · ${streakDays} hari berturut-turut` : ` · ${streakDays}-day streak`) : "";
+            const streak = streakDays > 1 ? (uiLang === "zh" ? ` · 连续 ${streakDays} 天` : uiLang === "id" ? ` · ${streakDays} hari beruntun` : ` · ${streakDays}-day streak`) : "";
             const tomorrow = !back ? "" : uiLang === "zh" ? `${back} 个词明天回来复习 · ` : uiLang === "id" ? `${back} kata kembali besok · ` : `${back} ${enOne(back, "word comes", "words come")} back tomorrow · `;
             return <p className="finish-tomorrow">{tomorrow}{uiLang === "zh"
               ? `今日目标 ${goal}${streak}`
