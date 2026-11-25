@@ -3057,7 +3057,7 @@ export default function Home() {
         {!(practiceLang === "zh" && rung === "choose") && !(dictation !== "off" && !zhLadder) && <div className="prevnext"><span lang={prevItem ? htmlLang(prevItem.lang) : undefined}>‹ {prevItem && prevItem.key !== item.key ? prevItem.text : "—"}</span><span lang={nextItem ? htmlLang(nextItem.lang) : undefined}>{nextItem && nextItem.key !== item.key ? nextItem.text : "—"} ›</span></div>}
         </>}
         {chapterFinished && <div className="reading-complete chapter-complete">
-          <span>✓</span><small>{reviewKeys ? TX("复习完成", "PENGULANGAN SELESAI", "REVIEW COMPLETE", uiLang) : uiLang === "zh" ? "本章完成" : uiLang === "id" ? "BAB SELESAI" : "CHAPTER COMPLETE"}</small>
+          <span>✓</span><small>{reviewKeys ? TX("复习完成", "Pengulangan selesai", "Review complete", uiLang) : TX("本章完成", "Bab selesai", "Chapter complete", uiLang)}</small>
           {/* the card replaces the practice word, so its title is the view's h1 */}
           <h1>{reviewKeys ? t.reviewing : uiLang === "zh" ? `第 ${finishedChapter + 1} 章` : uiLang === "id" ? `Bab ${finishedChapter + 1}` : `Chapter ${finishedChapter + 1}`}</h1>
           <p>{uiLang === "zh" ? `${chDone} 个词 · ${chWrongKeys.length} 个错词` : uiLang === "id" ? `${chDone} kata · ${chWrongKeys.length} salah` : `${chDone} ${enOne(chDone, "word", "words")} · ${chWrongKeys.length} missed`}</p>
