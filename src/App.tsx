@@ -1166,6 +1166,21 @@ export default function Home() {
     if (v && typeof v === "object") { const p = v as { ch?: unknown; pos?: unknown }; return Number(p.ch) === ch ? clampPos(p.pos) : 0; }
     return clampPos(v);
   };
+  // ...and the chapter's tally beside it: a reload (or the installed app closed and reopened)
+  // half-way through a chapter brought the word back but not the words done, missed and the
+  // seconds spent before it, so the finish card reported the words after the reload alone
+  // ("10 词 · 0 错" after 1 missed and 1 skipped before it) with no 练习错词 button. The 明日
+  // count is not kept: it names rows this run wrote, and a run that wrote none says so
+  const savedTally = (key: string, ch: number) => {
+    const v = readPositions()[key];
+    if (!v || typeof v !== "object") return null;
+    const p = v as { ch?: unknown; done?: unknown; wrong?: unknown; el?: unknown };
+    if (Number(p.ch) !== ch) return null;
+    const done = Math.min(20, Math.max(0, Math.floor(Number(p.done)) || 0));
+    if (!done) return null;
+    const wrong = Array.isArray(p.wrong) ? Array.from(new Set(p.wrong.filter(validMistakeKey))).slice(0, 20) : [];
+    return { done, wrong, el: Math.max(0, Math.floor(Number(p.el)) || 0) };
+  };
   const readSavedReading = (): { id: string; line: number; auto: boolean } | null => {
     try {
       const p: unknown = JSON.parse(localStorage.getItem("ketiklab-reading") || "null");
@@ -1201,8 +1216,11 @@ export default function Home() {
     pendingChapter.current = null;
     setChapter(ch);
     finishedBeforeReview.current = null;
-    setChapterFinished(false); setChDone(0); resetTomorrow(); setChWrongKeys([]); setWrongCountWord(0);
-    chapterStart.current = secondsRef.current;
+    // the tally saved with the position comes back with it (a position handed over directly
+    // is a fresh run of the chapter, as choosing the list anew is)
+    const kept = pendingIndex.current == null ? savedTally(sourceKey, ch) : null;
+    setChapterFinished(false); setChDone(kept?.done ?? 0); resetTomorrow(); setChWrongKeys(kept?.wrong ?? []); setWrongCountWord(0);
+    chapterStart.current = secondsRef.current - (kept?.el ?? 0);
     skipPositionWrite.current = true;
     // a position handed over directly is final: a clamp left behind by a list that never
     // arrived must not fire when this one does
@@ -1226,19 +1244,21 @@ export default function Home() {
     try {
       const m = readPositions();
       const pos = chapterFinished ? 0 : nextPos.current ?? index % 20;
-      const cur = m[sourceKey] as { ch?: unknown; pos?: unknown } | undefined;
-      if (cur && typeof cur === "object" && cur.ch === chapter && cur.pos === pos) return;
+      // a finished chapter starts over, so its tally is not kept either
+      const done = chapterFinished ? 0 : chDone, wrong = chapterFinished ? [] : chWrongKeys;
+      const cur = m[sourceKey] as { ch?: unknown; pos?: unknown; done?: unknown; wrong?: unknown } | undefined;
+      if (cur && typeof cur === "object" && cur.ch === chapter && cur.pos === pos && (cur.done ?? 0) === done && JSON.stringify(cur.wrong ?? []) === JSON.stringify(wrong)) return;
       // another tab (or the installed app beside a browser tab) moved this list to another chapter:
       // neither key is in the storage listener, and this tab's write, under its own chapter, left
       // the stored chapter and position disagreeing — the next visit opened the other tab's chapter
       // at word 1, both places lost. The chapter saved last wins its word too; this tab's word stays
       // on its card until it writes a chapter of its own (every in-tab chapter change writes first)
       if (savedChapter(sourceKey) !== chapter) return;
-      m[sourceKey] = { ch: chapter, pos };
+      m[sourceKey] = done ? { ch: chapter, pos, done, wrong, el: Math.max(0, secondsRef.current - chapterStart.current) } : { ch: chapter, pos };
       localStorage.setItem("ketiklab-position", JSON.stringify(m));
     } catch { /* ignore */ }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [index, sourceKey, chapterFinished, chapter, judged]);
+  }, [index, sourceKey, chapterFinished, chapter, judged, chDone, chWrongKeys.length]);
   // the reading and the line in hand; a finished piece starts over on the next visit, as a
   // finished chapter does. Nothing is written before the readings have arrived and the saved
   // piece has been restored, or the empty first render would wipe it
@@ -2852,10 +2872,13 @@ export default function Home() {
     const n = activeItems.slice(ch * 20, ch * 20 + 20).length;
     if (n && pos >= n) pos = n - 1;
     setChapter(ch);
-    setChapterFinished(restore); setChDone(restore ? kept.done : 0); setChWrongKeys(restore ? kept.wrong : []); resetTomorrow(restore ? kept.tomorrow : 0);
+    // a review started half-way through the chapter (开始复习 from the 错词本): the chapter's tally,
+    // saved with its position, comes back with the word, as after a reload
+    const mid = restore ? null : savedTally(sourceKey, ch);
+    setChapterFinished(restore); setChDone(restore ? kept.done : mid?.done ?? 0); setChWrongKeys(restore ? kept.wrong : mid?.wrong ?? []); resetTomorrow(restore ? kept.tomorrow : 0);
     // the card has no word to type, so the clock stops as it does when a chapter ends
     if (restore) { setFinishedChapter(kept.chapter); setChElapsed(kept.elapsed); setRunning(false); }
-    chapterStart.current = secondsRef.current;
+    chapterStart.current = secondsRef.current - (mid?.el ?? 0);
     // same as startReview: the slip noted inside the review must not grade the list's word
     setIndex(pos); setTyped(""); resetWordRun(); slipOn.current = ""; autoSpokenWord.current = null;
   }
