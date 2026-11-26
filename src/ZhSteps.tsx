@@ -433,7 +433,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       aria-label={T(uiLang, "拼音", "pinyin", "pinyin")}
       // a click into the box after Escape left the clock stopped and the status at 按任意键继续
       // until the first letter, unlike the App box, which resumes on focus
-      onFocus={() => { if (!autoFocus.current) onResume(); }}
+      // ...and a click that continues a stopped clock is the same gesture ENTER is below: an ENTER
+      // right behind it (the "any key" the status promised) used to skip the word with a lapse
+      onFocus={() => { if (!autoFocus.current) { if (!(isRunning?.() ?? true)) resumeFocus.at = Date.now(); onResume(); } }}
       onChange={e => {
         onResume();
         if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += e.target.value.slice(typed.length); return; }
