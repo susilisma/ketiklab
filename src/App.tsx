@@ -1245,7 +1245,15 @@ export default function Home() {
       const m = readPositions();
       const pos = chapterFinished ? 0 : nextPos.current ?? index % 20;
       // a finished chapter starts over, so its tally is not kept either
-      const done = chapterFinished ? 0 : chDone, wrong = chapterFinished ? [] : chWrongKeys;
+      // ...and inside the 320 ms done window the word is judged but its count still waits in the
+      // advance timer: the position had moved on (nextPos) while done stayed behind, so a reload
+      // in the window brought the next word back with the chapter one word short (and a slip on
+      // the judged word missing from its 错词). The judged word counts here as the timer will.
+      // Its last word ends the chapter: the card writes a fresh start then, as the finish card does
+      const pending = !chapterFinished && nextPos.current !== null;
+      const endsChapter = pending && nextPos.current === 0;
+      const done = chapterFinished || endsChapter ? 0 : chDone + (pending ? 1 : 0);
+      const wrong = chapterFinished || endsChapter ? [] : pending && (hadWrong.current || slipOn.current === wordId) ? Array.from(new Set([...chWrongKeys, wordId])) : chWrongKeys;
       const cur = m[sourceKey] as { ch?: unknown; pos?: unknown; done?: unknown; wrong?: unknown } | undefined;
       if (cur && typeof cur === "object" && cur.ch === chapter && cur.pos === pos && (cur.done ?? 0) === done && JSON.stringify(cur.wrong ?? []) === JSON.stringify(wrong)) return;
       // another tab (or the installed app beside a browser tab) moved this list to another chapter:
