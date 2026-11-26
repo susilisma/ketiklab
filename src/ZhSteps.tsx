@@ -18,9 +18,9 @@ const HINTS: Record<ZhStep, [string, string, string]> = {
     "Just look: hanzi + pinyin + meaning. Press SPACE for the next one.",
   ],
   pinyin: [
-    "用普通英文键盘打出拼音，不需要中文输入法。TAB 看答案，ENTER 跳过。",
-    "Ketik pinyin-nya dengan keyboard biasa, tanpa IME Mandarin. TAB untuk melihat jawaban, ENTER untuk melewati.",
-    "Type the pinyin on a normal keyboard \u2014 no Chinese IME needed. TAB to peek, ENTER to skip.",
+    "用普通英文键盘打出拼音，不需要中文输入法。TAB 看答案",
+    "Ketik pinyin-nya dengan keyboard biasa, tanpa IME Mandarin. TAB untuk melihat jawaban",
+    "Type the pinyin on a normal keyboard \u2014 no Chinese IME needed. TAB to peek",
   ],
   choose: [
     "看拼音和意思，选出正确的汉字。这是输入法选字的预演。",
@@ -49,6 +49,13 @@ if (typeof window !== "undefined") {
 export function zhStepHint(step: ZhStep, ui: UiLang) {
   const h = HINTS[step];
   return ui === "zh" ? h[0] : ui === "id" ? h[1] : h[2];
+}
+// the 打拼音 tip's ENTER clause: on a card whose clock is stopped ENTER is the start key the status
+// line promises (按任意键开始 / 继续), not the skip, so the tip names the skip only while the clock runs
+function pinyinHint(ui: UiLang, running: boolean) {
+  const base = zhStepHint("pinyin", ui);
+  if (!running) return base + (ui === "zh" ? "。" : ".");
+  return base + (ui === "zh" ? "，ENTER 跳过。" : ui === "id" ? ", ENTER untuk melewati." : ", ENTER to skip.");
 }
 
 /* ---------- data ---------- */
@@ -483,7 +490,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       autoComplete="off" autoCapitalize="off" autoCorrect="off" spellCheck={false}
     />
     <p className={wrong >= 3 ? "zh-tip has-skip" : "zh-tip"}>
-      {zhStepHint("pinyin", uiLang)}
+      {pinyinHint(uiLang, isRunning?.() ?? true)}
       {/* a ü the IME spelling keeps as v (lǜ, nǚ): the box takes v or ü and refuses u, which nothing
           on the card said — "lu" for 律师 was graded a miss with no way to learn why. Not for lüe/nüe,
           where "lue" is taken as well */}
