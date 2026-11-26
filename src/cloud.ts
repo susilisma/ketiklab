@@ -242,8 +242,10 @@ export async function loadProfile(userId: string): Promise<Profile | null | unde
 export async function saveName(userId: string, name: string) {
   // cut where it is read (loadProfile) and where it is written: a name an older build stored on this
   // device beyond the field's 24 characters went to the profiles row whole
-  const { error } = await supabase.from("profiles").upsert({ id: userId, name: name.slice(0, NAME_CHARS) }, { onConflict: "id" });
-  if (error) throw Object.assign(new Error(error.message), { code: error.code }); // the code lets Account word it (humanError)
+  const { error, status } = await supabase.from("profiles").upsert({ id: userId, name: name.slice(0, NAME_CHARS) }, { onConflict: "id" });
+  // named as saveProgress names its refusals: thrown raw, a gateway's 429 ("API rate limit exceeded")
+  // was read by humanError as the e-mail sending limit, and a 503 page as whatever words it held
+  if (error) throw Object.assign(new Error("cloud write failed: " + (/<[a-z!/]/i.test(error.message) ? "html body" : error.message)), { code: error.code || (status >= 400 ? String(status) : undefined) });
 }
 
 /** Whole-progress blob; one row per account. "No row yet" and "could not ask" are
