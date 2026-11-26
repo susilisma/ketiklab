@@ -1296,7 +1296,10 @@ export default function Home() {
     // landed on word 1 again until a chapter button was pressed
     if (!n) {
       const len = activeItemsRef.current.length;
-      if (len) { clampAt.current = null; const last = Math.ceil(len / 20) - 1; setIndex(0); setChapter(last); writeChapter(sourceKey, last); }
+      // ...and the tally restored for the stale chapter goes with it: carried over, the words done
+      // and missed in the chapter that no longer exists were written under the clamped one, and a
+      // list of 3 favourites typed cleanly ended with "5 个词 · 1 个错词" and a 练习错词 button
+      if (len) { clampAt.current = null; const last = Math.ceil(len / 20) - 1; setIndex(0); setChapter(last); writeChapter(sourceKey, last); setChDone(0); setChWrongKeys([]); resetTomorrow(); chapterStart.current = secondsRef.current; }
       return;
     }
     clampAt.current = null;
