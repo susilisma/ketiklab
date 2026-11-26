@@ -1310,7 +1310,12 @@ export default function Home() {
 
   // before paint, not after: a wrong key that lands between the new word's render and a
   // passive effect was reset away, and the next wrong key on that word wrote a second lapse
-  useLayoutEffect(() => { setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; slipOn.current = ""; }, [index]);
+  // ...unless the index moved under the same word: a favourite starred or unstarred in another tab
+  // shifts the word's slot (favListChanged follows it, letters typed included), and the reset here
+  // forgot the slip already noted on it — the word then finished as a clean pass, the finish card
+  // said 0 错 and the accuracy rose while the 错词本 and the SRS held its lapse
+  const sameWordMoved = useRef(false);
+  useLayoutEffect(() => { if (sameWordMoved.current) { sameWordMoved.current = false; return; } setWrongCountWord(0); setReveal(false); setMeaningPeek(false); setLoopIx(0); hadWrong.current = false; lapseRecorded.current = false; slipOn.current = ""; }, [index]);
   useEffect(() => { try { localStorage.setItem("ketiklab-days", JSON.stringify(dayCounts)); } catch { /* ignore */ } }, [dayCounts]);
   // the class on <html> gives the body the dark background too (the rubber-band area
   // above and below the app on phones), and index.html sets it before the app mounts
@@ -2207,6 +2212,8 @@ export default function Home() {
           else setIndex(slot + 1);
           return;
         }
+        // (the [index] reset stands aside for this move: the word is the same, its slip stays noted)
+        if (slot !== index % Math.max(learnItems.length, 1)) sameWordMoved.current = true;
         if (ch !== chapterSafe || slot !== index % Math.max(learnItems.length, 1)) setIndex(slot); return;
       }
       // unstarred inside the done window: the pass is counted, but its chapter tally waits in the
