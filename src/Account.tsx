@@ -78,7 +78,9 @@ function humanError(e: unknown, l: Lang): string {
     return T("登录已过期，这次没有同步。请重新登录。", "Sesi masuk sudah kedaluwarsa; tidak jadi disinkronkan. Masuk lagi.", "Your sign-in has expired, so nothing was synced. Sign in again.", l);
   // the row policy's refusal names its own remedy; read before the write line below, which
   // now prefixes every refused write (saveProgress)
-  if (ae.code === "42501" || m.includes("row-level security"))
+  // ...but a read refused with the same code (the table grant missing) changed nothing and has no
+  // sign-out remedy: it takes the read line below, as every other refused read does
+  if ((ae.code === "42501" || m.includes("row-level security")) && !m.includes("cloud read failed"))
     return T("服务器拒绝了这次写入。退出后重新登录再试。", "Server menolak penulisan ini. Keluar, masuk lagi, lalu coba lagi.", "The server refused this write. Sign out, sign in again and retry.", l);
   if (m.includes("cloud write failed")) return serverTrouble(ae.code);
   if (m.includes("cloud read failed"))
