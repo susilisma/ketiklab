@@ -121,6 +121,8 @@
 .chapter-nav button{width:24px;height:24px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--muted);font-size:13px;line-height:1}
 .chapter-nav button:hover:not(:disabled){color:var(--purple);border-color:var(--purple)}
 .chapter-nav button:disabled{opacity:.35;cursor:default}
+/* the header 开始 is disabled under the finish card (b8fcf1b): shown as such, not as a live pill */
+.primary:disabled{opacity:.35;cursor:default;box-shadow:none}
 .mode-row{display:flex;flex-wrap:wrap;align-items:center;gap:6px 7px;margin:13px 0 -6px}
 /* a group is a label plus its buttons; it has no box of its own until the phone block turns it into a row */
 .mode-group{display:contents}.mode-group>span{font-size:10px;color:var(--muted);letter-spacing:1px;text-transform:uppercase}
