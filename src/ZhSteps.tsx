@@ -458,7 +458,9 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
         // (a peek is a graded move on the card, so it starts the clock as a wrong pick or a wrong
         // letter does: on a card whose clock had not started, the lapse was written and the 错词本
         // entry filed while the status line kept saying 按任意键开始 over 00:00)
-        if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) { onResume(); onMiss(); } setPeek(true); }
+        // (...and with the bounce guard every other resume gesture has: a peek that started the clock
+        // made the ENTER pressed right behind it "to start" the skip)
+        if (e.key === "Tab" && !e.shiftKey) { e.preventDefault(); if (!e.repeat) { if (!(isRunning?.() ?? true)) resumeFocus.at = Date.now(); onResume(); onMiss(); } setPeek(true); }
         // leaving the box is a pause: with running left true the header kept saying FOCUS MODE
         // and the clock went on counting seconds the learner was not typing — after Shift+TAB
         // too, which moved the focus out but left the clock running and the sidebar hidden,
