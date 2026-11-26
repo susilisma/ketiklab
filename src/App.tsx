@@ -2770,6 +2770,9 @@ export default function Home() {
     if (chapterFinished) return;
     // the 打拼音 box too: after 暂停 the 开始 button left it unfocused (no caret, and on a phone no
     // keyboard) until the next key, which the window handler above sends in — a phone has no such key
+    // ...and an ENTER that pressed this button is the same gesture the window handler guards: a
+    // second ENTER within 320 ms used to land in the box just refocused and skip the half-typed word
+    resumeFocus.at = Date.now();
     setRunning(true); setTimeout(() => (input.current ?? document.querySelector<HTMLInputElement>(".zh-typebox"))?.focus(), 20);
   }
   // Keys are "<lang>:<word key>". Within a language an English key can still exist
