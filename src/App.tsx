@@ -2086,7 +2086,15 @@ export default function Home() {
           // list being swapped under the card in this same render (the write effect sits out the
           // first render of the new list). A pass had written it when judged (nextPos); a skip had
           // not, so the skipped word came back as the first on the next visit to the topic words
-          try { const m = readPositions(); m[sourceKey] = { ch: chapter, pos: index % 20 + 1 }; localStorage.setItem("ketiklab-position", JSON.stringify(m)); } catch { /* ignore */ }
+          // ...with the chapter's tally, as the write effect keeps it: written as {ch, pos} alone, the
+          // record dropped the words done and missed before the hand-over and never counted this one,
+          // and the chapter's finish card on the next visit to the topic words came up short
+          try {
+            const m = readPositions();
+            const done = chDone + 1, wrong = wasWrong ? Array.from(new Set([...chWrongKeys, wordId])) : chWrongKeys;
+            m[sourceKey] = { ch: chapter, pos: index % 20 + 1, done, wrong, el: Math.max(0, secondsRef.current - chapterStart.current) };
+            localStorage.setItem("ketiklab-position", JSON.stringify(m));
+          } catch { /* ignore */ }
           return;
         }
       } else persistSource(sourceRef.current);
