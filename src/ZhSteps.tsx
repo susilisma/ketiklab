@@ -442,7 +442,7 @@ export function ZhSteps({ step, word, plain, pool, uiLang, active, onPass, onSki
       // until the first letter, unlike the App box, which resumes on focus
       // ...and a click that continues a stopped clock is the same gesture ENTER is below: an ENTER
       // right behind it (the "any key" the status promised) used to skip the word with a lapse
-      onFocus={() => { if (!autoFocus.current) { if (!(isRunning?.() ?? true)) resumeFocus.at = Date.now(); onResume(); } }}
+      onFocus={() => { if (!autoFocus.current) { resumeFocus.at = Date.now(); onResume(); } }}
       onChange={e => {
         onResume();
         if (target.length > 0 && typed.length >= target.length) { pinyinCarry.current += e.target.value.slice(typed.length); return; }
