@@ -196,6 +196,13 @@ def main():
                 pinmap[w] = f"{toned(w)}|{plain(w)}|{level}"
         print(f"{dict_id}: {len(rows)} words")
 
+    # a pin on a key that is no dictionary headword (a topic word's first sense, kept in the map
+    # by hand) was never revisited: only the bands above are, so pinyin-fixes.json changed the
+    # inline value the trio generator writes but the map, which the card displays, kept the guess
+    for w in list(pinmap):
+        if w in FIXES and not pinmap[w].startswith(toned(w) + "|"):
+            pinmap[w] = f"{toned(w)}|{plain(w)}|{pinmap[w].split('|')[2]}"
+
     with open(pin_path, "w", encoding="utf-8") as f:
         json.dump(pinmap, f, ensure_ascii=False, separators=(",", ":"))
     annotate_coverage(manifest)
