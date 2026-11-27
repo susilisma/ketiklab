@@ -3362,7 +3362,9 @@ function LangSetup({ initialUi, initialLearn, defByLearn, onSave, onClose }: { i
     // Escape would report the state the dialog opened in
   }, [onClose, def]);
   return <div className="lang-modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="lang-modal-title">
-    <div className="lang-modal">
+    {/* the dialog redraws in the draft interface language before 保存, while <html lang> follows the
+        committed one: tagged, a screen reader voices 语言设置 / Pengaturan Bahasa in that language */}
+    <div className="lang-modal" lang={htmlLang(ui)}>
       <button className="lang-modal-close" onClick={() => onClose(def !== null)} aria-label={mt.cancel}>✕</button>
       <h2 id="lang-modal-title">{mt.title}</h2>
       <p className="lang-modal-subtitle">{mt.subtitle}</p>
