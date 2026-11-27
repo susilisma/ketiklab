@@ -616,6 +616,10 @@ export function finishPendingRestore(): boolean {
 }
 // profileName null: the profile could not be read, so the name the account's row carries stands in
 export async function linkThisDevice(userId: string, how: "merge" | "replace", profileName: string | null = "", shown: () => boolean = () => true): Promise<"uploaded" | "same" | "reloading" | "deferred"> {
+  // the settings as they stood when the link began: `raw` below is read after the round trip, so a
+  // setting changed during a slow read (the loop count, hide pronunciation) looked unchanged to the
+  // deferred restore's "changed" rule and was put back to the account's value
+  const settingsBefore = collectLocal();
   const r = await loadProgress(userId);
   if (!r.ok) throw Object.assign(new Error("cloud read failed: " + r.error), { code: r.code });
   const cloud = await normalized(r.data ?? {});
@@ -681,7 +685,10 @@ export async function linkThisDevice(userId: string, how: "merge" | "replace", p
   // normaliser's dictionary fetch taking seconds) is in localStorage but not in `merged`,
   // and writing `merged` alone erased it. The merge is cheap, so it is redone on what the
   // device holds now; merged stays on top, as before, for the settings it carries.
-  const restore = (own: false | "changed") => { applyMerged(merged, raw, own); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload(); };
+  // `raw` still measures the 错词本 (what `merged` was built from); only the settings compare with the start
+  const since: ProgressBlob = { ...raw };
+  for (const k of SYNCED_KEYS) if (!PROGRESS_KEYS.includes(k) && k !== "ketiklab-chapters") { if (k in settingsBefore) since[k] = settingsBefore[k]; else delete since[k]; }
+  const restore = (own: false | "changed") => { applyMerged(merged, since, own); noteAfterReload(wasLinked ? "merged" : "restored"); location.reload(); };
   if (!shown()) { pendingRestore = { uid: userId, run: () => restore("changed") }; return "deferred"; }
   restore(false);
   return "reloading";
