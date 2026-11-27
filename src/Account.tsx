@@ -263,12 +263,16 @@ export function Account({ uiLang, name, onName }: {
       // so nothing was backed up for the rest of the session and nothing said so
       const firstLink = !linked && sessionTyped(uid) && !recovering;
       if (!alive && !firstLink) return;
+      // a refusal confined to the profile write (a missing grant, a 429 on that one request) is kept
+      // until the sync below has shown the connection fine: swallowed, the header kept the device's name,
+      // the row stayed blank and nothing said so until the learner edited the field
+      let nameErr: unknown = null;
       if (prof) {
         if (alive) setProfName(prof.name || "");
         if (prof.name && !untrusted) onName(prof.name);
         // bounded like the profile read above it: a write that never answered held the mount
         // here for good — no 同步中, no sync, no word of it
-        else if (!prof.name && name.trim() && !untrusted) await withinSyncWait(saveName(uid, name.trim())).catch(() => { /* the sync below reports an outage */ });
+        else if (!prof.name && name.trim() && !untrusted) await withinSyncWait(saveName(uid, name.trim())).catch(e => { nameErr = e; /* an outage is reported by the sync below */ });
       }
       try {
         // a device linked to another account, reached by a session from a link: the note
@@ -305,6 +309,7 @@ export function Account({ uiLang, name, onName }: {
             : T("已同步。", "Tersinkron.", "Synced.", uiLang));
         }
         setSyncedAt(stamp());
+        if (nameErr !== null && alive) setErr(notSaved + humanError(nameErr, uiLang)); // the sync landed, so this was no outage
       } catch (e2: unknown) {
         if (firstLink && linkedUid() !== uid) linkFailed.current = true;
         if (alive) { setMsg(""); setErr(humanError(e2, uiLang)); }
